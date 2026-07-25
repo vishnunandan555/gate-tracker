@@ -5,7 +5,7 @@ class EnableShareProgressCardNotifier extends Notifier<bool> {
   @override
   bool build() {
     _load();
-    return false; // Disabled by default
+    return true; // Enabled by default
   }
 
   Future<void> _load() async {

@@ -1,0 +1,31 @@
+# WinGet Manifest for GATEletics
+# PackageIdentifier: Vishnunandan.GATEletics
+PackageIdentifier: Vishnunandan.GATEletics
+PackageVersion: 1.2.16
+PackageLocale: en-US
+Publisher: Vishnunandan
+PublisherUrl: https://github.com/vishnunandan555
+PublisherSupportUrl: https://github.com/vishnunandan555/gateletics/issues
+Author: Vishnunandan
+PackageName: GATEletics
+PackageUrl: https://github.com/vishnunandan555/gateletics
+License: MIT
+LicenseUrl: https://github.com/vishnunandan555/gateletics/blob/main/LICENSE
+Copyright: Copyright (c) 2026 Vishnunandan
+ShortDescription: A syllabus, focus, and resource tracker for GATE exam preparation.
+Description: GATEletics is a comprehensive study companion for GATE exam preparation featuring syllabus tracking, focus session timers, revision scheduling, analytics, and cross-platform cloud sync.
+Tags:
+  - gate
+  - exam
+  - study
+  - tracker
+  - syllabus
+  - focus-timer
+  - productivity
+Installers:
+  - Architecture: x64
+    InstallerType: inno
+    InstallerUrl: https://github.com/vishnunandan555/gateletics/releases/download/v1.2.16/gateletics-windows-v1.2.16-setup.exe
+    InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000 # To be updated on release tag
+ManifestType: singleton
+ManifestVersion: 1.6.0

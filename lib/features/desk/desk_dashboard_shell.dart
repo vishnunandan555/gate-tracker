@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../providers/subject_provider.dart';
+import '../../providers/syllabus_provider.dart';
 import '../dashboard/settings_screen.dart';
 import '../dashboard/widgets/focus_screen.dart';
 import '../../providers/focus_provider.dart';
@@ -14,7 +15,8 @@ import '../dashboard/widgets/shell_common.dart';
 import 'desk_dashboard_screen.dart';
 import '../../providers/overall_ui_scale_provider.dart';
 import '../dashboard/home_screen.dart';
-import '../../providers/syllabus_provider.dart';
+import '../../providers/desktop_update_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DeskDashboardShell extends ConsumerStatefulWidget {
   const DeskDashboardShell({super.key});
@@ -25,6 +27,7 @@ class DeskDashboardShell extends ConsumerStatefulWidget {
 
 class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
   int _currentIndex = 0;
+  bool _updateBannerDismissed = false;
 
   @override
   void initState() {
@@ -32,6 +35,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndInitSync();
       checkAppVersionUpdate(context, ref);
+      ref.read(desktopUpdateProvider.notifier).checkOnLaunchSilently();
     });
   }
 
@@ -61,32 +65,98 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
     });
 
     final overallScale = ref.watch(overallUiScaleProvider).scaleFactor;
+    final updateState = ref.watch(desktopUpdateProvider);
+    final isUpdateAvailable = !_updateBannerDismissed &&
+        updateState.status == DesktopUpdateStatus.updateAvailable &&
+        updateState.releaseInfo != null;
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(overallScale),
       ),
       child: Scaffold(
-        body: Row(
+        body: Column(
           children: [
-            _DeskSidebar(
-              currentIndex: _currentIndex,
-              progressColor: progressColor,
-              onTabSelected: _onTabSelected,
-              onMobileUiTap: () => context.go('/'),
-            ),
+            if (isUpdateAvailable)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: progressColor.withValues(alpha: 0.15),
+                  border: Border(bottom: BorderSide(color: progressColor.withValues(alpha: 0.3))),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.system_update_rounded, color: progressColor, size: 18),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'A new GATEletics update (v${updateState.releaseInfo!.latestVersion}) is available!',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final Uri url = Uri.parse(updateState.releaseInfo!.htmlUrl);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(6),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        child: Text(
+                          'DOWNLOAD UPDATE',
+                          style: GoogleFonts.outfit(
+                            color: progressColor,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, color: Colors.white60, size: 16),
+                      onPressed: () {
+                        setState(() => _updateBannerDismissed = true);
+                      },
+                      tooltip: 'Dismiss',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
-              child: IndexedStack(
-                index: _currentIndex,
+              child: Row(
                 children: [
-                  KeepAliveWrapper(
-                    child: HomeScreen(
-                      onNavigate: _onTabSelected,
+                  _DeskSidebar(
+                    currentIndex: _currentIndex,
+                    progressColor: progressColor,
+                    onTabSelected: _onTabSelected,
+                    onMobileUiTap: () => context.go('/'),
+                  ),
+                  Expanded(
+                    child: IndexedStack(
+                      index: _currentIndex,
+                      children: [
+                        KeepAliveWrapper(
+                          child: HomeScreen(
+                            onNavigate: _onTabSelected,
+                          ),
+                        ),
+                        const KeepAliveWrapper(child: DeskDashboardScreen()),
+                        KeepAliveWrapper(child: FocusScreen(progressColor: progressColor)),
+                        const KeepAliveWrapper(child: SettingsScreen()),
+                      ],
                     ),
                   ),
-                  const KeepAliveWrapper(child: DeskDashboardScreen()),
-                  KeepAliveWrapper(child: FocusScreen(progressColor: progressColor)),
-                  const KeepAliveWrapper(child: SettingsScreen()),
                 ],
               ),
             ),

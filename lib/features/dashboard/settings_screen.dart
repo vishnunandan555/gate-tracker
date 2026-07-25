@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
+import '../../providers/desktop_update_provider.dart';
 import '../../widgets/settings/about_dialog.dart';
 import '../../utils/ui_scaling.dart';
 
@@ -144,6 +147,14 @@ class SettingsScreen extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           aboutAppContent,
+          if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux)) ...[
+            const Divider(color: Colors.white10, height: 1),
+            _DesktopUpdateSettingsTile(
+              titleStyle: titleStyle,
+              subtitleStyle: subtitleStyle,
+              accentColor: accentColor,
+            ),
+          ],
           const Divider(color: Colors.white10, height: 1),
           AdvancedSettingsSection(
             titleStyle: titleStyle,
@@ -284,6 +295,85 @@ class SettingsScreen extends ConsumerWidget {
                 ),
         ),
       ),
+    );
+  }
+}
+
+class _DesktopUpdateSettingsTile extends ConsumerWidget {
+  final TextStyle titleStyle;
+  final TextStyle subtitleStyle;
+  final Color accentColor;
+
+  const _DesktopUpdateSettingsTile({
+    required this.titleStyle,
+    required this.subtitleStyle,
+    required this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final updateState = ref.watch(desktopUpdateProvider);
+
+    Widget trailingWidget;
+    String subtitleText = 'Check GitHub Releases for app updates';
+
+    if (updateState.status == DesktopUpdateStatus.checking) {
+      trailingWidget = SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(strokeWidth: 2, color: accentColor),
+      );
+      subtitleText = 'Checking GitHub API for updates...';
+    } else if (updateState.status == DesktopUpdateStatus.updateAvailable && updateState.releaseInfo != null) {
+      trailingWidget = TextButton(
+        onPressed: () async {
+          final Uri url = Uri.parse(updateState.releaseInfo!.htmlUrl);
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          }
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(
+          'UPDATE NOW',
+          style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold, fontSize: 11),
+        ),
+      );
+      subtitleText = '🔥 GATEletics v${updateState.releaseInfo!.latestVersion} is available!';
+    } else if (updateState.status == DesktopUpdateStatus.upToDate) {
+      trailingWidget = Icon(Icons.check_circle_outline_rounded, color: Colors.greenAccent, size: 20);
+      subtitleText = 'You are using the latest version';
+    } else if (updateState.status == DesktopUpdateStatus.error) {
+      trailingWidget = Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 20);
+      subtitleText = updateState.errorMessage ?? 'Could not check for updates';
+    } else {
+      trailingWidget = TextButton(
+        onPressed: () {
+          ref.read(desktopUpdateProvider.notifier).checkManually();
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(
+          'CHECK NOW',
+          style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold, fontSize: 11),
+        ),
+      );
+    }
+
+    return ListTile(
+      leading: Icon(Icons.system_update_rounded, color: accentColor),
+      title: Text('Check for Updates', style: titleStyle),
+      subtitle: Text(subtitleText, style: subtitleStyle),
+      trailing: trailingWidget,
+      onTap: () {
+        ref.read(desktopUpdateProvider.notifier).checkManually();
+      },
     );
   }
 }

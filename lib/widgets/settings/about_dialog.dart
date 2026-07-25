@@ -1,10 +1,12 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
+import '../../providers/desktop_update_provider.dart';
 
 void showAboutTrackerDialog(BuildContext context, WidgetRef ref) {
   final accentColor = ref.read(overallProgressColorProvider);
@@ -241,6 +243,12 @@ void showAboutTrackerDialog(BuildContext context, WidgetRef ref) {
                     ),
                   ),
 
+                  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux))
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(24, 0, 24, 8),
+                      child: _DesktopAboutUpdateTile(),
+                    ),
+
                   // ── Close button ─────────────────────────────────
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
@@ -275,6 +283,95 @@ void showAboutTrackerDialog(BuildContext context, WidgetRef ref) {
       ),
     ),
   );
+}
+
+class _DesktopAboutUpdateTile extends ConsumerWidget {
+  const _DesktopAboutUpdateTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accentColor = ref.watch(overallProgressColorProvider);
+    final updateState = ref.watch(desktopUpdateProvider);
+
+    Widget statusContent;
+    if (updateState.status == DesktopUpdateStatus.checking) {
+      statusContent = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(strokeWidth: 2, color: accentColor),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Checking for updates...',
+            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11.5),
+          ),
+        ],
+      );
+    } else if (updateState.status == DesktopUpdateStatus.updateAvailable && updateState.releaseInfo != null) {
+      statusContent = Column(
+        children: [
+          Text(
+            '🔥 GATEletics v${updateState.releaseInfo!.latestVersion} is available!',
+            style: GoogleFonts.outfit(color: Colors.cyanAccent, fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const SizedBox(height: 6),
+          InkWell(
+            onTap: () async {
+              final Uri url = Uri.parse(updateState.releaseInfo!.htmlUrl);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
+            child: Text(
+              'Download Update',
+              style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold, fontSize: 11.5, decoration: TextDecoration.underline),
+            ),
+          ),
+        ],
+      );
+    } else if (updateState.status == DesktopUpdateStatus.upToDate) {
+      statusContent = Text(
+        '✓ You are using the latest version',
+        style: GoogleFonts.outfit(color: Colors.greenAccent, fontWeight: FontWeight.w600, fontSize: 11.5),
+      );
+    } else if (updateState.status == DesktopUpdateStatus.error) {
+      statusContent = Text(
+        updateState.errorMessage ?? 'Could not check for updates',
+        style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 11),
+      );
+    } else {
+      statusContent = OutlinedButton.icon(
+        onPressed: () {
+          ref.read(desktopUpdateProvider.notifier).checkManually();
+        },
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: accentColor.withValues(alpha: 0.4)),
+          foregroundColor: accentColor,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        icon: const Icon(Icons.system_update_rounded, size: 14),
+        label: Text(
+          'CHECK FOR UPDATES',
+          style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(4),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withAlpha(10)),
+      ),
+      child: statusContent,
+    );
+  }
 }
 
 // ── Private helper widgets ─────────────────────────────────────────────────

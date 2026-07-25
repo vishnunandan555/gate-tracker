@@ -3,13 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../providers/completion_provider.dart';
 import '../../../providers/daily_history_provider.dart';
 import '../../../providers/focus_provider.dart';
 import '../../../providers/progress_font_provider.dart';
 import '../../../utils/ui_scaling.dart';
+
+import '../../../providers/home_carousel_page_provider.dart';
 
 class HomeCarousel extends ConsumerStatefulWidget {
   final Color accentColor;
@@ -27,30 +28,13 @@ class HomeCarousel extends ConsumerStatefulWidget {
 
 class _HomeCarouselState extends ConsumerState<HomeCarousel> {
   late PageController _pageController;
-  int _currentPage = 0;
+  late int _currentPage;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0);
-    _loadPersistedPage();
-  }
-
-  Future<void> _loadPersistedPage() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final page = prefs.getInt('home_carousel_page') ?? 0;
-      if (mounted && page != _currentPage) {
-        setState(() {
-          _currentPage = page;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_pageController.hasClients) {
-            _pageController.jumpToPage(page);
-          }
-        });
-      }
-    } catch (_) {}
+    _currentPage = ref.read(homeCarouselPageProvider);
+    _pageController = PageController(initialPage: _currentPage);
   }
 
   @override
@@ -91,15 +75,8 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
       setState(() {
         _currentPage = targetPage;
       });
-      _savePage(targetPage);
+      ref.read(homeCarouselPageProvider.notifier).setPage(targetPage);
     }
-  }
-
-  Future<void> _savePage(int page) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('home_carousel_page', page);
-    } catch (_) {}
   }
 
   @override
@@ -196,7 +173,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                   setState(() {
                     _currentPage = page;
                   });
-                  _savePage(page);
+                  ref.read(homeCarouselPageProvider.notifier).setPage(page);
                 },
                 children: [
                   // Card 1: Syllabus Completion
@@ -357,6 +334,10 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
+                setState(() {
+                  _currentPage = index;
+                });
+                ref.read(homeCarouselPageProvider.notifier).setPage(index);
               },
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(

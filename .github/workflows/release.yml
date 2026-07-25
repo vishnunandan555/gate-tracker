@@ -117,19 +117,28 @@ jobs:
       - name: Build Windows Desktop App
         run: flutter build windows --release --no-pub
 
-      - name: Compress Windows Release Bundle
+      - name: Compress Windows Portable Release Bundle
         shell: pwsh
         run: |
           Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath gateletics-windows-${{ env.VERSION }}.zip
+
+      - name: Compile Windows Setup Installer (Inno Setup)
+        shell: pwsh
+        run: |
+          choco install innosetup -y
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=${{ env.VERSION }} scripts/inno_setup.iss
+          Copy-Item "scripts/gateletics-windows-${{ env.VERSION }}-setup.exe" -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: gateletics-windows-${{ env.VERSION }}.zip
+          path: |
+            gateletics-windows-${{ env.VERSION }}.zip
+            gateletics-windows-${{ env.VERSION }}-setup.exe
 
   # -------------------------------------------------------------------------
-  # Job 3: Build Linux Desktop App (Default Single TAR.GZ & AppImage)
+  # Job 3: Build Linux Desktop App (Tarball, AppImage, & Debian .deb)
   # -------------------------------------------------------------------------
   build-linux:
     name: Build Linux Desktop
@@ -151,7 +160,7 @@ jobs:
       - name: Install Linux Build Prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev dpkg
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -201,6 +210,43 @@ jobs:
           ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run AppDir gateletics-linux-${{ env.VERSION }}.AppImage
           rm -rf AppDir
 
+      - name: Package Linux App as Debian Package (.deb)
+        run: |
+          CLEAN_VER="${VERSION#v}"
+          mkdir -p debian_pkg/DEBIAN
+          mkdir -p debian_pkg/usr/bin
+          mkdir -p debian_pkg/usr/lib/gateletics
+          mkdir -p debian_pkg/usr/share/applications
+          mkdir -p debian_pkg/usr/share/pixmaps
+
+          cp -r build/linux/x64/release/bundle/* debian_pkg/usr/lib/gateletics/
+          ln -s /usr/lib/gateletics/gateletics debian_pkg/usr/bin/gateletics
+          cp assets/icon.png debian_pkg/usr/share/pixmaps/gateletics.png
+
+          cat << EOF > debian_pkg/usr/share/applications/gateletics.desktop
+          [Desktop Entry]
+          Name=GATEletics
+          Comment=A syllabus and resource tracker for GATE exam preparation
+          Exec=gateletics
+          Icon=gateletics
+          Terminal=false
+          Type=Application
+          Categories=Utility;Education;
+          EOF
+
+          cat << EOF > debian_pkg/DEBIAN/control
+          Package: gateletics
+          Version: ${CLEAN_VER}
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Vishnunandan <https://github.com/vishnunandan555>
+          Description: GATEletics - Syllabus, focus, and resource tracker for GATE exam preparation.
+          EOF
+
+          dpkg-deb --build debian_pkg gateletics-linux-${{ env.VERSION }}.deb
+          rm -rf debian_pkg
+
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -208,9 +254,10 @@ jobs:
           path: |
             gateletics-linux-${{ env.VERSION }}.tar.gz
             gateletics-linux-${{ env.VERSION }}.AppImage
+            gateletics-linux-${{ env.VERSION }}.deb
 
   # -------------------------------------------------------------------------
-  # Job 4: Build Web App (ZIP Bundle & Vercel Deploy)
+  # Job 4: Build Web App (Vercel Production Deploy)
   # -------------------------------------------------------------------------
   build-web:
     name: Build Web Target
@@ -255,18 +302,6 @@ jobs:
           working-directory: ./build/web
           vercel-version: 54.17.1
 
-      - name: Compress Web Release Bundle (Zip)
-        run: |
-          cd build/web
-          zip -r ../../gateletics-web-${{ env.VERSION }}.zip .
-          cd ../..
-
-      - name: Upload Web Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: gateletics-web-${{ env.VERSION }}.zip
-
   # -------------------------------------------------------------------------
   # Job 5: Pull and Publish to GitHub Releases
   # -------------------------------------------------------------------------
@@ -309,22 +344,17 @@ jobs:
           name: linux-build
           path: release-files
 
-      - name: Download Web Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: web-build
-          path: release-files
-
       - name: Publish Compiled Packages to GitHub Release
         uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            release-files/gateletics-web-${{ env.VERSION }}.zip
             release-files/gateletics-${{ env.VERSION }}-*.apk
             release-files/gateletics-windows-${{ env.VERSION }}.zip
+            release-files/gateletics-windows-${{ env.VERSION }}-setup.exe
             release-files/gateletics-linux-${{ env.VERSION }}.AppImage
             release-files/gateletics-linux-${{ env.VERSION }}.tar.gz
+            release-files/gateletics-linux-${{ env.VERSION }}.deb
           draft: false
           prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
           generate_release_notes: true

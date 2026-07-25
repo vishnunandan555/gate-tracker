@@ -45,7 +45,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
           style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Glow, avatar size, and UI toggles',
+          'Visual customization, glow intensity, avatar sizing, and dashboard UI layout toggles',
           style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
         ),
         children: [

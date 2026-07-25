@@ -66,6 +66,13 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
 
     final ringColor = isBreak ? Colors.white : accentColor;
 
+    final now = DateTime.now();
+    final hour = now.hour;
+    final minute = now.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+    final timeStr = "$displayHour:$minute $period";
+
     return Stack(
       children: [
         Positioned.fill(
@@ -97,6 +104,16 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                       fontWeight: FontWeight.bold,
                       letterSpacing: context.s(0.5),
                     ),
+                  ),
+                ),
+                SizedBox(height: context.s(6)),
+                Text(
+                  timeStr,
+                  style: GoogleFonts.outfit(
+                    color: Colors.white30,
+                    fontSize: context.s(10),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: context.s(0.5),
                   ),
                 ),
               ],

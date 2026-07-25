@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'demo_guide_provider.dart';
 
 class SetupNotifier extends AsyncNotifier<bool> {
   @override
@@ -13,6 +14,10 @@ class SetupNotifier extends AsyncNotifier<bool> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_completed_setup', true);
     await prefs.setBool('force_onboarding', false);
+    
+    // Reset shell tab back to 2 (Home screen)
+    ref.read(shellTabProvider.notifier).state = 2;
+
     state = const AsyncValue.data(true);
   }
 
