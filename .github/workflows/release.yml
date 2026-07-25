@@ -79,6 +79,8 @@ jobs:
   build-windows:
     name: Build Windows Desktop
     runs-on: windows-latest
+    env:
+      CL: "/MP" # Enable multi-threaded MSBuild C++ parallel compilation
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -93,6 +95,11 @@ jobs:
             $VERSION = "v" + $PubLine.Line.Split(" ")[1].Split("+")[0]
           }
           echo "VERSION=$VERSION" >> $env:GITHUB_ENV
+
+      - name: Set up Inno Setup Compiler
+        uses: dmitriy-kuznetsov/setup-inno-setup@v1
+        with:
+          version: '6.2.2'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -125,8 +132,7 @@ jobs:
       - name: Compile Windows Setup Installer (Inno Setup)
         shell: pwsh
         run: |
-          choco install innosetup -y
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=${{ env.VERSION }} scripts/inno_setup.iss
+          iscc /DMyAppVersion=${{ env.VERSION }} scripts/inno_setup.iss
           Copy-Item "scripts/gateletics-windows-${{ env.VERSION }}-setup.exe" -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
 
       - name: Upload Windows Artifacts
