@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Boldonse&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&family=Orbitron:wght@600;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @font-face {
   font-family: 'Boldonse';
@@ -48,39 +48,71 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-main);
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1.6;
   font-size: 16px;
-  transition: background-color 0.25s, color 0.25s;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Fix for Violet Visited Links - Targeting paragraph and content links specifically */
-p a,
-li a,
-td a,
-.guide-content a,
-footer a {
-  color: var(--accent-color);
+/* Keyframe & Reveal Animations */
+@keyframes revealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 8px 36px rgba(0, 0, 0, 0.25), 0 0 28px rgba(0, 229, 255, 0.35);
+  }
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hero,
+.card,
+.comp-container,
+.guide-content {
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.grid .card:nth-child(1) { animation-delay: 0.05s; }
+.grid .card:nth-child(2) { animation-delay: 0.1s; }
+.grid .card:nth-child(3) { animation-delay: 0.15s; }
+.grid .card:nth-child(4) { animation-delay: 0.2s; }
+.grid .card:nth-child(5) { animation-delay: 0.25s; }
+.grid .card:nth-child(6) { animation-delay: 0.3s; }
+
+/* Universal Link Styling */
+a,
+a:visited,
+a:active {
+  color: var(--accent-color) !important;
   text-decoration: none;
-  transition: color 0.2s, text-decoration 0.2s;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
-p a:visited,
-li a:visited,
-td a:visited,
-.guide-content a:visited,
-footer a:visited {
-  color: var(--accent-color);
-}
-
-p a:hover,
-li a:hover,
-td a:hover,
-.guide-content a:hover,
-footer a:hover {
-  color: var(--accent-hover);
+a:hover {
+  color: var(--accent-hover) !important;
   text-decoration: underline;
 }
 
@@ -93,6 +125,7 @@ header {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 100;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 [data-theme="light"] header {
@@ -115,10 +148,13 @@ header {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Dark Grey Charcoal Pill Behind Navbar Logo (ONLY FOR LIGHT MODE) - Symmetric Padding & Alignment */
+.logo:hover {
+  transform: scale(1.02);
+}
+
 [data-theme="light"] .logo {
   background: #1e293b;
   padding: 7px 14px;
@@ -150,7 +186,6 @@ header {
   height: 100%;
 }
 
-/* Explicit Boldonse font matching Flutter app logo */
 .logo-gate {
   font-family: 'Boldonse', cursive, sans-serif !important;
   font-weight: 400 !important;
@@ -161,7 +196,6 @@ header {
   color: var(--text-main);
 }
 
-/* Explicit Orbitron 900 font for LETICS */
 .logo-letics {
   color: var(--accent-color) !important;
   font-family: 'Orbitron', sans-serif !important;
@@ -187,14 +221,17 @@ header {
 .nav-links a,
 .nav-links a:visited {
   color: var(--text-muted) !important;
+  font-family: 'Outfit', sans-serif;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none !important;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links a.active {
   color: var(--accent-color) !important;
+  font-weight: 600;
   text-decoration: none !important;
 }
 
@@ -206,17 +243,19 @@ header {
   border-radius: 20px;
   cursor: pointer;
   color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
   font-size: 13px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .theme-toggle:hover {
   border-color: var(--accent-color);
-  box-shadow: 0 0 12px var(--accent-glow);
+  transform: scale(1.04);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 
 .container {
@@ -257,7 +296,7 @@ header {
   border-radius: 24px;
   background: #09090b;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 24px rgba(0, 229, 255, 0.25);
+  animation: pulseGlow 4s ease-in-out infinite;
   margin-bottom: 20px;
 }
 
@@ -268,7 +307,7 @@ header {
 }
 
 .hero h1 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 46px;
   font-weight: 700;
   margin: 0 0 16px 0;
@@ -285,20 +324,24 @@ header {
   font-weight: 400;
 }
 
-/* Smooth Button Styles (Glitch Free Hover) */
+/* Smooth Button Micro-Interactions */
 .btn-primary,
-.btn-primary:visited {
+.btn-primary:visited,
+.btn-primary:active {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background-color: var(--accent-color);
   color: var(--btn-text) !important;
+  font-family: 'Outfit', sans-serif;
   font-weight: 600;
   font-size: 15px;
   padding: 12px 28px;
   border-radius: 12px;
   text-decoration: none !important;
   box-shadow: 0 4px 20px var(--accent-glow);
+  cursor: pointer;
+  border: none;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -310,19 +353,26 @@ header {
   text-decoration: none !important;
 }
 
+.btn-primary:active {
+  transform: translateY(0);
+}
+
 .btn-secondary,
-.btn-secondary:visited {
+.btn-secondary:visited,
+.btn-secondary:active {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background-color: var(--card-bg);
   color: var(--text-main) !important;
   border: 1px solid var(--border-color);
+  font-family: 'Outfit', sans-serif;
   font-weight: 500;
   font-size: 15px;
   padding: 12px 24px;
   border-radius: 12px;
   text-decoration: none !important;
+  cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -331,6 +381,10 @@ header {
   color: var(--text-main) !important;
   transform: translateY(-2px);
   text-decoration: none !important;
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
 }
 
 /* Trust Badges Pill List */
@@ -353,11 +407,17 @@ header {
   border: 1px solid var(--border-color);
   padding: 6px 14px;
   border-radius: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.trust-pill:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
 }
 
 /* Section Titles */
 h2 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 26px;
   font-weight: 700;
   margin-top: 48px;
@@ -378,7 +438,7 @@ h2 {
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 24px;
-  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
 }
@@ -386,8 +446,8 @@ h2 {
 .card:hover {
   border-color: var(--border-hover-color);
   background-color: var(--card-hover-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), 0 0 16px var(--accent-glow);
 }
 
 .card-header-layout {
@@ -404,8 +464,8 @@ h2 {
 }
 
 .card h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 17px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
   font-weight: 600;
   margin: 0;
 }
@@ -425,6 +485,12 @@ h2 {
   border-radius: 16px;
   overflow: hidden;
   margin-top: 24px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.comp-container:hover {
+  border-color: var(--border-hover-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .comp-table {
@@ -473,9 +539,16 @@ h2 {
   padding: 28px;
   border-radius: 16px;
   border: 1px solid var(--border-color);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.guide-content:hover {
+  border-color: var(--border-hover-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .guide-content h3 {
+  font-family: 'Outfit', sans-serif;
   font-size: 19px;
   font-weight: 600;
   margin-top: 0;
@@ -494,6 +567,141 @@ h2 {
 
 .guide-content li strong {
   color: var(--text-main);
+}
+
+/* =========================================================================
+   Download Choice Modal System
+   ========================================================================= */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px var(--accent-glow);
+  position: relative;
+  transform: scale(0.92);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-backdrop.active .modal-card {
+  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: color 0.2s, background-color 0.2s;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--text-main);
+  background-color: var(--border-color);
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-main) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.modal-option-btn:hover {
+  border-color: var(--accent-color);
+  background: var(--card-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.modal-option-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-option-badge {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--badge-bg);
+  color: var(--accent-color);
+  border: 1px solid var(--badge-border);
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
 }
 
 /* Media Queries */

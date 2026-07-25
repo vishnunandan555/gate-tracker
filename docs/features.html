@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <script>
-    // Apply theme immediately to prevent flashing
     (function () {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
@@ -15,13 +15,15 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Terms of Service for GATEletics.">
-  <title>Terms of Service - GATEletics</title>
+  <meta name="description" content="GATEletics Feature Showcase Page - Detailed feature breakdown coming soon.">
+  <link rel="canonical" href="https://vishnunandan555.github.io/gateletics/features.html">
+  <title>Features - GATEletics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header>
     <div class="nav-container">
@@ -32,19 +34,27 @@
       <div class="nav-controls">
         <div class="nav-links">
           <a href="index.html">Home</a>
+          <a href="features.html" class="active">Features</a>
+          <a href="downloads.html">Downloads</a>
+          <a href="guide.html">Guide</a>
           <a href="support.html">Support</a>
-          <a href="delete-account.html">Delete Account</a>
-          <a href="terms.html">Terms</a>
-          <a href="privacy.html">Privacy</a>
         </div>
         <button id="theme-toggle" class="theme-toggle">🌙 Dark</button>
       </div>
     </div>
   </header>
 
-  <div class="container">
-    <div id="content" class="doc-card">
-      <div class="loader">Loading Terms of Service...</div>
+  <div class="container" style="text-align: center; padding-top: 80px; padding-bottom: 120px;">
+    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 20px; background: var(--badge-bg); border: 1px solid var(--badge-border); font-size: 36px; margin-bottom: 24px;">
+      🚧
+    </div>
+    <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 16px;">Feature Deep-Dive Under Construction</h1>
+    <p style="color: var(--text-muted); max-width: 540px; margin: 0 auto 32px auto; font-size: 17px;">
+      We are expanding our interactive feature breakdown page. In the meantime, you can explore feature highlights on our <a href="index.html">Home Page</a> or read our <a href="guide.html">User Guide</a>.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+      <a href="index.html" class="btn-primary">Back to Home</a>
+      <a href="guide.html" class="btn-secondary">Read User Guide</a>
     </div>
   </div>
 
@@ -63,45 +73,16 @@
     </div>
   </footer>
 
-  <!-- Markdown Parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  
   <script>
-    // Theme Toggle Handler
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      updateToggleText(newTheme);
+      themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
     });
-
-    function updateToggleText(theme) {
-      themeToggle.innerHTML = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-    updateToggleText(document.documentElement.getAttribute('data-theme'));
-
-    // Dynamic Markdown Loader
-    const markdownUrl = 'https://raw.githubusercontent.com/vishnunandan555/gateletics/main/TERMS_OF_SERVICE.md';
-    
-    fetch(markdownUrl)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to load document');
-        return res.text();
-      })
-      .then(text => {
-        document.getElementById('content').innerHTML = marked.parse(text);
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('content').innerHTML = `
-          <h1>Terms of Service</h1>
-          <p style="color: #ef4444; font-weight: 600; margin-top: 24px;">Failed to load the document from GitHub.</p>
-          <p>Please check your network connection or view the terms directly on 
-          <a href="https://github.com/vishnunandan555/gateletics/blob/main/TERMS_OF_SERVICE.md" target="_blank">GitHub</a>.</p>
-        `;
-      });
   </script>
 </body>
+
 </html>

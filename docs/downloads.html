@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Download GATEletics for Windows, Linux, Android, or launch the Web Application. Free, open-source, and offline-first.">
+  <link rel="canonical" href="https://vishnunandan555.github.io/gateletics/downloads.html">
+  <title>Downloads & Releases - GATEletics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Orbitron:wght@600;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="logo_trans_cropped.png" alt="GATEletics Logo" class="logo-img">
+        <span class="logo-text"><span class="logo-gate">GATE</span><span class="logo-letics">LETICS</span></span>
+      </a>
+      <div class="nav-controls">
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="downloads.html" class="active">Downloads</a>
+          <a href="guide.html">Guide</a>
+          <a href="support.html">Support</a>
+        </div>
+        <button id="theme-toggle" class="theme-toggle">🌙 Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero" style="padding: 40px 0 30px 0;">
+      <div class="hero-eyebrow">DOWNLOAD HUBS & RELEASES</div>
+      <h1>📦 Get GATEletics</h1>
+      <p>Download native applications for your platform or launch the instant web application.</p>
+    </section>
+
+    <!-- Downloads Grid -->
+    <div class="grid" style="margin-top: 32px;">
+      <!-- Web App -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <h3>Web Application</h3>
+          </div>
+          <p>Instant browser application with WebAssembly SQLite database storage. Works on any browser.</p>
+        </div>
+        <a href="https://gateletics.vercel.app/" target="_blank" class="btn-primary" style="margin-top: 20px; justify-content: center;">🚀 Launch Web App</a>
+      </div>
+
+      <!-- Windows -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <img src="https://img.icons8.com/?size=100&id=108792&format=png&color=000000" class="card-icon" alt="Windows logo">
+            <h3>Windows Desktop</h3>
+          </div>
+          <p>Native 64-bit Windows binary builds. Installer setup or portable archive.</p>
+        </div>
+        <button onclick="openDownloadModal('windows')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
+          Download for Windows
+        </button>
+      </div>
+
+      <!-- Linux -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <img src="linux.png" class="card-icon" alt="Linux logo">
+            <h3>Linux Desktop</h3>
+          </div>
+          <p>Universal Linux AppImage executable, native Debian/Ubuntu package, or tarball archive.</p>
+        </div>
+        <button onclick="openDownloadModal('linux')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
+          Download for Linux
+        </button>
+      </div>
+
+      <!-- Android -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#3DDC84" aria-hidden="true">
+              <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
+            </svg>
+            <h3>Android Mobile</h3>
+          </div>
+          <p>Standalone APK package for Android smartphones and tablets.</p>
+        </div>
+        <button onclick="openDownloadModal('android')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
+          Download for Android
+        </button>
+      </div>
+    </div>
+
+    <!-- GitHub Release Banner -->
+    <div style="margin-top: 48px; text-align: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px 24px;">
+      <h3 style="margin: 0 0 12px 0; font-size: 20px;">Looking for Previous Releases?</h3>
+      <p style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 15px;">Browse complete release history, source code tarballs, and build artifacts on GitHub.</p>
+      <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" class="btn-primary" style="font-size: 15px; padding: 12px 28px;">
+        View All Releases on GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Interactive Choice Modal -->
+  <div id="download-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Select Download Option</h3>
+        <button class="modal-close" onclick="closeDownloadModal()">✕</button>
+      </div>
+      <div id="modal-options" class="modal-options"></div>
+    </div>
+  </div>
+
+  <footer style="margin-top: 60px; padding: 28px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 14px;">
+    <div class="container" style="padding-top: 0; padding-bottom: 0;">
+      <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 14px;">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="downloads.html">Downloads</a>
+        <a href="guide.html">Guide</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <p>© 2026 GATEletics. Open source under the MIT License.</p>
+    </div>
+  </footer>
+
+  <script>
+    const releaseLinks = {
+      winInstaller: '#',
+      winZip: '#',
+      linuxAppImage: '#',
+      linuxDeb: '#',
+      linuxTar: '#',
+      androidApk: '#'
+    };
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+    });
+
+    function openDownloadModal(platform) {
+      const modal = document.getElementById('download-modal');
+      const titleEl = document.getElementById('modal-title');
+      const optionsEl = document.getElementById('modal-options');
+
+      optionsEl.innerHTML = '';
+
+      if (platform === 'windows') {
+        titleEl.textContent = 'Download for Windows';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.winInstaller}" class="modal-option-btn">
+            <span>Setup Installer (.exe)</span>
+            <span class="modal-option-badge">Installer</span>
+          </a>
+          <a href="${releaseLinks.winZip}" class="modal-option-btn">
+            <span>Portable Bundle (.zip)</span>
+            <span class="modal-option-badge">Portable</span>
+          </a>
+        `;
+      } else if (platform === 'linux') {
+        titleEl.textContent = 'Download for Linux';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.linuxAppImage}" class="modal-option-btn">
+            <span>Universal AppImage (.AppImage)</span>
+            <span class="modal-option-badge">AppImage</span>
+          </a>
+          <a href="${releaseLinks.linuxDeb}" class="modal-option-btn">
+            <span>Debian / Ubuntu (.deb)</span>
+            <span class="modal-option-badge">Debian</span>
+          </a>
+          <a href="${releaseLinks.linuxTar}" class="modal-option-btn">
+            <span>Tarball Archive (.tar.gz)</span>
+            <span class="modal-option-badge">Tarball</span>
+          </a>
+        `;
+      } else if (platform === 'android') {
+        titleEl.textContent = 'Download for Android';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.androidApk}" class="modal-option-btn">
+            <span>Standalone Package (.apk)</span>
+            <span class="modal-option-badge">APK</span>
+          </a>
+        `;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeDownloadModal() {
+      document.getElementById('download-modal').classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(event) {
+      if (event.target.id === 'download-modal') {
+        closeDownloadModal();
+      }
+    }
+
+    async function fetchLatestRelease() {
+      try {
+        const response = await fetch('https://api.github.com/repos/vishnunandan555/gateletics/releases/latest');
+        if (!response.ok) return;
+        const data = await response.json();
+        const assets = data.assets || [];
+
+        assets.forEach(asset => {
+          const name = asset.name;
+          const url = asset.browser_download_url;
+
+          if (name.endsWith('.apk')) {
+            releaseLinks.androidApk = url;
+          } else if (name.includes('windows') && name.endsWith('-setup.exe')) {
+            releaseLinks.winInstaller = url;
+          } else if (name.includes('windows') && name.endsWith('.zip')) {
+            releaseLinks.winZip = url;
+          } else if (name.includes('linux') && name.endsWith('.AppImage')) {
+            releaseLinks.linuxAppImage = url;
+          } else if (name.includes('linux') && name.endsWith('.deb')) {
+            releaseLinks.linuxDeb = url;
+          } else if (name.includes('linux') && name.endsWith('.tar.gz')) {
+            releaseLinks.linuxTar = url;
+          }
+        });
+      } catch (e) {
+        console.error('Failed to fetch release assets:', e);
+      }
+    }
+    fetchLatestRelease();
+  </script>
+</body>
+
+</html>

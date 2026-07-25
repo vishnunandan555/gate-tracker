@@ -25,7 +25,7 @@
   <link rel="sitemap" type="application/xml" title="Sitemap" href="https://vishnunandan555.github.io/gateletics/sitemap.xml">
   <meta name="google-site-verification" content="RPjWnHv7MG2Z4S1HEDzXH98QUFOd8N_n3a9f1VJ7zXQ">
   
-  <!-- Open Graph / Facebook / LinkedIn -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vishnunandan555.github.io/gateletics/">
   <meta property="og:title" content="GATEletics - GATE Exam Syllabus & Focus Companion">
@@ -40,7 +40,7 @@
   <meta name="twitter:description" content="A clean, offline-first study companion for GATE aspirants. Easily organize your subjects, track focus sessions, manage daily tasks, and stay on top of your exam countdown.">
   <meta name="twitter:image" content="https://vishnunandan555.github.io/gateletics/logo_trans_cropped.png">
 
-  <!-- JSON-LD Structured Data for Search Engines & AI indexing -->
+  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -59,57 +59,15 @@
     "author": {
       "@type": "Person",
       "name": "Vishnunandan"
-    },
-    "featureList": [
-      "7 GATE Branch Presets (CS, DA, EC, EE, CE, ME, CH)",
-      "100% Offline-First SQLite Local Database",
-      "Pomodoro, Ultradian & Freestyle Focus Timers",
-      "Real-time Clock Overlay on Active Focus Screen",
-      "Notice Board Daily Task Suite",
-      "Shareable Progress Cards"
-    ]
+    }
   }
   </script>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is GATEletics?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "GATEletics is a free, offline-first syllabus tracker and study focus suite designed for GATE (Graduate Aptitude Test in Engineering) exam preparation."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Which GATE branches are supported in GATEletics?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "GATEletics provides built-in syllabus presets for 7 branches: Computer Science (CS), Data Science & AI (DA), Electronics (EC), Electrical (EE), Civil (CE), Mechanical (ME), and Chemical (CH)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does GATEletics work without internet connection?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, GATEletics stores 100% of your syllabus progress, tasks, and focus timer logs in a local Drift SQLite database on your device."
-        }
-      }
-    ]
-  }
-  </script>
   <title>GATEletics - GATE Exam Syllabus & Focus Companion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Orbitron:wght@600;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
@@ -121,14 +79,11 @@
       </a>
       <div class="nav-controls">
         <div class="nav-links">
-          <a href="#features">Features</a>
-          <a href="#comparison">Why GATEletics</a>
-          <a href="#downloads">Downloads</a>
-          <a href="#guide">Guide</a>
+          <a href="index.html" class="active">Home</a>
+          <a href="features.html">Features</a>
+          <a href="downloads.html">Downloads</a>
+          <a href="guide.html">Guide</a>
           <a href="support.html">Support</a>
-          <a href="delete-account.html">Delete Account</a>
-          <a href="terms.html">Terms</a>
-          <a href="privacy.html">Privacy</a>
         </div>
         <button id="theme-toggle" class="theme-toggle">🌙 Dark</button>
       </div>
@@ -159,17 +114,26 @@
 
       <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
         <a href="https://gateletics.vercel.app/" target="_blank" class="btn-primary">
-          🚀 Launch Web App
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.71 1.26-1.5 1.84-2.31M15.5 8.5l-3 3M16 4l-4 4M21 3l-6.5 6.5"></path>
+            <path d="M15 9l-3 3M9 15l-3 3M16.5 4.5a7.5 7.5 0 0 0-10.61 0L4.5 6l13.5 13.5 1.5-1.41a7.5 7.5 0 0 0 0-10.61z"></path>
+          </svg>
+          Launch Web App
         </a>
-        <a href="#downloads" class="btn-secondary">
-          📦 Download Desktop & Mobile
-        </a>
-        <a href="https://github.com/vishnunandan555/gateletics" target="_blank" class="btn-secondary"
-          style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+
+        <!-- OS Detected Dynamic Download Button -->
+        <button id="hero-download-btn" class="btn-secondary" onclick="handleDynamicDownloadClick()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span id="hero-download-text">Download Apps</span>
+        </button>
+
+        <a href="https://github.com/vishnunandan555/gateletics" target="_blank" class="btn-secondary">
           <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
-            <path
-              d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.35 3.12.88 0 .48.01.9.01.9 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z">
-            </path>
+            <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.35 3.12.88 0 .48.01.9.01.9 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
           </svg>
           Star on GitHub
         </a>
@@ -177,58 +141,97 @@
 
       <!-- Trust Badges Row -->
       <div class="trust-pills">
-        <div class="trust-pill"><span>🛡️</span> Privacy Conscious & Local Data</div>
-        <div class="trust-pill"><span>💾</span> 100% Offline SQLite Storage</div>
-        <div class="trust-pill"><span>⚡</span> Web, Android, Windows & Linux</div>
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Privacy Conscious & Local Data
+        </div>
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          </svg>
+          100% Offline SQLite Storage
+        </div>
+        <div class="trust-pill">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          Web, Android, Windows & Linux
+        </div>
       </div>
     </section>
 
-    <!-- Key Product Features -->
+    <!-- Core Features Grid -->
     <h2 id="features">✨ Core Features</h2>
     <div class="grid">
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          📚
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
         </div>
         <h3>Syllabus Progress Tracker</h3>
         <p>Track topics and subjects across 7 GATE branch presets (CS, DA, EC, EE, CE, ME, CH) with automatic completion percentages.</p>
       </div>
 
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          ⏱️
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
         </div>
         <h3>Deep Focus Workspace</h3>
         <p>Pomodoro, Ultradian, and Count-Up study focus timers featuring real-time clock overlays and focus history logs.</p>
       </div>
 
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          📊
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
         </div>
         <h3>Study Analytics & Stats</h3>
         <p>Monitor your study focus hours, daily prep consistency streaks, and subject completion trends over time.</p>
       </div>
 
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          📋
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg>
         </div>
         <h3>Notice Board Tasks</h3>
         <p>Organize daily study tasks with pending badge counters, smooth animations, and quick checklist management.</p>
       </div>
 
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          ⏳
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 15 15"></polyline>
+          </svg>
         </div>
         <h3>Live Exam Countdown</h3>
         <p>Real-time countdown timer configured for your target GATE exam date, accompanied by daily motivational quotes.</p>
       </div>
 
       <div class="card">
-        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
-          💾
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          </svg>
         </div>
         <h3>Offline SQLite Storage</h3>
         <p>100% offline-first local database storage on your device, with optional Google Authentication for cloud backup.</p>
@@ -280,77 +283,120 @@
       </table>
     </div>
 
-    <!-- Downloads Section -->
+    <!-- Interactive Platform Action Buttons (Home Screen Downloads Section) -->
     <h2 id="downloads">📦 Downloads & Platforms</h2>
     <div class="grid">
-      <!-- Windows -->
-      <div class="card">
-        <div class="card-header-layout">
-          <img src="https://img.icons8.com/?size=100&id=108792&format=png&color=000000" class="card-icon"
-            alt="Windows logo">
-          <h3>Windows Desktop</h3>
+      <!-- Windows Button Card -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <img src="https://img.icons8.com/?size=100&id=108792&format=png&color=000000" class="card-icon" alt="Windows logo">
+            <h3>Windows Desktop</h3>
+          </div>
+          <p>Native 64-bit Windows binary builds. Installer setup or portable archive.</p>
         </div>
-        <p>Native Windows application packages. Download the setup installer or portable ZIP archive.</p>
-        <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-          <a href="#" id="win-installer-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download Installer (.exe)</a>
-          <a href="#" id="win-zip-download" class="btn-secondary">Download Portable (.zip)</a>
-        </div>
-        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
+        <button onclick="openDownloadModal('windows')" class="btn-primary" style="margin-top: 16px; justify-content: center; width: 100%;">
+          Download for Windows
+        </button>
       </div>
 
-      <!-- Linux -->
-      <div class="card">
-        <div class="card-header-layout">
-          <img src="linux.png" class="card-icon" alt="Linux logo">
-          <h3>Linux Desktop</h3>
+      <!-- Linux Button Card -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <img src="linux.png" class="card-icon" alt="Linux logo">
+            <h3>Linux Desktop</h3>
+          </div>
+          <p>Universal Linux AppImage, native Debian package, or tarball archive.</p>
         </div>
-        <p>Standalone Linux AppImage executable, native Debian/Ubuntu (.deb) package, or tarball archive.</p>
-        <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-          <a href="#" id="linux-appimage-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download AppImage (.AppImage)</a>
-          <a href="#" id="linux-deb-download" class="btn-secondary">Download Debian Package (.deb)</a>
-          <a href="#" id="linux-tar-download" class="btn-secondary" style="font-size: 13px;">Download Tarball (.tar.gz)</a>
-        </div>
-        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
+        <button onclick="openDownloadModal('linux')" class="btn-primary" style="margin-top: 16px; justify-content: center; width: 100%;">
+          Download for Linux
+        </button>
       </div>
 
-      <!-- Android Mobile (Fixed Android Logo!) -->
-      <div class="card">
-        <div class="card-header-layout">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="#3DDC84" aria-hidden="true" style="shrink: 0;">
-            <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
+      <!-- Android Button Card -->
+      <div class="card" style="justify-content: space-between;">
+        <div>
+          <div class="card-header-layout">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#3DDC84" aria-hidden="true">
+              <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
+            </svg>
+            <h3>Android Mobile</h3>
+          </div>
+          <p>Standalone APK installer for Android devices and tablets.</p>
+        </div>
+        <button onclick="openDownloadModal('android')" class="btn-primary" style="margin-top: 16px; justify-content: center; width: 100%;">
+          Download for Android
+        </button>
+      </div>
+    </div>
+
+    <!-- What's New Section (GitHub Latest Release Notes) -->
+    <h2 id="whats-new">🎉 What's New in Latest Release</h2>
+    <div class="card" style="margin-top: 16px; padding: 28px; position: relative;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg viewBox="0 0 16 16" width="22" height="22" fill="var(--accent-color)" aria-hidden="true">
+            <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.35 3.12.88 0 .48.01.9.01.9 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
           </svg>
-          <h3>Android Mobile</h3>
+          <span id="release-version" style="font-weight: 700; font-size: 18px;">Latest Release</span>
         </div>
-        <p>Direct standalone APK installer for Android mobile devices and tablets.</p>
-        <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-          <a href="#" id="android-apk-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download APK (.apk)</a>
-        </div>
-        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
+        <span id="release-date" class="modal-option-badge" style="font-size: 13px; padding: 4px 10px;">Fetching date...</span>
+      </div>
+
+      <div id="whats-new-body" style="color: var(--text-muted); font-size: 15px; line-height: 1.7;">
+        Loading changelog from GitHub...
+      </div>
+
+      <div style="margin-top: 20px; text-align: right;">
+        <a href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="btn-secondary" style="font-size: 13px; padding: 8px 18px;">
+          View Full Release Notes on GitHub →
+        </a>
       </div>
     </div>
+  </div>
 
-    <!-- User Guide & Documentation -->
-    <h2 id="guide" style="margin-top: 48px;">📖 User Guide & Documentation</h2>
-    <div class="guide-content">
-      <h3>Getting Started with GATEletics</h3>
-      <ol>
-        <li><strong>Onboarding Setup:</strong> Choose your target GATE branch (CS, DA, EC, EE, CE, ME, CH), define your daily study focus goal (hours), and select your target GATE exam date.</li>
-        <li><strong>Syllabus Tracking:</strong> Expand categories to mark topics as completed. Your percentage completion rolls up automatically with atomic precision.</li>
-        <li><strong>Focus Mode:</strong> Select Pomodoro (25m/5m), Ultradian (90m/20m), or Count-Up mode. Review real-time clock overlays (`07:44 PM`) and save completed sessions to your stats history.</li>
-        <li><strong>Cloud Sync & Backups:</strong> Sign in with Google to enable automatic offline-first cloud backups. Data is saved locally first and backed up silently in the background.</li>
-      </ol>
-      <p>For additional assistance, visit our <a href="support.html">Support Hub</a>, <a href="privacy.html">Privacy Policy</a>, or <a href="terms.html">Terms of Service</a>.</p>
+  <!-- Interactive Choice Modal -->
+  <div id="download-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Select Download Option</h3>
+        <button class="modal-close" onclick="closeDownloadModal()">✕</button>
+      </div>
+      <div id="modal-options" class="modal-options">
+        <!-- Dynamically injected options -->
+      </div>
     </div>
-
   </div>
 
   <footer style="margin-top: 60px; padding: 28px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 14px;">
     <div class="container" style="padding-top: 0; padding-bottom: 0;">
-      <p>© 2026 GATEletics. Licensed under the MIT License.</p>
+      <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 14px;">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="downloads.html">Downloads</a>
+        <a href="guide.html">Guide</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <p>© 2026 GATEletics. Open source under the MIT License.</p>
     </div>
   </footer>
 
   <script>
+    // Global Storage for Live Download Links
+    const releaseLinks = {
+      winInstaller: '#',
+      winZip: '#',
+      linuxAppImage: '#',
+      linuxDeb: '#',
+      linuxTar: '#',
+      androidApk: '#'
+    };
+
+    let detectedOS = 'all';
+
     // Theme Toggle Functionality
     const themeToggleBtn = document.getElementById('theme-toggle');
     themeToggleBtn.addEventListener('click', () => {
@@ -361,7 +407,118 @@
       themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
     });
 
-    // Dynamic Latest Release Asset Fetcher
+    // Detect User OS on Page Load
+    function detectUserOS() {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      const heroBtnText = document.getElementById('hero-download-text');
+      
+      if (userAgent.indexOf('win') !== -1) {
+        detectedOS = 'windows';
+        if (heroBtnText) heroBtnText.textContent = 'Download for Windows';
+      } else if (userAgent.indexOf('android') !== -1) {
+        detectedOS = 'android';
+        if (heroBtnText) heroBtnText.textContent = 'Download for Android';
+      } else if (userAgent.indexOf('linux') !== -1 || userAgent.indexOf('x11') !== -1) {
+        detectedOS = 'linux';
+        if (heroBtnText) heroBtnText.textContent = 'Download for Linux';
+      } else {
+        detectedOS = 'all';
+        if (heroBtnText) heroBtnText.textContent = 'Download Apps';
+      }
+    }
+
+    function handleDynamicDownloadClick() {
+      openDownloadModal(detectedOS);
+    }
+
+    function openDownloadModal(platform) {
+      const modal = document.getElementById('download-modal');
+      const titleEl = document.getElementById('modal-title');
+      const optionsEl = document.getElementById('modal-options');
+
+      optionsEl.innerHTML = '';
+
+      if (platform === 'windows') {
+        titleEl.textContent = 'Download for Windows';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.winInstaller}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Setup Installer (.exe)</span>
+            </div>
+            <span class="modal-option-badge">Installer</span>
+          </a>
+          <a href="${releaseLinks.winZip}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Portable Bundle (.zip)</span>
+            </div>
+            <span class="modal-option-badge">Portable</span>
+          </a>
+        `;
+      } else if (platform === 'linux') {
+        titleEl.textContent = 'Download for Linux';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.linuxAppImage}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Universal AppImage (.AppImage)</span>
+            </div>
+            <span class="modal-option-badge">AppImage</span>
+          </a>
+          <a href="${releaseLinks.linuxDeb}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Debian / Ubuntu (.deb)</span>
+            </div>
+            <span class="modal-option-badge">Debian</span>
+          </a>
+          <a href="${releaseLinks.linuxTar}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Tarball Archive (.tar.gz)</span>
+            </div>
+            <span class="modal-option-badge">Tarball</span>
+          </a>
+        `;
+      } else if (platform === 'android') {
+        titleEl.textContent = 'Download for Android';
+        optionsEl.innerHTML = `
+          <a href="${releaseLinks.androidApk}" class="modal-option-btn">
+            <div class="modal-option-info">
+              <span>Standalone Package (.apk)</span>
+            </div>
+            <span class="modal-option-badge">APK</span>
+          </a>
+        `;
+      } else {
+        titleEl.textContent = 'Select Your Platform';
+        optionsEl.innerHTML = `
+          <a href="javascript:void(0)" onclick="openDownloadModal('windows')" class="modal-option-btn">
+            <span>Windows Desktop</span>
+            <span class="modal-option-badge">.exe / .zip</span>
+          </a>
+          <a href="javascript:void(0)" onclick="openDownloadModal('linux')" class="modal-option-btn">
+            <span>Linux Desktop</span>
+            <span class="modal-option-badge">.AppImage / .deb</span>
+          </a>
+          <a href="javascript:void(0)" onclick="openDownloadModal('android')" class="modal-option-btn">
+            <span>Android Mobile</span>
+            <span class="modal-option-badge">.apk</span>
+          </a>
+        `;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeDownloadModal() {
+      const modal = document.getElementById('download-modal');
+      modal.classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(event) {
+      if (event.target.id === 'download-modal') {
+        closeDownloadModal();
+      }
+    }
+
+    // Dynamic Latest Release Asset & Changelog Fetcher
     async function fetchLatestRelease() {
       try {
         const response = await fetch('https://api.github.com/repos/vishnunandan555/gateletics/releases/latest');
@@ -374,29 +531,53 @@
           const url = asset.browser_download_url;
 
           if (name.endsWith('.apk')) {
-            const el = document.getElementById('android-apk-download');
-            if (el) el.href = url;
+            releaseLinks.androidApk = url;
           } else if (name.includes('windows') && name.endsWith('-setup.exe')) {
-            const el = document.getElementById('win-installer-download');
-            if (el) el.href = url;
+            releaseLinks.winInstaller = url;
           } else if (name.includes('windows') && name.endsWith('.zip')) {
-            const el = document.getElementById('win-zip-download');
-            if (el) el.href = url;
+            releaseLinks.winZip = url;
           } else if (name.includes('linux') && name.endsWith('.AppImage')) {
-            const el = document.getElementById('linux-appimage-download');
-            if (el) el.href = url;
+            releaseLinks.linuxAppImage = url;
           } else if (name.includes('linux') && name.endsWith('.deb')) {
-            const el = document.getElementById('linux-deb-download');
-            if (el) el.href = url;
+            releaseLinks.linuxDeb = url;
           } else if (name.includes('linux') && name.endsWith('.tar.gz')) {
-            const el = document.getElementById('linux-tar-download');
-            if (el) el.href = url;
+            releaseLinks.linuxTar = url;
           }
         });
+
+        // Populate What's New Section
+        const versionEl = document.getElementById('release-version');
+        const dateEl = document.getElementById('release-date');
+        const bodyEl = document.getElementById('whats-new-body');
+
+        if (versionEl) versionEl.textContent = data.name || data.tag_name || 'Latest Release';
+        if (dateEl && data.published_at) {
+          const pubDate = new Date(data.published_at);
+          dateEl.textContent = pubDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        if (bodyEl && data.body) {
+          const rawNotes = data.body;
+          const formattedNotes = rawNotes
+            .split('\n')
+            .filter(line => line.trim().length > 0)
+            .map(line => {
+              let clean = line.replace(/^[#*-\s]+/, '').trim();
+              if (line.startsWith('#')) {
+                return `<strong style="display:block; color: var(--text-main); font-size: 16px; margin-top: 10px; margin-bottom: 4px;">${clean}</strong>`;
+              }
+              return `<div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px;"><span style="color: var(--accent-color);">•</span> <span>${clean}</span></div>`;
+            })
+            .join('');
+          bodyEl.innerHTML = formattedNotes;
+        }
+
       } catch (e) {
         console.error('Failed to fetch latest release assets:', e);
       }
     }
+
+    detectUserOS();
     fetchLatestRelease();
   </script>
 </body>
