@@ -133,7 +133,8 @@ jobs:
         shell: pwsh
         run: |
           iscc /DMyAppVersion=${{ env.VERSION }} scripts/inno_setup.iss
-          Copy-Item "scripts/gateletics-windows-${{ env.VERSION }}-setup.exe" -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
+          Copy-Item "scripts/Output/gateletics-windows-${{ env.VERSION }}-setup.exe" `
+            -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
