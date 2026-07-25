@@ -260,7 +260,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 fit: StackFit.expand,
                                 children: <Widget>[
                                   ...previousChildren,
-                                  if (currentChild != null) currentChild,
+                                  ?currentChild,
                                 ],
                               );
                             },

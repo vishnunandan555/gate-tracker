@@ -3,7 +3,7 @@
 
 <head>
   <script>
-    // Apply theme immediately to prevent flashing
+    // Immediate Theme Initialization
     (function () {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
@@ -17,11 +17,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="GATEletics - A minimalist, offline-first syllabus and resource tracker for GATE exam preparation.">
-  <title>GATEletics - GATE Exam Syllabus Tracker</title>
+    content="GATEletics Documentation & Product Hub - A minimalist, high-performance, offline-first syllabus tracker and study productivity suite for GATE exam preparation.">
+  <link rel="canonical" href="https://vishnunandan555.github.io/gateletics/">
+  <meta name="keywords" content="GATEletics, GATE exam tracker, GATE syllabus tracker, GATE CS syllabus, GATE DA syllabus, GATE EC EE CE ME CH, Pomodoro study timer GATE, GATE countdown timer, offline study tracker, Flutter GATE app">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://vishnunandan555.github.io/gateletics/sitemap.xml">
+  <meta name="google-site-verification" content="YOUR_GOOGLE_SITE_VERIFICATION_TOKEN">
+  
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vishnunandan555.github.io/gateletics/">
+  <meta property="og:title" content="GATEletics - GATE Exam Syllabus & Focus Companion">
+  <meta property="og:description" content="A clean, offline-first study companion for GATE aspirants. Easily organize your subjects, track focus sessions, manage daily tasks, and stay on top of your exam countdown.">
+  <meta property="og:image" content="https://vishnunandan555.github.io/gateletics/logo_trans_cropped.png">
+  <meta property="og:site_name" content="GATEletics">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GATEletics - GATE Exam Syllabus & Focus Companion">
+  <meta name="twitter:description" content="A clean, offline-first study companion for GATE aspirants. Easily organize your subjects, track focus sessions, manage daily tasks, and stay on top of your exam countdown.">
+  <meta name="twitter:image" content="https://vishnunandan555.github.io/gateletics/logo_trans_cropped.png">
+
+  <!-- JSON-LD Structured Data for Search Engines & AI indexing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "GATEletics",
+    "operatingSystem": "Android, Windows, Linux, Web",
+    "applicationCategory": "EducationalApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    },
+    "description": "A minimalist, high-performance, offline-first syllabus tracker and study productivity suite for Graduate Aptitude Test in Engineering (GATE) exam preparation.",
+    "url": "https://gateletics.vercel.app/",
+    "downloadUrl": "https://github.com/vishnunandan555/gateletics/releases",
+    "author": {
+      "@type": "Person",
+      "name": "Vishnunandan"
+    },
+    "featureList": [
+      "7 GATE Branch Presets (CS, DA, EC, EE, CE, ME, CH)",
+      "100% Offline-First SQLite Local Database",
+      "Pomodoro, Ultradian & Freestyle Focus Timers",
+      "Real-time Clock Overlay on Active Focus Screen",
+      "Notice Board Daily Task Suite",
+      "Shareable Progress Cards"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is GATEletics?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GATEletics is a free, offline-first syllabus tracker and study focus suite designed for GATE (Graduate Aptitude Test in Engineering) exam preparation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which GATE branches are supported in GATEletics?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GATEletics provides built-in syllabus presets for 7 branches: Computer Science (CS), Data Science & AI (DA), Electronics (EC), Electrical (EE), Civil (CE), Mechanical (ME), and Chemical (CH)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does GATEletics work without internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, GATEletics stores 100% of your syllabus progress, tasks, and focus timer logs in a local Drift SQLite database on your device."
+        }
+      }
+    ]
+  }
+  </script>
+  <title>GATEletics - GATE Exam Syllabus & Focus Companion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Orbitron:wght@400..900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -36,6 +121,8 @@
       </a>
       <div class="nav-controls">
         <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#comparison">Why GATEletics</a>
           <a href="#downloads">Downloads</a>
           <a href="#guide">Guide</a>
           <a href="support.html">Support</a>
@@ -49,19 +136,37 @@
   </header>
 
   <div class="container">
+    <!-- Hero Section -->
     <section class="hero">
-      <h1 class="hero-title">
-        <span class="logo-gate">GATE</span><span class="logo-letics">LETICS</span>
+      <div class="hero-eyebrow">
+        OFFLINE-FIRST SYLLABUS & FOCUS TRACKER
+      </div>
+
+      <div style="display: flex; justify-content: center;">
+        <div class="logo-box">
+          <img src="logo_trans_cropped.png" alt="GATEletics Logo Icon" class="hero-logo-img">
+        </div>
+      </div>
+
+      <h1>
+        Track your GATE preparation.<br>
+        <span style="color: var(--accent-color);">Simple, focused, and offline-first.</span>
       </h1>
-      <p>A minimalist, offline-first syllabus and resource tracker designed specifically for GATE Exam preparation.
-        Logically organize subjects, define topic weights, and track your progress in real-time.</p>
-      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+
+      <p>
+        A clean study companion for GATE aspirants. Easily organize your subjects, track focus sessions, manage daily tasks, and stay on top of your exam countdown.
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
         <a href="https://gateletics.vercel.app/" target="_blank" class="btn-primary">
-          Open Live Web App
+          🚀 Launch Web App
+        </a>
+        <a href="#downloads" class="btn-secondary">
+          📦 Download Desktop & Mobile
         </a>
         <a href="https://github.com/vishnunandan555/gateletics" target="_blank" class="btn-secondary"
-          style="margin-bottom: 0; padding: 10px 24px; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg viewBox="0 0 16 16" width="24" height="24" fill="currentColor" aria-hidden="true">
+          style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
             <path
               d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.35 3.12.88 0 .48.01.9.01.9 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z">
             </path>
@@ -69,9 +174,114 @@
           Star on GitHub
         </a>
       </div>
+
+      <!-- Trust Badges Row -->
+      <div class="trust-pills">
+        <div class="trust-pill"><span>🛡️</span> Privacy Conscious & Local Data</div>
+        <div class="trust-pill"><span>💾</span> 100% Offline SQLite Storage</div>
+        <div class="trust-pill"><span>⚡</span> Web, Android, Windows & Linux</div>
+      </div>
     </section>
 
-    <h2 id="downloads">Downloads</h2>
+    <!-- Key Product Features -->
+    <h2 id="features">✨ Core Features</h2>
+    <div class="grid">
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          📚
+        </div>
+        <h3>Syllabus Progress Tracker</h3>
+        <p>Track topics and subjects across 7 GATE branch presets (CS, DA, EC, EE, CE, ME, CH) with automatic completion percentages.</p>
+      </div>
+
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          ⏱️
+        </div>
+        <h3>Deep Focus Workspace</h3>
+        <p>Pomodoro, Ultradian, and Count-Up study focus timers featuring real-time clock overlays and focus history logs.</p>
+      </div>
+
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          📊
+        </div>
+        <h3>Study Analytics & Stats</h3>
+        <p>Monitor your study focus hours, daily prep consistency streaks, and subject completion trends over time.</p>
+      </div>
+
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          📋
+        </div>
+        <h3>Notice Board Tasks</h3>
+        <p>Organize daily study tasks with pending badge counters, smooth animations, and quick checklist management.</p>
+      </div>
+
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          ⏳
+        </div>
+        <h3>Live Exam Countdown</h3>
+        <p>Real-time countdown timer configured for your target GATE exam date, accompanied by daily motivational quotes.</p>
+      </div>
+
+      <div class="card">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--badge-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;">
+          💾
+        </div>
+        <h3>Offline SQLite Storage</h3>
+        <p>100% offline-first local database storage on your device, with optional Google Authentication for cloud backup.</p>
+      </div>
+    </div>
+
+    <!-- Comparison Matrix -->
+    <h2 id="comparison">💡 Why GATEletics</h2>
+    <p style="color: var(--text-muted); margin-top: -16px; margin-bottom: 24px;">
+      Designed to be lightweight, privacy-conscious, and functional without requiring an active internet connection.
+    </p>
+
+    <div class="comp-container">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>GATEletics</th>
+            <th>Generic Apps & Sheets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Data Storage</strong></td>
+            <td><span class="check-icon">✓</span> 100% Offline-First Local Database</td>
+            <td><span class="cross-icon">✗</span> Requires active internet connection</td>
+          </tr>
+          <tr>
+            <td><strong>Syllabus Setup</strong></td>
+            <td><span class="check-icon">✓</span> Built-in presets for 7 GATE Branches</td>
+            <td><span class="cross-icon">✗</span> Manual line-by-line spreadsheet typing</td>
+          </tr>
+          <tr>
+            <td><strong>Focus Timers</strong></td>
+            <td><span class="check-icon">✓</span> Pomodoro, Ultradian, & Freestyle with Clock Overlay</td>
+            <td><span class="cross-icon">✗</span> Basic generic stopwatch or none</td>
+          </tr>
+          <tr>
+            <td><strong>Progress Sharing</strong></td>
+            <td><span class="check-icon">✓</span> Story card generator with privacy toggles</td>
+            <td><span class="cross-icon">✗</span> Plain text or manual screenshots</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-Platform</strong></td>
+            <td><span class="check-icon">✓</span> Android, Windows, Linux, & Web PWA</td>
+            <td><span class="cross-icon">✗</span> Single platform or web-only</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Downloads Section -->
+    <h2 id="downloads">📦 Downloads & Platforms</h2>
     <div class="grid">
       <!-- Windows -->
       <div class="card">
@@ -80,14 +290,12 @@
             alt="Windows logo">
           <h3>Windows Desktop</h3>
         </div>
-        <p>Native desktop application bundle. Simply extract the ZIP file and run gateletics.exe.</p>
+        <p>Native Windows application packages. Download the setup installer or portable ZIP archive.</p>
         <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-          <a href="#" id="win-mobile-download" class="btn-secondary">Download Mobile UI (.zip)</a>
-          <a href="#" id="win-desktop-download" class="btn-secondary"
-            style="border-color: var(--accent-color); color: var(--accent-color);">Download Desktop UI (Beta) (.zip)</a>
+          <a href="#" id="win-installer-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download Installer (.exe)</a>
+          <a href="#" id="win-zip-download" class="btn-secondary">Download Portable (.zip)</a>
         </div>
-        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" class="card-link"
-          style="margin-top: 12px; display: inline-block;">Release notes</a>
+        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
       </div>
 
       <!-- Linux -->
@@ -96,173 +304,100 @@
           <img src="linux.png" class="card-icon" alt="Linux logo">
           <h3>Linux Desktop</h3>
         </div>
-        <p>Standalone AppImage executable (chmod +x and launch) or native tarball archive.</p>
+        <p>Standalone Linux AppImage executable, native Debian/Ubuntu (.deb) package, or tarball archive.</p>
         <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-          <div style="font-size: 11px; font-weight: bold; color: var(--text-color); opacity: 0.7;">MOBILE UI</div>
-          <div style="display: flex; gap: 8px;">
-            <a href="#" id="linux-mobile-appimage" class="btn-secondary"
-              style="flex: 1; font-size: 12px; padding: 10px;">AppImage</a>
-            <a href="#" id="linux-mobile-tarball" class="btn-secondary"
-              style="flex: 1; font-size: 12px; padding: 10px;">Tarball</a>
-          </div>
-          <div style="font-size: 11px; font-weight: bold; color: var(--accent-color); opacity: 0.9; margin-top: 8px;">
-            DESKTOP UI (BETA)</div>
-          <div style="display: flex; gap: 8px;">
-            <a href="#" id="linux-desktop-appimage" class="btn-secondary"
-              style="flex: 1; font-size: 12px; padding: 10px; border-color: var(--accent-color); color: var(--accent-color);">AppImage</a>
-            <a href="#" id="linux-desktop-tarball" class="btn-secondary"
-              style="flex: 1; font-size: 12px; padding: 10px; border-color: var(--accent-color); color: var(--accent-color);">Tarball</a>
-          </div>
+          <a href="#" id="linux-appimage-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download AppImage (.AppImage)</a>
+          <a href="#" id="linux-deb-download" class="btn-secondary">Download Debian Package (.deb)</a>
+          <a href="#" id="linux-tar-download" class="btn-secondary" style="font-size: 13px;">Download Tarball (.tar.gz)</a>
         </div>
+        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
       </div>
 
-      <!-- Android -->
+      <!-- Android Mobile (Fixed Android Logo!) -->
       <div class="card">
         <div class="card-header-layout">
-          <img src="https://img.icons8.com/?size=100&id=P2AnGyiJxMpp&format=png&color=000000" class="card-icon"
-            alt="Android logo">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="#3DDC84" aria-hidden="true" style="shrink: 0;">
+            <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
+          </svg>
           <h3>Android Mobile</h3>
         </div>
-        <p>Direct APK package binary. Install and run GATEletics on any Android mobile device.</p>
-        <a href="#" id="android-apk-download" class="btn-secondary" style="margin-top: 16px;">Download APK Package</a>
-        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" class="card-link"
-          style="margin-top: 12px; display: inline-block;">View other releases</a>
+        <p>Direct standalone APK installer for Android mobile devices and tablets.</p>
+        <div class="download-group" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+          <a href="#" id="android-apk-download" class="btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color) !important;">Download APK (.apk)</a>
+        </div>
+        <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" style="margin-top: 12px; display: inline-block; font-size: 13px;">All GitHub Releases</a>
       </div>
     </div>
 
-    <div
-      style="background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 32px; border-radius: 8px; margin-top: 24px; margin-bottom: 48px;">
-      <h3 id="release-version-title" style="margin-top: 0; color: var(--accent-color);">Loading latest release...</h3>
-      <div id="release-body"
-        style="color: var(--text-main); opacity: 0.9; margin-top: 16px; font-size: 14px; line-height: 1.6;">
-        Fetching release notes...</div>
+    <!-- User Guide & Documentation -->
+    <h2 id="guide" style="margin-top: 48px;">📖 User Guide & Documentation</h2>
+    <div class="guide-content">
+      <h3>Getting Started with GATEletics</h3>
+      <ol>
+        <li><strong>Onboarding Setup:</strong> Choose your target GATE branch (CS, DA, EC, EE, CE, ME, CH), define your daily study focus goal (hours), and select your target GATE exam date.</li>
+        <li><strong>Syllabus Tracking:</strong> Expand categories to mark topics as completed. Your percentage completion rolls up automatically with atomic precision.</li>
+        <li><strong>Focus Mode:</strong> Select Pomodoro (25m/5m), Ultradian (90m/20m), or Count-Up mode. Review real-time clock overlays (`07:44 PM`) and save completed sessions to your stats history.</li>
+        <li><strong>Cloud Sync & Backups:</strong> Sign in with Google to enable automatic offline-first cloud backups. Data is saved locally first and backed up silently in the background.</li>
+      </ol>
+      <p>For additional assistance, visit our <a href="support.html">Support Hub</a>, <a href="privacy.html">Privacy Policy</a>, or <a href="terms.html">Terms of Service</a>.</p>
     </div>
 
-    <h2 id="guide">Quick Setup Guide</h2>
-    <div
-      style="background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 32px; border-radius: 8px; margin-top: 24px;">
-      <div class="step">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h3>Accept Legal Terms</h3>
-          <p>Read and accept the onboarding legal disclosures (Terms of Service and Privacy Policy) to initialize the
-            local secure database environment.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h3>Select Completion Model</h3>
-          <p>Choose between <strong>Syllabus-Based</strong> (topic checkboxes) and <strong>Resource-Based</strong>
-            (playlist or video count logs) tracker modes.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-number">3</div>
-        <div class="step-content">
-          <h3>Import Presets</h3>
-          <p>Instantly populate your categories and subjects by loading pre-configured presets for popular video
-            playlists or general syllabus guidelines.</p>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <footer>
-    <div class="footer-links">
-      <a href="index.html">Home</a>
-      <a href="https://gateletics.vercel.app/" target="_blank">Launch Web App</a>
-      <a href="https://github.com/vishnunandan555/gateletics" target="_blank">GitHub Source</a>
-      <a href="support.html">Support</a>
-      <a href="delete-account.html">Delete Account</a>
-      <a href="terms.html">Terms of Service</a>
-      <a href="privacy.html">Privacy Policy</a>
+  <footer style="margin-top: 60px; padding: 28px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 14px;">
+    <div class="container" style="padding-top: 0; padding-bottom: 0;">
+      <p>© 2026 GATEletics. Licensed under the MIT License.</p>
     </div>
-    <div class="copyright">&copy; 2026 Vishnu Nandan. All rights reserved.</div>
   </footer>
 
   <script>
-    // Theme Toggle Handler
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
+    // Theme Toggle Functionality
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      updateToggleText(newTheme);
+      themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
     });
 
-    function updateToggleText(theme) {
-      themeToggle.innerHTML = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-    updateToggleText(document.documentElement.getAttribute('data-theme'));
-
-    // GitHub Release Asset Auto-Linker
-    const user = 'vishnunandan555';
-    const repo = 'gateletics';
-    const releaseApiUrl = `https://api.github.com/repos/${user}/${repo}/releases/latest`;
-
-    fetch(releaseApiUrl)
-      .then(response => {
-        if (!response.ok) throw new Error('API request failed');
-        return response.json();
-      })
-      .then(data => {
+    // Dynamic Latest Release Asset Fetcher
+    async function fetchLatestRelease() {
+      try {
+        const response = await fetch('https://api.github.com/repos/vishnunandan555/gateletics/releases/latest');
+        if (!response.ok) return;
+        const data = await response.json();
         const assets = data.assets || [];
-        const tag = data.tag_name;
 
-        const winMobile = assets.find(a => a.name.includes('windows-mobileUI'));
-        const winDesktop = assets.find(a => a.name.includes('windows-deskUI-beta'));
+        assets.forEach(asset => {
+          const name = asset.name;
+          const url = asset.browser_download_url;
 
-        const linuxMobileAppImage = assets.find(a => a.name.includes('linux-mobileUI') && a.name.endsWith('.AppImage'));
-        const linuxMobileTarball = assets.find(a => a.name.includes('linux-mobileUI') && a.name.endsWith('.tar.gz'));
-
-        const linuxDesktopAppImage = assets.find(a => a.name.includes('linux-deskUI-beta') && a.name.endsWith('.AppImage'));
-        const linuxDesktopTarball = assets.find(a => a.name.includes('linux-deskUI-beta') && a.name.endsWith('.tar.gz'));
-
-        const apkAsset = assets.find(a => a.name.startsWith('gateletics-v') && a.name.endsWith('.apk')) || assets.find(a => a.name.endsWith('.apk'));
-
-        document.getElementById('win-mobile-download').href = winMobile ? winMobile.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-windows-mobileUI-${tag}.zip`;
-        document.getElementById('win-desktop-download').href = winDesktop ? winDesktop.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-windows-deskUI-beta-${tag}.zip`;
-
-        document.getElementById('linux-mobile-appimage').href = linuxMobileAppImage ? linuxMobileAppImage.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-linux-mobileUI-${tag}.AppImage`;
-        document.getElementById('linux-mobile-tarball').href = linuxMobileTarball ? linuxMobileTarball.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-linux-mobileUI-${tag}.tar.gz`;
-
-        document.getElementById('linux-desktop-appimage').href = linuxDesktopAppImage ? linuxDesktopAppImage.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-linux-deskUI-beta-${tag}.AppImage`;
-        document.getElementById('linux-desktop-tarball').href = linuxDesktopTarball ? linuxDesktopTarball.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-linux-deskUI-beta-${tag}.tar.gz`;
-
-        document.getElementById('android-apk-download').href = apkAsset ? apkAsset.browser_download_url : `https://github.com/${user}/${repo}/releases/download/${tag}/gateletics-${tag}.apk`;
-
-        const releaseTitle = document.getElementById('release-version-title');
-        const releaseBody = document.getElementById('release-body');
-        if (releaseTitle) releaseTitle.textContent = `Latest Release: ${tag}`;
-        if (releaseBody) {
-          try {
-            releaseBody.innerHTML = marked.parse(data.body || 'No release notes provided.');
-          } catch (e) {
-            console.error('Failed to parse markdown:', e);
-            releaseBody.textContent = data.body || 'No release notes provided.';
+          if (name.endsWith('.apk')) {
+            const el = document.getElementById('android-apk-download');
+            if (el) el.href = url;
+          } else if (name.includes('windows') && name.endsWith('-setup.exe')) {
+            const el = document.getElementById('win-installer-download');
+            if (el) el.href = url;
+          } else if (name.includes('windows') && name.endsWith('.zip')) {
+            const el = document.getElementById('win-zip-download');
+            if (el) el.href = url;
+          } else if (name.includes('linux') && name.endsWith('.AppImage')) {
+            const el = document.getElementById('linux-appimage-download');
+            if (el) el.href = url;
+          } else if (name.includes('linux') && name.endsWith('.deb')) {
+            const el = document.getElementById('linux-deb-download');
+            if (el) el.href = url;
+          } else if (name.includes('linux') && name.endsWith('.tar.gz')) {
+            const el = document.getElementById('linux-tar-download');
+            if (el) el.href = url;
           }
-        }
-      })
-      .catch(err => {
-        console.warn('GitHub API failed, falling back to release page url:', err);
-        const releasePage = `https://github.com/${user}/${repo}/releases/latest`;
-        document.getElementById('win-mobile-download').href = releasePage;
-        document.getElementById('win-desktop-download').href = releasePage;
-        document.getElementById('linux-mobile-appimage').href = releasePage;
-        document.getElementById('linux-mobile-tarball').href = releasePage;
-        document.getElementById('linux-desktop-appimage').href = releasePage;
-        document.getElementById('linux-desktop-tarball').href = releasePage;
-        document.getElementById('android-apk-download').href = releasePage;
-
-        const releaseTitle = document.getElementById('release-version-title');
-        const releaseBody = document.getElementById('release-body');
-        if (releaseTitle) releaseTitle.textContent = 'Release Notes';
-        if (releaseBody) releaseBody.innerHTML = `Could not fetch release notes from GitHub API. <a href="${releasePage}" style="color: var(--accent-color);">View releases on GitHub</a>`;
-      });
+        });
+      } catch (e) {
+        console.error('Failed to fetch latest release assets:', e);
+      }
+    }
+    fetchLatestRelease();
   </script>
 </body>
 

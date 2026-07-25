@@ -1,0 +1,32 @@
+# GATEletics — GATE Exam Syllabus Tracker & Focus Suite
+
+> GATEletics is a free, minimalist, offline-first syllabus tracker and productivity suite built specifically for Graduate Aptitude Test in Engineering (GATE) aspirants in India.
+
+## Summary
+- **App Name**: GATEletics
+- **Purpose**: Track GATE exam syllabus progress across subjects, topics, and subtasks; log Pomodoro, Ultradian, and Count-Up study focus sessions; view real-time GATE countdowns; and share progress cards.
+- **Web App URL**: https://gateletics.vercel.app/
+- **Documentation & Product Hub**: https://vishnunandan555.github.io/gateletics/
+- **GitHub Repository**: https://github.com/vishnunandan555/gateletics
+
+## Key Capabilities
+1. **Multi-Branch Presets**: Pre-configured syllabus structures for 7 GATE branches:
+   - Computer Science & IT (CS)
+   - Data Science & Artificial Intelligence (DA)
+   - Electronics & Communication (EC)
+   - Electrical Engineering (EE)
+   - Civil Engineering (CE)
+   - Mechanical Engineering (ME)
+   - Chemical Engineering (CH)
+2. **Offline-First Architecture**: Powered by Flutter and Drift (SQLite) with WebAssembly local database storage. Operates 100% offline without mandatory login.
+3. **Study Focus Workspace**: Built-in Pomodoro (25m/5m), Ultradian (90m/20m), and Freestyle timers featuring real-time clock overlays (`07:44 PM`) and saved history logs.
+4. **Notice Board Task Suite**: Daily study task checklist with dynamic header pending badge counters and smooth transitions.
+5. **Shareable Progress Cards**: Generate high-resolution story progress graphics with daily focus stats, streak counters, and customizable privacy protection controls.
+6. **Cloud Sync & Backups**: Optional Google Auth backup via Cloud Firestore with intelligent multi-device merge conflict resolution.
+
+## Technical Architecture
+- **Framework**: Flutter 3.x (Dart 3.x)
+- **Database**: Drift (SQLite) for Native & WebAssembly / IndexedDB for Web
+- **State Management**: Riverpod 2.x
+- **Cloud Infrastructure**: Firebase Auth & Cloud Firestore
+- **License**: MIT Open Source License
