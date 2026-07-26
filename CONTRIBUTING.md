@@ -125,3 +125,15 @@ You can edit directly on GitHub or clone your fork locally.
 2. Push the changes to your fork.
 3. Open a **Pull Request** from your fork to the `main` branch of `gateletics`.
 4. We will review and merge it. Once merged, the app will automatically fetch and display your quote to all users! 🚀
+
+---
+
+## 🏷️ Version Strategy & Release Lifecycle
+
+GATEletics follows a structured versioning lifecycle for release management:
+
+- **Pre-Releases / Betas (`v1.3.0.X`)**:
+  - All versions following the pattern `v1.3.0.X` (e.g. `v1.3.0.0`, `v1.3.0.1`, `v1.3.0.2`) are **pre-releases / beta builds**.
+  - Published as GitHub Pre-Releases for active feature testing and community feedback.
+- **Proper Stable Releases (`v1.3.X.Y`)**:
+  - Proper stable releases follow the pattern `v1.3.X.Y` (where $X \ge 1$), published as full GitHub Releases and deployed for production distribution.

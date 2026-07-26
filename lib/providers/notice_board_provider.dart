@@ -3,6 +3,20 @@ import '../database/app_database.dart';
 import 'syllabus_provider.dart';
 import 'sync_provider.dart';
 
+enum HomeHeaderViewMode { dashboard, noticeBoard, notifications }
+
+class HomeHeaderViewModeNotifier extends Notifier<HomeHeaderViewMode> {
+  @override
+  HomeHeaderViewMode build() => HomeHeaderViewMode.dashboard;
+
+  @override
+  set state(HomeHeaderViewMode value) => super.state = value;
+}
+
+final homeHeaderViewModeProvider = NotifierProvider<HomeHeaderViewModeNotifier, HomeHeaderViewMode>(() {
+  return HomeHeaderViewModeNotifier();
+});
+
 // State provider to toggle between Home screen Dashboard Mode and Notice Board Mode
 class NoticeBoardModeNotifier extends Notifier<bool> {
   @override

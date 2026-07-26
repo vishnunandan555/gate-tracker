@@ -121,7 +121,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                             if (isWeak) ...[
                               Icon(
                                 Icons.warning_rounded,
-                                size: topicFontSize,
+                                size: topicFontSize * 1.25,
                                 color: Colors.amberAccent,
                               ),
                               SizedBox(width: context.s(6) * overallScale),

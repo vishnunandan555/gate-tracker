@@ -1,0 +1,27 @@
+[
+  {
+    "id": "notif_v1.3.0.0_beta",
+    "title": "🚀 GATEletics v1.3.0.0 Beta Phase Live!",
+    "message": "We have entered the v1.3.0.X beta stage! Pre-releases for v1.3.0.X versions will be published for active testing ahead of v1.3.X.Y stable releases.",
+    "date": "2026-07-26",
+    "type": "update",
+    "actionUrl": "https://vishnunandan555.github.io/gateletics/downloads.html",
+    "actionText": "View Downloads"
+  },
+  {
+    "id": "notif_v1.2.17",
+    "title": "🎉 GATEletics v1.2.17 Released!",
+    "message": "Dynamic time-aware greetings, 2-step account deletion safety, rigid countdown timer, and 3x faster CI build pipeline are now live.",
+    "date": "2026-07-26",
+    "type": "update",
+    "actionUrl": "https://vishnunandan555.github.io/gateletics/downloads.html",
+    "actionText": "View Downloads"
+  },
+  {
+    "id": "notif_welcome_community",
+    "title": "👋 Welcome to GATEletics!",
+    "message": "A minimalist, offline-first study companion designed specifically for engineering exam preparation. Stay focused and keep your streak alive!",
+    "date": "2026-07-25",
+    "type": "info"
+  }
+]

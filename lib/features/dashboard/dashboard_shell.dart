@@ -18,6 +18,7 @@ import 'widgets/countdown_widget.dart';
 import '../../providers/overall_ui_scale_provider.dart';
 import '../../providers/syllabus_provider.dart';
 import '../../providers/demo_guide_provider.dart';
+import '../../providers/community_notifications_provider.dart';
 import '../../utils/demo_keys.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -110,6 +111,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               ref.read(shellTabProvider.notifier).state = index;
 
               if (index != 2) {
+                ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
                 ref.read(noticeBoardModeProvider.notifier).state = false;
               }
               ref.read(syllabusCategoriesOrderProvider.notifier).clear();
@@ -918,20 +920,39 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isNoticeBoard = ref.watch(noticeBoardModeProvider);
+    final headerMode = ref.watch(homeHeaderViewModeProvider);
+    final isNoticeBoard = headerMode == HomeHeaderViewMode.noticeBoard;
+    final isNotifications = headerMode == HomeHeaderViewMode.notifications;
     final accentColor = ref.watch(overallProgressColorProvider);
     final tasks = ref.watch(customTasksProvider).value ?? [];
     final activeTasks = tasks.where((t) => !t.isCompleted).toList();
+    final notifState = ref.watch(communityNotificationsProvider);
+    final unreadCount = notifState.unreadCount;
 
-    Widget iconWidget;
-    if (isNoticeBoard) {
-      iconWidget = const Icon(
-        Icons.close_rounded,
-        color: Colors.white60,
-        size: 24,
+    if (isNoticeBoard || isNotifications) {
+      return Material(
+        color: Colors.transparent,
+        child: IconButton(
+          icon: const Icon(
+            Icons.close_rounded,
+            color: Colors.white60,
+            size: 24,
+          ),
+          onPressed: () {
+            ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
+            ref.read(noticeBoardModeProvider.notifier).state = false;
+          },
+          tooltip: 'Back to Dashboard',
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          splashRadius: 20,
+        ),
       );
-    } else if (activeTasks.isNotEmpty) {
-      iconWidget = Row(
+    }
+
+    Widget noticeBoardIconWidget;
+    if (activeTasks.isNotEmpty) {
+      noticeBoardIconWidget = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.assignment_outlined, color: accentColor, size: 32),
@@ -954,30 +975,94 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
         ],
       );
     } else {
-      iconWidget = Icon(
+      noticeBoardIconWidget = Icon(
         Icons.assignment_outlined,
         color: accentColor,
         size: 28,
       );
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: IconButton(
-        key: DemoKeys.homeNoticeBoardButton, // ← needed so mobile spotlight can find this widget
-        icon: iconWidget,
-        onPressed: () {
-          ref.read(noticeBoardModeProvider.notifier).state = !isNoticeBoard;
-          if (ref.read(demoGuideProvider) == DemoStep.homeNoticeInteract) {
-            // Notice board is now opening — advance to homeAddTask step
-            ref.read(demoGuideProvider.notifier).setStep(DemoStep.homeAddTask);
-          }
-        },
-        tooltip: isNoticeBoard ? 'Back to Dashboard' : 'Open Notice Board',
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-        splashRadius: 20,
-      ),
+    Widget notifIconWidget;
+    if (unreadCount > 0) {
+      notifIconWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.notifications_outlined, color: accentColor, size: 28),
+          const SizedBox(width: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            decoration: BoxDecoration(
+              color: accentColor,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text(
+              unreadCount > 9 ? '9+' : '$unreadCount',
+              style: GoogleFonts.orbitron(
+                color: Colors.black,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      notifIconWidget = const Icon(
+        Icons.notifications_outlined,
+        color: Colors.white38,
+        size: 26,
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Notice Board Icon (Left)
+        Material(
+          color: Colors.transparent,
+          child: IconButton(
+            key: DemoKeys.homeNoticeBoardButton, // ← needed so mobile spotlight can find this widget
+            icon: noticeBoardIconWidget,
+            onPressed: () {
+              final currentMode = ref.read(homeHeaderViewModeProvider);
+              final newMode = currentMode == HomeHeaderViewMode.noticeBoard
+                  ? HomeHeaderViewMode.dashboard
+                  : HomeHeaderViewMode.noticeBoard;
+              ref.read(homeHeaderViewModeProvider.notifier).state = newMode;
+              ref.read(noticeBoardModeProvider.notifier).state = (newMode == HomeHeaderViewMode.noticeBoard);
+              if (ref.read(demoGuideProvider) == DemoStep.homeNoticeInteract) {
+                // Notice board is now opening — advance to homeAddTask step
+                ref.read(demoGuideProvider.notifier).setStep(DemoStep.homeAddTask);
+              }
+            },
+            tooltip: 'Open Notice Board',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            splashRadius: 20,
+          ),
+        ),
+        const SizedBox(width: 6),
+
+        // Notification Bell Icon (Right, Exactly like Notice Board Icon)
+        Material(
+          color: Colors.transparent,
+          child: IconButton(
+            icon: notifIconWidget,
+            onPressed: () {
+              final currentMode = ref.read(homeHeaderViewModeProvider);
+              final newMode = currentMode == HomeHeaderViewMode.notifications
+                  ? HomeHeaderViewMode.dashboard
+                  : HomeHeaderViewMode.notifications;
+              ref.read(homeHeaderViewModeProvider.notifier).state = newMode;
+              ref.read(noticeBoardModeProvider.notifier).state = false;
+            },
+            tooltip: 'Community Announcements',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            splashRadius: 20,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -23,6 +23,7 @@ import '../../../../providers/sync_provider.dart';
 import '../../../../providers/stats_provider.dart';
 import '../../../../database/backup_service.dart';
 import '../../../../providers/demo_guide_provider.dart';
+import '../../../../providers/community_notifications_provider.dart';
 
 
 class DangerZoneSettingsSection extends ConsumerWidget {
@@ -205,6 +206,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
 
         ref.invalidate(agreementProvider);
         ref.invalidate(setupCompletedProvider);
+        ref.invalidate(communityNotificationsProvider);
         ref.invalidate(categoryFontSizeProvider);
         ref.invalidate(topicFontSizeProvider);
         ref.invalidate(taskFontSizeProvider);

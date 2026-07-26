@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/target_date_provider.dart';
 import '../../providers/progress_font_provider.dart';
@@ -19,6 +20,7 @@ import '../../providers/disable_countdown_provider.dart';
 import '../../database/app_database.dart';
 import '../../providers/notice_board_provider.dart';
 import '../../providers/demo_guide_provider.dart';
+import '../../providers/community_notifications_provider.dart';
 import '../../utils/demo_keys.dart';
 
 
@@ -116,6 +118,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _navigateToTab(int index) {
+    if (index != 2) {
+      ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
+      ref.read(noticeBoardModeProvider.notifier).state = false;
+    }
     if (widget.onNavigate != null) {
       widget.onNavigate!(index);
     } else if (widget.shellPageController != null) {
@@ -177,6 +183,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
+                  final headerMode = ref.watch(homeHeaderViewModeProvider);
                   final content = Padding(
                     padding: EdgeInsets.fromLTRB(
                       context.s(20.0),
@@ -196,6 +203,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 builder: (context, ref, _) {
                                   final tasks = ref.watch(customTasksProvider).value ?? [];
                                   final activeTasks = tasks.where((t) => !t.isCompleted).toList();
+                                  final notifState = ref.watch(communityNotificationsProvider);
+                                  final unreadCount = notifState.unreadCount;
+
                                   Widget iconWidget;
                                   if (isNoticeBoard) {
                                     iconWidget = const Icon(
@@ -233,13 +243,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       size: 26,
                                     );
                                   }
-                                  return IconButton(
-                                    icon: iconWidget,
-                                    onPressed: () {
-                                      ref.read(noticeBoardModeProvider.notifier).state = !isNoticeBoard;
-                                    },
-                                    tooltip: isNoticeBoard ? 'Back to Dashboard' : 'Open Notice Board',
-                                    splashRadius: 20,
+                                  Widget notifIconWidget;
+                                  if (unreadCount > 0) {
+                                    notifIconWidget = Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.notifications_outlined, color: accentColor, size: 28),
+                                        const SizedBox(width: 4),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: accentColor,
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Text(
+                                            unreadCount > 9 ? '9+' : '$unreadCount',
+                                            style: GoogleFonts.orbitron(
+                                              color: Colors.black,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    notifIconWidget = const Icon(
+                                      Icons.notifications_outlined,
+                                      color: Colors.white38,
+                                      size: 26,
+                                    );
+                                  }
+
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: iconWidget,
+                                        onPressed: () {
+                                          final currentMode = ref.read(homeHeaderViewModeProvider);
+                                          final newMode = currentMode == HomeHeaderViewMode.noticeBoard
+                                              ? HomeHeaderViewMode.dashboard
+                                              : HomeHeaderViewMode.noticeBoard;
+                                          ref.read(homeHeaderViewModeProvider.notifier).state = newMode;
+                                          ref.read(noticeBoardModeProvider.notifier).state = (newMode == HomeHeaderViewMode.noticeBoard);
+                                        },
+                                        tooltip: 'Open Notice Board',
+                                        splashRadius: 20,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      IconButton(
+                                        icon: notifIconWidget,
+                                        onPressed: () {
+                                          final currentMode = ref.read(homeHeaderViewModeProvider);
+                                          final newMode = currentMode == HomeHeaderViewMode.notifications
+                                              ? HomeHeaderViewMode.dashboard
+                                              : HomeHeaderViewMode.notifications;
+                                          ref.read(homeHeaderViewModeProvider.notifier).state = newMode;
+                                          ref.read(noticeBoardModeProvider.notifier).state = false;
+                                        },
+                                        tooltip: 'Community Announcements',
+                                        splashRadius: 20,
+                                      ),
+                                    ],
                                   );
                                 },
                               ),
@@ -249,9 +315,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ] else ...[
                           SizedBox(height: context.s(72)),
                         ],
+
                         Expanded(
                           child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 250),
+                            duration: const Duration(milliseconds: 320),
+                            reverseDuration: const Duration(milliseconds: 250),
                             switchInCurve: Curves.easeOutCubic,
                             switchOutCurve: Curves.easeInCubic,
                             layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
@@ -269,14 +337,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 opacity: animation,
                                 child: SlideTransition(
                                   position: Tween<Offset>(
-                                    begin: const Offset(0.0, 0.03),
+                                    begin: const Offset(0.0, 0.04),
                                     end: Offset.zero,
                                   ).animate(animation),
                                   child: child,
                                 ),
                               );
                             },
-                            child: isNoticeBoard
+                            child: headerMode == HomeHeaderViewMode.noticeBoard
                                 ? KeyedSubtree(
                                     key: const ValueKey('NoticeBoardContent'),
                                     child: SingleChildScrollView(
@@ -284,172 +352,180 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       child: _buildNoticeBoard(context, ref, accentColor),
                                     ),
                                   )
-                                : KeyedSubtree(
-                                    key: const ValueKey('DashboardContent'),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
+                                : headerMode == HomeHeaderViewMode.notifications
+                                    ? KeyedSubtree(
+                                        key: const ValueKey('NotificationsContent'),
+                                        child: SingleChildScrollView(
+                                          physics: const BouncingScrollPhysics(),
+                                          child: _buildNotificationsView(context, ref, accentColor),
+                                        ),
+                                      )
+                                    : KeyedSubtree(
+                                        key: const ValueKey('DashboardContent'),
+                                        child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            SizedBox(height: context.s(40)), // Push content down so it starts above middle
-                                            // Profile Avatar & Dynamic Greetings
-                                            if (profileState.profilePhotoMode != 'none') ...[
-                                              Center(
-                                                child: GestureDetector(
-                                                  key: isDesktop ? null : DemoKeys.homeProfileAvatar,
-                                                  onTap: () {
-                                                    ref.read(overallProgressColorProvider.notifier).next();
-                                                  },
-                                                  behavior: HitTestBehavior.translucent,
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(context.s(3)),
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(color: accentColor, width: context.s(1.5)),
-                                                    ),
-                                                    child: CircleAvatar(
-                                                      radius: context.s(profileState.profilePhotoSize),
-                                                      backgroundImage: profileImage,
-                                                      onBackgroundImageError: profileImage != null ? (e, s) {} : null,
-                                                      backgroundColor: accentColor.withAlpha(30),
-                                                      child: profileImage == null
-                                                          ? Icon(Icons.person_rounded, color: accentColor, size: context.s(profileState.profilePhotoSize))
-                                                          : null,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(height: context.s(10)),
-                                            ],
-
-                                            Center(
-                                              child: Builder(
-                                                builder: (context) {
-                                                  final greeting = _getDynamicGreeting(displayName);
-                                                  return Column(
-                                                    children: [
-                                                      Text(
-                                                        greeting.line1,
-                                                        style: GoogleFonts.outfit(
-                                                          color: greeting.isLine1Accent ? accentColor : Colors.white,
-                                                          fontSize: greeting.isLine1Accent ? context.s(26) : context.s(20),
-                                                          fontWeight: greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
-                                                          shadows: greeting.isLine1Accent
-                                                              ? [Shadow(color: accentColor.withAlpha(102), blurRadius: context.s(12))]
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+                                                SizedBox(height: context.s(40)), // Push content down so it starts above middle
+                                                // Profile Avatar & Dynamic Greetings
+                                                if (profileState.profilePhotoMode != 'none') ...[
+                                                  Center(
+                                                    child: GestureDetector(
+                                                      key: isDesktop ? null : DemoKeys.homeProfileAvatar,
+                                                      onTap: () {
+                                                        ref.read(overallProgressColorProvider.notifier).next();
+                                                      },
+                                                      behavior: HitTestBehavior.translucent,
+                                                      child: Container(
+                                                        padding: EdgeInsets.all(context.s(3)),
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          border: Border.all(color: accentColor, width: context.s(1.5)),
+                                                        ),
+                                                        child: CircleAvatar(
+                                                          radius: context.s(profileState.profilePhotoSize),
+                                                          backgroundImage: profileImage,
+                                                          onBackgroundImageError: profileImage != null ? (e, s) {} : null,
+                                                          backgroundColor: accentColor.withAlpha(30),
+                                                          child: profileImage == null
+                                                              ? Icon(Icons.person_rounded, color: accentColor, size: context.s(profileState.profilePhotoSize))
                                                               : null,
                                                         ),
-                                                        textAlign: TextAlign.center,
                                                       ),
-                                                      if (greeting.line2.isNotEmpty) ...[
-                                                        SizedBox(height: context.s(4)),
-                                                        Text(
-                                                          greeting.line2,
-                                                          style: GoogleFonts.outfit(
-                                                            color: !greeting.isLine1Accent ? accentColor : Colors.white,
-                                                            fontSize: !greeting.isLine1Accent ? context.s(26) : context.s(20),
-                                                            fontWeight: !greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
-                                                            shadows: !greeting.isLine1Accent
-                                                                ? [Shadow(color: accentColor.withAlpha(102), blurRadius: context.s(12))]
-                                                                : null,
-                                                          ),
-                                                          textAlign: TextAlign.center,
-                                                        ),
-                                                      ],
-                                                    ],
-                                                  );
-                                                },
-                                              ),
-                                            ),
-
-                                            SizedBox(height: context.s(20)),
-
-                                            // Big Countdown Timer (DAYS : HRS : MINS : SECS)
-                                            if (!ref.watch(disableCountdownProvider)) ...[
-                                              SizedBox(
-                                                key: isDesktop ? null : DemoKeys.homeCountdownTimer,
-                                                child: const _TickingCountdownTimer(),
-                                              ),
-                                              SizedBox(height: context.s(16)),
-                                            ],
-
-                                            // Static Launch Quote
-                                            Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: context.s(24.0)),
-                                                child: Text(
-                                                  "“$launchQuote”",
-                                                  style: GoogleFonts.outfit(
-                                                    color: Colors.white60,
-                                                    fontSize: context.s(13),
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                                          children: [
-                                            SizedBox(height: context.s(20)),
-                                            // Syllabus/Resource Completion Card
-                                            if (!disableWidget) ...[
-                                              HomeCarousel(
-                                                key: isDesktop ? null : DemoKeys.homeProgressCard,
-                                                accentColor: accentColor,
-                                                onTabChange: _navigateToTab,
-                                              ),
-                                              SizedBox(height: context.s(22)),
-                                            ],
-
-                                            // Resume Prep / Active Focus Button
-                                            SizedBox(
-                                              key: isDesktop ? null : DemoKeys.homeStartButton,
-                                              child: isFocusActive
-                                                  ? ActiveFocusWaveWidget(
-                                                      accentColor: accentColor,
-                                                      onTap: () => _navigateToTab(3),
-                                                    )
-                                                  : _buildResumePrepButton(todayProgress, hasStartedToday, accentColor),
-                                            ),
-
-                                            // Daily Goal Reached Tick Indicator
-                                            if (isDailyGoalReached) ...[
-                                              SizedBox(height: context.s(8)),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(Icons.check_circle_rounded, color: accentColor, size: context.s(14)),
-                                                  SizedBox(width: context.s(4)),
-                                                  Text(
-                                                    "Daily Goal Reached",
-                                                    style: GoogleFonts.outfit(
-                                                      color: accentColor,
-                                                      fontSize: context.s(11),
-                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
+                                                  SizedBox(height: context.s(16)),
                                                 ],
-                                              ),
-                                            ],
 
-                                            SizedBox(height: context.s(22)),
+                                                Center(
+                                                  child: Builder(
+                                                    builder: (context) {
+                                                      final greeting = _getDynamicGreeting(displayName);
+                                                      final accentFontSize = context.s(22);
+                                                      final normalFontSize = context.s(16);
 
-                                            SizedBox(
-                                              key: isDesktop ? null : DemoKeys.homeConsistencyGrid,
-                                              child: _buildConsistencyGrid(accentColor, dailyGoalMinutes),
+                                                      return Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            greeting.line1,
+                                                            style: GoogleFonts.outfit(
+                                                              color: greeting.isLine1Accent ? accentColor : Colors.white,
+                                                              fontSize: greeting.isLine1Accent ? accentFontSize : normalFontSize,
+                                                              fontWeight: greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
+                                                              height: 1.1,
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                          if (greeting.line2.isNotEmpty) ...[
+                                                            SizedBox(height: context.s(2)),
+                                                            Text(
+                                                              greeting.line2,
+                                                              style: GoogleFonts.outfit(
+                                                                color: !greeting.isLine1Accent ? accentColor : Colors.white,
+                                                                fontSize: !greeting.isLine1Accent ? accentFontSize : normalFontSize,
+                                                                fontWeight: !greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
+                                                                height: 1.1,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ],
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+
+                                                SizedBox(height: context.s(20)),
+
+                                                // Big Countdown Timer (DAYS : HRS : MINS : SECS)
+                                                if (!ref.watch(disableCountdownProvider)) ...[
+                                                  SizedBox(
+                                                    key: isDesktop ? null : DemoKeys.homeCountdownTimer,
+                                                    child: const _TickingCountdownTimer(),
+                                                  ),
+                                                  SizedBox(height: context.s(16)),
+                                                ],
+
+                                                // Static Launch Quote
+                                                Center(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: context.s(24.0)),
+                                                    child: Text(
+                                                      "“$launchQuote”",
+                                                      style: GoogleFonts.outfit(
+                                                        color: Colors.white60,
+                                                        fontSize: context.s(13),
+                                                        fontStyle: FontStyle.italic,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+                                                SizedBox(height: context.s(20)),
+                                                // Syllabus/Resource Completion Card
+                                                if (!disableWidget) ...[
+                                                  HomeCarousel(
+                                                    key: isDesktop ? null : DemoKeys.homeProgressCard,
+                                                    accentColor: accentColor,
+                                                    onTabChange: _navigateToTab,
+                                                  ),
+                                                  SizedBox(height: context.s(22)),
+                                                ],
+
+                                                // Resume Prep / Active Focus Button
+                                                SizedBox(
+                                                  key: isDesktop ? null : DemoKeys.homeStartButton,
+                                                  child: isFocusActive
+                                                      ? ActiveFocusWaveWidget(
+                                                          accentColor: accentColor,
+                                                          onTap: () => _navigateToTab(3),
+                                                        )
+                                                      : _buildResumePrepButton(todayProgress, hasStartedToday, accentColor),
+                                                ),
+
+                                                // Daily Goal Reached Tick Indicator
+                                                if (isDailyGoalReached) ...[
+                                                  SizedBox(height: context.s(8)),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Icons.check_circle_rounded, color: accentColor, size: context.s(14)),
+                                                      SizedBox(width: context.s(4)),
+                                                      Text(
+                                                        "Daily Goal Reached",
+                                                        style: GoogleFonts.outfit(
+                                                          color: accentColor,
+                                                          fontSize: context.s(11),
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+
+                                                SizedBox(height: context.s(22)),
+
+                                                SizedBox(
+                                                  key: isDesktop ? null : DemoKeys.homeConsistencyGrid,
+                                                  child: _buildConsistencyGrid(accentColor, dailyGoalMinutes),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
+                                      ),
                           ),
                         ),
                       ],
@@ -831,6 +907,256 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildNotificationsView(BuildContext context, WidgetRef ref, Color accentColor) {
+    final state = ref.watch(communityNotificationsProvider);
+    final notifications = state.notifications;
+    final readIds = state.readIds;
+    final unreadCount = state.unreadCount;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Title Header (Notice Board Style)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "Announcements",
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontSize: context.s(18),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(width: context.s(8)),
+                Icon(
+                  Icons.campaign_rounded,
+                  color: accentColor.withAlpha(200),
+                  size: context.s(18),
+                ),
+              ],
+            ),
+            if (unreadCount > 0)
+              GestureDetector(
+                onTap: () {
+                  ref.read(communityNotificationsProvider.notifier).markAllAsRead();
+                },
+                child: Text(
+                  "Mark all as read",
+                  style: GoogleFonts.outfit(
+                    color: accentColor,
+                    fontSize: context.s(12),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        SizedBox(height: context.s(16)),
+
+        // List of Announcement Cards (Notice Board Style with Tap-to-read)
+        if (notifications.isEmpty)
+          Container(
+            padding: EdgeInsets.all(context.s(24)),
+            decoration: BoxDecoration(
+              color: const Color(0xFF131316),
+              borderRadius: BorderRadius.circular(context.s(16)),
+              border: Border.all(color: Colors.white.withAlpha(8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: context.s(10),
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.notifications_none_rounded,
+                  color: accentColor.withAlpha(120),
+                  size: context.s(40),
+                ),
+                SizedBox(height: context.s(12)),
+                Text(
+                  "No Announcements",
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontSize: context.s(14),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: context.s(6)),
+                Text(
+                  "Check back later for updates and community news.",
+                  style: GoogleFonts.outfit(
+                    color: Colors.white38,
+                    fontSize: context.s(12),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (int index = 0; index < notifications.length; index++) ...[
+                if (index > 0) SizedBox(height: context.s(12)),
+                Builder(
+                  builder: (context) {
+                    final item = notifications[index];
+                    final isUnread = !readIds.contains(item.id);
+
+                    return InkWell(
+                      onTap: () {
+                        if (isUnread) {
+                          ref.read(communityNotificationsProvider.notifier).markAsRead(item.id);
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(context.s(16)),
+                      child: Container(
+                        padding: EdgeInsets.all(context.s(16)),
+                        decoration: BoxDecoration(
+                          color: isUnread ? accentColor.withAlpha(16) : const Color(0xFF131316),
+                          borderRadius: BorderRadius.circular(context.s(16)),
+                          border: Border.all(
+                            color: isUnread ? accentColor.withAlpha(160) : Colors.white.withAlpha(10),
+                            width: isUnread ? 1.5 : 1.0,
+                          ),
+                          boxShadow: [
+                            if (isUnread)
+                              BoxShadow(
+                                color: accentColor.withAlpha(25),
+                                blurRadius: context.s(12),
+                                offset: const Offset(0, 3),
+                              )
+                            else
+                              BoxShadow(
+                                color: Colors.black.withAlpha(20),
+                                blurRadius: context.s(4),
+                                offset: const Offset(0, 2),
+                              ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      if (isUnread) ...[
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: context.s(6),
+                                            vertical: context.s(2),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: accentColor,
+                                            borderRadius: BorderRadius.circular(context.s(4)),
+                                          ),
+                                          child: Text(
+                                            "NEW",
+                                            style: GoogleFonts.orbitron(
+                                              color: Colors.black,
+                                              fontSize: context.s(9),
+                                              fontWeight: FontWeight.w800,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: context.s(8)),
+                                      ],
+                                      Expanded(
+                                        child: Text(
+                                          item.title,
+                                          style: GoogleFonts.outfit(
+                                            color: isUnread ? Colors.white : Colors.white70,
+                                            fontSize: context.s(15),
+                                            fontWeight: isUnread ? FontWeight.bold : FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (item.date.isNotEmpty) ...[
+                                  SizedBox(width: context.s(8)),
+                                  Text(
+                                    item.date,
+                                    style: GoogleFonts.outfit(
+                                      color: isUnread ? accentColor.withAlpha(200) : Colors.white30,
+                                      fontSize: context.s(11),
+                                      fontWeight: isUnread ? FontWeight.w600 : FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            SizedBox(height: context.s(8)),
+                            Text(
+                              item.message,
+                              style: GoogleFonts.outfit(
+                                color: isUnread ? Colors.white.withAlpha(230) : Colors.white38,
+                                fontSize: context.s(13),
+                                height: 1.4,
+                              ),
+                            ),
+                            if (item.actionUrl != null && item.actionUrl!.isNotEmpty) ...[
+                              SizedBox(height: context.s(10)),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: context.s(12),
+                                      vertical: context.s(6),
+                                    ),
+                                    backgroundColor: accentColor.withAlpha(25),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(context.s(10)),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    ref.read(communityNotificationsProvider.notifier).markAsRead(item.id);
+                                    final uri = Uri.parse(item.actionUrl!);
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                    }
+                                  },
+                                  icon: Icon(Icons.open_in_new_rounded, size: context.s(14), color: accentColor),
+                                  label: Text(
+                                    item.actionText ?? 'Open Link',
+                                    style: GoogleFonts.outfit(
+                                      color: accentColor,
+                                      fontSize: context.s(12),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ],
+          ),
+      ],
     );
   }
 
@@ -1294,36 +1620,40 @@ class _TickingCountdownTimerState extends ConsumerState<_TickingCountdownTimer> 
     Widget buildTimeSegment(String value, String label) {
       final style = getAccentStyle(28, Colors.white, selectedFont).copyWith(
         height: 1.0,
-        letterSpacing: context.s(2.0),
-        fontFeatures: [const FontFeature.tabularFigures()],
+        fontFeatures: const [FontFeature.tabularFigures()],
       );
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: digitHeight,
-            child: Center(
-              child: Text(
-                value,
-                style: style,
-                textAlign: TextAlign.center,
+      return Expanded(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: digitHeight,
+              child: Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: style,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: context.s(4)),
-          Text(
-            label,
-            style: GoogleFonts.outfit(
-              color: Colors.white60,
-              fontSize: context.s(8.5),
-              letterSpacing: context.s(0.8),
-              fontWeight: FontWeight.w600,
+            SizedBox(height: context.s(4)),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                color: Colors.white60,
+                fontSize: context.s(8.5),
+                letterSpacing: context.s(0.8),
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       );
     }
 
@@ -1347,25 +1677,55 @@ class _TickingCountdownTimerState extends ConsumerState<_TickingCountdownTimer> 
     return Center(
       child: FractionallySizedBox(
         widthFactor: 0.9,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: context.s(12), horizontal: context.s(12)),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(color: accentColor.withAlpha(102), width: context.s(1.2)),
-            borderRadius: BorderRadius.circular(context.s(10)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildTimeSegment(totalDaysStr, 'DAYS'),
-              buildColon(),
-              buildTimeSegment(hoursStr, 'HRS'),
-              buildColon(),
-              buildTimeSegment(minutesStr, 'MINS'),
-              buildColon(),
-              buildTimeSegment(secondsStr, 'SECS'),
-            ],
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onLongPress: () async {
+            final targetDate = ref.read(targetDateProvider);
+            final selected = await showDatePicker(
+              context: context,
+              initialDate: targetDate,
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2100),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: ColorScheme.dark(
+                      primary: accentColor,
+                      onPrimary: Colors.black,
+                      surface: const Color(0xFF18181B),
+                      onSurface: Colors.white,
+                    ),
+                    dialogTheme: const DialogThemeData(
+                      backgroundColor: Color(0xFF18181B),
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+            if (selected != null) {
+              ref.read(targetDateProvider.notifier).setDate(selected);
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: context.s(12), horizontal: context.s(4)),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(color: accentColor.withAlpha(102), width: context.s(1.2)),
+              borderRadius: BorderRadius.circular(context.s(10)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildTimeSegment(totalDaysStr, 'DAYS'),
+                buildColon(),
+                buildTimeSegment(hoursStr, 'HRS'),
+                buildColon(),
+                buildTimeSegment(minutesStr, 'MINS'),
+                buildColon(),
+                buildTimeSegment(secondsStr, 'SECS'),
+              ],
+            ),
           ),
         ),
       ),
