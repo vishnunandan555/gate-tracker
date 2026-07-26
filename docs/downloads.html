@@ -61,16 +61,25 @@
       <div class="card" style="justify-content: space-between;">
         <div>
           <div class="card-header-layout">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
             <h3>Web Application</h3>
           </div>
-          <p>Instant browser application with WebAssembly SQLite database storage. Works on any browser.</p>
+          <p>Instant browser application with WebAssembly SQLite database. Zero installation required.</p>
         </div>
-        <a href="https://gateletics.vercel.app/" target="_blank" class="btn-primary" style="margin-top: 20px; justify-content: center;">🚀 Launch Web App</a>
+        <div class="download-options-list">
+          <a href="https://gateletics.vercel.app/" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Instant Web App</span>
+            </div>
+            <span class="download-opt-ext">PWA / WEB</span>
+          </a>
+        </div>
       </div>
 
       <!-- Windows -->
@@ -80,11 +89,22 @@
             <img src="https://img.icons8.com/?size=100&id=108792&format=png&color=000000" class="card-icon" alt="Windows logo">
             <h3>Windows Desktop</h3>
           </div>
-          <p>Native 64-bit Windows binary builds. Installer setup or portable archive.</p>
+          <p>Native 64-bit Windows builds. Choose between installer setup or portable zip.</p>
         </div>
-        <button onclick="openDownloadModal('windows')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
-          Download for Windows
-        </button>
+        <div class="download-options-list">
+          <a id="win-installer-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Setup Installer</span>
+            </div>
+            <span class="download-opt-ext">.EXE</span>
+          </a>
+          <a id="win-zip-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Portable Archive</span>
+            </div>
+            <span class="download-opt-ext">.ZIP</span>
+          </a>
+        </div>
       </div>
 
       <!-- Linux -->
@@ -94,48 +114,64 @@
             <img src="linux.png" class="card-icon" alt="Linux logo">
             <h3>Linux Desktop</h3>
           </div>
-          <p>Universal Linux AppImage executable, native Debian/Ubuntu package, or tarball archive.</p>
+          <p>Native Linux packages for Debian/Ubuntu, standalone AppImage, or tarball archive.</p>
         </div>
-        <button onclick="openDownloadModal('linux')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
-          Download for Linux
-        </button>
+        <div class="download-options-list">
+          <a id="linux-appimage-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Universal AppImage</span>
+            </div>
+            <span class="download-opt-ext">.AppImage</span>
+          </a>
+          <a id="linux-deb-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Debian / Ubuntu Package</span>
+            </div>
+            <span class="download-opt-ext">.DEB</span>
+          </a>
+          <a id="linux-tar-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Tarball Archive</span>
+            </div>
+            <span class="download-opt-ext">.TAR.GZ</span>
+          </a>
+        </div>
       </div>
 
       <!-- Android -->
       <div class="card" style="justify-content: space-between;">
         <div>
           <div class="card-header-layout">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="#3DDC84" aria-hidden="true">
-              <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
-            </svg>
+            <div class="icon-box" style="background: rgba(61, 220, 132, 0.1); border-color: rgba(61, 220, 132, 0.25);">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="#3DDC84">
+                <path d="M17.523 15.3414C17.0604 15.3414 16.6854 14.9664 16.6854 14.5038C16.6854 14.0412 17.0604 13.6662 17.523 13.6662C17.9856 13.6662 18.3606 14.0412 18.3606 14.5038C18.3606 14.9664 17.9856 15.3414 17.523 15.3414ZM6.47702 15.3414C6.01442 15.3414 5.63942 14.9664 5.63942 14.5038C5.63942 14.0412 6.01442 13.6662 6.47702 13.6662C6.93962 13.6662 7.31462 14.0412 7.31462 14.5038C7.31462 14.9664 6.93962 15.3414 6.47702 15.3414ZM17.8854 10.4288L19.4674 7.68878C19.6104 7.44078 19.5254 7.12378 19.2774 6.98078C19.0294 6.83778 18.7124 6.92278 18.5694 7.17078L16.9534 9.97078C15.4674 9.29078 13.7914 8.90878 12.0004 8.90878C10.2094 8.90878 8.53342 9.29078 7.04742 9.97078L5.43142 7.17078C5.28842 6.92278 4.97142 6.83778 4.72342 6.98078C4.47542 7.12378 4.39042 7.44078 4.53342 7.68878L6.11542 10.4288C2.69342 12.2988 0.354418 15.6888 0.000418427 19.7428H24.0004C23.6464 15.6888 21.3074 12.2988 17.8854 10.4288Z"/>
+              </svg>
+            </div>
             <h3>Android Mobile</h3>
           </div>
           <p>Standalone APK package for Android smartphones and tablets.</p>
         </div>
-        <button onclick="openDownloadModal('android')" class="btn-primary" style="margin-top: 20px; justify-content: center; width: 100%;">
-          Download for Android
-        </button>
+        <div class="download-options-list">
+          <a id="android-apk-link" href="https://github.com/vishnunandan555/gateletics/releases/latest" target="_blank" class="download-opt-btn">
+            <div class="download-opt-meta">
+              <span>Android Application</span>
+            </div>
+            <span class="download-opt-ext">.APK</span>
+          </a>
+        </div>
       </div>
     </div>
 
     <!-- GitHub Release Banner -->
     <div style="margin-top: 48px; text-align: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px 24px;">
-      <h3 style="margin: 0 0 12px 0; font-size: 20px;">Looking for Previous Releases?</h3>
-      <p style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 15px;">Browse complete release history, source code tarballs, and build artifacts on GitHub.</p>
-      <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" class="btn-primary" style="font-size: 15px; padding: 12px 28px;">
-        View All Releases on GitHub
+      <h3 style="margin: 0 0 12px 0; font-size: 20px;">Looking for Release Binaries & Source Code?</h3>
+      <p style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 15px;">Browse complete release history, source code tarballs, and build artifacts directly on GitHub.</p>
+      <a href="https://github.com/vishnunandan555/gateletics/releases" target="_blank" class="btn-primary" style="font-size: 15px; padding: 12px 28px; display: inline-flex; align-items: center; gap: 10px;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: block;">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <span>View All Releases on GitHub</span>
       </a>
-    </div>
-  </div>
-
-  <!-- Interactive Choice Modal -->
-  <div id="download-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="modal-title" class="modal-title">Select Download Option</h3>
-        <button class="modal-close" onclick="closeDownloadModal()">✕</button>
-      </div>
-      <div id="modal-options" class="modal-options"></div>
     </div>
   </div>
 
@@ -155,15 +191,6 @@
   </footer>
 
   <script>
-    const releaseLinks = {
-      winInstaller: '#',
-      winZip: '#',
-      linuxAppImage: '#',
-      linuxDeb: '#',
-      linuxTar: '#',
-      androidApk: '#'
-    };
-
     const themeToggleBtn = document.getElementById('theme-toggle');
     themeToggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -172,64 +199,6 @@
       localStorage.setItem('theme', newTheme);
       themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
     });
-
-    function openDownloadModal(platform) {
-      const modal = document.getElementById('download-modal');
-      const titleEl = document.getElementById('modal-title');
-      const optionsEl = document.getElementById('modal-options');
-
-      optionsEl.innerHTML = '';
-
-      if (platform === 'windows') {
-        titleEl.textContent = 'Download for Windows';
-        optionsEl.innerHTML = `
-          <a href="${releaseLinks.winInstaller}" class="modal-option-btn">
-            <span>Setup Installer (.exe)</span>
-            <span class="modal-option-badge">Installer</span>
-          </a>
-          <a href="${releaseLinks.winZip}" class="modal-option-btn">
-            <span>Portable Bundle (.zip)</span>
-            <span class="modal-option-badge">Portable</span>
-          </a>
-        `;
-      } else if (platform === 'linux') {
-        titleEl.textContent = 'Download for Linux';
-        optionsEl.innerHTML = `
-          <a href="${releaseLinks.linuxAppImage}" class="modal-option-btn">
-            <span>Universal AppImage (.AppImage)</span>
-            <span class="modal-option-badge">AppImage</span>
-          </a>
-          <a href="${releaseLinks.linuxDeb}" class="modal-option-btn">
-            <span>Debian / Ubuntu (.deb)</span>
-            <span class="modal-option-badge">Debian</span>
-          </a>
-          <a href="${releaseLinks.linuxTar}" class="modal-option-btn">
-            <span>Tarball Archive (.tar.gz)</span>
-            <span class="modal-option-badge">Tarball</span>
-          </a>
-        `;
-      } else if (platform === 'android') {
-        titleEl.textContent = 'Download for Android';
-        optionsEl.innerHTML = `
-          <a href="${releaseLinks.androidApk}" class="modal-option-btn">
-            <span>Standalone Package (.apk)</span>
-            <span class="modal-option-badge">APK</span>
-          </a>
-        `;
-      }
-
-      modal.classList.add('active');
-    }
-
-    function closeDownloadModal() {
-      document.getElementById('download-modal').classList.remove('active');
-    }
-
-    function closeModalOnBackdrop(event) {
-      if (event.target.id === 'download-modal') {
-        closeDownloadModal();
-      }
-    }
 
     async function fetchLatestRelease() {
       try {
@@ -243,17 +212,23 @@
           const url = asset.browser_download_url;
 
           if (name.endsWith('.apk')) {
-            releaseLinks.androidApk = url;
+            const el = document.getElementById('android-apk-link');
+            if (el) el.href = url;
           } else if (name.includes('windows') && name.endsWith('-setup.exe')) {
-            releaseLinks.winInstaller = url;
+            const el = document.getElementById('win-installer-link');
+            if (el) el.href = url;
           } else if (name.includes('windows') && name.endsWith('.zip')) {
-            releaseLinks.winZip = url;
+            const el = document.getElementById('win-zip-link');
+            if (el) el.href = url;
           } else if (name.includes('linux') && name.endsWith('.AppImage')) {
-            releaseLinks.linuxAppImage = url;
+            const el = document.getElementById('linux-appimage-link');
+            if (el) el.href = url;
           } else if (name.includes('linux') && name.endsWith('.deb')) {
-            releaseLinks.linuxDeb = url;
+            const el = document.getElementById('linux-deb-link');
+            if (el) el.href = url;
           } else if (name.includes('linux') && name.endsWith('.tar.gz')) {
-            releaseLinks.linuxTar = url;
+            const el = document.getElementById('linux-tar-link');
+            if (el) el.href = url;
           }
         });
       } catch (e) {
@@ -262,6 +237,7 @@
     }
     fetchLatestRelease();
   </script>
+
 </body>
 
 </html>
