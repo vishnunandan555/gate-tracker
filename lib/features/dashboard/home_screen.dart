@@ -325,32 +325,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             ],
 
                                             Center(
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    displayName != null ? "Welcome Back," : "Welcome Back!",
-                                                    style: GoogleFonts.outfit(
-                                                      color: Colors.white,
-                                                      fontSize: context.s(20),
-                                                      fontWeight: FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  if (displayName != null) ...[
-                                                    SizedBox(height: context.s(4)),
-                                                    Text(
-                                                      "$displayName!",
-                                                      style: GoogleFonts.outfit(
-                                                        color: accentColor,
-                                                        fontSize: context.s(26),
-                                                        fontWeight: FontWeight.bold,
-                                                        shadows: [
-                                                          Shadow(color: accentColor.withAlpha(102), blurRadius: context.s(12)),
-                                                        ],
+                                              child: Builder(
+                                                builder: (context) {
+                                                  final greeting = _getDynamicGreeting(displayName);
+                                                  return Column(
+                                                    children: [
+                                                      Text(
+                                                        greeting.line1,
+                                                        style: GoogleFonts.outfit(
+                                                          color: greeting.isLine1Accent ? accentColor : Colors.white,
+                                                          fontSize: greeting.isLine1Accent ? context.s(26) : context.s(20),
+                                                          fontWeight: greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
+                                                          shadows: greeting.isLine1Accent
+                                                              ? [Shadow(color: accentColor.withAlpha(102), blurRadius: context.s(12))]
+                                                              : null,
+                                                        ),
+                                                        textAlign: TextAlign.center,
                                                       ),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ],
-                                                ],
+                                                      if (greeting.line2.isNotEmpty) ...[
+                                                        SizedBox(height: context.s(4)),
+                                                        Text(
+                                                          greeting.line2,
+                                                          style: GoogleFonts.outfit(
+                                                            color: !greeting.isLine1Accent ? accentColor : Colors.white,
+                                                            fontSize: !greeting.isLine1Accent ? context.s(26) : context.s(20),
+                                                            fontWeight: !greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
+                                                            shadows: !greeting.isLine1Accent
+                                                                ? [Shadow(color: accentColor.withAlpha(102), blurRadius: context.s(12))]
+                                                                : null,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  );
+                                                },
                                               ),
                                             ),
 
@@ -1665,7 +1674,91 @@ class _ECGPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ECGPainter oldDelegate) {
-    return oldDelegate.phase != phase || oldDelegate.color != color;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class _GreetingData {
+  final String line1;
+  final String line2;
+  final bool isLine1Accent;
+
+  const _GreetingData({
+    required this.line1,
+    required this.line2,
+    required this.isLine1Accent,
+  });
+}
+
+_GreetingData _getDynamicGreeting(String? name) {
+  final now = DateTime.now();
+  final hour = now.hour;
+  final cleanName = (name != null && name.trim().isNotEmpty) ? name.trim() : null;
+
+  if (cleanName == null) {
+    if (hour >= 5 && hour < 9) {
+      final options = ["Good Morning!", "Rise & Grind!", "Early Bird!", "Dawn of a New Day!", "Fresh Start!"];
+      return _GreetingData(line1: options[now.minute % options.length], line2: "", isLine1Accent: false);
+    } else if (hour >= 9 && hour < 12) {
+      final options = ["Good Morning!", "Stay Sharp!", "Keep the Momentum!", "Ready to Focus!", "Welcome Back!"];
+      return _GreetingData(line1: options[now.minute % options.length], line2: "", isLine1Accent: false);
+    } else if (hour >= 12 && hour < 17) {
+      final options = ["Good Afternoon!", "Lock In!", "Keep Pushing!", "Back to the Grind!", "Stay on Track!"];
+      return _GreetingData(line1: options[now.minute % options.length], line2: "", isLine1Accent: false);
+    } else if (hour >= 17 && hour < 21) {
+      final options = ["Good Evening!", "Finish Strong!", "Golden Hour Focus!", "Back at the Desk!", "Evening Session!"];
+      return _GreetingData(line1: options[now.minute % options.length], line2: "", isLine1Accent: false);
+    } else {
+      final options = ["The Night is Young!", "Burning the Midnight Oil!", "Midnight Scholar!", "Late Night Grind!", "Night Owl Focus!"];
+      return _GreetingData(line1: options[now.minute % options.length], line2: "", isLine1Accent: false);
+    }
+  }
+
+  final indexSeed = (now.minute + now.day) % 5;
+
+  if (hour >= 5 && hour < 9) {
+    final templates = [
+      _GreetingData(line1: "Good Morning,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "time to shine!", isLine1Accent: true),
+      _GreetingData(line1: "Rise and grind,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "dawn of a new day!", isLine1Accent: true),
+      _GreetingData(line1: "Fresh start,", line2: "$cleanName!", isLine1Accent: false),
+    ];
+    return templates[indexSeed % templates.length];
+  } else if (hour >= 9 && hour < 12) {
+    final templates = [
+      _GreetingData(line1: "$cleanName,", line2: "stay sharp!", isLine1Accent: true),
+      _GreetingData(line1: "Keep the momentum,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "ready to focus?", isLine1Accent: true),
+      _GreetingData(line1: "Good Morning,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "welcome back!", isLine1Accent: true),
+    ];
+    return templates[indexSeed % templates.length];
+  } else if (hour >= 12 && hour < 17) {
+    final templates = [
+      _GreetingData(line1: "Good Afternoon,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "lock in!", isLine1Accent: true),
+      _GreetingData(line1: "Keep pushing,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "back to the grind!", isLine1Accent: true),
+      _GreetingData(line1: "Stay on track,", line2: "$cleanName!", isLine1Accent: false),
+    ];
+    return templates[indexSeed % templates.length];
+  } else if (hour >= 17 && hour < 21) {
+    final templates = [
+      _GreetingData(line1: "Good Evening,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "finish strong!", isLine1Accent: true),
+      _GreetingData(line1: "Golden hour focus,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "back at the desk!", isLine1Accent: true),
+      _GreetingData(line1: "Evening session,", line2: "$cleanName!", isLine1Accent: false),
+    ];
+    return templates[indexSeed % templates.length];
+  } else {
+    final templates = [
+      _GreetingData(line1: "$cleanName,", line2: "the night is young!", isLine1Accent: true),
+      _GreetingData(line1: "Burning the midnight oil,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "midnight scholar mode!", isLine1Accent: true),
+      _GreetingData(line1: "Late night grind,", line2: "$cleanName!", isLine1Accent: false),
+      _GreetingData(line1: "$cleanName,", line2: "night owl focus!", isLine1Accent: true),
+    ];
+    return templates[indexSeed % templates.length];
   }
 }

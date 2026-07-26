@@ -741,7 +741,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       case DemoStep.focusDailyGoalBar:
         _runSpotlight("focusDailyGoalBar", [
           makeTarget("dailyGoalBar", DemoKeys.focusDailyGoalBar,
-            "Daily Goal Bar: Tracks today's study time against your set goal. Resets at midnight and feeds your streak counter.",
+            "Daily Goal Bar: Tracks today's study time against your set goal. Resets at your daily study rollover time and feeds your streak counter.",
             stepNumber: 14, align: ContentAlign.top,
           ),
         ], () { ref.read(demoGuideProvider.notifier).setStep(DemoStep.focusDailyGoalActions); });

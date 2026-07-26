@@ -66,16 +66,13 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release
 
+      # Note: If no custom android/key.properties exists, Flutter automatically signs
+      # the release build with Android's default debug key. Since debug SHA-1 is registered
+      # in Firebase, Google Sign-In works cleanly. We name it clean '-android.apk'.
       - name: Prepare Android Artifacts
         run: |
           mkdir -p artifacts
-          if [ -f android/key.properties ]; then
-            echo "Release key.properties found. Copying as release-signed."
-            cp build/app/outputs/flutter-apk/app-release.apk artifacts/gateletics-${{ env.VERSION }}-release-signed.apk
-          else
-            echo "Release key.properties NOT found. Copying as debug-signed fallback."
-            cp build/app/outputs/flutter-apk/app-release.apk artifacts/gateletics-${{ env.VERSION }}-debug-signed.apk
-          fi
+          cp build/app/outputs/flutter-apk/app-release.apk artifacts/gateletics-${{ env.VERSION }}-android.apk
 
       - name: Upload Android Artifacts
         uses: actions/upload-artifact@v4
