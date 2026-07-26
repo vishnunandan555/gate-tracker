@@ -334,7 +334,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                           if (finalState.status == SyncStatus.success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('✓ Sync initialized successfully!'),
+                                content: Text('✓ Signed in! Your local study progress is backed up to cloud.'),
                                 backgroundColor: Colors.green,
                               ),
                             );
@@ -595,131 +595,175 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 Center(
                   child: TextButton(
                     onPressed: () async {
-                      final confirm = await showDialog<bool>(
+                      // Step 1: Choice Dialog (Keep Local Data vs Delete Everything)
+                      final choice = await showDialog<String>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: const Color(0xFF161B22),
+                          backgroundColor: const Color(0xFF18181B),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                           title: Text(
                             'Delete Account',
                             style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
                           ),
-                          content: Text(
-                            'Are you sure you want to delete your account? This will permanently delete all your synced data backups from the cloud. Your local database will remain intact.',
-                            style: GoogleFonts.outfit(color: Colors.white70),
+                          content: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  'Deleting your account will permanently remove your cloud backups from our servers. How would you like to handle your local study progress on this device?',
+                                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+                                ),
+                                const SizedBox(height: 16),
+                                _buildDialogOption(
+                                  context: context,
+                                  title: "Keep Local Progress (Offline Mode)",
+                                  subtitle: "Delete cloud backup, keep study data on phone in Offline Mode",
+                                  icon: Icons.smartphone_rounded,
+                                  color: Colors.cyanAccent,
+                                  onTap: () => Navigator.pop(context, 'keepLocal'),
+                                ),
+                                const SizedBox(height: 12),
+                                _buildDialogOption(
+                                  context: context,
+                                  title: "Delete Everything (Wipe Local Data)",
+                                  subtitle: "Permanently delete cloud backup AND erase all local study data",
+                                  icon: Icons.delete_forever_rounded,
+                                  color: Colors.redAccent,
+                                  onTap: () => Navigator.pop(context, 'wipeAll'),
+                                ),
+                              ],
+                            ),
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: Text(
-                                'Cancel',
-                                style: GoogleFonts.outfit(color: Colors.grey),
-                              ),
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
                             ),
+                          ],
+                        ),
+                      );
+
+                      if (choice == null || !context.mounted) return;
+
+                      final isWipeAll = choice == 'wipeAll';
+
+                      // Step 2: Final 'Are You Sure?' Confirmation Dialog
+                      final confirmSecond = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: const Color(0xFF18181B),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                          title: Text(
+                            'Are you sure?',
+                            style: GoogleFonts.outfit(
+                              color: isWipeAll ? Colors.redAccent : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          content: Text(
+                            isWipeAll
+                                ? 'This will permanently delete all your cloud backups AND permanently erase all local study progress on this device. This action CANNOT be undone.'
+                                : 'This will permanently delete your cloud backups from the server. Your study progress will remain saved locally on this device in Offline Mode.',
+                            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+                          ),
+                          actions: [
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: isWipeAll ? Colors.redAccent : widget.accentColor,
+                                foregroundColor: isWipeAll ? Colors.white : Colors.black,
+                              ),
                               child: Text(
-                                'Delete Permanently',
-                                style: GoogleFonts.outfit(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                                isWipeAll ? 'Yes, Delete Everything' : 'Yes, Delete Cloud Account',
+                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
                         ),
                       );
 
-                      if (confirm == true && context.mounted) {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                      if (confirmSecond != true || !context.mounted) return;
 
-                        try {
-                          await ref.read(authProvider.notifier).deleteServerAccountOnly();
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
 
+                      try {
+                        if (isWipeAll) {
+                          await ref.read(authProvider.notifier).deleteAccount();
                           if (context.mounted) {
                             Navigator.of(context).pop();
                           }
-
-                          if (context.mounted) {
-                            await showDialog<void>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => AlertDialog(
-                                backgroundColor: const Color(0xFF161B22),
-                                title: Text(
-                                  'Local Data Remains',
-                                  style: GoogleFonts.outfit(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                content: Text(
-                                  'local data still exists',
-                                  style: GoogleFonts.outfit(color: Colors.white70),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    child: Text(
-                                      'OK',
-                                      style: GoogleFonts.outfit(
-                                        color: Colors.cyanAccent,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          await ref.read(authProvider.notifier).completeLocalSignOut();
-
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Account and synced data deleted successfully.'),
+                                content: Text('✓ Account and all local study data deleted successfully.'),
                                 backgroundColor: Colors.green,
                               ),
                             );
                           }
-                        } on FirebaseAuthException catch (e) {
+                        } else {
+                          await ref.read(authProvider.notifier).deleteServerAccountOnly();
+                          await ref.read(authProvider.notifier).switchToOfflineAfterAccountDeletion();
                           if (context.mounted) {
                             Navigator.of(context).pop();
                           }
-                          if (e.code == 'requires-recent-login' && context.mounted) {
+                          if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please sign out and sign in again to verify your identity before deleting your account.'),
-                                backgroundColor: Colors.redAccent,
-                                duration: Duration(seconds: 5),
-                              ),
-                            );
-                          } else if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: ${e.message}'),
-                                backgroundColor: Colors.redAccent,
+                                content: Text('✓ Cloud account deleted. Your study progress remains saved locally in Offline Mode.'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 4),
                               ),
                             );
                           }
-                        } catch (e) {
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: $e'),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          }
+                        }
+                      } on FirebaseAuthException catch (e) {
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                        if (e.code == 'requires-recent-login' && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please sign out and sign in again to verify your identity before deleting your account.'),
+                              backgroundColor: Colors.redAccent,
+                              duration: Duration(seconds: 5),
+                            ),
+                          );
+                        } else if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: ${e.message}'),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
                         }
                       }
                     },

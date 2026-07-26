@@ -308,6 +308,32 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       state = AsyncValue.error(e, stack);
     }
   }
+
+  // Switch to local offline mode after server account deletion (preserving local data)
+  Future<void> switchToOfflineAfterAccountDeletion() async {
+    state = const AsyncValue.loading();
+    try {
+      if (isFirebaseSupported()) {
+        if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
+          await GoogleSignIn.instance.signOut();
+        }
+        await FirebaseAuth.instance.signOut();
+      }
+      await _prefs.setBool('has_chosen_offline', true);
+      try {
+        await ref.read(syncProvider.notifier).clearSyncState();
+      } catch (e) {
+        debugPrint("Error clearing sync state: $e");
+      }
+      state = AsyncValue.data(AuthState(
+        user: null,
+        isOfflineMode: true,
+        isLoading: false,
+      ));
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
 }
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, AuthState>(() {
