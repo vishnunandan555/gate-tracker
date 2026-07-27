@@ -40,18 +40,13 @@ class AboutScreen extends ConsumerWidget {
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.all(context.s(16)),
           children: [
-            // ── Top Hero Header Section (Simple & Clean) ───────────────────
-            Container(
-              width: double.infinity,
+            // ── Top Hero Header Section ────────────────────────────────────
+            _AnimatedCard(
               padding: EdgeInsets.symmetric(horizontal: context.s(20), vertical: context.s(24)),
-              decoration: BoxDecoration(
-                color: const Color(0xFF131316),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
+              borderRadius: BorderRadius.circular(20),
               child: Column(
                 children: [
-                  // App Icon (No glows)
+                  // App Icon
                   Container(
                     width: 72,
                     height: 72,
@@ -119,7 +114,7 @@ class AboutScreen extends ConsumerWidget {
 
             SizedBox(height: context.s(12)),
 
-            // ── Link Buttons Row (Simple & Clean) ──────────────────────────
+            // ── Link Buttons Row ───────────────────────────────────────────
             Row(
               children: [
                 const Expanded(
@@ -150,14 +145,10 @@ class AboutScreen extends ConsumerWidget {
 
             SizedBox(height: context.s(12)),
 
-            // ── Application Info Card (Simple & Clean) ─────────────────────
-            Container(
+            // ── Application Info Card ──────────────────────────────────────
+            _AnimatedCard(
               padding: EdgeInsets.all(context.s(18)),
-              decoration: BoxDecoration(
-                color: const Color(0xFF131316),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
+              borderRadius: BorderRadius.circular(16),
               child: const Column(
                 children: [
                   _InfoRow(
@@ -184,13 +175,9 @@ class AboutScreen extends ConsumerWidget {
             SizedBox(height: context.s(12)),
 
             // ── Legal Disclaimer Card ─────────────────────────────────────
-            Container(
+            _AnimatedCard(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFF131316),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
+              borderRadius: BorderRadius.circular(14),
               child: Text(
                 'GATEletics is an independent educational tool and is not affiliated with, authorized by, or associated with GATE or its organizing institutes (IISc, IITs, or NCB-GATE).',
                 style: GoogleFonts.outfit(
@@ -530,6 +517,52 @@ class _TextLinkState extends ConsumerState<_TextLink> {
               decorationColor: accentColor.withValues(alpha: 0.5),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedCard extends StatefulWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final BorderRadius? borderRadius;
+
+  const _AnimatedCard({
+    required this.child,
+    this.padding,
+    this.borderRadius,
+  });
+
+  @override
+  State<_AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<_AnimatedCard> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.98 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          padding: widget.padding,
+          decoration: BoxDecoration(
+            color: const Color(0xFF131316),
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
+            border: Border.all(
+              color: _isPressed
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : Colors.white.withValues(alpha: 0.05),
+            ),
+          ),
+          child: widget.child,
         ),
       ),
     );

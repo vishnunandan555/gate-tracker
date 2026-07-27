@@ -345,154 +345,137 @@ class CustomizationSettingsSection extends ConsumerWidget {
       onTap: () => _showAccentColorDialog(context, ref),
     );
 
-    final fontSizeExpansionContent = Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        iconColor: currentColor,
-        collapsedIconColor: Colors.white30,
-        leading: Icon(Icons.format_size_rounded, color: currentColor),
-        title: Text('Font Size & UI Scale', style: titleStyle),
-        subtitle: Text(
-          'Adjust category headers, subject cards, checklist text, and global UI scaling',
-          style: subtitleStyle,
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Global UI Scale', style: titleStyle),
-                  subtitle: Text('Resize all margins, card panels, and text blocks', style: subtitleStyle),
-                  trailing: DropdownButtonHideUnderline(
-                    child: DropdownButton<OverallUiScale>(
-                      value: currentScale,
-                      dropdownColor: const Color(0xFF18181B),
-                      alignment: Alignment.centerRight,
-                      items: OverallUiScale.values.map((scale) {
-                        String name = '';
-                        switch (scale) {
-                          case OverallUiScale.xs: name = 'XS (0.8x)'; break;
-                          case OverallUiScale.s: name = 'S (0.9x)'; break;
-                          case OverallUiScale.normal: name = 'Normal (1.0x)'; break;
-                          case OverallUiScale.l: name = 'L (1.1x)'; break;
-                          case OverallUiScale.xl: name = 'XL (1.2x)'; break;
-                        }
-                        return DropdownMenuItem(
-                          value: scale,
-                          child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          ref.read(overallUiScaleProvider.notifier).setScale(val);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                const Divider(color: Colors.white10, height: 1),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Category Headers', style: titleStyle),
-                  subtitle: Text('Adjust font size of syllabus category headers', style: subtitleStyle),
-                  trailing: DropdownButtonHideUnderline(
-                    child: DropdownButton<CategoryFontSize>(
-                      value: currentCategorySize,
-                      dropdownColor: const Color(0xFF18181B),
-                      alignment: Alignment.centerRight,
-                      items: CategoryFontSize.values.map((size) {
-                        String name = '';
-                        switch (size) {
-                          case CategoryFontSize.level1: name = 'XS'; break;
-                          case CategoryFontSize.level2: name = 'S'; break;
-                          case CategoryFontSize.level3: name = 'Normal'; break;
-                          case CategoryFontSize.level4: name = 'L'; break;
-                          case CategoryFontSize.level5: name = 'XL'; break;
-                        }
-                        return DropdownMenuItem(
-                          value: size,
-                          child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          ref.read(categoryFontSizeProvider.notifier).setFontSize(val);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                const Divider(color: Colors.white10, height: 1),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Subject Cards', style: titleStyle),
-                  subtitle: Text('Adjust font size of subject card titles', style: subtitleStyle),
-                  trailing: DropdownButtonHideUnderline(
-                    child: DropdownButton<TopicFontSize>(
-                      value: currentTopicSize,
-                      dropdownColor: const Color(0xFF18181B),
-                      alignment: Alignment.centerRight,
-                      items: TopicFontSize.values.map((size) {
-                        String name = '';
-                        switch (size) {
-                          case TopicFontSize.level1: name = 'XS'; break;
-                          case TopicFontSize.level2: name = 'S'; break;
-                          case TopicFontSize.level3: name = 'Normal'; break;
-                          case TopicFontSize.level4: name = 'L'; break;
-                          case TopicFontSize.level5: name = 'XL'; break;
-                        }
-                        return DropdownMenuItem(
-                          value: size,
-                          child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          ref.read(topicFontSizeProvider.notifier).setFontSize(val);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                const Divider(color: Colors.white10, height: 1),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Checklist Tasks', style: titleStyle),
-                  subtitle: Text('Adjust font size of checklist task checkboxes', style: subtitleStyle),
-                  trailing: DropdownButtonHideUnderline(
-                    child: DropdownButton<TaskFontSize>(
-                      value: currentTaskSize,
-                      dropdownColor: const Color(0xFF18181B),
-                      alignment: Alignment.centerRight,
-                      items: TaskFontSize.values.map((size) {
-                        String name = '';
-                        switch (size) {
-                          case TaskFontSize.level1: name = 'XS'; break;
-                          case TaskFontSize.level2: name = 'S'; break;
-                          case TaskFontSize.level3: name = 'Normal'; break;
-                          case TaskFontSize.level4: name = 'L'; break;
-                          case TaskFontSize.level5: name = 'XL'; break;
-                        }
-                        return DropdownMenuItem(
-                          value: size,
-                          child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          ref.read(taskFontSizeProvider.notifier).setFontSize(val);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+    final fontSizeDirectContent = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: Icon(Icons.aspect_ratio_rounded, color: currentColor),
+          title: Text('Global UI Scale', style: titleStyle),
+          subtitle: Text('Resize margins, cards, and overall display elements', style: subtitleStyle),
+          trailing: DropdownButtonHideUnderline(
+            child: DropdownButton<OverallUiScale>(
+              value: currentScale,
+              dropdownColor: const Color(0xFF18181B),
+              alignment: Alignment.centerRight,
+              items: OverallUiScale.values.map((scale) {
+                String name = '';
+                switch (scale) {
+                  case OverallUiScale.xs: name = 'XS (0.8x)'; break;
+                  case OverallUiScale.s: name = 'S (0.9x)'; break;
+                  case OverallUiScale.normal: name = 'Normal (1.0x)'; break;
+                  case OverallUiScale.l: name = 'L (1.1x)'; break;
+                  case OverallUiScale.xl: name = 'XL (1.2x)'; break;
+                }
+                return DropdownMenuItem(
+                  value: scale,
+                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(overallUiScaleProvider.notifier).setScale(val);
+                }
+              },
             ),
           ),
-        ],
-      ),
+        ),
+        const Divider(color: Colors.white10, height: 1),
+        ListTile(
+          leading: Icon(Icons.text_fields_rounded, color: currentColor),
+          title: Text('Category Header Font Size', style: titleStyle),
+          subtitle: Text('Adjust font size of syllabus category headers', style: subtitleStyle),
+          trailing: DropdownButtonHideUnderline(
+            child: DropdownButton<CategoryFontSize>(
+              value: currentCategorySize,
+              dropdownColor: const Color(0xFF18181B),
+              alignment: Alignment.centerRight,
+              items: CategoryFontSize.values.map((size) {
+                String name = '';
+                switch (size) {
+                  case CategoryFontSize.level1: name = 'XS'; break;
+                  case CategoryFontSize.level2: name = 'S'; break;
+                  case CategoryFontSize.level3: name = 'Normal'; break;
+                  case CategoryFontSize.level4: name = 'L'; break;
+                  case CategoryFontSize.level5: name = 'XL'; break;
+                }
+                return DropdownMenuItem(
+                  value: size,
+                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(categoryFontSizeProvider.notifier).setFontSize(val);
+                }
+              },
+            ),
+          ),
+        ),
+        const Divider(color: Colors.white10, height: 1),
+        ListTile(
+          leading: Icon(Icons.topic_rounded, color: currentColor),
+          title: Text('Subject Card Font Size', style: titleStyle),
+          subtitle: Text('Adjust font size of subject card titles', style: subtitleStyle),
+          trailing: DropdownButtonHideUnderline(
+            child: DropdownButton<TopicFontSize>(
+              value: currentTopicSize,
+              dropdownColor: const Color(0xFF18181B),
+              alignment: Alignment.centerRight,
+              items: TopicFontSize.values.map((size) {
+                String name = '';
+                switch (size) {
+                  case TopicFontSize.level1: name = 'XS'; break;
+                  case TopicFontSize.level2: name = 'S'; break;
+                  case TopicFontSize.level3: name = 'Normal'; break;
+                  case TopicFontSize.level4: name = 'L'; break;
+                  case TopicFontSize.level5: name = 'XL'; break;
+                }
+                return DropdownMenuItem(
+                  value: size,
+                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(topicFontSizeProvider.notifier).setFontSize(val);
+                }
+              },
+            ),
+          ),
+        ),
+        const Divider(color: Colors.white10, height: 1),
+        ListTile(
+          leading: Icon(Icons.checklist_rounded, color: currentColor),
+          title: Text('Checklist Task Font Size', style: titleStyle),
+          subtitle: Text('Adjust font size of checklist task checkboxes', style: subtitleStyle),
+          trailing: DropdownButtonHideUnderline(
+            child: DropdownButton<TaskFontSize>(
+              value: currentTaskSize,
+              dropdownColor: const Color(0xFF18181B),
+              alignment: Alignment.centerRight,
+              items: TaskFontSize.values.map((size) {
+                String name = '';
+                switch (size) {
+                  case TaskFontSize.level1: name = 'XS'; break;
+                  case TaskFontSize.level2: name = 'S'; break;
+                  case TaskFontSize.level3: name = 'Normal'; break;
+                  case TaskFontSize.level4: name = 'L'; break;
+                  case TaskFontSize.level5: name = 'XL'; break;
+                }
+                return DropdownMenuItem(
+                  value: size,
+                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(taskFontSizeProvider.notifier).setFontSize(val);
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     );
 
     return Column(
@@ -660,7 +643,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
         const Divider(color: Colors.white10, height: 1),
         accentColorContent,
         const Divider(color: Colors.white10, height: 1),
-        fontSizeExpansionContent,
+        fontSizeDirectContent,
       ],
     );
   }

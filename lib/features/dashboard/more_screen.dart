@@ -11,29 +11,6 @@ import '../more/screens/contribute_screen.dart';
 import '../more/screens/customize_ui_screen.dart';
 import 'settings_screen.dart';
 
-enum IconBoxStyle {
-  subtleFillOutline, // Tinted fill + colored outline + colored icon (default)
-  noFillOutline,     // Transparent fill + colored outline + colored icon
-  darkFillNoOutline, // Dark 0xFF131316 background + no outline + colored icon
-  solidAccentFill,   // Full accent fill + dark 0xFF131316 icon inside
-  noBoxMinimal,      // No square box container, icon sits directly on left
-}
-
-class IconBoxStyleNotifier extends Notifier<IconBoxStyle> {
-  @override
-  IconBoxStyle build() => IconBoxStyle.darkFillNoOutline;
-
-  void cycleNext() {
-    final nextIndex = (state.index + 1) % IconBoxStyle.values.length;
-    state = IconBoxStyle.values[nextIndex];
-  }
-}
-
-final iconBoxStyleProvider =
-    NotifierProvider<IconBoxStyleNotifier, IconBoxStyle>(() {
-  return IconBoxStyleNotifier();
-});
-
 /// The "More" hub screen — replaces the old Settings tab.
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -105,7 +82,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
   Widget build(BuildContext context) {
     final accentColor = ref.watch(overallProgressColorProvider);
     final packageInfo = ref.watch(packageInfoProvider);
-    final currentStyle = ref.watch(iconBoxStyleProvider);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 900;
 
@@ -154,7 +130,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                           item: item,
                           accentColor: accentColor,
                           isDesktop: isDesktop,
-                          boxStyle: currentStyle,
                         ),
                       ),
                     );
@@ -494,13 +469,11 @@ class _MoreMenuItem extends StatefulWidget {
   final _MoreMenuItemData item;
   final Color accentColor;
   final bool isDesktop;
-  final IconBoxStyle boxStyle;
 
   const _MoreMenuItem({
     required this.item,
     required this.accentColor,
     required this.isDesktop,
-    required this.boxStyle,
   });
 
   @override
@@ -522,7 +495,7 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
       duration: const Duration(milliseconds: 140),
       reverseDuration: const Duration(milliseconds: 200),
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.97).animate(
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.98).animate(
       CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOutCubic),
     );
   }
@@ -539,16 +512,17 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
     final isDesktop = widget.isDesktop;
     final isDisabled = item.comingSoon;
 
-    final cardSize = isDesktop ? 64.0 : context.s(58.0);
-    final iconSize = isDesktop ? 30.0 : context.s(28.0);
-    final borderRadius = BorderRadius.circular(isDesktop ? 12 : context.s(10));
+    final cardHeight = isDesktop ? 64.0 : context.s(60.0);
+    final iconBoxSize = isDesktop ? 44.0 : context.s(42.0);
+    final iconSize = isDesktop ? 22.0 : context.s(20.0);
+    final borderRadius = BorderRadius.circular(isDesktop ? 14 : context.s(14));
 
     return Padding(
-      padding: EdgeInsets.only(bottom: isDesktop ? 9 : context.s(8)),
+      padding: EdgeInsets.only(bottom: isDesktop ? 10 : context.s(8)),
       child: AnimatedBuilder(
         animation: _pressCtrl,
         builder: (context, child) {
-          final glowOpacity = _pressCtrl.value * 0.28;
+          final glowOpacity = _pressCtrl.value * 0.25;
           return Transform.scale(
             scale: _scaleAnim.value,
             child: GestureDetector(
@@ -571,102 +545,109 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
                       setState(() => _pressed = false);
                       _pressCtrl.reverse();
                     },
-              child: SizedBox(
-                height: cardSize,
+              child: Container(
+                height: cardHeight,
+                decoration: BoxDecoration(
+                  color: isDisabled
+                      ? const Color(0xFF131316)
+                      : const Color(0xFF16161B),
+                  borderRadius: borderRadius,
+                  border: Border.all(
+                    color: _pressed
+                        ? item.color.withValues(alpha: 0.45)
+                        : Colors.white.withValues(alpha: 0.06),
+                    width: 1.0,
+                  ),
+                  boxShadow: [
+                    if (_pressed)
+                      BoxShadow(
+                        color: item.color.withValues(alpha: glowOpacity),
+                        blurRadius: 18,
+                        spreadRadius: 1,
+                      ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? 14 : context.s(12),
+                  vertical: isDesktop ? 8 : context.s(8),
+                ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Icon Container Box (Styled according to boxStyle selection)
-                    _buildIconBox(cardSize, iconSize, borderRadius, isDisabled,
-                        glowOpacity),
-                    SizedBox(width: isDesktop ? 12 : context.s(10)),
-                    // Content Rectangle Card (No colored border outline, clean dark fill)
-                    Expanded(
-                      child: Container(
-                        height: cardSize,
-                        decoration: BoxDecoration(
-                          color: isDisabled
-                              ? const Color(0xFF131316)
-                              : const Color(0xFF1B1B22),
-                          borderRadius: borderRadius,
-                          border: Border.all(
-                            color: _pressed
-                                ? item.color.withValues(alpha: 0.5)
-                                : Colors.white.withValues(alpha: 0.05),
-                            width: 1.0,
-                          ),
-                          boxShadow: [
-                            if (_pressed)
-                              BoxShadow(
-                                color: item.color.withValues(alpha: glowOpacity),
-                                blurRadius: 20,
-                                spreadRadius: 1,
-                              ),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isDesktop ? 14 : context.s(12),
-                          vertical: isDesktop ? 4 : context.s(3),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          item.label,
-                                          style: GoogleFonts.outfit(
-                                            color: isDisabled
-                                                ? Colors.white.withValues(alpha: 0.4)
-                                                : Colors.white,
-                                            fontSize: isDesktop
-                                                ? 14
-                                                : context.s(13.5),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      if (item.comingSoon) ...[
-                                        SizedBox(width: context.s(7)),
-                                        _ComingSoonBadge(
-                                          color: item.color,
-                                          isDesktop: isDesktop,
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                  const SizedBox(height: 1),
-                                  Text(
-                                    item.subtitle,
-                                    style: GoogleFonts.outfit(
-                                      color: Colors.white.withValues(
-                                          alpha: isDisabled ? 0.25 : 0.45),
-                                      fontSize: isDesktop ? 11 : context.s(10.5),
-                                      height: 1.2,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: isDesktop ? 8 : context.s(6)),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: isDisabled
-                                  ? Colors.white.withValues(alpha: 0.12)
-                                  : Colors.white.withValues(alpha: 0.35),
-                              size: isDesktop ? 16 : context.s(14),
-                            ),
-                          ],
+                    // Integrated icon badge container on the left
+                    Container(
+                      width: iconBoxSize,
+                      height: iconBoxSize,
+                      decoration: BoxDecoration(
+                        color: item.color.withValues(alpha: isDisabled ? 0.08 : 0.14),
+                        borderRadius: BorderRadius.circular(isDesktop ? 11 : context.s(10)),
+                        border: Border.all(
+                          color: item.color.withValues(alpha: isDisabled ? 0.15 : 0.28),
+                          width: 1.0,
                         ),
                       ),
+                      child: Center(
+                        child: Icon(
+                          item.icon,
+                          color: isDisabled
+                              ? item.color.withValues(alpha: 0.45)
+                              : item.color,
+                          size: iconSize,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: isDesktop ? 14 : context.s(12)),
+                    // Label and Subtitle text block
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  item.label,
+                                  style: GoogleFonts.outfit(
+                                    color: isDisabled
+                                        ? Colors.white.withValues(alpha: 0.4)
+                                        : Colors.white,
+                                    fontSize: isDesktop ? 14 : context.s(13.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              if (item.comingSoon) ...[
+                                SizedBox(width: context.s(7)),
+                                _ComingSoonBadge(
+                                  color: item.color,
+                                  isDesktop: isDesktop,
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            item.subtitle,
+                            style: GoogleFonts.outfit(
+                              color: Colors.white.withValues(
+                                  alpha: isDisabled ? 0.25 : 0.45),
+                              fontSize: isDesktop ? 11 : context.s(10.5),
+                              height: 1.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: isDesktop ? 8 : context.s(6)),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: isDisabled
+                          ? Colors.white.withValues(alpha: 0.12)
+                          : Colors.white.withValues(alpha: 0.35),
+                      size: isDesktop ? 20 : context.s(18),
                     ),
                   ],
                 ),
@@ -676,155 +657,6 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
         },
       ),
     );
-  }
-
-  Widget _buildIconBox(double cardSize, double iconSize,
-      BorderRadius borderRadius, bool isDisabled, double glowOpacity) {
-    final item = widget.item;
-
-    switch (widget.boxStyle) {
-      case IconBoxStyle.subtleFillOutline:
-        // Style 1: Tinted fill + colored outline + colored icon
-        return Container(
-          width: cardSize,
-          height: cardSize,
-          decoration: BoxDecoration(
-            color: isDisabled
-                ? item.color.withValues(alpha: 0.12)
-                : item.color.withValues(alpha: 0.22),
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: _pressed
-                  ? item.color
-                  : item.color.withValues(alpha: isDisabled ? 0.20 : 0.45),
-              width: 1.2,
-            ),
-            boxShadow: [
-              if (_pressed)
-                BoxShadow(
-                  color: item.color.withValues(alpha: glowOpacity),
-                  blurRadius: 16,
-                  spreadRadius: 1,
-                ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              item.icon,
-              color: isDisabled
-                  ? item.color.withValues(alpha: 0.45)
-                  : item.color,
-              size: iconSize,
-            ),
-          ),
-        );
-
-      case IconBoxStyle.noFillOutline:
-        // Style 2: Transparent fill + colored outline + colored icon
-        return Container(
-          width: cardSize,
-          height: cardSize,
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: _pressed
-                  ? item.color
-                  : item.color.withValues(alpha: isDisabled ? 0.20 : 0.55),
-              width: 1.5,
-            ),
-            boxShadow: [
-              if (_pressed)
-                BoxShadow(
-                  color: item.color.withValues(alpha: glowOpacity),
-                  blurRadius: 16,
-                  spreadRadius: 1,
-                ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              item.icon,
-              color: isDisabled
-                  ? item.color.withValues(alpha: 0.45)
-                  : item.color,
-              size: iconSize,
-            ),
-          ),
-        );
-
-      case IconBoxStyle.darkFillNoOutline:
-        // Style 3: Dark 0xFF131316 fill + no outline + colored icon
-        return Container(
-          width: cardSize,
-          height: cardSize,
-          decoration: BoxDecoration(
-            color: const Color(0xFF131316),
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: _pressed
-                  ? item.color.withValues(alpha: 0.4)
-                  : Colors.white.withValues(alpha: 0.05),
-              width: 1.0,
-            ),
-          ),
-          child: Center(
-            child: Icon(
-              item.icon,
-              color: isDisabled
-                  ? item.color.withValues(alpha: 0.45)
-                  : item.color,
-              size: iconSize,
-            ),
-          ),
-        );
-
-      case IconBoxStyle.solidAccentFill:
-        // Style 4: Solid accent fill + dark icon inside
-        final fillColor =
-            isDisabled ? item.color.withValues(alpha: 0.35) : item.color;
-        final iconColor =
-            isDisabled ? Colors.white38 : const Color(0xFF131316);
-        return Container(
-          width: cardSize,
-          height: cardSize,
-          decoration: BoxDecoration(
-            color: fillColor,
-            borderRadius: borderRadius,
-            boxShadow: [
-              if (_pressed)
-                BoxShadow(
-                  color: item.color.withValues(alpha: glowOpacity * 1.5),
-                  blurRadius: 18,
-                  spreadRadius: 1,
-                ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              item.icon,
-              color: iconColor,
-              size: iconSize,
-            ),
-          ),
-        );
-
-      case IconBoxStyle.noBoxMinimal:
-        // Style 5: No square box container at all, icon directly on left
-        return SizedBox(
-          width: cardSize * 0.75,
-          height: cardSize,
-          child: Center(
-            child: Icon(
-              item.icon,
-              color: isDisabled
-                  ? item.color.withValues(alpha: 0.45)
-                  : item.color,
-              size: iconSize * 1.15,
-            ),
-          ),
-        );
-    }
   }
 }
 
