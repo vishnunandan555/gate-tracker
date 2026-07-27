@@ -595,9 +595,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
-                  onPressed: () async {
-                    await ref.read(authProvider.notifier).signOut();
-                  },
+                  onPressed: () => showSignOutConfirmationDialog(context, ref),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.white24),
                     foregroundColor: Colors.white70,
@@ -765,9 +763,9 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                         if (e.code == 'requires-recent-login' && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Please sign out and sign in again to verify your identity before deleting your account.'),
+                              content: Text('For security, please sign out and sign back in — then try deleting your account again.'),
                               backgroundColor: Colors.redAccent,
-                              duration: Duration(seconds: 5),
+                              duration: Duration(seconds: 6),
                             ),
                           );
                         } else if (context.mounted) {
@@ -821,6 +819,130 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
       error: (err, _) => Text(
         'Auth Error: $err',
         style: const TextStyle(color: Colors.redAccent),
+      ),
+    );
+  }
+}
+
+Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) async {
+  final choice = await showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: const Color(0xFF18181B),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: Text(
+        'Sign Out',
+        style: GoogleFonts.outfit(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'How would you like to handle your local study progress on this device when signing out?',
+              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: () => Navigator.pop(ctx, 'keepLocal'),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white10),
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withAlpha(5),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.smartphone_rounded, color: Colors.cyanAccent, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Keep Local Progress (Offline Mode)',
+                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Preserve study data on device and switch to Offline Mode',
+                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: () => Navigator.pop(ctx, 'wipeData'),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.redAccent.withValues(alpha: 0.2)),
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.redAccent.withValues(alpha: 0.05),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Reset & Wipe Local Data',
+                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Sign out and permanently erase all local study progress',
+                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
+        ),
+      ],
+    ),
+  );
+
+  if (choice == null || !context.mounted) return;
+
+  final keepLocal = choice == 'keepLocal';
+  await ref.read(authProvider.notifier).signOut(keepLocalData: keepLocal);
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          keepLocal
+              ? '✓ Signed out. Switched to Offline Mode (local data preserved).'
+              : '✓ Signed out and local study data reset.',
+        ),
+        backgroundColor: Colors.green,
       ),
     );
   }

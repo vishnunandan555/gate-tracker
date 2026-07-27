@@ -248,10 +248,10 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
               selectedMethod: recoveredMethod,
               sessionStartTime: start,
               totalSecondsFocused: elapsed.clamp(0, 86400),
-              elapsedSeconds: elapsed.clamp(0, 86400),
+              elapsedSeconds: 0, // Interval counter — reset to 0 so timer display starts fresh on resume
             );
-            _previousTotalSecondsFocused = elapsed;
-            _previousSegmentSeconds = elapsed;
+            _previousTotalSecondsFocused = elapsed; // Total focused time is recovered
+            _previousSegmentSeconds = 0; // No segment was in progress — starts fresh on resume
           }
         }
       }

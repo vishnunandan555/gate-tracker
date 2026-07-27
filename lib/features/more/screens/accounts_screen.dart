@@ -131,9 +131,7 @@ class AccountsScreen extends ConsumerWidget {
               ),
             ] else ...[
               OutlinedButton.icon(
-                onPressed: () async {
-                  await ref.read(authProvider.notifier).signOut();
-                },
+                onPressed: () => showSignOutConfirmationDialog(context, ref),
                 icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
                 label: Text(
                   'Sign Out',

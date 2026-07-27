@@ -953,21 +953,35 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         return false;
       }
 
+      // Use the same composite key (name_color) as mergeData for consistency
+      String catCompositeKey(Map<String, dynamic> c) => "${c['name']}_${_parseInt(c['color']) ?? 0}";
+
       final localCatsMap = <String, Map<String, dynamic>>{
-        for (var c in localSylCats) c['name'] as String: Map<String, dynamic>.from(c)
+        for (var c in localSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
+      };
+      final cloudCatsMap = <String, Map<String, dynamic>>{
+        for (var c in cloudSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
       };
 
+      // Check cloud → local
       for (final cc in cloudSylCats) {
-        final catName = cc['name'] as String;
-        final lc = localCatsMap[catName];
+        final key = catCompositeKey(Map<String, dynamic>.from(cc));
+        final lc = localCatsMap[key];
         if (lc == null) {
-          debugPrint("Sync diff: cloud syllabus category not found in local ($catName)");
+          debugPrint("Sync diff: cloud syllabus category not found in local ($key)");
           return false;
         }
         if ((lc['isDeleted'] ?? false) != (cc['isDeleted'] ?? false) ||
-            _parseInt(lc['color']) != _parseInt(cc['color']) ||
             _parseInt(lc['position']) != _parseInt(cc['position'])) {
-          debugPrint("Sync diff: syllabus category mismatch ($catName) isDeleted: ${lc['isDeleted']} vs ${cc['isDeleted']}, color: ${lc['color']} vs ${cc['color']}, position: ${lc['position']} vs ${cc['position']}");
+          debugPrint("Sync diff: syllabus category mismatch ($key) isDeleted: ${lc['isDeleted']} vs ${cc['isDeleted']}, position: ${lc['position']} vs ${cc['position']}");
+          return false;
+        }
+      }
+      // Check local → cloud (catches local-only items)
+      for (final lc in localSylCats) {
+        final key = catCompositeKey(Map<String, dynamic>.from(lc));
+        if (!cloudCatsMap.containsKey(key)) {
+          debugPrint("Sync diff: local syllabus category not found in cloud ($key)");
           return false;
         }
       }
@@ -985,14 +999,19 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
       final localTopicMap = <String, Map<String, dynamic>>{};
       for (var t in localSylTops) {
-        final catName = localCatIdToNameMap[_parseInt(t['categoryId'])] ?? 'Unknown';
-        final key = "$catName/${t['name']}";
+        final catId = _parseInt(t['categoryId']);
+        final catName = localCatIdToNameMap[catId] ?? 'Unknown';
+        final catColor = _parseInt(localCatsMap.values
+            .firstWhere((c) => c['name'] == catName, orElse: () => {})['color']) ?? 0;
+        final key = "${catName}_$catColor/${t['name']}";
         localTopicMap[key] = Map<String, dynamic>.from(t);
       }
 
       for (final ct in cloudSylTops) {
         final catName = cloudCatIdToNameMap[_parseInt(ct['categoryId'])] ?? 'Unknown';
-        final key = "$catName/${ct['name']}";
+        final catColor = _parseInt(cloudCatsMap.values
+            .firstWhere((c) => c['name'] == catName, orElse: () => {})['color']) ?? 0;
+        final key = "${catName}_$catColor/${ct['name']}";
         final lt = localTopicMap[key];
         if (lt == null) {
           debugPrint("Sync diff: cloud syllabus topic not found in local ($key)");

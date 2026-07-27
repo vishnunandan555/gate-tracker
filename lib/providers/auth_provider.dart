@@ -194,7 +194,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   }
 
   // Handle Sign-Out
-  Future<void> signOut() async {
+  Future<void> signOut({bool keepLocalData = false}) async {
     state = const AsyncValue.loading();
     try {
       if (isFirebaseSupported()) {
@@ -203,8 +203,12 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         }
         await FirebaseAuth.instance.signOut();
       }
-      await _prefs.setBool('has_chosen_offline', false);
-      await _wipeLocalUserData();
+      if (keepLocalData) {
+        await _prefs.setBool('has_chosen_offline', true);
+      } else {
+        await _prefs.setBool('has_chosen_offline', false);
+        await _wipeLocalUserData();
+      }
       try {
         await ref.read(syncProvider.notifier).clearSyncState();
       } catch (e) {
@@ -212,7 +216,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       }
       state = AsyncValue.data(AuthState(
         user: null,
-        isOfflineMode: false,
+        isOfflineMode: keepLocalData,
         isLoading: false,
       ));
     } catch (e, stack) {
