@@ -12,6 +12,7 @@ final overallProgressColorProvider = NotifierProvider<OverallProgressColorNotifi
 class OverallProgressColorNotifier extends Notifier<Color> {
   String _mode = 'auto'; // 'auto' or 'frozen'
   Color? _frozenColor;
+  Color? _autoColor;
 
   String get mode => _mode;
   Color? get frozenColor => _frozenColor;
@@ -30,7 +31,8 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     if (_mode == 'frozen' && _frozenColor != null) {
       return _frozenColor!;
     }
-    return AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+    _autoColor ??= AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+    return _autoColor!;
   }
 
   Future<void> setAutoMode() async {
@@ -53,13 +55,15 @@ class OverallProgressColorNotifier extends Notifier<Color> {
 
   void randomize() {
     if (_mode == 'frozen') return;
-    state = AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+    _autoColor = AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+    state = _autoColor!;
   }
 
   void next() {
     if (_mode == 'frozen') return;
     final currentIdx = AppColors.neonCycle.indexOf(state);
     final nextIdx = (currentIdx + 1) % AppColors.neonCycle.length;
-    state = AppColors.neonCycle[nextIdx];
+    _autoColor = AppColors.neonCycle[nextIdx];
+    state = _autoColor!;
   }
 }

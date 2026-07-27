@@ -99,6 +99,23 @@ class BackupService {
 
   // Restore database tables from a serialized Map payload
   static Future<void> restoreDatabase(AppDatabase db, Map<String, dynamic> payload) async {
+    final version = (payload['version'] as num?)?.toInt() ?? 1;
+    // Version migration shim — normalize old payloads before restore
+    if (version < 9) {
+      payload.putIfAbsent('syllabusProgressLogs', () => <dynamic>[]);
+    }
+    if (version < 11) {
+      final topics = payload['syllabusTopics'] as List<dynamic>? ?? [];
+      for (final t in topics) {
+        if (t is Map<String, dynamic>) {
+          t.putIfAbsent('isCounter', () => false);
+          t.putIfAbsent('currentCount', () => 0);
+          t.putIfAbsent('maxCount', () => 0);
+          t.putIfAbsent('resourceUrl', () => null);
+        }
+      }
+    }
+
     final syllabusCategoriesData = payload['syllabusCategories'] as List<dynamic>?;
     final syllabusTopicsData = payload['syllabusTopics'] as List<dynamic>?;
     final syllabusTasksData = payload['syllabusTasks'] as List<dynamic>?;

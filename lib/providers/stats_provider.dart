@@ -21,8 +21,8 @@ class CategoryStudyTime {
 
 final progressLogsProvider = StreamProvider<List<SyllabusProgressLog>>((ref) {
   final db = ref.watch(appDatabaseProvider);
-  // Watch all active logs reactively
-  return db.watchProgressLogsForPeriod(DateTime(2020, 1, 1), DateTime(2030, 12, 31));
+  // Watch all active progress logs reactively without hardcoded date boundaries
+  return db.watchAllProgressLogs();
 });
 
 

@@ -257,76 +257,80 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     final localSylTsks = List<Map<String, dynamic>>.from(local['syllabusTasks'] ?? []);
     final cloudSylTsks = List<Map<String, dynamic>>.from(cloud['syllabusTasks'] ?? []);
 
-    // Merge Syllabus Categories by name
+    // Merge Syllabus Categories by composite key (name + color)
     final mergedSylCats = <String, Map<String, dynamic>>{};
     for (final c in [...localSylCats, ...cloudSylCats]) {
       final name = c['name'] as String;
-      if (!mergedSylCats.containsKey(name)) {
-        mergedSylCats[name] = Map<String, dynamic>.from(c);
+      final color = _parseInt(c['color']) ?? 0;
+      final key = "${name}_$color";
+      if (!mergedSylCats.containsKey(key)) {
+        mergedSylCats[key] = Map<String, dynamic>.from(c);
       } else {
-        final existing = mergedSylCats[name]!;
-        mergedSylCats[name] = _resolveConflict(existing, c);
+        final existing = mergedSylCats[key]!;
+        mergedSylCats[key] = _resolveConflict(existing, c);
       }
     }
 
-    // Build Maps for Topic resolution (old categoryId mapped to Category name)
-    String getSylCatName(dynamic catId, List<Map<String, dynamic>> catsList) {
+    // Helper: get Category Key for a category ID
+    String getSylCatKey(dynamic catId, List<Map<String, dynamic>> catsList) {
       final targetId = _parseInt(catId);
-      if (targetId == null) return 'General';
+      if (targetId == null) return 'General_0';
       final match = catsList.firstWhere(
         (c) => _parseInt(c['id']) == targetId,
         orElse: () => {},
       );
-      return match['name'] as String? ?? 'General';
+      final name = match['name'] as String? ?? 'General';
+      final color = _parseInt(match['color']) ?? 0;
+      return "${name}_$color";
     }
 
-    // Merge Syllabus Topics by Category Name & Topic Name
+    // Merge Syllabus Topics by Category Key & Topic Name
     final mergedSylTops = <String, Map<String, dynamic>>{};
     for (final t in localSylTops) {
-      final catName = t.containsKey('categoryName')
-          ? t['categoryName'] as String
-          : getSylCatName(t['categoryId'], localSylCats);
-      final key = "${catName}_${t['name']}";
+      final catKey = t.containsKey('categoryKey')
+          ? t['categoryKey'] as String
+          : getSylCatKey(t['categoryId'], localSylCats);
+      final key = "${catKey}_${t['name']}";
       mergedSylTops[key] = {
         ...t,
-        'categoryName': catName,
+        'categoryKey': catKey,
       };
     }
     for (final t in cloudSylTops) {
-      final catName = t.containsKey('categoryName')
-          ? t['categoryName'] as String
-          : getSylCatName(t['categoryId'], cloudSylCats);
-      final key = "${catName}_${t['name']}";
+      final catKey = t.containsKey('categoryKey')
+          ? t['categoryKey'] as String
+          : getSylCatKey(t['categoryId'], cloudSylCats);
+      final key = "${catKey}_${t['name']}";
       if (!mergedSylTops.containsKey(key)) {
         mergedSylTops[key] = {
           ...t,
-          'categoryName': catName,
+          'categoryKey': catKey,
         };
       } else {
         final existing = mergedSylTops[key]!;
         final resolved = _resolveConflict(existing, t);
         mergedSylTops[key] = {
           ...resolved,
-          'categoryName': catName,
+          'categoryKey': catKey,
         };
       }
     }
 
-    // Helper to find Topic Name
+    // Helper to find Topic Key for a task
     String getTopicKeyForSource(dynamic topicId, List<Map<String, dynamic>> topsList, List<Map<String, dynamic>> catsList) {
       final targetId = _parseInt(topicId);
-      if (targetId == null) return 'General_Unknown';
+      if (targetId == null) return 'General_0_Unknown';
       final match = topsList.firstWhere(
         (t) => _parseInt(t['id']) == targetId,
         orElse: () => {},
       );
       final name = match['name'] as String? ?? 'Unknown';
       final catId = match['categoryId'];
-      final catName = getSylCatName(catId, catsList);
-      return "${catName}_$name";
+      final catKey = getSylCatKey(catId, catsList);
+      return "${catKey}_$name";
     }
 
-    // Merge Syllabus Tasks by Topic name & Task name
+    // Merge Syllabus Tasks by Topic key & Task name
     final mergedSylTsks = <String, Map<String, dynamic>>{};
     for (final k in localSylTsks) {
       final topicKey = k.containsKey('topicKey')
@@ -364,13 +368,13 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     final finalSylTsks = <Map<String, dynamic>>[];
 
     int catCounter = 1;
-    final catNameToId = <String, int>{};
-    mergedSylCats.forEach((name, c) {
+    final catKeyToId = <String, int>{};
+    mergedSylCats.forEach((key, c) {
       final id = catCounter++;
-      catNameToId[name] = id;
+      catKeyToId[key] = id;
       finalSylCats.add({
         'id': id,
-        'name': name,
+        'name': c['name'] as String,
         'position': _parseInt(c['position']),
         'color': _parseInt(c['color']),
         'lastInteractedAt': c['lastInteractedAt'],
@@ -383,8 +387,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     mergedSylTops.forEach((key, t) {
       final id = topCounter++;
       topKeyToId[key] = id;
-      final catName = t['categoryName'];
-      final catId = catNameToId[catName] ?? 1;
+      final catKey = t['categoryKey'];
+      final catId = catKeyToId[catKey] ?? 1;
       finalSylTops.add({
         'id': id,
         'categoryId': catId,
@@ -501,8 +505,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     String getTaskKeyForLog(dynamic taskId, dynamic topicId, List<Map<String, dynamic>> tsksList, List<Map<String, dynamic>> topsList, List<Map<String, dynamic>> catsList) {
       final targetTaskId = _parseInt(taskId);
       final targetTopicId = _parseInt(topicId);
-      
-      String catName = 'General';
+
+      String catKey = 'General_0';
       String topicName = 'Unknown';
       if (targetTopicId != null) {
         final match = topsList.firstWhere(
@@ -511,16 +515,16 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         );
         topicName = match['name'] as String? ?? 'Unknown';
         final catId = match['categoryId'];
-        catName = getSylCatName(catId, catsList);
+        catKey = getSylCatKey(catId, catsList);
       }
-      
-      if (targetTaskId == null) return "$catName:::$topicName:::none";
+
+      if (targetTaskId == null) return "$catKey:::$topicName:::none";
       final match = tsksList.firstWhere(
         (k) => _parseInt(k['id']) == targetTaskId,
         orElse: () => {},
       );
       final name = match['name'] as String? ?? 'Unknown';
-      return "$catName:::$topicName:::$name";
+      return "$catKey:::$topicName:::$name";
     }
 
     for (final l in localLogs) {
@@ -550,14 +554,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     mergedLogs.forEach((key, l) {
       final id = logCounter++;
       final taskKey = l['taskKey'] as String;
-      
+
       final parts = taskKey.split(':::');
-      final catName = parts[0];
+      final catKey = parts[0];
       final topicName = parts[1];
       final taskName = parts[2];
 
-      final topicKey = "${catName}_$topicName";
-      final catId = catNameToId[catName] ?? 1;
+      final topicKey = "${catKey}_$topicName";
+      final catId = catKeyToId[catKey] ?? 1;
       final topicId = topKeyToId[topicKey] ?? 1;
       final taskId = taskName == 'none' ? null : (taskKeyToId["${topicKey}_$taskName"]);
 

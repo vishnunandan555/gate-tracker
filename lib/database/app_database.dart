@@ -177,6 +177,9 @@ class AppDatabase extends _$AppDatabase {
               await m.database.customStatement('ALTER TABLE focus_sessions ADD COLUMN category_id INTEGER REFERENCES syllabus_categories(id) ON DELETE SET NULL;');
             } catch (_) {}
           }
+          if (from < 8) {
+            // v8 was intentionally skipped / internal build. No schema changes.
+          }
           if (from < 9) {
             try {
               await m.createTable(customTasks);
@@ -752,6 +755,12 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<SyllabusProgressLog>> watchProgressLogsForPeriod(DateTime start, DateTime end) {
     return (select(syllabusProgressLogs)
           ..where((l) => l.isDeleted.equals(false) & l.timestamp.isBetweenValues(start, end)))
+        .watch();
+  }
+
+  Stream<List<SyllabusProgressLog>> watchAllProgressLogs() {
+    return (select(syllabusProgressLogs)
+          ..where((l) => l.isDeleted.equals(false)))
         .watch();
   }
 

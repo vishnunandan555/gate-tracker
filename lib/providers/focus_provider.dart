@@ -214,6 +214,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
       _timer?.cancel();
     });
     _loadSelection();
+    _recoverInterruptedSession();
 
     // Listen to changes in the syllabus provider to update accomplishments dynamically in-memory
     ref.listen<AsyncValue<List<SyllabusCategoryWithTopics>>>(syllabusProvider, (prev, next) {
@@ -223,6 +224,46 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     });
 
     return FocusSessionState.initial();
+  }
+
+  Future<void> _recoverInterruptedSession() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final recoveryStart = prefs.getString('focus_session_recovery_start');
+      final recoveryMethodStr = prefs.getString('focus_session_recovery_method');
+      if (recoveryStart != null && state.status == FocusStatus.idle) {
+        final start = DateTime.tryParse(recoveryStart);
+        if (start != null) {
+          final elapsed = DateTime.now().difference(start).inSeconds;
+          if (elapsed > 0 && elapsed < 86400) {
+            FocusMethod recoveredMethod = state.selectedMethod;
+            if (recoveryMethodStr != null) {
+              recoveredMethod = FocusMethod.values.firstWhere(
+                (m) => m.name == recoveryMethodStr,
+                orElse: () => state.selectedMethod,
+              );
+            }
+            state = state.copyWith(
+              status: FocusStatus.paused,
+              selectedMethod: recoveredMethod,
+              sessionStartTime: start,
+              totalSecondsFocused: elapsed.clamp(0, 86400),
+              elapsedSeconds: elapsed.clamp(0, 86400),
+            );
+            _previousTotalSecondsFocused = elapsed;
+            _previousSegmentSeconds = elapsed;
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _clearSessionRecovery() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('focus_session_recovery_start');
+      await prefs.remove('focus_session_recovery_method');
+    } catch (_) {}
   }
 
   Future<void> _loadSelection() async {
@@ -268,6 +309,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     _segmentStartTime = null;
     _previousSegmentSeconds = 0;
     _previousTotalSecondsFocused = 0;
+    _clearSessionRecovery();
     state = FocusSessionState.initial();
   }
 
@@ -276,6 +318,12 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
     final db = ref.read(appDatabaseProvider);
     final startTime = DateTime.now();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('focus_session_recovery_start', startTime.toIso8601String());
+      await prefs.setString('focus_session_recovery_method', state.selectedMethod.name);
+    } catch (_) {}
 
     // Capture initial snapshots for accomplishments comparison
     final initialCompletedTaskIds = <int>{};
@@ -501,6 +549,8 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
     final prevMethod = state.selectedMethod;
     final prevCustomMins = state.customTimerMinutes;
+
+    await _clearSessionRecovery();
 
     state = FocusSessionState.initial().copyWith(
       selectedMethod: prevMethod,
