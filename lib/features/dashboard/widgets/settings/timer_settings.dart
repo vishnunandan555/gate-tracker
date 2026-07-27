@@ -110,7 +110,7 @@ class TimerSettingsSection extends ConsumerWidget {
           secondary: Icon(Icons.sort_rounded, color: accentColor),
           title: Text('Auto-Sort Categories', style: titleStyle),
           subtitle: Text(
-            'Move recently studied categories to the top automatically',
+            'Move active categories to top automatically',
             style: subtitleStyle,
           ),
           value: autoSort,
@@ -123,7 +123,7 @@ class TimerSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.track_changes_rounded, color: accentColor),
           title: Text('Daily Study Goal', style: titleStyle),
           subtitle: Text(
-            'Daily targeted countdown goal. Default is 2 hours.',
+            'Daily targeted countdown goal (default 2h)',
             style: subtitleStyle,
           ),
           trailing: Text(
@@ -137,7 +137,7 @@ class TimerSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.task_alt_rounded, color: accentColor),
           title: Text('Daily Check-in Goal', style: titleStyle),
           subtitle: Text(
-            'Minimum focused study duration required to mark check-in streak.',
+            'Minimum study duration to mark check-in streak',
             style: subtitleStyle,
           ),
           trailing: Text(
@@ -151,7 +151,7 @@ class TimerSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.alarm_rounded, color: accentColor),
           title: Text('Overnight Rollover Hour', style: titleStyle),
           subtitle: Text(
-            'Hour of the day (0-23) when tracking transitions to the next day. Enables post-midnight study tracking.',
+            'Daily cut-off hour (0-23) for post-midnight tracking',
             style: subtitleStyle,
           ),
           trailing: Text(

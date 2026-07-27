@@ -325,33 +325,51 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
   }
 }
 
-class _Badge extends StatelessWidget {
+class _Badge extends StatefulWidget {
   final String label;
   const _Badge({required this.label});
 
   @override
+  State<_Badge> createState() => _BadgeState();
+}
+
+class _BadgeState extends State<_Badge> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.outfit(
-          color: Colors.white54,
-          fontWeight: FontWeight.w600,
-          fontSize: 11,
-          letterSpacing: 0.4,
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: () {},
+      child: AnimatedScale(
+        scale: _isPressed ? 0.92 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+          ),
+          child: Text(
+            widget.label,
+            style: GoogleFonts.outfit(
+              color: Colors.white54,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              letterSpacing: 0.4,
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class _LinkButton extends StatelessWidget {
+class _LinkButton extends StatefulWidget {
   final String label;
   final String url;
   final IconData? icon;
@@ -365,38 +383,59 @@ class _LinkButton extends StatelessWidget {
   });
 
   @override
+  State<_LinkButton> createState() => _LinkButtonState();
+}
+
+class _LinkButtonState extends State<_LinkButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        decoration: BoxDecoration(
-          color: const Color(0xFF131316),
+    return AnimatedScale(
+      scale: _isPressed ? 0.94 : 1.0,
+      duration: const Duration(milliseconds: 120),
+      curve: Curves.easeOutCubic,
+      child: Material(
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (assetIcon != null)
-              Image.asset(assetIcon!, width: 20, height: 20, color: Colors.white70)
-            else
-              Icon(icon, size: 20, color: Colors.white70),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: GoogleFonts.outfit(
-                color: Colors.white70,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
+          splashColor: Colors.white.withValues(alpha: 0.08),
+          highlightColor: Colors.white.withValues(alpha: 0.04),
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          onTap: () async {
+            final uri = Uri.parse(widget.url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.assetIcon != null)
+                  Image.asset(widget.assetIcon!, width: 20, height: 20, color: Colors.white70)
+                else
+                  Icon(widget.icon, size: 20, color: Colors.white70),
+                const SizedBox(height: 6),
+                Text(
+                  widget.label,
+                  style: GoogleFonts.outfit(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -450,28 +489,47 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _TextLink extends ConsumerWidget {
+class _TextLink extends ConsumerStatefulWidget {
   final String label;
   final String url;
   const _TextLink({required this.label, required this.url});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_TextLink> createState() => _TextLinkState();
+}
+
+class _TextLinkState extends ConsumerState<_TextLink> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
     final accentColor = ref.watch(overallProgressColorProvider);
     return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
       onTap: () async {
-        final uri = Uri.parse(url);
+        final uri = Uri.parse(widget.url);
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       },
-      child: Text(
-        label,
-        style: GoogleFonts.outfit(
-          color: accentColor,
-          fontSize: 12,
-          decoration: TextDecoration.underline,
-          decorationColor: accentColor.withValues(alpha: 0.5),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.92 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOutCubic,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 100),
+          opacity: _isPressed ? 0.6 : 1.0,
+          child: Text(
+            widget.label,
+            style: GoogleFonts.outfit(
+              color: accentColor,
+              fontSize: 12,
+              decoration: TextDecoration.underline,
+              decorationColor: accentColor.withValues(alpha: 0.5),
+            ),
+          ),
         ),
       ),
     );

@@ -248,30 +248,22 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
   Widget build(BuildContext context) {
     if (!isFirebaseSupported()) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(5),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withAlpha(8)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.info_outline_rounded, color: Colors.cyanAccent),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  "Cloud Sync is supported on Web & Android. To transfer data to/from this desktop app, please use the Local Backup & Restore tools below.",
-                  style: GoogleFonts.outfit(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.info_outline_rounded, color: Colors.cyanAccent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                "Cloud Sync is supported on Web & Android. To transfer data to/from this desktop app, please use the Local Backup & Restore tools below.",
+                style: GoogleFonts.outfit(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  height: 1.4,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
@@ -286,102 +278,87 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
 
         if (user == null || isOffline) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(5),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withAlpha(8)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.cloud_off_rounded, color: Colors.white60),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          "Offline Mode Enabled",
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.cloud_off_rounded, color: Colors.white60),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Offline Mode Enabled",
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Your progress is stored locally on this device. Sign in with Google to enable automatic cloud sync and backups.",
-                    style: GoogleFonts.outfit(
-                      color: Colors.white30,
-                      fontSize: 12,
-                      height: 1.4,
                     ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Your progress is stored locally on this device. Sign in with Google to enable automatic cloud sync and backups.",
+                  style: GoogleFonts.outfit(
+                    color: Colors.white30,
+                    fontSize: 12,
+                    height: 1.4,
                   ),
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: () async {
-                      try {
-                        await ref.read(authProvider.notifier).signInWithGoogle();
-                        final needsAction = await ref.read(syncProvider.notifier).initializeSync();
-                        if (needsAction && context.mounted) {
-                          _showSyncConflictDialog(context, ref);
-                        } else if (context.mounted) {
-                          final finalState = ref.read(syncProvider);
-                          if (finalState.status == SyncStatus.success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('✓ Signed in! Your local study progress is backed up to cloud.'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
+                ),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: () async {
+                    try {
+                      await ref.read(authProvider.notifier).signInWithGoogle();
+                      final needsAction = await ref.read(syncProvider.notifier).initializeSync();
+                      if (needsAction && context.mounted) {
+                        _showSyncConflictDialog(context, ref);
+                      } else if (context.mounted) {
+                        final finalState = ref.read(syncProvider);
+                        if (finalState.status == SyncStatus.success) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Google Sign-in failed: $e')),
+                            const SnackBar(
+                              content: Text('✓ Signed in! Your local study progress is backed up to cloud.'),
+                              backgroundColor: Colors.green,
+                            ),
                           );
                         }
                       }
-                    },
-                    style: FilledButton.styleFrom(
-                      backgroundColor: widget.accentColor,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    icon: const Icon(Icons.login_rounded, size: 18),
-                    label: Text(
-                      "SIGN IN WITH GOOGLE",
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Google Sign-in failed: $e')),
+                        );
+                      }
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: widget.accentColor,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  _buildDownloadBanner(context, ref, widget.accentColor),
-                ],
-              ),
+                  icon: const Icon(Icons.login_rounded, size: 18),
+                  label: Text(
+                    "SIGN IN WITH GOOGLE",
+                    style: GoogleFonts.outfit(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+                _buildDownloadBanner(context, ref, widget.accentColor),
+              ],
             ),
           );
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withAlpha(5),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withAlpha(8)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   children: [
@@ -788,8 +765,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 _buildDownloadBanner(context, ref, widget.accentColor),
               ],
             ),
-          ),
-        );
+          );
       },
       loading: () => Center(
         child: CircularProgressIndicator(color: widget.accentColor),

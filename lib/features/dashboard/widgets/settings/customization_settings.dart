@@ -503,7 +503,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           secondary: Icon(Icons.format_quote_rounded, color: currentColor),
           title: Text('Motivational Quotes', style: titleStyle),
           subtitle: Text(
-            'Display study motivation quotes during focus sessions (except Freestyle)',
+            'Show inspirational study quotes during focus timer',
             style: subtitleStyle,
           ),
           value: quotesEnabled,
@@ -516,7 +516,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.animation_rounded, color: currentColor),
           title: Text('Focus Loop Animation', style: titleStyle),
           subtitle: Text(
-            'Looping visual graphic shown during active focus countdowns',
+            'Looping graphic shown during active focus countdowns',
             style: subtitleStyle,
           ),
           trailing: DropdownButtonHideUnderline(
@@ -564,7 +564,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.smart_button_rounded, color: currentColor),
           title: Text('Resume Button Style', style: titleStyle),
           subtitle: Text(
-            'Configure preparation progress visual filling style on Home page',
+            'Preparation progress filling style on home dashboard',
             style: subtitleStyle,
           ),
           trailing: DropdownButtonHideUnderline(
@@ -606,7 +606,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           leading: Icon(Icons.font_download_rounded, color: currentColor),
           title: Text('Checklist Typography', style: titleStyle),
           subtitle: Text(
-            'Choose font style for progress headers and text statistics',
+            'Font style for progress headers and statistics',
             style: subtitleStyle,
           ),
           trailing: DropdownButtonHideUnderline(

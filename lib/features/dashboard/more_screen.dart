@@ -8,7 +8,7 @@ import '../../utils/ui_scaling.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
 import '../more/screens/contribute_screen.dart';
-import '../more/screens/customize_nav_bar_screen.dart';
+import '../more/screens/customize_ui_screen.dart';
 import 'settings_screen.dart';
 
 enum IconBoxStyle {
@@ -195,11 +195,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     return [
       _MoreMenuItemData(
         icon: Icons.tune_rounded,
-        label: 'Customize Nav Bar',
-        subtitle: 'Personalize navigation layout, tabs and scale',
+        label: 'Customize UI',
+        subtitle: 'Theme color, fonts, animations & navigation',
         color: const Color(0xFF00F0FF),
         comingSoon: false,
-        onTap: (ctx) => _pushPage(ctx, const CustomizeNavBarScreen()),
+        onTap: (ctx) => _pushPage(ctx, const CustomizeUiScreen()),
       ),
       _MoreMenuItemData(
         icon: Icons.manage_accounts_rounded,

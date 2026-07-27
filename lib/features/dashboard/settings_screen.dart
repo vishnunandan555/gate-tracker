@@ -11,11 +11,8 @@ import '../../providers/desktop_update_provider.dart';
 import '../../utils/ui_scaling.dart';
 
 // Modular settings widgets imports
-import 'widgets/settings/layout_settings.dart';
 import 'widgets/settings/danger_zone_settings.dart';
-import 'widgets/settings/customization_settings.dart';
 import 'widgets/settings/timer_settings.dart';
-import 'widgets/settings/advanced_beta_settings.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -61,40 +58,22 @@ class SettingsScreen extends ConsumerWidget {
             ? const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
             : EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(6)),
         decoration: BoxDecoration(
-          color: const Color(0xFF131316),
           borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),
           border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),
           child: Material(
-            color: Colors.transparent,
+            color: const Color(0xFF131316),
             child: child,
           ),
         ),
       );
     }
 
-    final uiSwitchHeader = buildHeader('LAYOUT');
-    final uiSwitchContent = buildSettingsGroup(
-      LayoutSettingsSection(
-        titleStyle: titleStyle,
-        subtitleStyle: subtitleStyle,
-      ),
-    );
-
     final appSettingsHeader = buildHeader('TIMER & SYLLABUS GOALS');
     final appSettingsContent = buildSettingsGroup(
       TimerSettingsSection(
-        titleStyle: titleStyle,
-        subtitleStyle: subtitleStyle,
-        accentColor: accentColor,
-      ),
-    );
-
-    final customizationSettingsHeader = buildHeader('CUSTOMIZATION');
-    final customizationSettingsContent = buildSettingsGroup(
-      CustomizationSettingsSection(
         titleStyle: titleStyle,
         subtitleStyle: subtitleStyle,
         accentColor: accentColor,
@@ -110,33 +89,18 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
 
-    final systemOptionsHeader = buildHeader('ADVANCED');
-    final systemOptionsContent = buildSettingsGroup(
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux)) ...[
+    final showSystemOptions = !kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux);
+
+    final systemOptionsHeader = showSystemOptions ? buildHeader('ADVANCED') : const SizedBox.shrink();
+    final systemOptionsContent = showSystemOptions
+        ? buildSettingsGroup(
             _DesktopUpdateSettingsTile(
               titleStyle: titleStyle,
               subtitleStyle: subtitleStyle,
               accentColor: accentColor,
             ),
-            const Divider(color: Colors.white10, height: 1),
-          ],
-          AdvancedSettingsSection(
-            titleStyle: titleStyle,
-            subtitleStyle: subtitleStyle,
-            accentColor: accentColor,
-          ),
-          const Divider(color: Colors.white10, height: 1),
-          BetaSettingsSection(
-            titleStyle: titleStyle,
-            subtitleStyle: subtitleStyle,
-            accentColor: accentColor,
-          ),
-        ],
-      ),
-    );
+          )
+        : const SizedBox.shrink();
 
     final versionText = Center(
       child: Text(
@@ -151,7 +115,11 @@ class SettingsScreen extends ConsumerWidget {
     return Theme(
       data: Theme.of(context).copyWith(
         listTileTheme: ListTileThemeData(
-          dense: true,
+          dense: false,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: isDesktop ? 16 : context.s(16),
+            vertical: isDesktop ? 2 : context.s(2),
+          ),
           titleTextStyle: GoogleFonts.outfit(
             color: Colors.white,
             fontSize: isDesktop ? 13.0 : context.s(13),
@@ -160,6 +128,7 @@ class SettingsScreen extends ConsumerWidget {
           subtitleTextStyle: GoogleFonts.outfit(
             color: Colors.white.withValues(alpha: 0.45),
             fontSize: isDesktop ? 11.5 : context.s(11),
+            height: 1.35,
           ),
         ),
       ),
@@ -185,22 +154,12 @@ class SettingsScreen extends ConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
+                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                if ((kIsWeb || defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) &&
-                                    defaultTargetPlatform != TargetPlatform.android &&
-                                    defaultTargetPlatform != TargetPlatform.iOS) ...[
-                                  uiSwitchHeader,
-                                  uiSwitchContent,
-                                  const SizedBox(height: 12),
-                                ],
-                                localBackupsHeader,
-                                localBackupsContent,
-                                const SizedBox(height: 12),
-                                systemOptionsHeader,
-                                systemOptionsContent,
+                                appSettingsHeader,
+                                appSettingsContent,
                               ],
                             ),
                           ),
@@ -209,13 +168,15 @@ class SettingsScreen extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                appSettingsHeader,
-                                appSettingsContent,
-                                const SizedBox(height: 12),
-                                customizationSettingsHeader,
-                                customizationSettingsContent,
-                              ],
-                            ),
+                                 localBackupsHeader,
+                                 localBackupsContent,
+                                 if (showSystemOptions) ...[
+                                   const SizedBox(height: 12),
+                                   systemOptionsHeader,
+                                   systemOptionsContent,
+                                 ],
+                               ],
+                             ),
                           ),
                         ],
                       ),
@@ -231,20 +192,14 @@ class SettingsScreen extends ConsumerWidget {
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
                   children: [
-                    if ((kIsWeb || defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) &&
-                        defaultTargetPlatform != TargetPlatform.android &&
-                        defaultTargetPlatform != TargetPlatform.iOS) ...[
-                      uiSwitchHeader,
-                      uiSwitchContent,
-                    ],
                     appSettingsHeader,
                     appSettingsContent,
-                    customizationSettingsHeader,
-                    customizationSettingsContent,
                     localBackupsHeader,
                     localBackupsContent,
-                    systemOptionsHeader,
-                    systemOptionsContent,
+                    if (showSystemOptions) ...[
+                      systemOptionsHeader,
+                      systemOptionsContent,
+                    ],
                     SizedBox(height: context.s(12)),
                     versionText,
                     SizedBox(height: context.s(16)),

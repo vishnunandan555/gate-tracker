@@ -368,7 +368,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           leading: const Icon(Icons.restart_alt_rounded, color: Color(0xFFFFD54F)),
           title: Text('Redo Onboarding Setup', style: titleStyle),
           subtitle: Text(
-            'Reconfigure profile, daily goals, branch, and syllabus presets',
+            'Reconfigure profile, daily goals, and branch presets',
             style: subtitleStyle,
           ),
           onTap: () => _performRedoOnboarding(context, ref),
@@ -378,7 +378,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
             leading: const Icon(Icons.help_outline_rounded, color: Color(0xFFE040FB)),
             title: Text('Redo Demo Guide', style: titleStyle),
             subtitle: Text(
-              'Re-run the interactive walkthrough tutorial of the app',
+              'Re-run interactive walkthrough tutorial',
               style: subtitleStyle,
             ),
             onTap: () => _performRedoDemo(context, ref),

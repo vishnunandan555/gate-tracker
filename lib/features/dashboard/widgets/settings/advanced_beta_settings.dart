@@ -32,25 +32,15 @@ class AdvancedSettingsSection extends ConsumerWidget {
     final disableWidgets = ref.watch(disableHomeScreenWidgetProvider);
     final disableChartGlow = ref.watch(disableGraphGlowProvider);
     final swapChartLines = ref.watch(swapChartLinesProvider);
+    final showProjected = ref.watch(showProjectedCompletionProvider);
+    final shareProgress = ref.watch(enableShareProgressCardProvider);
 
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        initiallyExpanded: false,
-        leading: Icon(Icons.tune_rounded, color: accentColor, size: 20),
-        iconColor: accentColor,
-        collapsedIconColor: Colors.white30,
-        title: Text(
-          'Advanced Options',
-          style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Visual customization, glow intensity, avatar sizing, and dashboard UI layout toggles',
-          style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
-        ),
-        children: [
-          const Divider(color: Colors.white10, height: 1),
-          // Home Screen Glow Intensity
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 4),
+        // Home Screen Glow Intensity
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Row(
@@ -243,81 +233,21 @@ class AdvancedSettingsSection extends ConsumerWidget {
           SwitchListTile(
             secondary: Icon(Icons.swap_calls_rounded, color: swapChartLines ? accentColor : Colors.white30, size: 20),
             title: Text('Prioritize Progress in Chart', style: titleStyle),
-            subtitle: Text('Show daily syllabus completion progress as the solid primary line and study hours as dashed line', style: subtitleStyle),
+            subtitle: Text('Show daily syllabus completion progress as the primary line', style: subtitleStyle),
             value: swapChartLines,
             activeThumbColor: accentColor,
             onChanged: (val) {
               ref.read(swapChartLinesProvider.notifier).setEnabled(val);
             },
           ),
-          const SizedBox(height: 4),
-        ],
-      ),
-    );
-  }
-}
 
-class BetaSettingsSection extends ConsumerWidget {
-  final TextStyle titleStyle;
-  final TextStyle subtitleStyle;
-  final Color accentColor;
-
-  const BetaSettingsSection({
-    super.key,
-    required this.titleStyle,
-    required this.subtitleStyle,
-    required this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final showProjected = ref.watch(showProjectedCompletionProvider);
-
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        initiallyExpanded: false,
-        leading: const Icon(Icons.science_outlined, color: Colors.amber, size: 20),
-        iconColor: Colors.amber,
-        collapsedIconColor: Colors.amber.withValues(alpha: 0.4),
-        title: Text(
-          'Beta',
-          style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Experimental features, may change',
-          style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
-        ),
-        children: [
           const Divider(color: Colors.white10, height: 1),
-          // Beta info banner
-          Container(
-            margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.science_outlined, color: Colors.amber, size: 16),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'These features are experimental and may change or be removed in future releases.',
-                    style: GoogleFonts.outfit(color: Colors.amber.withValues(alpha: 0.8), fontSize: 11),
-                  ),
-                ),
-              ],
-            ),
-          ),
 
           // Projected Completion toggle
           SwitchListTile(
             secondary: Icon(Icons.trending_up_rounded, color: showProjected ? accentColor : Colors.white30, size: 20),
             title: Text('Projected Completion', style: titleStyle),
-            subtitle: Text('Show estimated syllabus completion date in Stats (experimental accuracy)', style: subtitleStyle),
+            subtitle: Text('Show estimated syllabus completion date in Stats', style: subtitleStyle),
             value: showProjected,
             activeThumbColor: accentColor,
             onChanged: (val) {
@@ -329,10 +259,10 @@ class BetaSettingsSection extends ConsumerWidget {
 
           // Enable Share Progress Card toggle
           SwitchListTile(
-            secondary: Icon(Icons.share_rounded, color: ref.watch(enableShareProgressCardProvider) ? accentColor : Colors.white30, size: 20),
+            secondary: Icon(Icons.share_rounded, color: shareProgress ? accentColor : Colors.white30, size: 20),
             title: Text('Share Progress Card', style: titleStyle),
             subtitle: Text('Enable daily progress sharing widget on home screen', style: subtitleStyle),
-            value: ref.watch(enableShareProgressCardProvider),
+            value: shareProgress,
             activeThumbColor: accentColor,
             onChanged: (val) {
               ref.read(enableShareProgressCardProvider.notifier).setEnabled(val);
@@ -340,7 +270,6 @@ class BetaSettingsSection extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
         ],
-      ),
-    );
+      );
   }
 }
