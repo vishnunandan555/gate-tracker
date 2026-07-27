@@ -62,6 +62,41 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     }
   }
 
+  void _animateToTab(int targetIndex) {
+    if (_currentIndex == targetIndex) return;
+    final previousIndex = _currentIndex;
+
+    setState(() {
+      _currentIndex = targetIndex;
+    });
+    ref.read(shellTabProvider.notifier).state = targetIndex;
+
+    final activeSlots = ref.read(navBarSlotsProvider);
+    final homeIndex = activeSlots.indexOf('home');
+    if (targetIndex != homeIndex) {
+      ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
+      ref.read(noticeBoardModeProvider.notifier).state = false;
+    }
+    ref.read(syllabusCategoriesOrderProvider.notifier).clear();
+    ref.read(categoryOrderLockProvider.notifier).unlockAndResort();
+    ref.read(syncProvider.notifier).syncIfPending();
+
+    if (_pageController.hasClients) {
+      final diff = targetIndex - previousIndex;
+      if (diff.abs() > 1) {
+        final intermediatePage = diff > 0 ? targetIndex - 1 : targetIndex + 1;
+        _pageController.jumpToPage(intermediatePage);
+      }
+      _pageController.animateToPage(
+        targetIndex,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -76,16 +111,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     final shellTab = ref.watch(shellTabProvider);
     if (_currentIndex != shellTab) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_pageController.hasClients) {
-          _pageController.animateToPage(
-            shellTab,
-            duration: const Duration(milliseconds: 420),
-            curve: Curves.easeInOutCubic,
-          );
-          setState(() {
-            _currentIndex = shellTab;
-          });
-        }
+        _animateToTab(shellTab);
       });
     }
 
@@ -113,20 +139,22 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
           PageView(
             controller: _pageController,
             onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-              ref.read(shellTabProvider.notifier).state = index;
+              if (_currentIndex != index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+                ref.read(shellTabProvider.notifier).state = index;
 
-              final activeSlots = ref.read(navBarSlotsProvider);
-              final homeIndex = activeSlots.indexOf('home');
-              if (index != homeIndex) {
-                ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
-                ref.read(noticeBoardModeProvider.notifier).state = false;
+                final activeSlots = ref.read(navBarSlotsProvider);
+                final homeIndex = activeSlots.indexOf('home');
+                if (index != homeIndex) {
+                  ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
+                  ref.read(noticeBoardModeProvider.notifier).state = false;
+                }
+                ref.read(syllabusCategoriesOrderProvider.notifier).clear();
+                ref.read(categoryOrderLockProvider.notifier).unlockAndResort();
+                ref.read(syncProvider.notifier).syncIfPending();
               }
-              ref.read(syllabusCategoriesOrderProvider.notifier).clear();
-              ref.read(categoryOrderLockProvider.notifier).unlockAndResort();
-              ref.read(syncProvider.notifier).syncIfPending();
             },
             children: [
               ...List.generate(4, (index) {
@@ -148,12 +176,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
           const DemoGuideBanner(),
         ],
       ),
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: Container(
+      bottomNavigationBar: Container(
           height: 64 + MediaQuery.of(context).padding.bottom,
           decoration: BoxDecoration(
             color: const Color(0xFF131316),
@@ -202,9 +225,8 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _getPageForId(String id, Color progressColor, PageController pageController) {
     switch (id) {
@@ -277,7 +299,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       child: InkWell(
 
         onTap: () {
-          _pageController.jumpToPage(index);
+          _animateToTab(index);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -345,7 +367,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       child: InkWell(
 
         onTap: () {
-          _pageController.jumpToPage(index);
+          _animateToTab(index);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1414,6 +1436,85 @@ class _NavBarComingSoonScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DirectionalTabTransition extends StatefulWidget {
+  final int currentIndex;
+  final Widget child;
+
+  const _DirectionalTabTransition({
+    required this.currentIndex,
+    required this.child,
+  });
+
+  @override
+  State<_DirectionalTabTransition> createState() => _DirectionalTabTransitionState();
+}
+
+class _DirectionalTabTransitionState extends State<_DirectionalTabTransition> {
+  int _previousIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _previousIndex = widget.currentIndex;
+  }
+
+  @override
+  void didUpdateWidget(covariant _DirectionalTabTransition oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.currentIndex != widget.currentIndex) {
+      _previousIndex = oldWidget.currentIndex;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isForward = widget.currentIndex >= _previousIndex;
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 260),
+      reverseDuration: const Duration(milliseconds: 220),
+      layoutBuilder: (currentChild, previousChildren) {
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            ...previousChildren,
+            ?currentChild,
+          ],
+        );
+      },
+      transitionBuilder: (child, animation) {
+        final isIncoming = child.key == ValueKey(widget.currentIndex);
+
+        final curvedAnim = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        final inTween = Tween<Offset>(
+          begin: isForward ? const Offset(1.0, 0.0) : const Offset(-1.0, 0.0),
+          end: Offset.zero,
+        );
+        final outTween = Tween<Offset>(
+          begin: isForward ? const Offset(-1.0, 0.0) : const Offset(1.0, 0.0),
+          end: Offset.zero,
+        );
+
+        final tween = isIncoming ? inTween : outTween;
+
+        return SlideTransition(
+          position: tween.animate(curvedAnim),
+          child: child,
+        );
+      },
+      child: KeyedSubtree(
+        key: ValueKey(widget.currentIndex),
+        child: widget.child,
       ),
     );
   }

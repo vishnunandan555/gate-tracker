@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
@@ -13,6 +14,9 @@ class AppTheme {
         secondary: Colors.cyan,
         surface: AppColors.surface,
       ),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      dividerColor: Colors.transparent,
       textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF09090B),
@@ -22,59 +26,14 @@ class AppTheme {
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
-          TargetPlatform.android: _FadeSlidePageTransitionsBuilder(),
-          TargetPlatform.iOS: _FadeSlidePageTransitionsBuilder(),
-          TargetPlatform.linux: _FadeSlidePageTransitionsBuilder(),
-          TargetPlatform.macOS: _FadeSlidePageTransitionsBuilder(),
-          TargetPlatform.windows: _FadeSlidePageTransitionsBuilder(),
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
         },
       ),
       useMaterial3: true,
-    );
-  }
-}
-
-class _FadeSlidePageTransitionsBuilder extends PageTransitionsBuilder {
-  const _FadeSlidePageTransitionsBuilder();
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    final curvedAnimation = CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
-    );
-
-    final slideAnimation = Tween<Offset>(
-      begin: const Offset(0.04, 0.0),
-      end: Offset.zero,
-    ).animate(curvedAnimation);
-
-    final scaleAnimation = Tween<double>(
-      begin: 0.98,
-      end: 1.0,
-    ).animate(curvedAnimation);
-
-    final fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(curvedAnimation);
-
-    return FadeTransition(
-      opacity: fadeAnimation,
-      child: ScaleTransition(
-        scale: scaleAnimation,
-        child: SlideTransition(
-          position: slideAnimation,
-          child: child,
-        ),
-      ),
     );
   }
 }

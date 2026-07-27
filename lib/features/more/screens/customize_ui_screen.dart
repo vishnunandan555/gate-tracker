@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
-import '../../../utils/page_transitions.dart';
 import '../../dashboard/widgets/settings/customization_settings.dart';
 import '../../dashboard/widgets/settings/layout_settings.dart';
 import '../../dashboard/widgets/settings/advanced_beta_settings.dart';
@@ -58,25 +57,26 @@ class CustomizeUiScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           child: Material(
             color: const Color(0xFF131316),
-            child: child,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                listTileTheme: ListTileThemeData(
+                  dense: false,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: context.s(16),
+                    vertical: context.s(2),
+                  ),
+                  titleTextStyle: titleStyle,
+                  subtitleTextStyle: subtitleStyle,
+                ),
+              ),
+              child: child,
+            ),
           ),
         ),
       );
     }
 
-    return Theme(
-      data: Theme.of(context).copyWith(
-        listTileTheme: ListTileThemeData(
-          dense: false,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: context.s(16),
-            vertical: context.s(2),
-          ),
-          titleTextStyle: titleStyle,
-          subtitleTextStyle: subtitleStyle,
-        ),
-      ),
-      child: Scaffold(
+    return Scaffold(
       backgroundColor: const Color(0xFF09090B),
       appBar: AppBar(
         backgroundColor: const Color(0xFF09090B),
@@ -113,7 +113,7 @@ class CustomizeUiScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white30),
                 onTap: () {
                   Navigator.of(context).push(
-                    AppPageRoute(page: const CustomizeNavBarScreen()),
+                    MaterialPageRoute(builder: (_) => const CustomizeNavBarScreen()),
                   );
                 },
               ),
@@ -139,8 +139,6 @@ class CustomizeUiScreen extends ConsumerWidget {
               ),
             ),
 
-
-
             // ── Platform Layout Switcher (Web/Desktop specific) ───────────
             if ((kIsWeb || defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) &&
                 defaultTargetPlatform != TargetPlatform.android &&
@@ -158,7 +156,6 @@ class CustomizeUiScreen extends ConsumerWidget {
           ],
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

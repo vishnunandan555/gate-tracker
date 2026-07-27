@@ -330,9 +330,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 900;
 
-    final resetDataContent = Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
+    final resetDataContent = ExpansionTile(
         iconColor: Colors.redAccent,
         collapsedIconColor: Colors.redAccent.withValues(alpha: 0.5),
         leading: const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
@@ -362,8 +360,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
         ],
-      ),
-    );
+      );
 
     return Column(
       mainAxisSize: MainAxisSize.min,

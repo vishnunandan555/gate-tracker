@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
 import '../../utils/ui_scaling.dart';
-import '../../utils/page_transitions.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
 import '../more/screens/contribute_screen.dart';
@@ -266,7 +265,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
 
   void _pushPage(BuildContext context, Widget targetScreen) {
     Navigator.of(context).push(
-      AppPageRoute(page: targetScreen),
+      MaterialPageRoute(builder: (context) => targetScreen),
     );
   }
 
@@ -342,8 +341,8 @@ class _MoreHeader extends ConsumerWidget {
             children: [
               Image.asset(
                 'assets/logo_trans_cropped.png',
-                width: isDesktop ? 34 : context.s(30),
-                height: isDesktop ? 34 : context.s(30),
+                width: isDesktop ? 48 : context.s(42),
+                height: isDesktop ? 48 : context.s(42),
                 fit: BoxFit.contain,
               ),
               SizedBox(width: isDesktop ? 10 : context.s(8)),

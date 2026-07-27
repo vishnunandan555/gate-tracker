@@ -112,27 +112,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
 
-    return Theme(
-      data: Theme.of(context).copyWith(
-        listTileTheme: ListTileThemeData(
-          dense: false,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: isDesktop ? 16 : context.s(16),
-            vertical: isDesktop ? 2 : context.s(2),
-          ),
-          titleTextStyle: GoogleFonts.outfit(
-            color: Colors.white,
-            fontSize: isDesktop ? 13.0 : context.s(13),
-            fontWeight: isDesktop ? FontWeight.w500 : FontWeight.bold,
-          ),
-          subtitleTextStyle: GoogleFonts.outfit(
-            color: Colors.white.withValues(alpha: 0.45),
-            fontSize: isDesktop ? 11.5 : context.s(11),
-            height: 1.35,
-          ),
-        ),
-      ),
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(
             'SETTINGS',
@@ -206,9 +186,8 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
         ),
-      ),
-    );
-  }
+      );
+    }
 }
 
 class _DesktopUpdateSettingsTile extends ConsumerWidget {

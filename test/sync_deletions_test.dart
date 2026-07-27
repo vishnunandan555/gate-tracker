@@ -148,9 +148,11 @@ void main() {
   });
 
   test('Sync mergeData resolves deletion conflicts using Last-Write-Wins (LWW)', () async {
+    final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
+        sharedPreferencesProvider.overrideWithValue(prefs),
       ],
     );
     addTearDown(container.dispose);
@@ -192,9 +194,11 @@ void main() {
   });
 
   test('areDataEqual detects deletion/modification differences in categories and topics', () async {
+    final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
+        sharedPreferencesProvider.overrideWithValue(prefs),
       ],
     );
     addTearDown(container.dispose);
