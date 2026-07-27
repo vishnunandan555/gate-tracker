@@ -1,6 +1,6 @@
 # Privacy Policy for GATEletics
 
-Last updated: July 17, 2026
+Last updated: July 28, 2026
 
 Vishnu Nandan ("we", "our", or "us") operates the GATEletics application (the "App"). We are committed to protecting your privacy. This Privacy Policy explains our practices regarding your information.
 

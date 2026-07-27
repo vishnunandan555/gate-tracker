@@ -66,9 +66,6 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release
 
-      # Note: If no custom android/key.properties exists, Flutter automatically signs
-      # the release build with Android's default debug key. Since debug SHA-1 is registered
-      # in Firebase, Google Sign-In works cleanly. We name it clean '-android.apk'.
       - name: Prepare Android Artifacts
         run: |
           mkdir -p artifacts

@@ -10,8 +10,8 @@
 
 <p align="center">
   <a href="https://github.com/vishnunandan555/gateletics/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/vishnunandan555/gateletics/release.yml?logo=github&label=Build%20%26%20Release" alt="Build & Release"></a>
-  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/version-1.3.0.0-emerald.svg" alt="Version"></a>
-  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/stage-v1.3.0.X%20beta-orange.svg?logo=github" alt="Beta Stage"></a>
+  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/version-1.3.0--beta.1%2B21-emerald.svg" alt="Version"></a>
+  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/stage-v1.3.0%20production%20candidate-emerald.svg?logo=googleplay" alt="Production Candidate"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat&logo=Flutter&logoColor=white" alt="Flutter"></a>
 </p>

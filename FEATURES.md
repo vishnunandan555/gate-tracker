@@ -1,10 +1,14 @@
-# FEATURES (v1.3.0.X Beta Stage Roadmap)
+# FEATURES (v1.3.0 Release Candidate Roadmap — Production Stage)
 
-This document tracks upcoming major features, architectural enhancements, and UI roadmap specifications for the **v1.3.0.X** beta release cycle.
+This document tracks upcoming major features, architectural enhancements, and UI roadmap specifications for the **v1.3.0** production release cycle.
 
 ---
 
 ## 🎯 Milestone 1: Navbar Customization & "More" Screen Hub
+
+### 0. Draggable & Reorderable "More" Options
+- **Custom Item Ordering**: Users can drag and reorder menu items inside the **"More"** options screen to prioritize their most frequently used features.
+- **Drag-and-Drop Gesture Support**: Smooth reordering with persistent order saving across app sessions.
 
 ### 1. Dynamic Bottom Navbar Customization
 - **Flexible Tab Slotting**: Users can swap feature items in and out of the primary bottom navigation bar slots.

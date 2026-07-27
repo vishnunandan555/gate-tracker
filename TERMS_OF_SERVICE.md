@@ -1,6 +1,6 @@
 # Terms of Service for GATEletics
 
-Last updated: July 17, 2026
+Last updated: July 28, 2026
 
 Please read these Terms of Service ("Terms") carefully before using the GATEletics application (the "App") operated by Vishnu Nandan ("us", "we", or "our").
 
