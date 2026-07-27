@@ -11,6 +11,7 @@ permissions:
 
 env:
   VERSION: ''
+  FORCE_JAVASCRIPT_ACTIONS_NODE_TYPE: node20
 
 jobs:
   # -------------------------------------------------------------------------
@@ -23,7 +24,7 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs='-Xmx3072m -XX:+UseParallelGC'"
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Extract Version
         run: |
@@ -36,29 +37,33 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Java Development Kit (JDK)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v4.7.0
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
+
+      - name: Setup Gradle Cache
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.18.0
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
           cache: true
 
-      - name: Cache Pub Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
       - name: Install Dependencies
         run: flutter pub get
+
+      - name: Cache Drift Code Generation
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            .dart_tool
+            lib/**/*.g.dart
+          key: ${{ runner.os }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
+          restore-keys: |
+            ${{ runner.os }}-drift-
 
       - name: Run Build Runner (Drift Models)
         run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -72,7 +77,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/gateletics-${{ env.VERSION }}-android.apk
 
       - name: Upload Android Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: android-build
           path: artifacts/
@@ -87,7 +92,7 @@ jobs:
       CL: "/MP" # Enable multi-threaded MSBuild C++ parallel compilation
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Extract Version
         shell: pwsh
@@ -106,28 +111,27 @@ jobs:
           choco install innosetup --yes --no-progress
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.18.0
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
           cache: true
 
-      - name: Cache Pub Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~\AppData\Local\Pub\Cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Cache Drift Code Generation
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            .dart_tool
+            lib/**/*.g.dart
+          key: ${{ runner.os }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
+          restore-keys: |
+            ${{ runner.os }}-drift-
+
       - name: Run Build Runner (Drift Models)
         run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: Run Flutter Config Only (Generate Platform Files)
-        run: flutter build windows --config-only
 
       - name: Strip Firebase from Windows C++ Build
         shell: bash
@@ -149,7 +153,7 @@ jobs:
             -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
 
       - name: Upload Windows Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: windows-build
           path: |
@@ -164,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Extract Version
         run: |
@@ -182,22 +186,24 @@ jobs:
           sudo apt-get install -y --no-install-recommends clang cmake ninja-build pkg-config libgtk-3-dev dpkg wget
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.18.0
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
           cache: true
 
-      - name: Cache Pub Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
       - name: Install Dependencies
         run: flutter pub get
+
+      - name: Cache Drift Code Generation
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            .dart_tool
+            lib/**/*.g.dart
+          key: ${{ runner.os }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
+          restore-keys: |
+            ${{ runner.os }}-drift-
 
       - name: Run Build Runner (Drift Models)
         run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -275,7 +281,7 @@ jobs:
           rm -rf debian_pkg
 
       - name: Upload Linux Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: linux-build
           path: |
@@ -291,7 +297,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Extract Version
         run: |
@@ -304,22 +310,24 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.18.0
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
           cache: true
 
-      - name: Cache Pub Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
       - name: Install Dependencies
         run: flutter pub get
+
+      - name: Cache Drift Code Generation
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            .dart_tool
+            lib/**/*.g.dart
+          key: ${{ runner.os }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
+          restore-keys: |
+            ${{ runner.os }}-drift-
 
       - name: Run Build Runner (Drift Models)
         run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -346,7 +354,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Extract Version
         run: |
@@ -362,25 +370,25 @@ jobs:
         run: mkdir -p release-files
 
       - name: Download Android Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: android-build
           path: release-files
 
       - name: Download Windows Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: windows-build
           path: release-files
 
       - name: Download Linux Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: linux-build
           path: release-files
 
       - name: Publish Compiled Packages to GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
