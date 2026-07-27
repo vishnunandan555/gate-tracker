@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
+import '../../../utils/page_transitions.dart';
 import '../../dashboard/widgets/auth_screen.dart';
 import '../../dashboard/widgets/settings/profile_settings.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
@@ -115,7 +116,7 @@ class AccountsScreen extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => const AuthScreen()),
+                    AppPageRoute(page: const AuthScreen()),
                   );
                 },
                 icon: const Icon(Icons.login_rounded, color: Colors.black),

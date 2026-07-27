@@ -86,12 +86,32 @@ class GateTrackerApp extends ConsumerWidget {
     }
 
     if (agreementAsync.hasError || authAsync.hasError || setupAsync.hasError) {
-      final error = agreementAsync.error ?? authAsync.error ?? setupAsync.error;
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+          backgroundColor: const Color(0xFF09090B),
           body: Center(
-            child: Text('Initialization Error: $error'),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Something went wrong on startup',
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Please restart the app. If the issue persists, try reinstalling.',
+                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );

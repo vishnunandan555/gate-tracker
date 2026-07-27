@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
 import '../../utils/ui_scaling.dart';
+import '../../utils/page_transitions.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
 import '../more/screens/contribute_screen.dart';
@@ -265,23 +266,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
 
   void _pushPage(BuildContext context, Widget targetScreen) {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (ctx, anim, secondaryAnim) => targetScreen,
-        transitionsBuilder: (ctx, anim, secondaryAnim, child) {
-          return FadeTransition(
-            opacity: anim,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.08, 0),
-                end: Offset.zero,
-              ).animate(
-                  CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
+      AppPageRoute(page: targetScreen),
     );
   }
 

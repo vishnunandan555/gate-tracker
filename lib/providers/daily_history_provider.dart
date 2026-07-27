@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/app_database.dart';
@@ -38,7 +38,8 @@ final dailyHistoryManagerProvider = Provider<void>((ref) {
           error: (_, _) => 0,
         );
 
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // ref.listen fires outside the build phase — no addPostFrameCallback needed
+        () async {
           try {
             await db.upsertDailyHistory(
               dateStr: dateStr,
@@ -52,7 +53,7 @@ final dailyHistoryManagerProvider = Provider<void>((ref) {
           } catch (e) {
             debugPrint("Failed to upsert daily history: $e");
           }
-        });
+        }();
       });
     });
   }

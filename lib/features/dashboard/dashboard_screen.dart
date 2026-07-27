@@ -63,7 +63,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void _resetAutoHideTimer() {
     _autoHideTimer?.cancel();
     if (searchQuery.isEmpty) {
-      _autoHideTimer = Timer(const Duration(seconds: 8), () {
+      _autoHideTimer = Timer(const Duration(seconds: 20), () {
         if (mounted && searchQuery.isEmpty) {
           setState(() {
             searchBarVisible = false;

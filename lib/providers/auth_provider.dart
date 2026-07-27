@@ -268,7 +268,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
                 defaultTargetPlatform == TargetPlatform.iOS) {
               final googleUser = await GoogleSignIn.instance.authenticate();
               final googleAuth = googleUser.authentication;
-              final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
+              final credential = GoogleAuthProvider.credential(
+                idToken: googleAuth.idToken,
+              );
               await user.reauthenticateWithCredential(credential);
               await user.delete();
             } else {

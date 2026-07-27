@@ -115,31 +115,54 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         if (filePath == null) return;
         bytes = await File(filePath).readAsBytes();
       }
-      final raw = utf8.decode(bytes);
-      final payload = jsonDecode(raw);
-      final db = ref.read(appDatabaseProvider);
 
-      await BackupService.restoreDatabase(db, payload);
-      ref.read(syncProvider.notifier).clearDatabaseCaches();
+      if (!context.mounted) return;
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✓ Backup data successfully restored!')),
-        );
+      // Show loading indicator during restore (can take 1-4s on large backups)
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => const Center(child: CircularProgressIndicator()),
+      );
+
+      try {
+        final raw = utf8.decode(bytes);
+        final payload = jsonDecode(raw);
+        final db = ref.read(appDatabaseProvider);
+
+        await BackupService.restoreDatabase(db, payload);
+        ref.read(syncProvider.notifier).clearDatabaseCaches();
+
+        if (context.mounted) Navigator.of(context).pop(); // dismiss loading
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✓ Backup data successfully restored!')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) Navigator.of(context).pop(); // dismiss loading
+        if (context.mounted) {
+          String message = 'Import failed: $e';
+          if (e is PlatformException && e.code == 'invalid_file_extension') {
+            message = 'Invalid file type selected. Only JSON (.json) files are supported for importing backup files.';
+          } else if (e is FormatException) {
+            message = 'The selected file is not a valid JSON file. Please ensure you picked a valid backup file.';
+          } else if (e is TypeError || e is StateError) {
+            message = 'The selected file does not contain valid backup data.';
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (context.mounted) {
-        String message = 'Import failed: $e';
-        if (e is PlatformException && e.code == 'invalid_file_extension') {
-          message = 'Invalid file type selected. Only JSON (.json) files are supported for importing backup files.';
-        } else if (e is FormatException) {
-          message = 'The selected file is not a valid JSON file. Please ensure you picked a valid backup file.';
-        } else if (e is TypeError || e is StateError) {
-          message = 'The selected file does not contain valid backup data.';
-        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message),
+            content: Text('Could not open file: $e'),
             backgroundColor: Colors.redAccent,
           ),
         );

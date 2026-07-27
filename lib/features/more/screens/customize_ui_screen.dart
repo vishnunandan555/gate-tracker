@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
+import '../../../utils/page_transitions.dart';
 import '../../dashboard/widgets/settings/customization_settings.dart';
 import '../../dashboard/widgets/settings/layout_settings.dart';
 import '../../dashboard/widgets/settings/advanced_beta_settings.dart';
@@ -112,7 +113,7 @@ class CustomizeUiScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white30),
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => const CustomizeNavBarScreen()),
+                    AppPageRoute(page: const CustomizeNavBarScreen()),
                   );
                 },
               ),

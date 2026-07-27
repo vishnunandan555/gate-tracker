@@ -189,8 +189,12 @@ class DesktopUpdateNotifier extends Notifier<DesktopUpdateState> {
       }
     }
 
-    // All 5 attempts failed silently -> quietly cancel without displaying errors
-    state = const DesktopUpdateState(status: DesktopUpdateStatus.idle);
+    // All 5 attempts failed silently — mark as offline/error so UI can reflect it
+    state = const DesktopUpdateState(
+      status: DesktopUpdateStatus.error,
+      errorMessage: 'Could not reach update server. Check your connection.',
+      isManual: false,
+    );
   }
 
   /// Triggered manually by user clicking "Check for Updates" in Settings / About page

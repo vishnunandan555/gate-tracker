@@ -269,12 +269,27 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
   Future<void> _loadSelection() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final methodIndex = prefs.getInt('focus_selected_method_index');
       final customMins = prefs.getInt('focus_custom_timer_minutes');
       FocusMethod? method;
-      if (methodIndex != null && methodIndex >= 0 && methodIndex < FocusMethod.values.length) {
-        method = FocusMethod.values[methodIndex];
+
+      // Load by stable name string (v1.3+)
+      final methodName = prefs.getString('focus_selected_method_name');
+      if (methodName != null) {
+        method = FocusMethod.values.firstWhere(
+          (m) => m.name == methodName,
+          orElse: () => FocusMethod.freestyle,
+        );
+      } else {
+        // Migration: legacy index-based key — read once, then migrate to name
+        final methodIndex = prefs.getInt('focus_selected_method_index');
+        if (methodIndex != null && methodIndex >= 0 && methodIndex < FocusMethod.values.length) {
+          method = FocusMethod.values[methodIndex];
+          // Migrate to name-based storage and clear old key
+          await prefs.setString('focus_selected_method_name', method.name);
+          await prefs.remove('focus_selected_method_index');
+        }
       }
+
       if (state.status == FocusStatus.idle) {
         state = state.copyWith(
           selectedMethod: method ?? state.selectedMethod,
@@ -287,7 +302,8 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
   Future<void> _saveSelection() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('focus_selected_method_index', state.selectedMethod.index);
+      // Save by stable name string — immune to enum reordering
+      await prefs.setString('focus_selected_method_name', state.selectedMethod.name);
       await prefs.setInt('focus_custom_timer_minutes', state.customTimerMinutes);
     } catch (_) {}
   }
