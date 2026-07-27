@@ -8,13 +8,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
 import '../../providers/desktop_update_provider.dart';
-import '../../widgets/settings/about_dialog.dart';
 import '../../utils/ui_scaling.dart';
 
 // Modular settings widgets imports
-import 'widgets/settings/profile_settings.dart';
 import 'widgets/settings/layout_settings.dart';
-import 'widgets/settings/sync_settings.dart';
 import 'widgets/settings/danger_zone_settings.dart';
 import 'widgets/settings/customization_settings.dart';
 import 'widgets/settings/timer_settings.dart';
@@ -78,22 +75,6 @@ class SettingsScreen extends ConsumerWidget {
       );
     }
 
-    final cloudSyncHeader = buildHeader('CLOUD SYNC');
-    final cloudSyncContent = SyncSettingsSection(
-      titleStyle: titleStyle,
-      subtitleStyle: subtitleStyle,
-      accentColor: accentColor,
-    );
-
-    final profileSettingsHeader = buildHeader('PROFILE SETTINGS');
-    final profileSettingsContent = buildSettingsGroup(
-      ProfileSettingsSection(
-        titleStyle: titleStyle,
-        subtitleStyle: subtitleStyle,
-        accentColor: accentColor,
-      ),
-    );
-
     final uiSwitchHeader = buildHeader('LAYOUT');
     final uiSwitchContent = buildSettingsGroup(
       LayoutSettingsSection(
@@ -129,33 +110,19 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
 
-    final aboutAppContent = ListTile(
-      leading: Icon(Icons.info_outline_rounded, color: accentColor),
-      title: Text('About GATEletics', style: titleStyle),
-      subtitle: Text(
-        'View app details, credits, developer info, and source code',
-        style: subtitleStyle,
-      ),
-      onTap: () {
-        showAboutTrackerDialog(context, ref);
-      },
-    );
-
     final systemOptionsHeader = buildHeader('ADVANCED');
     final systemOptionsContent = buildSettingsGroup(
       Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          aboutAppContent,
           if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux)) ...[
-            const Divider(color: Colors.white10, height: 1),
             _DesktopUpdateSettingsTile(
               titleStyle: titleStyle,
               subtitleStyle: subtitleStyle,
               accentColor: accentColor,
             ),
+            const Divider(color: Colors.white10, height: 1),
           ],
-          const Divider(color: Colors.white10, height: 1),
           AdvancedSettingsSection(
             titleStyle: titleStyle,
             subtitleStyle: subtitleStyle,
@@ -222,19 +189,13 @@ class SettingsScreen extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                cloudSyncHeader,
-                                cloudSyncContent,
-                                const SizedBox(height: 12),
-                                profileSettingsHeader,
-                                profileSettingsContent,
                                 if ((kIsWeb || defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) &&
                                     defaultTargetPlatform != TargetPlatform.android &&
                                     defaultTargetPlatform != TargetPlatform.iOS) ...[
-                                  const SizedBox(height: 12),
                                   uiSwitchHeader,
                                   uiSwitchContent,
+                                  const SizedBox(height: 12),
                                 ],
-                                const SizedBox(height: 12),
                                 localBackupsHeader,
                                 localBackupsContent,
                                 const SizedBox(height: 12),
@@ -270,10 +231,6 @@ class SettingsScreen extends ConsumerWidget {
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
                   children: [
-                    cloudSyncHeader,
-                    cloudSyncContent,
-                    profileSettingsHeader,
-                    profileSettingsContent,
                     if ((kIsWeb || defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) &&
                         defaultTargetPlatform != TargetPlatform.android &&
                         defaultTargetPlatform != TargetPlatform.iOS) ...[

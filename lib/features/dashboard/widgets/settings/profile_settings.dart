@@ -33,14 +33,14 @@ class ProfileSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          leading: const Icon(Icons.badge_rounded, color: Colors.cyanAccent),
+          leading: const Icon(Icons.badge_rounded, color: Colors.white60),
           title: Text('Change Display Name', style: titleStyle),
           subtitle: Text(
             'Current: ${profile.customDisplayName != null ? profile.customDisplayName! : (displayName ?? 'Not set')}',
             style: subtitleStyle,
           ),
           trailing: IconButton(
-            icon: Icon(Icons.edit_rounded, color: accentColor),
+            icon: const Icon(Icons.edit_rounded, color: Colors.white60),
             onPressed: () async {
               final controller = TextEditingController(text: profile.customDisplayName ?? displayName ?? '');
               final result = await showDialog<String>(
@@ -72,7 +72,7 @@ class ProfileSettingsSection extends ConsumerWidget {
                         ref.read(profileProvider.notifier).setCustomDisplayName(null);
                         Navigator.pop(ctx);
                       },
-                      child: Text('Reset', style: TextStyle(color: Colors.redAccent)),
+                      child: const Text('Reset', style: TextStyle(color: Colors.redAccent)),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.pop(ctx, controller.text),
@@ -98,7 +98,7 @@ class ProfileSettingsSection extends ConsumerWidget {
             height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: accentColor, width: 1),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
             ),
             child: CircleAvatar(
               radius: 16,
@@ -117,7 +117,7 @@ class ProfileSettingsSection extends ConsumerWidget {
             style: subtitleStyle,
           ),
           trailing: PopupMenuButton<String>(
-            icon: Icon(Icons.photo_camera_rounded, color: accentColor),
+            icon: const Icon(Icons.photo_camera_rounded, color: Colors.white60),
             color: const Color(0xFF1F1F23),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             onSelected: (val) async {

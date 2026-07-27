@@ -2,17 +2,24 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/notice_board_provider.dart';
+import '../../providers/nav_bar_provider.dart';
 import 'dashboard_screen.dart';
 import 'home_screen.dart';
 import 'progress_history_screen.dart';
 import 'widgets/focus_screen.dart';
 import '../../providers/focus_provider.dart';
 import 'widgets/shell_common.dart';
+import 'more_screen.dart';
 import 'settings_screen.dart';
+import '../more/screens/about_screen.dart';
+import '../more/screens/accounts_screen.dart';
+import '../more/screens/contribute_screen.dart';
+import '../more/screens/customize_nav_bar_screen.dart';
 import 'widgets/app_bar_title.dart';
 import 'widgets/countdown_widget.dart';
 import '../../providers/overall_ui_scale_provider.dart';
@@ -64,6 +71,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
   @override
   Widget build(BuildContext context) {
     final progressColor = ref.watch(overallProgressColorProvider);
+    final activeSlotIds = ref.watch(navBarSlotsProvider);
 
     final shellTab = ref.watch(shellTabProvider);
     if (_currentIndex != shellTab) {
@@ -110,7 +118,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               });
               ref.read(shellTabProvider.notifier).state = index;
 
-              if (index != 2) {
+              final activeSlots = ref.read(navBarSlotsProvider);
+              final homeIndex = activeSlots.indexOf('home');
+              if (index != homeIndex) {
                 ref.read(homeHeaderViewModeProvider.notifier).state = HomeHeaderViewMode.dashboard;
                 ref.read(noticeBoardModeProvider.notifier).state = false;
               }
@@ -119,11 +129,11 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               ref.read(syncProvider.notifier).syncIfPending();
             },
             children: [
-              const KeepAliveWrapper(child: ProgressHistoryScreen()),
-              const KeepAliveWrapper(child: DashboardScreen()),
-              KeepAliveWrapper(child: HomeScreen(shellPageController: _pageController)),
-              KeepAliveWrapper(child: FocusScreen(progressColor: progressColor)),
-              const KeepAliveWrapper(child: SettingsScreen()),
+              ...List.generate(4, (index) {
+                final id = activeSlotIds[index];
+                return _getPageForId(id, progressColor, _pageController);
+              }),
+              const KeepAliveWrapper(child: MoreScreen()),
             ],
           ),
           Positioned(
@@ -161,40 +171,31 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  ...List.generate(4, (index) {
+                    final id = activeSlotIds[index];
+                    final option = navBarAllOptions.firstWhere((o) => o.id == id);
+                    if (id == 'focus') {
+                      return _buildFocusNavItem(
+                        key: ValueKey('tab_focus_$index'),
+                        index: index,
+                        color: progressColor,
+                      );
+                    }
+                    return _buildNavItem(
+                      key: ValueKey('tab_${id}_$index'),
+                      index: index,
+                      icon: option.icon,
+                      label: option.label,
+                      color: progressColor,
+                    );
+                  }),
                   _buildNavItem(
-                    key: DemoKeys.statsTab,
-                    index: 0,
-                    icon: Icons.analytics_rounded,
-                    label: 'Stats',
-                    color: progressColor,
-                  ),
-                  _buildNavItem(
-                    key: DemoKeys.completionTab,
-                    index: 1,
-                    icon: Icons.percent_rounded,
-                    label: 'Completion',
-                    color: progressColor,
-                  ),
-                  _buildNavItem(
-                    key: DemoKeys.homeTab,
-                    index: 2,
-                    icon: Icons.home_rounded,
-                    label: 'Home',
-                    color: progressColor,
-                  ),
-                  _buildFocusNavItem(
-                    key: DemoKeys.focusTab,
-                    index: 3,
-                    color: progressColor,
-                  ),
-                  _buildNavItem(
-                    key: DemoKeys.settingsTab,
+                    key: const ValueKey('tab_more_4'),
                     index: 4,
-                    icon: Icons.settings_rounded,
-                    label: 'Settings',
+                    svgAsset: 'assets/icons/more_app.svg',
+                    label: 'More',
                     color: progressColor,
                   ),
-
                 ],
               ),
             ),
@@ -205,10 +206,68 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
   );
 }
 
+  Widget _getPageForId(String id, Color progressColor, PageController pageController) {
+    switch (id) {
+      case 'stats':
+        return const KeepAliveWrapper(child: ProgressHistoryScreen());
+      case 'completion':
+        return const KeepAliveWrapper(child: DashboardScreen());
+      case 'home':
+        return KeepAliveWrapper(child: HomeScreen(shellPageController: pageController));
+      case 'focus':
+        return KeepAliveWrapper(child: FocusScreen(progressColor: progressColor));
+      case 'accounts':
+        return const KeepAliveWrapper(child: AccountsScreen());
+      case 'settings':
+        return const KeepAliveWrapper(child: SettingsScreen());
+      case 'contribute':
+        return const KeepAliveWrapper(child: ContributeScreen());
+      case 'about':
+        return const KeepAliveWrapper(child: AboutScreen());
+      case 'customizer':
+        return const KeepAliveWrapper(child: CustomizeNavBarScreen());
+      case 'socials':
+        return const KeepAliveWrapper(
+          child: _NavBarComingSoonScreen(
+            title: 'Friends & Socials',
+            description: 'Study groups, accountability partners, and friend leaderboards will be available in an upcoming release!',
+            icon: Icons.group_rounded,
+          ),
+        );
+      case 'resources':
+        return const KeepAliveWrapper(
+          child: _NavBarComingSoonScreen(
+            title: 'Resource Explorer',
+            description: 'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
+            icon: Icons.library_books_rounded,
+          ),
+        );
+      case 'planner':
+        return const KeepAliveWrapper(
+          child: _NavBarComingSoonScreen(
+            title: 'Revision Planner',
+            description: 'Spaced-repetition revision schedules and exam countdowns are coming in the next update!',
+            icon: Icons.edit_calendar_rounded,
+          ),
+        );
+      case 'notifications':
+        return const KeepAliveWrapper(
+          child: _NavBarComingSoonScreen(
+            title: 'Notifications & Reminders',
+            description: 'Custom study reminders and alerts will be configurable in an upcoming update!',
+            icon: Icons.notifications_active_rounded,
+          ),
+        );
+      default:
+        return KeepAliveWrapper(child: HomeScreen(shellPageController: pageController));
+    }
+  }
+
   Widget _buildNavItem({
     Key? key,
     required int index,
-    required IconData icon,
+    IconData? icon,
+    String? svgAsset,
     required String label,
     required Color color,
   }) {
@@ -223,11 +282,22 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? color : Colors.white30,
-              size: 26,
-            ),
+            if (svgAsset != null)
+              SvgPicture.asset(
+                svgAsset,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  isSelected ? color : Colors.white38,
+                  BlendMode.srcIn,
+                ),
+              )
+            else if (icon != null)
+              Icon(
+                icon,
+                color: isSelected ? color : Colors.white30,
+                size: 26,
+              ),
             const SizedBox(height: 4),
             Text(
               label,
@@ -826,40 +896,45 @@ class _SharedShellHeader extends ConsumerWidget {
           page = currentIndex.toDouble();
         }
 
-        // Header opacity: 0.0 at page 0 (Stats), 1.0 at page 1 (Completion) and page 2 (Home), 0.0 at page 3 (Focus) and page 4 (Settings)
+        final activeSlots = ref.watch(navBarSlotsProvider);
+        final completionIdx = activeSlots.indexOf('completion');
+        final homeIdx = activeSlots.indexOf('home');
+
+        final visibleIndices = <int>[];
+        if (completionIdx != -1) visibleIndices.add(completionIdx);
+        if (homeIdx != -1) visibleIndices.add(homeIdx);
+
         double headerOpacity = 0.0;
-        if (page <= 1.0) {
-          headerOpacity = page.clamp(0.0, 1.0);
-        } else if (page > 1.0 && page <= 2.0) {
-          headerOpacity = 1.0;
-        } else if (page > 2.0 && page <= 3.0) {
-          headerOpacity = (3.0 - page).clamp(0.0, 1.0);
-        }
-
-        // Background transition from transparent to solid black when scrolled down in Completion screen (page 1)
-        Color headerBgColor = Colors.transparent;
-        if (isScrolled) {
-          if (page <= 1.0) {
-            headerBgColor = Colors.black.withValues(alpha: page.clamp(0.0, 1.0));
-          } else if (page > 1.0 && page <= 2.0) {
-            headerBgColor = Colors.black.withValues(alpha: (2.0 - page).clamp(0.0, 1.0));
+        if (visibleIndices.isNotEmpty) {
+          double minDistance = 999.0;
+          for (final idx in visibleIndices) {
+            final dist = (page - idx).abs();
+            if (dist < minDistance) {
+              minDistance = dist;
+            }
           }
+          headerOpacity = (1.0 - minDistance).clamp(0.0, 1.0);
         }
 
-        // Countdown widget opacity: 0.0 at page 0 (Stats), 1.0 at page 1 (Completion), 0.0 at page 2 (Home) and page 3+
+        // Background transition from transparent to solid black when scrolled down in Completion screen
+        Color headerBgColor = Colors.transparent;
+        if (isScrolled && completionIdx != -1) {
+          final distToCompletion = (page - completionIdx).abs();
+          headerBgColor = Colors.black.withValues(alpha: (1.0 - distToCompletion).clamp(0.0, 1.0));
+        }
+
+        // Countdown widget opacity: 1.0 at Completion screen
         double countdownOpacity = 0.0;
-        if (page <= 1.0) {
-          countdownOpacity = page.clamp(0.0, 1.0);
-        } else if (page > 1.0 && page <= 2.0) {
-          countdownOpacity = (2.0 - page).clamp(0.0, 1.0);
+        if (completionIdx != -1) {
+          final distToCompletion = (page - completionIdx).abs();
+          countdownOpacity = (1.0 - distToCompletion).clamp(0.0, 1.0);
         }
 
-        // Notice Board button opacity: 1.0 at page 2 (Home), 0.0 at page 1 (Completion) and page 3 (Focus)
+        // Notice Board button opacity: 1.0 at Home screen
         double noticeBoardOpacity = 0.0;
-        if (page > 1.0 && page <= 2.0) {
-          noticeBoardOpacity = (page - 1.0).clamp(0.0, 1.0);
-        } else if (page > 2.0 && page <= 3.0) {
-          noticeBoardOpacity = (3.0 - page).clamp(0.0, 1.0);
+        if (homeIdx != -1) {
+          final distToHome = (page - homeIdx).abs();
+          noticeBoardOpacity = (1.0 - distToHome).clamp(0.0, 1.0);
         }
 
         final ignorePointer = headerOpacity < 0.5;
@@ -879,8 +954,11 @@ class _SharedShellHeader extends ConsumerWidget {
                 children: [
                   AppBarTitle(
                     onTap: () {
+                      final activeSlotsIds = ref.read(navBarSlotsProvider);
+                      final compIdx = activeSlotsIds.indexOf('completion');
+                      final targetPage = compIdx != -1 ? compIdx : 1;
                       pageController.animateToPage(
-                        1, // Navigate to Completion screen (index 1)
+                        targetPage,
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.fastOutSlowIn,
                       );
@@ -1260,6 +1338,80 @@ class DemoGuideBanner extends ConsumerWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBarComingSoonScreen extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+
+  const _NavBarComingSoonScreen({
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF09090B),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.04),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: Colors.white70, size: 48),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  color: Colors.white54,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  'COMING SOON',
+                  style: GoogleFonts.outfit(
+                    color: Colors.amber,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
