@@ -942,27 +942,90 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             ),
-            if (unreadCount > 0)
-              GestureDetector(
-                onTap: () {
-                  ref.read(communityNotificationsProvider.notifier).markAllAsRead();
-                },
-                child: Text(
-                  "Mark all as read",
-                  style: GoogleFonts.outfit(
-                    color: accentColor,
-                    fontSize: context.s(12),
-                    fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                // Refresh button with loading indicator
+                if (state.isLoading)
+                  SizedBox(
+                    width: context.s(18),
+                    height: context.s(18),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: accentColor.withAlpha(180),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: () => ref.read(communityNotificationsProvider.notifier).refresh(),
+                    child: Icon(
+                      Icons.refresh_rounded,
+                      color: accentColor.withAlpha(160),
+                      size: context.s(18),
+                    ),
                   ),
-                ),
-              ),
+                if (unreadCount > 0) ...[
+                  SizedBox(width: context.s(12)),
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(communityNotificationsProvider.notifier).markAllAsRead();
+                    },
+                    child: Text(
+                      "Mark all as read",
+                      style: GoogleFonts.outfit(
+                        color: accentColor,
+                        fontSize: context.s(12),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ],
         ),
+
+        // Offline / error banner with retry
+        if (state.hasError && !state.isLoading) ...[
+          SizedBox(height: context.s(10)),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: context.s(14), vertical: context.s(8)),
+            decoration: BoxDecoration(
+              color: Colors.orange.withAlpha(20),
+              borderRadius: BorderRadius.circular(context.s(10)),
+              border: Border.all(color: Colors.orange.withAlpha(60)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.wifi_off_rounded, color: Colors.orange, size: context.s(14)),
+                SizedBox(width: context.s(8)),
+                Expanded(
+                  child: Text(
+                    "Couldn't fetch latest updates.",
+                    style: GoogleFonts.outfit(color: Colors.orange, fontSize: context.s(12)),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => ref.read(communityNotificationsProvider.notifier).refresh(),
+                  child: Text(
+                    "Retry",
+                    style: GoogleFonts.outfit(
+                      color: accentColor,
+                      fontSize: context.s(12),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+
         SizedBox(height: context.s(16)),
 
         // List of Announcement Cards (Notice Board Style with Tap-to-read)
         if (notifications.isEmpty)
           Container(
+
             padding: EdgeInsets.all(context.s(24)),
             decoration: BoxDecoration(
               color: const Color(0xFF131316),

@@ -184,6 +184,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         'disable_countdown',
         'disable_graph_glow',
         'disable_home_screen_widget',
+        // Notification read state — cleared so 30-day window applies on next sign-in
+        'read_community_notification_ids',
+        'cached_community_notifications_json',
       ];
       for (final key in keysToRemove) {
         await _prefs.remove(key);

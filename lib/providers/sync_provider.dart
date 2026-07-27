@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// SharedPreferences is accessed via sharedPreferencesProvider (injected at startup)
 import '../database/app_database.dart';
 import '../database/backup_service.dart';
 import 'auth_provider.dart';
@@ -106,7 +106,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   Future<void> _load() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       final lastSyncedStr = prefs.getString('last_synced_at');
       final lastStatusStr = prefs.getString('last_sync_status');
       final lastErrorStr = prefs.getString('last_sync_error');
@@ -168,7 +168,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     );
 
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       await prefs.setString('last_sync_status', saveStatus);
       if (lastSyncedAt != null) {
         await prefs.setString('last_synced_at', lastSyncedAt.toIso8601String());
@@ -185,7 +185,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   Future<void> clearSyncState() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       await prefs.remove('last_sync_status');
       await prefs.remove('last_synced_at');
       await prefs.remove('last_sync_error');
@@ -620,7 +620,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
       // 4. Check if there are custom syllabus categories or missing default syllabus categories
       final sylCategories = await _db.select(_db.syllabusCategories).get();
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       final selectedBranch = prefs.getString('selected_branch') ?? 'CS';
       final activePreset = branchPresets[selectedBranch.toUpperCase()] ?? defaultSyllabusPreset;
       final defaultSylCatNames = activePreset.map((e) => e.name).toSet();
