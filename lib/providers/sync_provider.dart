@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,14 @@ import 'syllabus_provider.dart';
 import 'setup_provider.dart';
 import 'hide_download_banner_provider.dart';
 import '../database/syllabus_preset.dart';
+
+final syncPayloadSizeProvider = FutureProvider<double>((ref) async {
+  final notifier = ref.watch(syncProvider.notifier);
+  final data = await notifier.exportLocalData();
+  final jsonStr = jsonEncode(data);
+  final sizeBytes = utf8.encode(jsonStr).length;
+  return sizeBytes / (1024 * 1024);
+});
 
 enum SyncStatus {
   idle,

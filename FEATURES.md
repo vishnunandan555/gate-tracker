@@ -28,3 +28,8 @@ This document tracks upcoming major features, architectural enhancements, and UI
 1. **Spaced Repetition Revision Scheduler**
 2. **Resource Explorer & Reference Links**
 3. **Enhanced Consistency Grid Analytics**
+
+---
+
+## ⚡ Technical & Architecture Documentation
+- **Firestore 1 MB Document Limit & Sync Compression Strategy**: See [FIRESTORE_LIMIT_PROBLEM.md](file:///home/vishnunandan555/Projects/gate-tracker/FIRESTORE_LIMIT_PROBLEM.md) for full problem analysis, live monitoring UI, and solution options (Option A, B, C).

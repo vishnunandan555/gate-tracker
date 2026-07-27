@@ -434,6 +434,54 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                       )
                   ],
                 ),
+                const SizedBox(height: 8),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final sizeAsync = ref.watch(syncPayloadSizeProvider);
+                    return sizeAsync.when(
+                      data: (sizeMb) {
+                        final sizeKb = (sizeMb * 1024).toStringAsFixed(1);
+                        final sizeMbFormatted = sizeMb.toStringAsFixed(3);
+                        final isNearLimit = sizeMb > 0.8;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isNearLimit
+                                ? Colors.amber.withValues(alpha: 0.1)
+                                : Colors.white.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isNearLimit
+                                  ? Colors.amberAccent.withValues(alpha: 0.3)
+                                  : Colors.white.withValues(alpha: 0.05),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isNearLimit ? Icons.warning_amber_rounded : Icons.sd_storage_rounded,
+                                size: 14,
+                                color: isNearLimit ? Colors.amberAccent : Colors.white54,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                "Payload Size: $sizeMbFormatted MB ($sizeKb KB) / 1.00 MB limit",
+                                style: GoogleFonts.outfit(
+                                  color: isNearLimit ? Colors.amberAccent : Colors.white60,
+                                  fontSize: 11,
+                                  fontWeight: isNearLimit ? FontWeight.bold : FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loading: () => const SizedBox.shrink(),
+                      error: (err, stack) => const SizedBox.shrink(),
+                    );
+                  },
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
