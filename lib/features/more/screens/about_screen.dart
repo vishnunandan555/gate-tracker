@@ -56,7 +56,18 @@ class AboutScreen extends ConsumerWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(19),
-                      child: Image.asset('assets/icon.png', fit: BoxFit.cover),
+                      child: Image.asset(
+                        'assets/icon.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.cyanAccent.withValues(alpha: 0.1),
+                          child: const Icon(
+                            Icons.school_rounded,
+                            color: Colors.cyanAccent,
+                            size: 36,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

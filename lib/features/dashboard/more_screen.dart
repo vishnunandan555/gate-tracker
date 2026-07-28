@@ -42,8 +42,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _headerCtrl, curve: Curves.easeOutCubic));
 
-    const maxItems = 16;
-    for (int i = 0; i < maxItems; i++) {
+    _headerCtrl.forward();
+  }
+
+  void _ensureItemControllers(int targetCount) {
+    while (_itemCtrlList.length < targetCount) {
+      final idx = _itemCtrlList.length;
       final ctrl = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 480),
@@ -58,12 +62,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
           end: Offset.zero,
         ).animate(CurvedAnimation(parent: ctrl, curve: Curves.easeOutCubic)),
       );
-    }
 
-    _headerCtrl.forward();
-    for (int i = 0; i < _itemCtrlList.length; i++) {
-      Future.delayed(Duration(milliseconds: 100 + i * 60), () {
-        if (mounted && i < _itemCtrlList.length) _itemCtrlList[i].forward();
+      Future.delayed(Duration(milliseconds: 100 + idx * 60), () {
+        if (mounted && idx < _itemCtrlList.length) {
+          _itemCtrlList[idx].forward();
+        }
       });
     }
   }
@@ -85,6 +88,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     final isDesktop = screenWidth > 900;
 
     final items = _buildMenuItems(accentColor, isDesktop, context, ref);
+    _ensureItemControllers(items.length);
 
     return Scaffold(
       backgroundColor: Colors.transparent,

@@ -205,13 +205,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     try {
       if (everything) {
         final db = ref.read(appDatabaseProvider);
-        await db.delete(db.syllabusProgressLogs).go();
-        await db.delete(db.syllabusTasks).go();
-        await db.delete(db.syllabusTopics).go();
-        await db.delete(db.syllabusCategories).go();
-        await db.delete(db.focusSessions).go();
-        await db.delete(db.dailyHistory).go();
-        await db.delete(db.customTasks).go();
+        await db.wipeDatabaseData();
 
         final prefs = ref.read(sharedPreferencesProvider);
         await prefs.clear();
@@ -248,6 +242,11 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         ref.invalidate(todayFocusSessionsProvider);
         ref.invalidate(todayFocusDurationProvider);
         ref.invalidate(dailyFocusGoalProvider);
+
+        try {
+          final syncNotifier = ref.read(syncProvider.notifier);
+          await syncNotifier.uploadLocalToCloud();
+        } catch (_) {}
       }
 
       if (context.mounted) {
