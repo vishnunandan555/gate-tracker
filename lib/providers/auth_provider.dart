@@ -403,3 +403,36 @@ final accountCreationDateProvider = FutureProvider<DateTime>((ref) async {
   await prefs.setString('account_creation_date', now.toIso8601String());
   return now;
 });
+
+final earliestDataDateProvider = FutureProvider<DateTime>((ref) async {
+  final db = ref.watch(appDatabaseProvider);
+  final accountCreationAsync = await ref.watch(accountCreationDateProvider.future);
+  DateTime earliest = accountCreationAsync;
+
+  // 1. Check earliest progress log
+  final logs = await (db.select(db.syllabusProgressLogs)..where((l) => l.isDeleted.equals(false))).get();
+  for (final l in logs) {
+    if (l.timestamp.isBefore(earliest)) {
+      earliest = l.timestamp;
+    }
+  }
+
+  // 2. Check earliest daily history
+  final history = await db.select(db.dailyHistory).get();
+  for (final h in history) {
+    final d = DateTime.tryParse(h.dateStr);
+    if (d != null && d.isBefore(earliest)) {
+      earliest = d;
+    }
+  }
+
+  // 3. Check earliest focus session
+  final sessions = await db.select(db.focusSessions).get();
+  for (final s in sessions) {
+    if (s.startTime.isBefore(earliest)) {
+      earliest = s.startTime;
+    }
+  }
+
+  return earliest;
+});

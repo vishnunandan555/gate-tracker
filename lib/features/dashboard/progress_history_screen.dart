@@ -119,7 +119,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     final categoriesAsync = ref.watch(syllabusCategoriesProvider);
     final projection = ref.watch(projectedCompletionProvider);
     final showProjComp = ref.watch(showProjectedCompletionProvider);
-    final accountCreationDateAsync = ref.watch(accountCreationDateProvider);
+    final accountCreationDateAsync = ref.watch(earliestDataDateProvider);
     final accountCreationDate = accountCreationDateAsync.value ?? DateTime.now();
 
     final todayGoalSeconds = dailyGoalMinutes * 60;
