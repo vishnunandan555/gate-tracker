@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/sync_provider.dart';
 import '../../../providers/package_info_provider.dart';
 
@@ -177,7 +178,21 @@ class _SyncDialogOption extends StatelessWidget {
   }
 }
 
+void checkAndInitSync(WidgetRef ref) {
+  final authState = ref.read(authProvider).value;
+  if (authState != null && authState.user != null) {
+    final syncState = ref.read(syncProvider);
+    if (syncState.status == SyncStatus.idle) {
+      ref.read(syncProvider.notifier).initializeSync();
+    }
+  }
+}
+
+bool _hasCheckedVersionThisSession = false;
+
 Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
+  if (_hasCheckedVersionThisSession) return;
+  _hasCheckedVersionThisSession = true;
   try {
     final prefs = await SharedPreferences.getInstance();
     final packageInfo = ref.read(packageInfoProvider);

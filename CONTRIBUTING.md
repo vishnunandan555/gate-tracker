@@ -2,12 +2,12 @@
 
 We love community contributions! If you have a favorite motivational quote that keeps you focused, disciplined, or inspired during exam preparation, you can add it directly to GATEletics.
 
-GATEletics uses **two quote files**, each serving a different purpose:
+GATEletics uses **two quote files**, each serving a distinct format and architectural purpose:
 
-| File | Where it appears |
-|---|---|
-| `quotes.json` | Home screen / general motivational carousel |
-| `focus_quotes.json` | Focus Mode timer — shown during active study & break intervals |
+| File | Delivery Mechanism | Format & Purpose |
+|---|---|---|
+| `quotes.json` | Remotely fetched from GitHub & cached locally | Flat string array of general motivational quotes for top bar title and home screen. |
+| `focus_quotes.json` | Bundled local app asset (`assets/`) | Structured JSON object containing `focus` and `break` quote arrays with `{session}`, `{subject}`, `{minutes}` placeholders. |
 
 ---
 

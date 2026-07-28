@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/notice_board_provider.dart';
@@ -46,20 +45,10 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     super.initState();
     _pageController = PageController(initialPage: 2);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndInitSync();
+      checkAndInitSync(ref);
       _checkDesktopWarning();
       checkAppVersionUpdate(context, ref);
     });
-  }
-
-  void _checkAndInitSync() {
-    final authState = ref.read(authProvider).value;
-    if (authState != null && authState.user != null) {
-      final syncState = ref.read(syncProvider);
-      if (syncState.status == SyncStatus.idle) {
-        ref.read(syncProvider.notifier).initializeSync();
-      }
-    }
   }
 
   void _animateToTab(int targetIndex) {

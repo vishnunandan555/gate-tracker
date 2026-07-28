@@ -1,6 +1,32 @@
 # FEATURES (v1.3.0 Release Candidate Roadmap — Production Stage)
 
-This document tracks upcoming major features, architectural enhancements, and UI roadmap specifications for the **v1.3.0** production release cycle.
+This document tracks upcoming major features, architectural enhancements, security specifications, and UI roadmap items.
+
+---
+
+## 🔒 Security & Backend Milestone: Firestore Security Rules Specification
+
+### Firestore Data Validation & Access Rules (`firestore.rules`)
+Server-side security rules for Firestore ensure all cloud sync payloads are validated prior to writing.
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      // Allow read/write only if the authenticated user matches the document ID
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Schema and payload size validation
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.size() < 1048576 // Max 1 MB limit
+        && request.resource.data.keys().hasAll(['data', 'lastSyncedAt'])
+        && request.resource.data.data.version is number;
+    }
+  }
+}
+```
 
 ---
 

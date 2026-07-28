@@ -12,8 +12,6 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/profile_provider.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
-import '../../../utils/page_transitions.dart';
-import '../../dashboard/widgets/auth_screen.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
 
 class AccountsScreen extends ConsumerWidget {
@@ -273,14 +271,31 @@ class _HeroProfileCard extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    AppPageRoute(page: const AuthScreen()),
-                  );
-                },
-                icon: const Icon(Icons.login_rounded, color: Colors.black, size: 18),
+                onPressed: authAsync.isLoading
+                    ? null
+                    : () async {
+                        try {
+                          await ref.read(authProvider.notifier).signInWithGoogle();
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Sign in failed: ${e.toString()}'),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                icon: authAsync.isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                      )
+                    : const Icon(Icons.login_rounded, color: Colors.black, size: 18),
                 label: Text(
-                  'Sign In to Sync Progress',
+                  authAsync.isLoading ? 'Signing In…' : 'Sign In with Google',
                   style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
                 ),
                 style: FilledButton.styleFrom(

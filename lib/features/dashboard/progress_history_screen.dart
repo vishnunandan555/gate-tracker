@@ -19,6 +19,7 @@ import 'widgets/history/history_graph.dart';
 import 'widgets/history/history_streaks.dart';
 import 'widgets/history/history_pie_chart.dart';
 import 'widgets/history/history_projection.dart';
+import '../../providers/demo_guide_provider.dart';
 import '../../utils/demo_keys.dart';
 
 class ProgressHistoryScreen extends ConsumerStatefulWidget {
@@ -148,6 +149,10 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (history.isEmpty) ...[
+                _buildEmptyStateCard(context, accentColor),
+                SizedBox(height: context.s(16)),
+              ],
               _buildAnimatedEntrance(
                 animation: _streakHeaderAnim,
                 child: SizedBox(
@@ -505,5 +510,57 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     } else {
       return "$dateLabel\nFocused for $hrsStr hrs ($pct%)\nGoal Not Reached | $deltaStr";
     }
+  }
+
+  Widget _buildEmptyStateCard(BuildContext context, Color accentColor) {
+    return Container(
+      padding: EdgeInsets.all(context.s(16)),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(context.s(16)),
+        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.track_changes_rounded, size: context.s(32), color: accentColor),
+          SizedBox(height: context.s(8)),
+          Text(
+            'Your Study Journey Starts Here',
+            style: GoogleFonts.outfit(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: context.s(14),
+            ),
+          ),
+          SizedBox(height: context.s(4)),
+          Text(
+            'Complete your first focus session or check off a syllabus topic to unlock daily heatmaps, study streaks, and completion analytics!',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.outfit(
+              color: Colors.white60,
+              fontSize: context.s(11),
+              height: 1.4,
+            ),
+          ),
+          SizedBox(height: context.s(12)),
+          ElevatedButton.icon(
+            onPressed: () {
+              ref.read(shellTabProvider.notifier).state = 2; // Switch to Focus tab
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accentColor,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.s(10))),
+              padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
+            ),
+            icon: Icon(Icons.play_arrow_rounded, size: context.s(16)),
+            label: Text(
+              'Start Focus Session',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: context.s(12)),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

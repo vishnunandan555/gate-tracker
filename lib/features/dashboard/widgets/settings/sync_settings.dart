@@ -645,29 +645,37 @@ class _SyncStatusBadge extends StatelessWidget {
     final isSynced = syncState.lastSyncedAt != null &&
         syncState.status == SyncStatus.success;
 
-    final Color badgeColor = isError
-        ? Colors.redAccent
-        : isSyncing
-            ? Colors.cyanAccent
-            : isSynced
-                ? Colors.greenAccent
-                : Colors.white38;
+    final isOfflinePause = isError && (syncState.errorMessage?.contains('internet') == true || syncState.errorMessage?.contains('paused') == true);
 
-    final String label = isError
-        ? 'Sync Error'
-        : isSyncing
-            ? 'Syncing…'
-            : isSynced
-                ? 'Synced ${formatSyncTime(syncState.lastSyncedAt!)}'
-                : 'Not synced';
+    final Color badgeColor = isOfflinePause
+        ? Colors.amberAccent
+        : isError
+            ? Colors.redAccent
+            : isSyncing
+                ? Colors.cyanAccent
+                : isSynced
+                    ? Colors.greenAccent
+                    : Colors.white38;
 
-    final IconData icon = isError
-        ? Icons.cloud_off_rounded
-        : isSyncing
-            ? Icons.sync_rounded
-            : isSynced
-                ? Icons.cloud_done_rounded
-                : Icons.cloud_queue_rounded;
+    final String label = isOfflinePause
+        ? (syncState.errorMessage ?? 'No Internet — Sync Paused')
+        : isError
+            ? 'Sync Error'
+            : isSyncing
+                ? 'Syncing…'
+                : isSynced
+                    ? 'Synced ${formatSyncTime(syncState.lastSyncedAt!)}'
+                    : 'Not synced';
+
+    final IconData icon = isOfflinePause
+        ? Icons.wifi_off_rounded
+        : isError
+            ? Icons.cloud_off_rounded
+            : isSyncing
+                ? Icons.sync_rounded
+                : isSynced
+                    ? Icons.cloud_done_rounded
+                    : Icons.cloud_queue_rounded;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

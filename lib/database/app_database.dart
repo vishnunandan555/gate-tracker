@@ -74,6 +74,8 @@ class CustomTasks extends Table {
   DateTimeColumn get lastInteractedAt => dateTime().nullable()();
 }
 
+@TableIndex(name: 'idx_progress_logs_timestamp', columns: {#timestamp})
+@TableIndex(name: 'idx_progress_logs_category', columns: {#categoryId})
 class SyllabusProgressLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get categoryId => integer().references(SyllabusCategories, #id, onDelete: KeyAction.cascade)();
@@ -136,6 +138,9 @@ class AppDatabase extends _$AppDatabase {
       await delete(focusSessions).go();
       await delete(dailyHistory).go();
       await delete(customTasks).go();
+      try {
+        await customStatement('DELETE FROM sqlite_sequence;');
+      } catch (_) {}
     });
   }
 
@@ -218,6 +223,8 @@ class AppDatabase extends _$AppDatabase {
           if (from < 14) {
             try {
               await m.createTable(syllabusProgressLogs);
+              await customStatement('CREATE INDEX IF NOT EXISTS idx_progress_logs_timestamp ON syllabus_progress_logs (timestamp);');
+              await customStatement('CREATE INDEX IF NOT EXISTS idx_progress_logs_category ON syllabus_progress_logs (category_id);');
             } catch (_) {}
           }
           if (shouldSeed) {
@@ -787,10 +794,12 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> softDeleteCounterProgressLog(int topicId, int countToCancel) async {
-    // Find the most recent active progress logs for this topic
+  Future<void> softDeleteCounterProgressLog(int topicId, int countToCancel, {StudyDayRollover rollover = StudyDayRollover.overnight}) async {
+    final now = DateTime.now();
+    final todayStart = getStudyDayStart(now, rollover: rollover);
+    // Find the most recent active progress logs for this topic within today's study window
     final activeLogs = await (select(syllabusProgressLogs)
-          ..where((l) => l.topicId.equals(topicId) & l.isDeleted.equals(false) & l.taskId.isNull())
+          ..where((l) => l.topicId.equals(topicId) & l.isDeleted.equals(false) & l.taskId.isNull() & l.timestamp.isBiggerOrEqualValue(todayStart))
           ..orderBy([(l) => OrderingTerm(expression: l.timestamp, mode: OrderingMode.desc)]))
         .get();
 

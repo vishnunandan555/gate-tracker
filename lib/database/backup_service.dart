@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'app_database.dart';
+import 'schema_version.dart';
 
 class BackupService {
   // Export local database to a standard serialized Map payload
@@ -52,6 +53,7 @@ class BackupService {
       'durationSeconds': fs.durationSeconds,
       'accomplishments': fs.accomplishments,
       'progressDelta': fs.progressDelta,
+      'categoryId': fs.categoryId,
     }).toList();
 
     final exportedDailyHistory = dailyHist.map((dh) => {
@@ -85,7 +87,7 @@ class BackupService {
     }).toList();
 
     return {
-      'version': 9,
+      'version': appSchemaVersion,
       'syllabusCategories': exportedSyllabusCats,
       'syllabusTopics': exportedSyllabusTops,
       'syllabusTasks': exportedSyllabusTsks,
@@ -100,7 +102,7 @@ class BackupService {
   // Restore database tables from a serialized Map payload
   static Future<void> restoreDatabase(AppDatabase db, Map<String, dynamic> payload) async {
     final version = (payload['version'] as num?)?.toInt() ?? 1;
-    // Version migration shim — normalize old payloads before restore
+    // Version migration shims — normalize old payloads before restore
     if (version < 9) {
       payload.putIfAbsent('syllabusProgressLogs', () => <dynamic>[]);
     }
@@ -112,6 +114,14 @@ class BackupService {
           t.putIfAbsent('currentCount', () => 0);
           t.putIfAbsent('maxCount', () => 0);
           t.putIfAbsent('resourceUrl', () => null);
+        }
+      }
+    }
+    if (version < 13) {
+      final history = payload['dailyHistory'] as List<dynamic>? ?? [];
+      for (final dh in history) {
+        if (dh is Map<String, dynamic>) {
+          dh.putIfAbsent('tasksCompletedTotal', () => 0);
         }
       }
     }
@@ -249,6 +259,8 @@ class BackupService {
           final durationSeconds = ((fs['durationSeconds'] ?? 0) as num).toInt();
           final accomplishments = fs['accomplishments'] as String?;
           final progressDelta = ((fs['progressDelta'] ?? 0.0) as num).toDouble();
+          final rawCatId = fs['categoryId'];
+          final categoryId = rawCatId != null ? (rawCatId as num).toInt() : null;
 
           if (startTime != null) {
             await db.addFocusSession(FocusSessionsCompanion.insert(
@@ -257,6 +269,7 @@ class BackupService {
               durationSeconds: durationSeconds,
               accomplishments: Value(accomplishments),
               progressDelta: Value(progressDelta),
+              categoryId: Value(categoryId),
             ));
           }
         }

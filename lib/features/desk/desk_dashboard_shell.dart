@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/syllabus_provider.dart';
@@ -33,20 +32,10 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndInitSync();
+      checkAndInitSync(ref);
       checkAppVersionUpdate(context, ref);
       ref.read(desktopUpdateProvider.notifier).checkOnLaunchSilently();
     });
-  }
-
-  void _checkAndInitSync() {
-    final authState = ref.read(authProvider).value;
-    if (authState != null && authState.user != null) {
-      final syncState = ref.read(syncProvider);
-      if (syncState.status == SyncStatus.idle) {
-        ref.read(syncProvider.notifier).initializeSync();
-      }
-    }
   }
 
   void _onTabSelected(int index) {

@@ -10,8 +10,8 @@
 
 <p align="center">
   <a href="https://github.com/vishnunandan555/gateletics/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/vishnunandan555/gateletics/release.yml?logo=github&label=Build%20%26%20Release" alt="Build & Release"></a>
-  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/version-1.3.0--beta.1%2B21-emerald.svg" alt="Version"></a>
-  <a href="https://github.com/vishnunandan555/gateletics/releases"><img src="https://img.shields.io/badge/stage-v1.3.0%20production%20candidate-emerald.svg?logo=googleplay" alt="Production Candidate"></a>
+  <a href="https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics"><img src="https://img.shields.io/github/v/release/vishnunandan555/gateletics?label=Production&logo=googleplay&color=00C853" alt="Production Track"></a>
+  <a href="https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics"><img src="https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta&logo=googleplay&color=FF9100" alt="Beta"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat&logo=Flutter&logoColor=white" alt="Flutter"></a>
 </p>
@@ -27,6 +27,19 @@
 ## 🌟 What is GATEletics?
 
 **GATEletics** is a clean, offline-first study companion designed specifically for Graduate Aptitude Test in Engineering (GATE) aspirants. It helps you track syllabus completion across your branch, run study focus timers, manage daily tasks on an interactive Notice Board, and stay on top of your exam countdown—all stored **100% offline-first** on your local device.
+
+---
+
+## 🚀 Release Tracks & Status
+
+GATEletics maintains two distinct release tracks on Google Play Store and GitHub Releases:
+
+| Track | Target Audience | Version Format | Status Badge | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| 🟢 **Production Track** | General Users | Proper Releases (e.g. `v1.3.1`) | [![Production](https://img.shields.io/github/v/release/vishnunandan555/gateletics?label=Production&logo=googleplay&color=00C853)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Fully tested, stable releases available on Google Play Store production channel & GitHub. |
+| 🟠 **Beta Track (Open Testing)** | Early Testers | Beta Builds (e.g. `v1.3.1-beta2`) | [![Beta Track](https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta%20Track&logo=googleplay&color=FF9100)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Early access builds in Google Play Open Testing with latest preview features & early patches. |
+
+> **Note:** The status badges above dynamically reflect the latest version published to each track. Whichever version is newest (e.g., a new `v1.3.1-beta2` build vs stable `v1.3.1`) will automatically update in real-time.
 
 ---
 
@@ -70,12 +83,13 @@
 
 GATEletics is available natively across Desktop, Mobile, and Web platforms:
 
-| Platform | Download Link | Description |
-| :--- | :--- | :--- |
-| **🌐 Web App** | [gateletics.vercel.app](https://gateletics.vercel.app/) | Full PWA web application, runs offline in any browser |
-| **📱 Android** | [Download APK](https://github.com/vishnunandan555/gateletics/releases) | Standalone APK installer (`gateletics-v*.apk`) |
-| **🪟 Windows** | [Download Setup / ZIP](https://github.com/vishnunandan555/gateletics/releases) | Windows Setup Installer (`-setup.exe`) & Portable ZIP (`.zip`) |
-| **🐧 Linux** | [Download AppImage / DEB](https://github.com/vishnunandan555/gateletics/releases) | Standalone AppImage (`.AppImage`), Debian package (`.deb`), & Tarball (`.tar.gz`) |
+| Platform | Download / Install Link | Track / Version | Description |
+| :--- | :--- | :--- | :--- |
+| **🌐 Web App** | [gateletics.vercel.app](https://gateletics.vercel.app/) | Live PWA | Full PWA web application, runs offline in any browser |
+| **📱 Android (Production)** | [Google Play Store](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Stable APK](https://github.com/vishnunandan555/gateletics/releases) | Production (`v1.3.1`) | Official Google Play Store production release |
+| **🧪 Android (Beta Track)** | [Play Store Open Testing](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Beta APK](https://github.com/vishnunandan555/gateletics/releases) | Beta (`v1.3.1-beta2`) | Google Play Open Testing channel for pre-release testing |
+| **🪟 Windows** | [Download Setup / ZIP](https://github.com/vishnunandan555/gateletics/releases) | Desktop Installer | Windows Setup Installer (`-setup.exe`) & Portable ZIP (`.zip`) |
+| **🐧 Linux** | [Download AppImage / DEB](https://github.com/vishnunandan555/gateletics/releases) | Linux Packages | Standalone AppImage (`.AppImage`), Debian package (`.deb`), & Tarball (`.tar.gz`) |
 
 ---
 
