@@ -9,7 +9,7 @@ PublisherSupportUrl: https://github.com/vishnunandan555/gateletics/issues
 Author: Vishnunandan
 PackageName: GATEletics
 PackageUrl: https://github.com/vishnunandan555/gateletics
-License: MIT
+License: AGPL-3.0
 LicenseUrl: https://github.com/vishnunandan555/gateletics/blob/main/LICENSE
 Copyright: Copyright (c) 2026 Vishnunandan
 ShortDescription: A syllabus, focus, and resource tracker for GATE exam preparation.

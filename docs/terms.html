@@ -48,39 +48,13 @@
     </div>
   </div>
 
-  <footer style="margin-top: 60px; padding: 28px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 14px;">
-    <div class="container" style="padding-top: 0; padding-bottom: 0;">
-      <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 14px;">
-        <a href="index.html">Home</a>
-        <a href="features.html">Features</a>
-        <a href="downloads.html">Downloads</a>
-        <a href="guide.html">Guide</a>
-        <a href="support.html">Support</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-      </div>
-      <p>© 2026 GATEletics. Open source under the MIT License.</p>
-    </div>
-  </footer>
+  <div id="site-footer"></div>
+  <script src="shared-components.js"></script>
 
   <!-- Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  
-  <script>
-    // Theme Toggle Handler
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      updateToggleText(newTheme);
-    });
 
-    function updateToggleText(theme) {
-      themeToggle.innerHTML = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-    updateToggleText(document.documentElement.getAttribute('data-theme'));
+  <script>
 
     // Dynamic Markdown Loader
     const markdownUrl = 'https://raw.githubusercontent.com/vishnunandan555/gateletics/main/TERMS_OF_SERVICE.md';

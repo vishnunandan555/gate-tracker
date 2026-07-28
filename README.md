@@ -12,7 +12,7 @@
   <a href="https://github.com/vishnunandan555/gateletics/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/vishnunandan555/gateletics/release.yml?logo=github&label=Build%20%26%20Release" alt="Build & Release"></a>
   <a href="https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics"><img src="https://img.shields.io/github/v/release/vishnunandan555/gateletics?label=Production&logo=googleplay&color=00C853" alt="Production Track"></a>
   <a href="https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics"><img src="https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta&logo=googleplay&color=FF9100" alt="Beta"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPLv3-blue.svg" alt="License"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat&logo=Flutter&logoColor=white" alt="Flutter"></a>
 </p>
 
@@ -192,4 +192,4 @@ lib/
 
 ### 📄 License
 
-This project is licensed under the [MIT License](LICENSE) — see the file for details.
+This project is licensed under the [GNU AGPLv3 License](LICENSE) — see the file for details.

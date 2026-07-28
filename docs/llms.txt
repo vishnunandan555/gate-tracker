@@ -29,4 +29,4 @@
 - **Database**: Drift (SQLite) for Native & WebAssembly / IndexedDB for Web
 - **State Management**: Riverpod 2.x
 - **Cloud Infrastructure**: Firebase Auth & Cloud Firestore
-- **License**: MIT Open Source License
+- **License**: GNU AGPLv3 Open Source License

@@ -27,7 +27,7 @@ By using GATEletics ("App"), you agree to be bound by these Terms. If you disagr
 We grant you a personal, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial educational purposes on devices owned or controlled by you.
 
 3. Intellectual Property
-The App, its original features, and source code are open-source and licensed under the MIT License. You may modify and redistribute it under the terms of the MIT License, but the official Play Store version and brand name "GATEletics" are represented by the developer.
+The App, its original features, and source code are open-source and licensed under the GNU AGPLv3 License. You may modify and redistribute it under the terms of the GNU AGPLv3 License, but the official Play Store version and brand name "GATEletics" are represented by the developer.
 
 4. Limitation of Liability & "As-Is" Clause
 The App is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. Vishnu Nandan shall not be liable for any damages arising out of your use of, or inability to use, the App. This includes loss of study data, device issues, or syllabus errors.

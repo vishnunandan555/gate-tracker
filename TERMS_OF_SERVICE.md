@@ -24,7 +24,7 @@ We grant you a personal, non-exclusive, non-transferable, revocable license to u
 ---
 
 ## 4. Intellectual Property
-The App, its original features, and source code are open-source and licensed under the MIT License. You may modify and redistribute it under the terms of the MIT License, but the official Play Store version and brand name "GATEletics" are represented by the developer.
+The App, its original features, and source code are open-source and licensed under the GNU AGPLv3 License. You may modify and redistribute it under the terms of the GNU AGPLv3 License, but the official Play Store version and brand name "GATEletics" are represented by the developer.
 
 ---
 
