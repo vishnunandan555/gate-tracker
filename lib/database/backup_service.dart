@@ -125,6 +125,16 @@ class BackupService {
         }
       }
     }
+    if (version < 14) {
+      // categoryId was added to focusSessions in schema v14.
+      // Old backups have no such field; explicitly null so restore ignores it.
+      final sessions = payload['focusSessions'] as List<dynamic>? ?? [];
+      for (final fs in sessions) {
+        if (fs is Map<String, dynamic>) {
+          fs.putIfAbsent('categoryId', () => null);
+        }
+      }
+    }
 
     final syllabusCategoriesData = payload['syllabusCategories'] as List<dynamic>?;
     final syllabusTopicsData = payload['syllabusTopics'] as List<dynamic>?;

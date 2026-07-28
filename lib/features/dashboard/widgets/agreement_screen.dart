@@ -1,4 +1,4 @@
-import 'dart:io' show exit, Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -276,10 +276,10 @@ If you have any questions about this Privacy Policy, please contact us at: vishn
                             Expanded(
                               child: OutlinedButton(
                                 onPressed: () {
-                                  if (Platform.isAndroid || Platform.isIOS) {
+                                  if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
                                     SystemNavigator.pop();
                                   } else {
-                                    exit(0);
+                                    SystemNavigator.pop();
                                   }
                                 },
                                 style: OutlinedButton.styleFrom(

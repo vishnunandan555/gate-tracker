@@ -4,17 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../providers/sync_provider.dart';
-import '../../providers/subject_provider.dart';
-import '../../providers/syllabus_provider.dart';
 import '../dashboard/settings_screen.dart';
 import '../dashboard/widgets/focus_screen.dart';
-import '../../providers/focus_provider.dart';
 import '../dashboard/widgets/shell_common.dart';
 import 'desk_dashboard_screen.dart';
-import '../../providers/overall_ui_scale_provider.dart';
 import '../dashboard/home_screen.dart';
-import '../../providers/desktop_update_provider.dart';
+import '../dashboard/progress_history_screen.dart';
+import '../dashboard/more_screen.dart';
+import '../../providers/providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DeskDashboardShell extends ConsumerStatefulWidget {
@@ -132,17 +129,29 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
                     onMobileUiTap: () => context.go('/'),
                   ),
                   Expanded(
-                    child: IndexedStack(
-                      index: _currentIndex,
+                    child: Column(
                       children: [
-                        KeepAliveWrapper(
-                          child: HomeScreen(
-                            onNavigate: _onTabSelected,
+                        _DeskHeaderBar(
+                          progressColor: progressColor,
+                          onTabSelected: _onTabSelected,
+                        ),
+                        Expanded(
+                          child: IndexedStack(
+                            index: _currentIndex,
+                            children: [
+                              KeepAliveWrapper(
+                                child: HomeScreen(
+                                  onNavigate: _onTabSelected,
+                                ),
+                              ),
+                              const KeepAliveWrapper(child: DeskDashboardScreen()),
+                              KeepAliveWrapper(child: FocusScreen(progressColor: progressColor)),
+                              const KeepAliveWrapper(child: ProgressHistoryScreen()),
+                              const KeepAliveWrapper(child: MoreScreen()),
+                              const KeepAliveWrapper(child: SettingsScreen()),
+                            ],
                           ),
                         ),
-                        const KeepAliveWrapper(child: DeskDashboardScreen()),
-                        KeepAliveWrapper(child: FocusScreen(progressColor: progressColor)),
-                        const KeepAliveWrapper(child: SettingsScreen()),
                       ],
                     ),
                   ),
@@ -259,6 +268,24 @@ class _DeskSidebar extends StatelessWidget {
           _SidebarNavItem(
             index: 3,
             currentIndex: currentIndex,
+            icon: Icons.analytics_rounded,
+            label: 'Analytics',
+            color: progressColor,
+            isCompact: isCompact,
+            onTap: onTabSelected,
+          ),
+          _SidebarNavItem(
+            index: 4,
+            currentIndex: currentIndex,
+            icon: Icons.grid_view_rounded,
+            label: 'More',
+            color: progressColor,
+            isCompact: isCompact,
+            onTap: onTabSelected,
+          ),
+          _SidebarNavItem(
+            index: 5,
+            currentIndex: currentIndex,
             icon: Icons.settings_rounded,
             label: 'Settings',
             color: progressColor,
@@ -266,6 +293,11 @@ class _DeskSidebar extends StatelessWidget {
             onTap: onTabSelected,
           ),
           const Spacer(),
+          _DeskProfileFooter(
+            progressColor: progressColor,
+            isCompact: isCompact,
+            onTapProfile: () => onTabSelected(4),
+          ),
           if (kIsWeb)
             Padding(
               padding: isCompact
@@ -448,5 +480,248 @@ class _SidebarNavItem extends ConsumerWidget {
       final s = seconds % 60;
       return "${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
     }
+  }
+}
+
+class _DeskHeaderBar extends ConsumerWidget {
+  final Color progressColor;
+  final ValueChanged<int> onTabSelected;
+
+  const _DeskHeaderBar({
+    required this.progressColor,
+    required this.onTabSelected,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final completionAsync = ref.watch(completionStatsProvider);
+    final completionPct = completionAsync.value?.percentage ?? 0.0;
+    final syncState = ref.watch(syncProvider);
+    final profile = ref.watch(profileProvider);
+    final authState = ref.watch(authProvider);
+    final streak = ref.watch(checkInStreakProvider);
+
+    final user = authState.value?.user;
+    final String displayName = (profile.customDisplayName != null && profile.customDisplayName!.trim().isNotEmpty)
+        ? profile.customDisplayName!.trim()
+        : (user?.displayName != null && user!.displayName!.trim().isNotEmpty
+            ? user.displayName!.trim()
+            : 'GATE Aspirant');
+
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131316),
+        border: Border(
+          bottom: BorderSide(color: Colors.white.withAlpha(12)),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Header Preparation Quick Metrics
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: progressColor.withAlpha(20),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: progressColor.withAlpha(60)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.pie_chart_rounded, color: progressColor, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  '${completionPct.toStringAsFixed(1)}% Prepared',
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.amber.withAlpha(20),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.amber.withAlpha(60)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.local_fire_department_rounded, color: Colors.amberAccent, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  '$streak Day Streak',
+                  style: GoogleFonts.outfit(
+                    color: Colors.amberAccent,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          // Sync Status Chip with 1-tap sync trigger
+          GestureDetector(
+            onTap: () {
+              ref.read(syncProvider.notifier).syncIfPending();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(8),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white.withAlpha(15)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (syncState.status == SyncStatus.syncing) ...[
+                    SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Syncing...',
+                      style: GoogleFonts.outfit(color: progressColor, fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ] else ...[
+                    Icon(
+                      syncState.status == SyncStatus.error ? Icons.sync_problem_rounded : Icons.cloud_done_rounded,
+                      color: syncState.status == SyncStatus.error ? Colors.redAccent : Colors.cyanAccent,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      syncState.status == SyncStatus.error ? 'Sync Error' : 'Cloud Synced',
+                      style: GoogleFonts.outfit(
+                        color: syncState.status == SyncStatus.error ? Colors.redAccent : Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // User Profile Quick Tile
+          GestureDetector(
+            onTap: () => onTabSelected(4), // Navigate to More Hub
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(8),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: progressColor.withAlpha(40),
+                    child: Text(
+                      displayName.isNotEmpty ? displayName[0].toUpperCase() : 'G',
+                      style: GoogleFonts.outfit(color: progressColor, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    displayName,
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeskProfileFooter extends ConsumerWidget {
+  final Color progressColor;
+  final bool isCompact;
+  final VoidCallback onTapProfile;
+
+  const _DeskProfileFooter({
+    required this.progressColor,
+    required this.isCompact,
+    required this.onTapProfile,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
+    final authState = ref.watch(authProvider);
+
+    final user = authState.value?.user;
+    final String displayName = (profile.customDisplayName != null && profile.customDisplayName!.trim().isNotEmpty)
+        ? profile.customDisplayName!.trim()
+        : (user?.displayName != null && user!.displayName!.trim().isNotEmpty
+            ? user.displayName!.trim()
+            : 'GATE Aspirant');
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: isCompact ? 8 : 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withAlpha(10)),
+      ),
+      child: GestureDetector(
+        onTap: onTapProfile,
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 14,
+              backgroundColor: progressColor.withAlpha(40),
+              child: Text(
+                displayName.isNotEmpty ? displayName[0].toUpperCase() : 'G',
+                style: GoogleFonts.outfit(color: progressColor, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (!isCompact) ...[
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName,
+                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'GATE Aspirant',
+                      style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: Colors.white30, size: 18),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }

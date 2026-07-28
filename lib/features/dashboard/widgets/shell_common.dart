@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../providers/sync_provider.dart';
-import '../../../providers/package_info_provider.dart';
+import '../../../providers/providers.dart';
 
 class KeepAliveWrapper extends StatefulWidget {
   final Widget child;
@@ -194,7 +191,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
   if (_hasCheckedVersionThisSession) return;
   _hasCheckedVersionThisSession = true;
   try {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final packageInfo = ref.read(packageInfoProvider);
     final currentVer = '${packageInfo.version}+${packageInfo.buildNumber}';
     final lastKnownVer = prefs.getString('last_known_app_version');

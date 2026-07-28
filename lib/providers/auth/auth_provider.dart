@@ -337,14 +337,14 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> deleteServerAccountOnly() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Delete Firestore document first
+      final uid = user.uid;
+      // Delete FirebaseAuth user first so if re-authentication is required, Firestore data isn't deleted prematurely
+      await user.delete();
       try {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+        await FirebaseFirestore.instance.collection('users').doc(uid).delete();
       } catch (e) {
         debugPrint("Error deleting user Firestore data: $e");
       }
-      // Delete FirebaseAuth user
-      await user.delete();
     }
     await _prefs.remove('account_creation_date');
   }
@@ -413,7 +413,7 @@ final accountCreationDateProvider = FutureProvider<DateTime>((ref) async {
   if (firebaseUser != null && firebaseUser.metadata.creationTime != null) {
     return firebaseUser.metadata.creationTime!;
   }
-  final prefs = await SharedPreferences.getInstance();
+  final prefs = ref.watch(sharedPreferencesProvider);
   final localStr = prefs.getString('account_creation_date');
   if (localStr != null) {
     final date = DateTime.tryParse(localStr);

@@ -170,12 +170,20 @@ flutter run -d linux
 
 ```text
 lib/
-├── core/            # App routing (GoRouter), theme system, and layout resolvers
-├── database/        # Drift SQLite tables, migration schemas, and presets
+├── core/            # App routing (GoRouter with 404 fallback), theme system, and layout resolvers
+├── database/        # Drift SQLite tables, migration engine (v1–v14), backup service, and presets
 ├── features/        # Main feature modules:
-│   ├── dashboard/   # Home screen, Notice Board, Focus workspace, Settings
+│   ├── dashboard/   # Mobile & Adaptive UI: Home screen, Notice Board, Focus workspace, Settings
 │   └── desk/        # Multi-platform Widescreen Desktop UI shell
-├── providers/       # Riverpod state notifiers and business logic
+├── providers/       # Domain-driven Riverpod state notifiers and business logic:
+│   ├── auth/        # Authentication, Google Sign-In, Windows auth helper, user agreement
+│   ├── sync/        # Offline-first Cloud Firestore sync, desktop update checker, package info
+│   ├── syllabus/    # Syllabus progress, category auto-sorting, subject color themes, setup
+│   ├── focus/       # Focus timers (Freestyle/Pomodoro/Ultradian), ambient animation visualizers
+│   ├── history/     # Daily history snapshots, study streaks, category analytics
+│   ├── settings/    # Font scaling, UI scale, glow strength, countdown & chart display toggles
+│   ├── user/        # Profile customization, quotes, community notifications, notice board
+│   └── providers.dart # Central barrel export file
 ├── utils/           # Adaptive UI scaling helpers, keys, and string utilities
 └── widgets/         # Reusable dialogs, share cards, and custom canvas painters
 ```

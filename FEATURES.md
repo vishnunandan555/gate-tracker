@@ -1,6 +1,6 @@
 # FEATURES (v1.3.0 Release Candidate Roadmap — Production Stage)
 
-This document tracks upcoming major features, architectural enhancements, security specifications, and UI roadmap items.
+This document tracks upcoming major features, architectural enhancements, security specifications, and completed milestone tasks for GATEletics.
 
 ---
 
@@ -64,3 +64,21 @@ service cloud.firestore {
 
 ## ⚡ Technical & Architecture Documentation
 - **Firestore 1 MB Document Limit & Sync Compression Strategy**: See [FIRESTORE_LIMIT_PROBLEM.md](file:///home/vishnunandan555/Projects/gate-tracker/FIRESTORE_LIMIT_PROBLEM.md) for full problem analysis, live monitoring UI, and solution options (Option A, B, C).
+
+---
+
+## ✅ Completed Milestones & Quality Audit
+
+### 📌 Milestone 0: Core Quality & Architecture Audit (COMPLETED ✅)
+- [x] **Backend & Sync Engine Audit (H1–H8):** Fixed `autoSync` state transitions (`SyncStatus.syncing`), backup migration engine for v1–v14 payloads, focus session soft-deletes, multi-platform account deletion re-auth, category composite key collisions (`name_color_position`), and Dependency Injection consistency via `sharedPreferencesProvider`.
+- [x] **Sync & Auth Enhancements (M1–M15):** Resolved offline sync retries & splashes, debounced session version checks, isolated Firestore rate-limiting timers, extracted shell sync initialization (`shell_common.dart`), inline Google Sign-In with user error toasts, 404 router fallbacks, and local documents directory profile photo persistence.
+- [x] **UI Modularization & Performance (L7, L8, L9, L15, L16, L20):**
+  - Decomposed `home_screen.dart` into `ActiveFocusWaveWidget` and `TickingCountdownTimer` (550+ lines extracted).
+  - Modularized syllabus customization sheets.
+  - Added E2E integration test suite (`auth_flow_test.dart`, `backup_restore_e2e_test.dart`, `sync_merge_e2e_test.dart`).
+  - Capped remote community notifications at max 50 items.
+  - Reset auto-increment sequence counters (`sqlite_sequence`) on database wipe and restore.
+- [x] **Providers Directory Architecture Refactoring:**
+  - Grouped 39 provider files into 7 domain subfolders (`auth/`, `sync/`, `syllabus/`, `focus/`, `history/`, `settings/`, `user/`).
+  - Created central `providers.dart` barrel file with root forwarders for zero breaking changes.
+  - Cleaned up verbose/negative boolean provider names and unified font size scaling providers.
