@@ -2,20 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'shell_common.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../providers/sync_provider.dart';
-import '../../../providers/setup_provider.dart';
-import '../../../providers/subject_provider.dart';
-import '../../../providers/syllabus_provider.dart';
-import '../../../providers/selected_branch_provider.dart';
-import '../../../providers/profile_provider.dart';
-import '../../../providers/focus_provider.dart';
-import '../../../providers/target_date_provider.dart';
+import '../../../providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
 import '../../../database/app_database.dart';
-import '../../../providers/rollover_provider.dart';
-import '../../../providers/stats_provider.dart';
 
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
@@ -335,7 +325,13 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         final db = ref.read(appDatabaseProvider);
         await db.delete(db.syllabusProgressLogs).go();
         await db.delete(db.dailyHistory).go();
+        await db.delete(db.focusSessions).go();
+
+        ref.read(focusProvider.notifier).resetState();
         ref.invalidate(progressLogsProvider);
+        ref.invalidate(dailyHistoryProvider);
+        ref.invalidate(todayFocusSessionsProvider);
+        ref.invalidate(todayFocusDurationProvider);
       }
     }
 

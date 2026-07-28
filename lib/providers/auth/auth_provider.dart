@@ -158,7 +158,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
     // 2. Reset setup/onboarding completion status
     try {
-      await ref.read(setupCompletedProvider.notifier).resetSetup(forceOnboarding: true);
+      await ref.read(setupCompletedProvider.notifier).resetSetup(forceOnboarding: false);
     } catch (e) {
       debugPrint("Error resetting setup: $e");
     }
