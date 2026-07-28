@@ -2,24 +2,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/sync_provider.dart';
 import '../../../../providers/hide_download_banner_provider.dart';
-import '../../../../providers/subject_provider.dart';
-import '../shell_common.dart';
 
 class SyncSettingsSection extends ConsumerStatefulWidget {
-  final TextStyle titleStyle;
-  final TextStyle subtitleStyle;
   final Color accentColor;
 
   const SyncSettingsSection({
     super.key,
-    required this.titleStyle,
-    required this.subtitleStyle,
     required this.accentColor,
   });
 
@@ -114,136 +107,6 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
     );
   }
 
-  void _showSyncConflictDialog(BuildContext context, WidgetRef ref) {
-    final accentColor = ref.read(overallProgressColorProvider);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          "Sync Conflict Detected",
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
-        ),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Both your local device and cloud backup contain study tracking progress. How would you like to resolve this conflict?",
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final localData = await ref.read(syncProvider.notifier).exportLocalData();
-                  final cloudData = ref.read(syncProvider).pendingCloudData;
-                  if (cloudData != null && context.mounted) {
-                    showConflictDetailsDialog(context, localData, cloudData, accentColor);
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: accentColor.withValues(alpha: 0.1)),
-                  foregroundColor: accentColor,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-                icon: const Icon(Icons.compare_arrows_rounded, size: 16),
-                label: Text(
-                  "Compare Data (View Conflicts)",
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildDialogOption(
-                context: context,
-                title: "Merge Progress (Recommended)",
-                subtitle: "Combine local and cloud progress (no data lost)",
-                icon: Icons.merge_type_rounded,
-                color: Colors.cyanAccent,
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(syncProvider.notifier).mergeCloudAndLocal();
-                },
-              ),
-              const SizedBox(height: 12),
-              _buildDialogOption(
-                context: context,
-                title: "Use Cloud Backup",
-                subtitle: "Overwrite local data with your cloud backup",
-                icon: Icons.cloud_download_rounded,
-                color: Colors.greenAccent,
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(syncProvider.notifier).downloadCloudToLocal();
-                },
-              ),
-              const SizedBox(height: 12),
-              _buildDialogOption(
-                context: context,
-                title: "Keep Local Progress",
-                subtitle: "Overwrite cloud data with your local progress",
-                icon: Icons.cloud_upload_rounded,
-                color: Colors.orangeAccent,
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(syncProvider.notifier).uploadLocalToCloud();
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialogOption({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white10),
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white.withAlpha(5),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.outfit(color: Colors.white30, fontSize: 10),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!isFirebaseSupported()) {
@@ -284,70 +147,40 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.cloud_off_rounded, color: Colors.white60),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.cloud_off_rounded, color: Colors.white54, size: 18),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        "Offline Mode Enabled",
-                        style: GoogleFonts.outfit(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cloud Sync Disabled',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Sign in to enable automatic cloud backups.',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white38,
+                              fontSize: 11,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Your progress is stored locally on this device. Sign in with Google to enable automatic cloud sync and backups.",
-                  style: GoogleFonts.outfit(
-                    color: Colors.white30,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FilledButton.icon(
-                  onPressed: () async {
-                    try {
-                      await ref.read(authProvider.notifier).signInWithGoogle();
-                      final needsAction = await ref.read(syncProvider.notifier).initializeSync();
-                      if (needsAction && context.mounted) {
-                        _showSyncConflictDialog(context, ref);
-                      } else if (context.mounted) {
-                        final finalState = ref.read(syncProvider);
-                        if (finalState.status == SyncStatus.success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('✓ Signed in! Your local study progress is backed up to cloud.'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Google Sign-in failed: $e')),
-                        );
-                      }
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: widget.accentColor,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  icon: const Icon(Icons.login_rounded, size: 18),
-                  label: Text(
-                    "SIGN IN WITH GOOGLE",
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                    ),
-                  ),
                 ),
                 _buildDownloadBanner(context, ref, widget.accentColor),
               ],
@@ -360,121 +193,89 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // ── Sync status badge row ─────────────────────────
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                      backgroundColor: widget.accentColor.withValues(alpha: 0.2),
-                      child: user.photoURL == null ? const Icon(Icons.person, color: Colors.white) : null,
+                    _SyncStatusBadge(
+                      syncState: syncState,
+                      accentColor: widget.accentColor,
+                      formatSyncTime: _formatSyncTime,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.displayName ?? "GATEletics User",
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            user.email ?? "",
-                            style: GoogleFonts.outfit(
-                              color: Colors.white30,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Divider(color: Colors.white10),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Sync Status:",
-                            style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            syncState.status == SyncStatus.syncing
-                                ? "Syncing..."
-                                : syncState.status == SyncStatus.error
-                                    ? "Sync Error"
-                                    : syncState.lastSyncedAt != null
-                                        ? "Last Synced: ${_formatSyncTime(syncState.lastSyncedAt!)}"
-                                        : "Not synced",
-                            style: GoogleFonts.outfit(
-                              color: syncState.status == SyncStatus.error
-                                  ? Colors.redAccent
-                                  : widget.accentColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const Spacer(),
                     if (syncState.status == SyncStatus.syncing)
                       SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: widget.accentColor),
-                      )
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: widget.accentColor,
+                        ),
+                      ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                // ── Payload progress bar ──────────────────────────
                 Consumer(
                   builder: (context, ref, child) {
                     final sizeAsync = ref.watch(syncPayloadSizeProvider);
                     return sizeAsync.when(
                       data: (sizeMb) {
                         final sizeKb = (sizeMb * 1024).toStringAsFixed(1);
-                        final sizeMbFormatted = sizeMb.toStringAsFixed(3);
+                        final fraction = (sizeMb / 1.0).clamp(0.0, 1.0);
                         final isNearLimit = sizeMb > 0.8;
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: isNearLimit
-                                ? Colors.amber.withValues(alpha: 0.1)
-                                : Colors.white.withValues(alpha: 0.03),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isNearLimit
-                                  ? Colors.amberAccent.withValues(alpha: 0.3)
-                                  : Colors.white.withValues(alpha: 0.05),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                isNearLimit ? Icons.warning_amber_rounded : Icons.sd_storage_rounded,
-                                size: 14,
-                                color: isNearLimit ? Colors.amberAccent : Colors.white54,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                "Payload Size: $sizeMbFormatted MB ($sizeKb KB) / 1.00 MB limit",
-                                style: GoogleFonts.outfit(
-                                  color: isNearLimit ? Colors.amberAccent : Colors.white60,
-                                  fontSize: 11,
-                                  fontWeight: isNearLimit ? FontWeight.bold : FontWeight.w500,
+                        final barColor = isNearLimit
+                            ? Colors.amberAccent
+                            : widget.accentColor;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  isNearLimit
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.sd_storage_rounded,
+                                  size: 13,
+                                  color: isNearLimit
+                                      ? Colors.amberAccent
+                                      : Colors.white38,
                                 ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Cloud Storage',
+                                  style: GoogleFonts.outfit(
+                                    color: Colors.white38,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  '$sizeKb KB / 1024 KB',
+                                  style: GoogleFonts.outfit(
+                                    color: isNearLimit
+                                        ? Colors.amberAccent
+                                        : Colors.white38,
+                                    fontSize: 11,
+                                    fontWeight: isNearLimit
+                                        ? FontWeight.bold
+                                        : FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: fraction,
+                                backgroundColor:
+                                    Colors.white.withValues(alpha: 0.06),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(barColor),
+                                minHeight: 5,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         );
                       },
                       loading: () => const SizedBox.shrink(),
@@ -593,221 +394,6 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () => showSignOutConfirmationDialog(context, ref),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.white24),
-                    foregroundColor: Colors.white70,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: Text(
-                    "SIGN OUT",
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Center(
-                  child: TextButton(
-                    onPressed: () async {
-                      // Step 1: Choice Dialog (Keep Local Data vs Delete Everything)
-                      final choice = await showDialog<String>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: const Color(0xFF18181B),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                          title: Text(
-                            'Delete Account',
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          content: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 400),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  'Deleting your account will permanently remove your cloud backups from our servers. How would you like to handle your local study progress on this device?',
-                                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
-                                ),
-                                const SizedBox(height: 16),
-                                _buildDialogOption(
-                                  context: context,
-                                  title: "Keep Local Progress (Offline Mode)",
-                                  subtitle: "Delete cloud backup, keep study data on phone in Offline Mode",
-                                  icon: Icons.smartphone_rounded,
-                                  color: Colors.cyanAccent,
-                                  onTap: () => Navigator.pop(context, 'keepLocal'),
-                                ),
-                                const SizedBox(height: 12),
-                                _buildDialogOption(
-                                  context: context,
-                                  title: "Delete Everything (Wipe Local Data)",
-                                  subtitle: "Permanently delete cloud backup AND erase all local study data",
-                                  icon: Icons.delete_forever_rounded,
-                                  color: Colors.redAccent,
-                                  onTap: () => Navigator.pop(context, 'wipeAll'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
-                            ),
-                          ],
-                        ),
-                      );
-
-                      if (choice == null || !context.mounted) return;
-
-                      final isWipeAll = choice == 'wipeAll';
-
-                      // Step 2: Final 'Are You Sure?' Confirmation Dialog
-                      final confirmSecond = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: const Color(0xFF18181B),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                          title: Text(
-                            'Are you sure?',
-                            style: GoogleFonts.outfit(
-                              color: isWipeAll ? Colors.redAccent : Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          content: Text(
-                            isWipeAll
-                                ? 'This will permanently delete all your cloud backups AND permanently erase all local study progress on this device. This action CANNOT be undone.'
-                                : 'This will permanently delete your cloud backups from the server. Your study progress will remain saved locally on this device in Offline Mode.',
-                            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
-                            ),
-                            FilledButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: isWipeAll ? Colors.redAccent : widget.accentColor,
-                                foregroundColor: isWipeAll ? Colors.white : Colors.black,
-                              ),
-                              child: Text(
-                                isWipeAll ? 'Yes, Delete Everything' : 'Yes, Delete Cloud Account',
-                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-
-                      if (confirmSecond != true || !context.mounted) return;
-
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-
-                      try {
-                        if (isWipeAll) {
-                          await ref.read(authProvider.notifier).deleteAccount();
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('✓ Account and all local study data deleted successfully.'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        } else {
-                          await ref.read(authProvider.notifier).deleteServerAccountOnly();
-                          await ref.read(authProvider.notifier).switchToOfflineAfterAccountDeletion();
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('✓ Cloud account deleted. Your study progress remains saved locally in Offline Mode.'),
-                                backgroundColor: Colors.green,
-                                duration: Duration(seconds: 4),
-                              ),
-                            );
-                          }
-                        }
-                      } on FirebaseAuthException catch (e) {
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                        }
-                        if (e.code == 'requires-recent-login' && context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('For security, please sign out and sign back in — then try deleting your account again.'),
-                              backgroundColor: Colors.redAccent,
-                              duration: Duration(seconds: 6),
-                            ),
-                          );
-                        } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error: ${e.message}'),
-                              backgroundColor: Colors.redAccent,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                        }
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error: $e'),
-                              backgroundColor: Colors.redAccent,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      minimumSize: Size.zero,
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      foregroundColor: Colors.redAccent,
-                    ),
-                    child: const Text(
-                      "Delete Account",
-                      style: TextStyle(
-                        fontSize: 12,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.redAccent,
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
                 _buildDownloadBanner(context, ref, widget.accentColor),
               ],
             ),
@@ -819,6 +405,78 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
       error: (err, _) => Text(
         'Auth Error: $err',
         style: const TextStyle(color: Colors.redAccent),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sync Status Badge widget
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SyncStatusBadge extends StatelessWidget {
+  final SyncState syncState;
+  final Color accentColor;
+  final String Function(DateTime) formatSyncTime;
+
+  const _SyncStatusBadge({
+    required this.syncState,
+    required this.accentColor,
+    required this.formatSyncTime,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSyncing = syncState.status == SyncStatus.syncing;
+    final isError = syncState.status == SyncStatus.error;
+    final isSynced = syncState.lastSyncedAt != null &&
+        syncState.status == SyncStatus.success;
+
+    final Color badgeColor = isError
+        ? Colors.redAccent
+        : isSyncing
+            ? Colors.cyanAccent
+            : isSynced
+                ? Colors.greenAccent
+                : Colors.white38;
+
+    final String label = isError
+        ? 'Sync Error'
+        : isSyncing
+            ? 'Syncing…'
+            : isSynced
+                ? 'Synced ${formatSyncTime(syncState.lastSyncedAt!)}'
+                : 'Not synced';
+
+    final IconData icon = isError
+        ? Icons.cloud_off_rounded
+        : isSyncing
+            ? Icons.sync_rounded
+            : isSynced
+                ? Icons.cloud_done_rounded
+                : Icons.cloud_queue_rounded;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: badgeColor),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.outfit(
+              color: badgeColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

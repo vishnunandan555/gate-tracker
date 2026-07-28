@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../../providers/profile_provider.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
+import '../../../utils/page_transitions.dart';
 import '../../dashboard/widgets/auth_screen.dart';
-import '../../dashboard/widgets/settings/profile_settings.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
 
 class AccountsScreen extends ConsumerWidget {
@@ -19,27 +26,18 @@ class AccountsScreen extends ConsumerWidget {
     final user = authAsync.value?.user;
     final isSignedIn = user != null;
 
-    final titleStyle = GoogleFonts.outfit(
-      color: Colors.white,
-      fontSize: context.s(14),
-      fontWeight: FontWeight.w600,
-    );
-    final subtitleStyle = GoogleFonts.outfit(
-      color: Colors.white54,
-      fontSize: context.s(11.5),
-    );
-
     return Scaffold(
       backgroundColor: const Color(0xFF09090B),
       appBar: AppBar(
         backgroundColor: const Color(0xFF09090B),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.white70, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Accounts & Cloud Sync',
+          'Account & Sync',
           style: GoogleFonts.outfit(
             color: Colors.white,
             fontSize: 18,
@@ -50,152 +48,780 @@ class AccountsScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: EdgeInsets.all(context.s(16)),
+          padding: EdgeInsets.symmetric(
+              horizontal: context.s(16), vertical: context.s(8)),
           children: [
-            // User Profile Card
+            // ── Zone 1: Hero Identity Card ──────────────────────────
+            _HeroProfileCard(accentColor: accentColor, isSignedIn: isSignedIn),
+
+            SizedBox(height: context.s(20)),
+
+            // ── Zone 2: Cloud Sync Card ──────────────────────────────
+            _SectionLabel(label: 'CLOUD SYNC'),
+            const SizedBox(height: 8),
             Container(
-              padding: EdgeInsets.all(context.s(16)),
               decoration: BoxDecoration(
                 color: const Color(0xFF131316),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  width: 1.0,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+              ),
+              child: SyncSettingsSection(accentColor: accentColor),
+            ),
+
+            // ── Zone 3: Danger Zone (signed-in only) ─────────────────
+            if (isSignedIn) ...[
+              SizedBox(height: context.s(20)),
+              _SectionLabel(label: 'ACCOUNT'),
+              const SizedBox(height: 8),
+              _DangerZoneCard(accentColor: accentColor),
+            ],
+
+            SizedBox(height: context.s(24)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero Profile Card
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HeroProfileCard extends ConsumerWidget {
+  final Color accentColor;
+  final bool isSignedIn;
+
+  const _HeroProfileCard(
+      {required this.accentColor, required this.isSignedIn});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
+    final displayName = ref.watch(displayNameProvider);
+    final displayImage = ref.watch(displayProfileImageProvider);
+    final authAsync = ref.watch(authProvider);
+    final user = authAsync.value?.user;
+    final isGoogleUser = user != null;
+
+    final resolvedName = profile.customDisplayName?.isNotEmpty == true
+        ? profile.customDisplayName!
+        : (displayName ?? 'Guest Scholar');
+
+    final emailText = isSignedIn ? (user?.email ?? '') : 'Offline / Local Storage';
+
+    return Container(
+      padding: EdgeInsets.all(context.s(20)),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+      ),
+      child: Column(
+        children: [
+          // ── Avatar + Status Badge ───────────────────────────────
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              // Tappable avatar
+              GestureDetector(
+                onTap: () => _showPhotoOptions(
+                    context, ref, isGoogleUser, accentColor),
+                child: Container(
+                  width: context.s(80),
+                  height: context.s(80),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.4),
+                      width: 2.5,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: context.s(38),
+                    backgroundImage: displayImage,
+                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    child: displayImage == null
+                        ? Text(
+                            isSignedIn
+                                ? (user?.email?.isNotEmpty == true
+                                    ? user!.email![0].toUpperCase()
+                                    : 'G')
+                                : 'G',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white70,
+                              fontSize: context.s(28),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: context.s(24),
-                    backgroundColor: Colors.white.withValues(alpha: 0.04),
-                    child: Text(
-                      user?.email?.isNotEmpty == true
-                          ? user!.email![0].toUpperCase()
-                          : 'G',
-                      style: GoogleFonts.outfit(
-                        color: Colors.white70,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+              // Camera icon overlay
+              Positioned(
+                bottom: 0,
+                right: MediaQuery.sizeOf(context).width * 0.5 - context.s(56),
+                child: GestureDetector(
+                  onTap: () => _showPhotoOptions(
+                      context, ref, isGoogleUser, accentColor),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: accentColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFF09090B), width: 2),
                     ),
+                    child: const Icon(Icons.photo_camera_rounded,
+                        color: Colors.black, size: 14),
                   ),
-                  SizedBox(width: context.s(14)),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.email ?? 'Guest Scholar',
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontSize: context.s(14.5),
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          isSignedIn ? 'Signed In via Google' : 'Offline / Local Storage Mode',
-                          style: GoogleFonts.outfit(
-                            color: isSignedIn ? Colors.greenAccent.withValues(alpha: 0.8) : Colors.amberAccent.withValues(alpha: 0.8),
-                            fontSize: context.s(11),
-                          ),
-                        ),
-                      ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: context.s(14)),
+
+          // ── Name row (tappable to edit) ─────────────────────────
+          GestureDetector(
+            onTap: () => _showEditNameDialog(context, ref, profile, displayName, accentColor),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    resolvedName,
+                    style: GoogleFonts.outfit(
+                      color: Colors.white,
+                      fontSize: context.s(18),
+                      fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
+                ),
+                const SizedBox(width: 6),
+                Icon(Icons.edit_rounded,
+                    size: context.s(14), color: Colors.white38),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          // ── Email / mode subtitle ───────────────────────────────
+          Text(
+            emailText,
+            style: GoogleFonts.outfit(
+              color: Colors.white38,
+              fontSize: context.s(12),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+
+          const SizedBox(height: 10),
+
+          // ── Status pill ─────────────────────────────────────────
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: (isSignedIn ? Colors.greenAccent : Colors.amberAccent)
+                  .withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: (isSignedIn
+                        ? Colors.greenAccent
+                        : Colors.amberAccent)
+                    .withValues(alpha: 0.3),
               ),
             ),
-            SizedBox(height: context.s(16)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSignedIn
+                        ? Colors.greenAccent
+                        : Colors.amberAccent,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  isSignedIn ? 'Signed In via Google' : 'Offline Mode',
+                  style: GoogleFonts.outfit(
+                    color: isSignedIn
+                        ? Colors.greenAccent
+                        : Colors.amberAccent,
+                    fontSize: context.s(11),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-            // Action Button (Sign In / Sign Out)
-            if (!isSignedIn) ...[
-              FilledButton.icon(
+          // ── Sign-in CTA (only when offline) ────────────────────
+          if (!isSignedIn) ...[
+            SizedBox(height: context.s(16)),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AuthScreen()),
+                    AppPageRoute(page: const AuthScreen()),
                   );
                 },
-                icon: const Icon(Icons.login_rounded, color: Colors.black),
+                icon: const Icon(Icons.login_rounded, color: Colors.black, size: 18),
                 label: Text(
                   'Sign In to Sync Progress',
                   style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: accentColor,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-            ] else ...[
-              OutlinedButton.icon(
-                onPressed: () => showSignOutConfirmationDialog(context, ref),
-                icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-                label: Text(
-                  'Sign Out',
-                  style: GoogleFonts.outfit(color: Colors.redAccent, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showEditNameDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ProfileState profile,
+    String? displayName,
+    Color accentColor,
+  ) async {
+    final controller = TextEditingController(
+        text: profile.customDisplayName ?? displayName ?? '');
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF18181B),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text('Set Display Name',
+            style: GoogleFonts.outfit(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+        content: TextField(
+          controller: controller,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'Enter name',
+            hintStyle: const TextStyle(color: Colors.white30),
+            focusedBorder:
+                UnderlineInputBorder(borderSide: BorderSide(color: accentColor)),
+          ),
+          maxLength: 30,
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child:
+                const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () {
+              ref
+                  .read(profileProvider.notifier)
+                  .setCustomDisplayName(null);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Reset',
+                style: TextStyle(color: Colors.redAccent)),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text),
+            style: FilledButton.styleFrom(
+              backgroundColor: accentColor,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (result != null) {
+      await ref.read(profileProvider.notifier).setCustomDisplayName(result);
+    }
+  }
+
+  void _showPhotoOptions(
+    BuildContext context,
+    WidgetRef ref,
+    bool isGoogleUser,
+    Color accentColor,
+  ) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF18181B),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.redAccent),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text('Profile Photo',
+                style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            _PhotoOption(
+              icon: Icons.photo_library_rounded,
+              label: 'Choose Custom Photo',
+              color: accentColor,
+              onTap: () async {
+                Navigator.pop(ctx);
+                final result =
+                    await FilePicker.pickFiles(type: FileType.image);
+                if (result != null) {
+                  final file = result.files.single;
+                  final bytes = await file.readAsBytes();
+                  String savedPath;
+                  if (file.path != null && !kIsWeb) {
+                    final dir =
+                        await getApplicationDocumentsDirectory();
+                    final targetFile = File(
+                        '${dir.path}/custom_profile_${DateTime.now().millisecondsSinceEpoch}.png');
+                    await File(file.path!).copy(targetFile.path);
+                    savedPath = targetFile.path;
+                  } else {
+                    savedPath =
+                        'data:image/png;base64,${base64Encode(bytes)}';
+                  }
+                  await ref
+                      .read(profileProvider.notifier)
+                      .setCustomProfilePhotoPath(savedPath);
+                  await ref
+                      .read(profileProvider.notifier)
+                      .setProfilePhotoMode('custom');
+                }
+              },
+            ),
+            if (isGoogleUser) ...[
+              const SizedBox(height: 10),
+              _PhotoOption(
+                icon: Icons.account_circle_rounded,
+                label: 'Use Google Photo',
+                color: Colors.cyanAccent,
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  await ref
+                      .read(profileProvider.notifier)
+                      .setProfilePhotoMode('google');
+                },
               ),
             ],
+            const SizedBox(height: 10),
+            _PhotoOption(
+              icon: Icons.delete_rounded,
+              label: 'Remove Photo',
+              color: Colors.redAccent,
+              onTap: () async {
+                Navigator.pop(ctx);
+                await ref
+                    .read(profileProvider.notifier)
+                    .setProfilePhotoMode('none');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-            SizedBox(height: context.s(20)),
-            // Profile Settings Section
-            Text(
-              'PROFILE CUSTOMIZATION',
-              style: GoogleFonts.outfit(
-                color: Colors.white54,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF131316),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
-              child: ProfileSettingsSection(
-                titleStyle: titleStyle,
-                subtitleStyle: subtitleStyle,
-                accentColor: accentColor,
-              ),
-            ),
+class _PhotoOption extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
 
-            SizedBox(height: context.s(20)),
-            // Cloud Sync Section
-            Text(
-              'CLOUD SYNC PREFERENCES',
-              style: GoogleFonts.outfit(
-                color: Colors.white54,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
+  const _PhotoOption(
+      {required this.icon,
+      required this.label,
+      required this.color,
+      required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.15)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 14),
+            Text(label,
+                style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Danger Zone Card (signed-in only)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DangerZoneCard extends ConsumerWidget {
+  final Color accentColor;
+
+  const _DangerZoneCard({required this.accentColor});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF131316),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: [
+          // Sign Out row
+          InkWell(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            onTap: () => showSignOutConfirmationDialog(context, ref),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.04),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.logout_rounded,
+                        color: Colors.white60, size: 18),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text('Sign Out',
+                        style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14)),
+                  ),
+                  const Icon(Icons.chevron_right_rounded,
+                      color: Colors.white24, size: 20),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF131316),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
-              child: SyncSettingsSection(
-                titleStyle: titleStyle,
-                subtitleStyle: subtitleStyle,
-                accentColor: accentColor,
+          ),
+          Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+          // Delete Account row
+          _DeleteAccountRow(accentColor: accentColor),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeleteAccountRow extends ConsumerStatefulWidget {
+  final Color accentColor;
+
+  const _DeleteAccountRow({required this.accentColor});
+
+  @override
+  ConsumerState<_DeleteAccountRow> createState() => _DeleteAccountRowState();
+}
+
+class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
+  Widget _buildDialogOption({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white10),
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white.withAlpha(5),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style:
+                          GoogleFonts.outfit(color: Colors.white30, fontSize: 10)),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius:
+          const BorderRadius.vertical(bottom: Radius.circular(16)),
+      onTap: () async {
+        final choice = await showDialog<String>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF18181B),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Text('Delete Account',
+                style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18)),
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Deleting your account will permanently remove your cloud backups from our servers. How would you like to handle your local study progress on this device?',
+                    style: GoogleFonts.outfit(
+                        color: Colors.white70, fontSize: 13, height: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDialogOption(
+                    context: context,
+                    title: 'Keep Local Progress (Offline Mode)',
+                    subtitle:
+                        'Delete cloud backup, keep study data on phone in Offline Mode',
+                    icon: Icons.smartphone_rounded,
+                    color: Colors.cyanAccent,
+                    onTap: () => Navigator.pop(context, 'keepLocal'),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDialogOption(
+                    context: context,
+                    title: 'Delete Everything (Wipe Local Data)',
+                    subtitle:
+                        'Permanently delete cloud backup AND erase all local study data',
+                    icon: Icons.delete_forever_rounded,
+                    color: Colors.redAccent,
+                    onTap: () => Navigator.pop(context, 'wipeAll'),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel',
+                    style: GoogleFonts.outfit(color: Colors.grey)),
+              ),
+            ],
+          ),
+        );
+
+        if (choice == null || !context.mounted) return;
+        final isWipeAll = choice == 'wipeAll';
+
+        final confirmSecond = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF18181B),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Text('Are you sure?',
+                style: GoogleFonts.outfit(
+                    color: isWipeAll ? Colors.redAccent : Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18)),
+            content: Text(
+              isWipeAll
+                  ? 'This will permanently delete all your cloud backups AND permanently erase all local study progress on this device. This action CANNOT be undone.'
+                  : 'This will permanently delete your cloud backups from the server. Your study progress will remain saved locally on this device in Offline Mode.',
+              style: GoogleFonts.outfit(
+                  color: Colors.white70, fontSize: 13, height: 1.5),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel',
+                    style: GoogleFonts.outfit(color: Colors.grey)),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: FilledButton.styleFrom(
+                  backgroundColor:
+                      isWipeAll ? Colors.redAccent : widget.accentColor,
+                  foregroundColor:
+                      isWipeAll ? Colors.white : Colors.black,
+                ),
+                child: Text(
+                  isWipeAll
+                      ? 'Yes, Delete Everything'
+                      : 'Yes, Delete Cloud Account',
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        );
+
+        if (confirmSecond != true || !context.mounted) return;
+
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) =>
+                const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        try {
+          if (isWipeAll) {
+            await ref.read(authProvider.notifier).deleteAccount();
+            if (context.mounted) Navigator.of(context).pop();
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      '✓ Account and all local study data deleted successfully.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          } else {
+            await ref
+                .read(authProvider.notifier)
+                .deleteServerAccountOnly();
+            await ref
+                .read(authProvider.notifier)
+                .switchToOfflineAfterAccountDeletion();
+            if (context.mounted) Navigator.of(context).pop();
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      '✓ Cloud account deleted. Your study progress remains saved locally in Offline Mode.'),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 4),
+                ),
+              );
+            }
+          }
+        } catch (e) {
+          if (context.mounted) Navigator.of(context).pop();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Error: $e'),
+                  backgroundColor: Colors.redAccent),
+            );
+          }
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.redAccent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.delete_forever_rounded,
+                  color: Colors.redAccent, size: 18),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text('Delete Account',
+                  style: GoogleFonts.outfit(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14)),
+            ),
+            const Icon(Icons.chevron_right_rounded,
+                color: Colors.white24, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: GoogleFonts.outfit(
+        color: Colors.white38,
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.1,
       ),
     );
   }
