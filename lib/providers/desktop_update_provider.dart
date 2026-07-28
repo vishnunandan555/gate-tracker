@@ -123,18 +123,43 @@ class DesktopUpdateNotifier extends Notifier<DesktopUpdateState> {
   /// Semver comparator: returns true if [remoteVersion] is strictly newer than [localVersion]
   static bool isNewerVersion(String remoteVersion, String localVersion) {
     try {
-      final cleanRemoteStr = remoteVersion.split('+').first.replaceAll(RegExp(r'[^0-9.]'), '');
-      final cleanLocalStr = localVersion.split('+').first.replaceAll(RegExp(r'[^0-9.]'), '');
+      // 1. Remove build metadata (anything after +) and prefix 'v'
+      final cleanRemote = remoteVersion.trim().replaceAll(RegExp(r'^v'), '').split('+').first;
+      final cleanLocal = localVersion.trim().replaceAll(RegExp(r'^v'), '').split('+').first;
 
-      final remoteParts = cleanRemoteStr.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-      final localParts = cleanLocalStr.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+      // 2. Separate base version numbers from pre-release tag (after -)
+      final remoteSplit = cleanRemote.split('-');
+      final localSplit = cleanLocal.split('-');
 
-      final maxLength = remoteParts.length > localParts.length ? remoteParts.length : localParts.length;
-      for (int i = 0; i < maxLength; i++) {
-        final r = i < remoteParts.length ? remoteParts[i] : 0;
-        final l = i < localParts.length ? localParts[i] : 0;
+      final remoteBase = remoteSplit.first.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+      final localBase = localSplit.first.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+
+      // Compare base numbers (X.Y.Z)
+      final maxLen = remoteBase.length > localBase.length ? remoteBase.length : localBase.length;
+      for (int i = 0; i < maxLen; i++) {
+        final r = i < remoteBase.length ? remoteBase[i] : 0;
+        final l = i < localBase.length ? localBase[i] : 0;
         if (r > l) return true;
         if (r < l) return false;
+      }
+
+      // Base numbers are identical (e.g. 1.3.0 vs 1.3.0-beta.1 or 1.3.0-beta.1 vs 1.3.0-beta.2)
+      final bool remoteHasPre = remoteSplit.length > 1;
+      final bool localHasPre = localSplit.length > 1;
+
+      // Stable release (no pre-release tag) is newer than pre-release tag
+      if (!remoteHasPre && localHasPre) return true; // 1.3.0 > 1.3.0-beta.1
+      if (remoteHasPre && !localHasPre) return false; // 1.3.0-beta.1 < 1.3.0
+
+      // Both have pre-release tags (e.g. 1.3.0-beta.2 vs 1.3.0-beta.1)
+      if (remoteHasPre && localHasPre) {
+        final remotePreStr = remoteSplit.sublist(1).join('-');
+        final localPreStr = localSplit.sublist(1).join('-');
+
+        final remotePreNum = int.tryParse(remotePreStr.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+        final localPreNum = int.tryParse(localPreStr.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+
+        return remotePreNum > localPreNum;
       }
     } catch (_) {}
     return false;

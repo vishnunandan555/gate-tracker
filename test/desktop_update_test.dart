@@ -7,16 +7,20 @@ void main() {
       expect(DesktopUpdateNotifier.isNewerVersion('v1.3.0', '1.2.16'), isTrue);
       expect(DesktopUpdateNotifier.isNewerVersion('2.0.0', '1.9.9'), isTrue);
       expect(DesktopUpdateNotifier.isNewerVersion('1.2.17', '1.2.16'), isTrue);
+      expect(DesktopUpdateNotifier.isNewerVersion('1.3.0', '1.3.0-beta.1'), isTrue);
+      expect(DesktopUpdateNotifier.isNewerVersion('1.3.0-beta.2', '1.3.0-beta.1'), isTrue);
     });
 
     test('Same remote version returns false', () {
       expect(DesktopUpdateNotifier.isNewerVersion('v1.2.16', '1.2.16'), isFalse);
       expect(DesktopUpdateNotifier.isNewerVersion('1.2.16+19', '1.2.16'), isFalse);
+      expect(DesktopUpdateNotifier.isNewerVersion('1.3.0-beta.1', '1.3.0-beta.1'), isFalse);
     });
 
     test('Older remote version returns false', () {
       expect(DesktopUpdateNotifier.isNewerVersion('v1.2.15', '1.2.16'), isFalse);
       expect(DesktopUpdateNotifier.isNewerVersion('1.0.0', '1.2.16'), isFalse);
+      expect(DesktopUpdateNotifier.isNewerVersion('1.3.0-beta.1', '1.3.0'), isFalse);
     });
   });
 

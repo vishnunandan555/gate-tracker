@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,6 +104,155 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _showPayloadBreakdownDialog(BuildContext context, WidgetRef ref) async {
+    final notifier = ref.read(syncProvider.notifier);
+    final data = await notifier.exportLocalData();
+
+    int getBytes(dynamic val) => utf8.encode(jsonEncode(val ?? [])).length;
+
+    final tasksList = data['syllabusTasks'] as List? ?? [];
+    final topicsList = data['syllabusTopics'] as List? ?? [];
+    final catsList = data['syllabusCategories'] as List? ?? [];
+    final focusList = data['focusSessions'] as List? ?? [];
+    final historyList = data['dailyHistory'] as List? ?? [];
+    final logsList = data['syllabusProgressLogs'] as List? ?? [];
+
+    final tasksBytes = getBytes(tasksList);
+    final topicsBytes = getBytes(topicsList);
+    final catsBytes = getBytes(catsList);
+    final focusBytes = getBytes(focusList);
+    final historyBytes = getBytes(historyList);
+    final logsBytes = getBytes(logsList);
+    final totalBytes = utf8.encode(jsonEncode(data)).length;
+
+    double toKb(int b) => b / 1024.0;
+    double toPct(int b) => totalBytes > 0 ? (b / totalBytes) * 100 : 0;
+
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF18181B),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            Icon(Icons.analytics_rounded, color: widget.accentColor, size: 22),
+            const SizedBox(width: 10),
+            Text(
+              'Payload Breakdown',
+              style: GoogleFonts.outfit(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'GATEletics comes pre-seeded with the full GATE syllabus structure. Here is how your ${toKb(totalBytes).toStringAsFixed(1)} KB payload is distributed:',
+                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 12, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              _buildBreakdownItem(
+                label: 'Checklist Tasks (${tasksList.length} items)',
+                sizeKb: toKb(tasksBytes),
+                pct: toPct(tasksBytes),
+                color: Colors.cyanAccent,
+                icon: Icons.checklist_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildBreakdownItem(
+                label: 'Syllabus Topics (${topicsList.length} topics)',
+                sizeKb: toKb(topicsBytes),
+                pct: toPct(topicsBytes),
+                color: Colors.blueAccent,
+                icon: Icons.topic_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildBreakdownItem(
+                label: 'Subject Categories (${catsList.length} subjects)',
+                sizeKb: toKb(catsBytes),
+                pct: toPct(catsBytes),
+                color: Colors.purpleAccent,
+                icon: Icons.folder_copy_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildBreakdownItem(
+                label: 'Focus Timer Sessions (${focusList.length} sessions)',
+                sizeKb: toKb(focusBytes),
+                pct: toPct(focusBytes),
+                color: Colors.orangeAccent,
+                icon: Icons.timer_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildBreakdownItem(
+                label: 'Daily Study History (${historyList.length} days)',
+                sizeKb: toKb(historyBytes),
+                pct: toPct(historyBytes),
+                color: Colors.greenAccent,
+                icon: Icons.calendar_today_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildBreakdownItem(
+                label: 'Progress Logs & Settings',
+                sizeKb: toKb(logsBytes + 1500),
+                pct: toPct(logsBytes + 1500),
+                color: Colors.white54,
+                icon: Icons.history_toggle_off_rounded,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Close', style: GoogleFonts.outfit(color: widget.accentColor, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBreakdownItem({
+    required String label,
+    required double sizeKb,
+    required double pct,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            '${sizeKb.toStringAsFixed(1)} KB (${pct.toStringAsFixed(1)}%)',
+            style: GoogleFonts.outfit(color: Colors.white60, fontSize: 11),
+          ),
+        ],
       ),
     );
   }
@@ -214,7 +364,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                // ── Payload progress bar ──────────────────────────
+                // ── Dual Payload & Storage progress bars ──────────
                 Consumer(
                   builder: (context, ref, child) {
                     final sizeAsync = ref.watch(syncPayloadSizeProvider);
@@ -223,59 +373,122 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                         final sizeKb = (sizeMb * 1024).toStringAsFixed(1);
                         final fraction = (sizeMb / 1.0).clamp(0.0, 1.0);
                         final isNearLimit = sizeMb > 0.8;
-                        final barColor = isNearLimit
+                        final payloadColor = isNearLimit
                             ? Colors.amberAccent
                             : widget.accentColor;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                        final percentStr = (fraction * 100).toStringAsFixed(1);
+
+                        return InkWell(
+                          onTap: () => _showPayloadBreakdownDialog(context, ref),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                  isNearLimit
-                                      ? Icons.warning_amber_rounded
-                                      : Icons.sd_storage_rounded,
-                                  size: 13,
-                                  color: isNearLimit
-                                      ? Colors.amberAccent
-                                      : Colors.white38,
+                                // Bar 1: Local Device Storage
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.dns_rounded,
+                                      size: 13,
+                                      color: Colors.white38,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Local Data Storage',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white38,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.info_outline_rounded,
+                                      size: 11,
+                                      color: Colors.white24,
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      '$sizeKb KB',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white60,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Cloud Storage',
-                                  style: GoogleFonts.outfit(
-                                    color: Colors.white38,
-                                    fontSize: 11,
+                                const SizedBox(height: 5),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: fraction,
+                                    backgroundColor:
+                                        Colors.white.withValues(alpha: 0.06),
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(Colors.cyanAccent),
+                                    minHeight: 4,
                                   ),
                                 ),
-                                const Spacer(),
-                                Text(
-                                  '$sizeKb KB / 1024 KB',
-                                  style: GoogleFonts.outfit(
-                                    color: isNearLimit
-                                        ? Colors.amberAccent
-                                        : Colors.white38,
-                                    fontSize: 11,
-                                    fontWeight: isNearLimit
-                                        ? FontWeight.bold
-                                        : FontWeight.w400,
+
+                                const SizedBox(height: 12),
+
+                                // Bar 2: Cloud Sync Payload Size (1 MB Limit)
+                                Row(
+                                  children: [
+                                    Icon(
+                                      isNearLimit
+                                          ? Icons.warning_amber_rounded
+                                          : Icons.cloud_upload_rounded,
+                                      size: 13,
+                                      color: isNearLimit
+                                          ? Colors.amberAccent
+                                          : Colors.white38,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Cloud Sync Payload (1 MB Limit)',
+                                      style: GoogleFonts.outfit(
+                                        color: isNearLimit
+                                            ? Colors.amberAccent
+                                            : Colors.white38,
+                                        fontSize: 11,
+                                        fontWeight: isNearLimit
+                                            ? FontWeight.bold
+                                            : FontWeight.w400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      '$sizeKb KB / 1024 KB ($percentStr%)',
+                                      style: GoogleFonts.outfit(
+                                        color: isNearLimit
+                                            ? Colors.amberAccent
+                                            : Colors.white60,
+                                        fontSize: 11,
+                                        fontWeight: isNearLimit
+                                            ? FontWeight.bold
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: fraction,
+                                    backgroundColor:
+                                        Colors.white.withValues(alpha: 0.06),
+                                    valueColor:
+                                        AlwaysStoppedAnimation<Color>(payloadColor),
+                                    minHeight: 5,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: fraction,
-                                backgroundColor:
-                                    Colors.white.withValues(alpha: 0.06),
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(barColor),
-                                minHeight: 5,
-                              ),
-                            ),
-                          ],
+                          ),
                         );
                       },
                       loading: () => const SizedBox.shrink(),

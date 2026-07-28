@@ -61,6 +61,7 @@ class SyncState {
 class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   bool _hasPendingChanges = false;
   DateTime? _firstPendingTime;
+  DateTime? _lastFirestoreWriteTime;
   Timer? _syncTimer;
 
   bool get hasPendingChanges => _hasPendingChanges;
@@ -119,6 +120,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> _load() async {
+    await Future.microtask(() {}); // Delay to ensure build() completes before reading providers
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       final lastSyncedStr = prefs.getString('last_synced_at');
@@ -832,6 +834,26 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _throttledFirestoreWrite(String uid, Map<String, dynamic> data) async {
+    final now = DateTime.now().toUtc();
+    if (_lastFirestoreWriteTime != null) {
+      final elapsedSecs = now.difference(_lastFirestoreWriteTime!).inSeconds;
+      if (elapsedSecs < 30) {
+        final waitDuration = Duration(seconds: 30 - elapsedSecs);
+        _syncTimer?.cancel();
+        _syncTimer = Timer(waitDuration, () {
+          autoSync();
+        });
+        return;
+      }
+    }
+    _lastFirestoreWriteTime = now;
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'data': data,
+      'lastSyncedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   // Triggers an auto-sync check (can be called silently after database writes)
   Future<void> autoSync() async {
     if (!isFirebaseSupported()) return;
@@ -845,17 +867,36 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     _syncTimer = null;
 
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
       final localData = await exportLocalData();
       localData['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
 
+      // Fast-path B4: Check Firestore local cache first before network fetch
+      try {
+        final cachedDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get(const GetOptions(source: Source.cache));
+
+        if (cachedDoc.exists && cachedDoc.data()?['data'] != null) {
+          final cachedCloudData = cachedDoc.data()!['data'] as Map<String, dynamic>;
+          if (areDataEqual(localData, cachedCloudData)) {
+            DateTime? cloudLastSynced;
+            final ts = cachedDoc.data()?['lastSyncedAt'];
+            if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
+            await _updateSyncState(status: state.status, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
+            return;
+          }
+        }
+      } catch (_) {
+        // Cache miss or offline cache unavailable — proceed to server fetch
+      }
+
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
+
       if (!doc.exists || doc.data()?['data'] == null) {
-        // Cloud is empty. Safe to just upload local.
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'data': localData,
-          'lastSyncedAt': FieldValue.serverTimestamp(),
-        });
-        await _updateSyncState(status: state.status, lastSyncedAt: DateTime.now());
+        // Cloud is empty. Safe to upload local data.
+        await _throttledFirestoreWrite(user.uid, localData);
+        await _updateSyncState(status: state.status, lastSyncedAt: DateTime.now().toUtc());
         return;
       }
 
@@ -865,8 +906,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         // Already matching, just update local timestamp if cloud is newer, otherwise do nothing
         DateTime? cloudLastSynced;
         final ts = doc.data()?['lastSyncedAt'];
-        if (ts is Timestamp) cloudLastSynced = ts.toDate();
-        await _updateSyncState(status: state.status, lastSyncedAt: cloudLastSynced ?? DateTime.now());
+        if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
+        await _updateSyncState(status: state.status, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
         return;
       }
 
@@ -883,11 +924,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       }
 
       merged['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'data': merged,
-        'lastSyncedAt': FieldValue.serverTimestamp(),
-      });
-      await _updateSyncState(status: state.status, lastSyncedAt: DateTime.now());
+      await _throttledFirestoreWrite(user.uid, merged);
+      await _updateSyncState(status: state.status, lastSyncedAt: DateTime.now().toUtc());
     } catch (e, stack) {
       debugPrint("Auto-sync error: $e\n$stack");
     }

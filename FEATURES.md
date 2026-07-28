@@ -32,6 +32,7 @@ This document tracks upcoming major features, architectural enhancements, and UI
 1. **Spaced Repetition Revision Scheduler**
 2. **Resource Explorer & Reference Links**
 3. **Enhanced Consistency Grid Analytics**
+4. **Desktop Onboarding & Tutorial Flow**: Desktop-friendly tooltip sequence / welcome onboarding for new desktop users once Desktop UI is finalized.
 
 ---
 

@@ -19,7 +19,7 @@ class OverallProgressColorNotifier extends Notifier<Color> {
 
   @override
   Color build() {
-    final prefs = ref.read(sharedPreferencesProvider);
+    final prefs = ref.watch(sharedPreferencesProvider);
     _mode = prefs.getString('accent_color_mode') ?? 'auto';
     final colorHex = prefs.getString('frozen_accent_color');
     if (colorHex != null) {

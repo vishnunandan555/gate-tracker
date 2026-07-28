@@ -10,7 +10,7 @@ class BackupService {
     final focusSess = await db.select(db.focusSessions).get();
     final dailyHist = await db.select(db.dailyHistory).get();
     final customTsks = await db.select(db.customTasks).get();
-    final progressLogs = await db.select(db.syllabusProgressLogs).get();
+    final progressLogs = await (db.select(db.syllabusProgressLogs)..where((l) => l.isDeleted.equals(false))).get();
 
     final exportedSyllabusCats = syllabusCats.map((c) => {
       'id': c.id,
