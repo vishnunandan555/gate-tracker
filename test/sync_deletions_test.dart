@@ -287,4 +287,45 @@ void main() {
     };
     expect(syncNotifier.areDataEqual(data1, dataTopicCounter), isFalse);
   });
+
+  test('mergeData merges newer local and remote changes based on lastInteractedAt timestamps', () async {
+    final container = ProviderContainer(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(db),
+      ],
+    );
+    addTearDown(container.dispose);
+    final syncNotifier = container.read(syncProvider.notifier);
+
+    final olderTime = DateTime(2026, 1, 1, 10, 0, 0).toIso8601String();
+    final newerTime = DateTime(2026, 1, 1, 12, 0, 0).toIso8601String();
+
+    final localData = {
+      'syllabusCategories': [
+        {'id': 1, 'name': 'Local Category', 'color': 0xFF0000FF, 'position': 0, 'lastInteractedAt': newerTime, 'isDeleted': false}
+      ],
+      'syllabusTopics': [],
+      'syllabusTasks': [],
+      'customTasks': [],
+      'dailyHistory': [],
+      'focusSessions': [],
+      'syllabusProgressLogs': [],
+    };
+
+    final remoteData = {
+      'syllabusCategories': [
+        {'id': 1, 'name': 'Remote Category', 'color': 0xFF0000FF, 'position': 0, 'lastInteractedAt': olderTime, 'isDeleted': false}
+      ],
+      'syllabusTopics': [],
+      'syllabusTasks': [],
+      'customTasks': [],
+      'dailyHistory': [],
+      'focusSessions': [],
+      'syllabusProgressLogs': [],
+    };
+
+    final merged = await syncNotifier.mergeData(localData, remoteData);
+    final categories = merged['syllabusCategories'] as List<dynamic>;
+    expect(categories.first['name'], 'Local Category');
+  });
 }

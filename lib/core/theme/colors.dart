@@ -16,8 +16,10 @@ class AppColors {
     Color(0xFFFFFC00), // Neon Yellow
     Color(0xFFC1FF72), // Neon Lime
   ];
+  static const Color scaffoldBackground = Color(0xFF09090B);
+  static const Color card = Color(0xFF131316);
   static const Color background = Color(0xFF18181B);
-  static const Color cardBackground = Color(0xFF18181B);
+  static const Color cardBackground = Color(0xFF131316);
   static const Color surface = Color(0xFF18181B);
   static const Color textSecondary = Colors.grey;
 }

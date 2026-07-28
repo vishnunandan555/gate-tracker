@@ -118,6 +118,71 @@ enum FocusStatus {
   paused,
 }
 
+class FocusAccomplishmentTopic {
+  final String topicTitle;
+  final List<String> taskTitles;
+  final int counterDelta;
+
+  const FocusAccomplishmentTopic({
+    required this.topicTitle,
+    required this.taskTitles,
+    this.counterDelta = 0,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'topicName': topicTitle,
+        'topicTitle': topicTitle,
+        'tasks': taskTitles,
+        'taskTitles': taskTitles,
+        if (counterDelta != 0) ...{
+          'isCounter': true,
+          'counterDelta': counterDelta,
+          'currentCount': counterDelta,
+          'initialCount': 0,
+        },
+      };
+
+  factory FocusAccomplishmentTopic.fromJson(Map<String, dynamic> json) {
+    return FocusAccomplishmentTopic(
+      topicTitle: json['topicTitle'] as String? ?? json['topicName'] as String? ?? '',
+      taskTitles: (json['taskTitles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          (json['tasks'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          [],
+      counterDelta: (json['counterDelta'] as num?)?.toInt() ??
+          ((json['currentCount'] as num?)?.toInt() ?? 0) - ((json['initialCount'] as num?)?.toInt() ?? 0),
+    );
+  }
+}
+
+class FocusAccomplishment {
+  final String categoryName;
+  final double categoryDelta;
+  final List<FocusAccomplishmentTopic> topics;
+
+  const FocusAccomplishment({
+    required this.categoryName,
+    required this.categoryDelta,
+    required this.topics,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'categoryName': categoryName,
+        'categoryDelta': categoryDelta,
+        'topics': topics.map((t) => t.toJson()).toList(),
+      };
+
+  factory FocusAccomplishment.fromJson(Map<String, dynamic> json) {
+    return FocusAccomplishment(
+      categoryName: json['categoryName'] as String? ?? '',
+      categoryDelta: (json['categoryDelta'] as num?)?.toDouble() ?? 0.0,
+      topics: (json['topics'] as List<dynamic>?)
+              ?.map((t) => FocusAccomplishmentTopic.fromJson(t as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+}
+
 class FocusSessionState {
   final FocusStatus status;
   final FocusMethod selectedMethod;
@@ -127,10 +192,9 @@ class FocusSessionState {
   final int completedFocusIntervals;
   final Set<int> initialCompletedTaskIds;
   final Map<int, int> initialSubjectCompletedVideos;
-  final List<String> sessionAccomplishments;
+  final List<FocusAccomplishment> sessionAccomplishments;
   final DateTime? sessionStartTime;
   final bool isBreakActive;
-
 
   FocusSessionState({
     required this.status,
@@ -155,7 +219,7 @@ class FocusSessionState {
     int? completedFocusIntervals,
     Set<int>? initialCompletedTaskIds,
     Map<int, int>? initialSubjectCompletedVideos,
-    List<String>? sessionAccomplishments,
+    List<FocusAccomplishment>? sessionAccomplishments,
     DateTime? sessionStartTime,
     bool? isBreakActive,
   }) {
@@ -424,11 +488,11 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
       });
     });
 
-    final categoryList = <Map<String, dynamic>>[];
+    final accomplishmentsList = <FocusAccomplishment>[];
 
     for (final catWithTopics in syllabusData) {
       final cat = catWithTopics.category;
-      final topicList = <Map<String, dynamic>>[];
+      final topicList = <FocusAccomplishmentTopic>[];
       double categoryDelta = 0.0;
 
       for (final topicWithTasks in catWithTopics.topics) {
@@ -444,14 +508,11 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
             }
             categoryDelta += topicDelta;
 
-            topicList.add({
-              'topicName': topic.name,
-              'topicDelta': topicDelta,
-              'isCounter': true,
-              'currentCount': topic.currentCount,
-              'initialCount': initialVal,
-              'maxCount': topic.maxCount,
-            });
+            topicList.add(FocusAccomplishmentTopic(
+              topicTitle: topic.name,
+              taskTitles: const [],
+              counterDelta: delta,
+            ));
           }
         } else {
           final completedTasks = <String>[];
@@ -466,30 +527,24 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
             }
             categoryDelta += topicDelta;
 
-            topicList.add({
-              'topicName': topic.name,
-              'topicDelta': topicDelta,
-              'isCounter': false,
-              'tasks': completedTasks,
-            });
+            topicList.add(FocusAccomplishmentTopic(
+              topicTitle: topic.name,
+              taskTitles: completedTasks,
+            ));
           }
         }
       }
 
       if (topicList.isNotEmpty) {
-        categoryList.add({
-          'categoryName': cat.name,
-          'categoryDelta': categoryDelta,
-          'topics': topicList,
-        });
+        accomplishmentsList.add(FocusAccomplishment(
+          categoryName: cat.name,
+          categoryDelta: categoryDelta,
+          topics: topicList,
+        ));
       }
     }
 
-    if (categoryList.isNotEmpty) {
-      state = state.copyWith(sessionAccomplishments: [jsonEncode(categoryList)]);
-    } else {
-      state = state.copyWith(sessionAccomplishments: []);
-    }
+    state = state.copyWith(sessionAccomplishments: accomplishmentsList);
   }
 
   Future<FocusSession> stopSession() async {
@@ -509,7 +564,9 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
     await checkAccomplishments();
 
-    final finalAccomplishments = state.sessionAccomplishments.join('\n');
+    final finalAccomplishments = state.sessionAccomplishments.isEmpty
+        ? null
+        : jsonEncode(state.sessionAccomplishments.map((a) => a.toJson()).toList());
 
     double progressDelta = 0.0;
     try {
@@ -539,7 +596,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
       method: state.details.name,
       startTime: state.sessionStartTime ?? DateTime.now(),
       durationSeconds: finalFocusedSeconds,
-      accomplishments: Value(finalAccomplishments.isNotEmpty ? finalAccomplishments : null),
+      accomplishments: Value(finalAccomplishments),
       progressDelta: Value(progressDelta),
     );
 
@@ -555,7 +612,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
       method: state.details.name,
       startTime: state.sessionStartTime ?? DateTime.now(),
       durationSeconds: finalFocusedSeconds,
-      accomplishments: finalAccomplishments.isNotEmpty ? finalAccomplishments : null,
+      accomplishments: finalAccomplishments,
       progressDelta: progressDelta,
     );
 
@@ -762,27 +819,9 @@ final formattedQuoteProvider = Provider.family<String, String?>((ref, rawUserNam
 
       // Accomplishment summary
       int tasksCount = 0;
-      if (sessionState.sessionAccomplishments.isNotEmpty) {
-        final first = sessionState.sessionAccomplishments.first;
-        if (first.startsWith('[')) {
-          try {
-            final list = jsonDecode(first) as List<dynamic>;
-            for (final cat in list) {
-              final topics = cat['topics'] as List<dynamic>? ?? [];
-              for (final topic in topics) {
-                if (topic['isCounter'] == true) {
-                  final current = topic['currentCount'] as int? ?? 0;
-                  final initial = topic['initialCount'] as int? ?? 0;
-                  tasksCount += max(0, current - initial);
-                } else {
-                  final tasks = topic['tasks'] as List<dynamic>? ?? [];
-                  tasksCount += tasks.length;
-                }
-              }
-            }
-          } catch (_) {}
-        } else {
-          tasksCount = sessionState.sessionAccomplishments.where((line) => line.startsWith("    -")).length;
+      for (final acc in sessionState.sessionAccomplishments) {
+        for (final topic in acc.topics) {
+          tasksCount += topic.taskTitles.length + topic.counterDelta;
         }
       }
 

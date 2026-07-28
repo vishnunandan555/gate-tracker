@@ -226,4 +226,35 @@ void main() {
       expect(getCategoryShortName('Digital/Logic'), 'DL');
     });
   });
+
+  group('FocusAccomplishment Clean Serialization', () {
+    test('Serializes and deserializes FocusAccomplishment model correctly', () {
+      final accomplishment = FocusAccomplishment(
+        categoryName: 'Algorithms',
+        categoryDelta: 15.5,
+        topics: [
+          const FocusAccomplishmentTopic(
+            topicTitle: 'Sorting Algorithms',
+            taskTitles: ['Quicksort', 'Mergesort'],
+            counterDelta: 0,
+          ),
+          const FocusAccomplishmentTopic(
+            topicTitle: 'Graph Theory',
+            taskTitles: [],
+            counterDelta: 3,
+          ),
+        ],
+      );
+
+      final jsonMap = accomplishment.toJson();
+      final decoded = FocusAccomplishment.fromJson(jsonMap);
+
+      expect(decoded.categoryName, 'Algorithms');
+      expect(decoded.categoryDelta, 15.5);
+      expect(decoded.topics.length, 2);
+      expect(decoded.topics.first.topicTitle, 'Sorting Algorithms');
+      expect(decoded.topics.first.taskTitles, containsAll(['Quicksort', 'Mergesort']));
+      expect(decoded.topics.last.counterDelta, 3);
+    });
+  });
 }

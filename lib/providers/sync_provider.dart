@@ -60,6 +60,7 @@ class SyncState {
 
 class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   bool _hasPendingChanges = false;
+  DateTime? _firstPendingTime;
   Timer? _syncTimer;
 
   bool get hasPendingChanges => _hasPendingChanges;
@@ -81,6 +82,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       if (_hasPendingChanges) {
         _syncTimer?.cancel();
         _syncTimer = null;
+        _firstPendingTime = null;
         autoSync();
       }
     }
@@ -88,9 +90,20 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   void triggerAutoSync() {
     _hasPendingChanges = true;
+    _firstPendingTime ??= DateTime.now();
+
+    if (DateTime.now().difference(_firstPendingTime!).inSeconds >= 30) {
+      _syncTimer?.cancel();
+      _syncTimer = null;
+      _firstPendingTime = null;
+      autoSync();
+      return;
+    }
+
     _syncTimer?.cancel();
     _syncTimer = Timer(const Duration(seconds: 10), () {
       if (_hasPendingChanges) {
+        _firstPendingTime = null;
         autoSync();
       }
     });
@@ -100,6 +113,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     if (_hasPendingChanges) {
       _syncTimer?.cancel();
       _syncTimer = null;
+      _firstPendingTime = null;
       await autoSync();
     }
   }
@@ -826,6 +840,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     if (state.status == SyncStatus.requiresAction) return;
 
     _hasPendingChanges = false;
+    _firstPendingTime = null;
     _syncTimer?.cancel();
     _syncTimer = null;
 
