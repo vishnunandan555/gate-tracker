@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 class CommunityNotification {
   final String id;
@@ -89,7 +89,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   }
 
   Future<void> _init() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
 
     // 1. Load read IDs from SharedPreferences
     // NOTE: null means key was NEVER set (fresh install).
@@ -145,7 +145,8 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
     state = CommunityNotificationsState(
       notifications: loadedList,
       readIds: readSet,
-      isLoading: false,
+      isLoading: true,
+      hasError: false,
     );
 
     // 3. Fetch latest from remote in background
@@ -157,11 +158,10 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   /// [isFirstInstall]: When true (readIds key never existed in SharedPrefs),
   /// notifications older than 30 days are pre-marked as read to avoid
   /// flooding new users with a wall of old unread notifications.
-  Future<void> _fetchRemote({bool isFirstInstall = false}) async {
+  Future<void> _fetchRemote({required bool isFirstInstall}) async {
     try {
       final response = await http.get(Uri.parse(_remoteUrl)).timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
         final decoded = jsonDecode(response.body) as List<dynamic>;
         List<CommunityNotification> fetchedList = decoded
             .map((item) => CommunityNotification.fromJson(item as Map<String, dynamic>))
@@ -170,12 +170,16 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
           fetchedList = fetchedList.sublist(0, 50);
         }
 
+        final prefs = ref.read(sharedPreferencesProvider);
         // 1. Completely replace local storage with the capped notification payload
         await prefs.setString(_cacheKey, jsonEncode(fetchedList.map((n) => n.toJson()).toList()));
 
         // 2. Prune obsolete read IDs (garbage collection for deleted/retired notifications)
+        final currentReadList = prefs.getStringList(_readIdsKey);
         final activeIds = fetchedList.map((n) => n.id).toSet();
-        Set<String> cleanedReadSet = state.readIds.intersection(activeIds);
+        Set<String> cleanedReadSet = currentReadList != null
+            ? currentReadList.where((id) => activeIds.contains(id)).toSet()
+            : <String>{};
 
         // 3. Fresh install — pre-mark notifications older than 30 days as read
         //    so users aren't greeted with a wall of unread historical announcements.
@@ -221,7 +225,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
     final updatedReadSet = {...state.readIds, ...allIds};
     state = state.copyWith(readIds: updatedReadSet);
 
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList(_readIdsKey, updatedReadSet.toList());
   }
 
@@ -230,7 +234,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
     final updatedReadSet = {...state.readIds, id};
     state = state.copyWith(readIds: updatedReadSet);
 
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList(_readIdsKey, updatedReadSet.toList());
   }
 }
@@ -238,4 +242,3 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
 final communityNotificationsProvider = NotifierProvider<CommunityNotificationsNotifier, CommunityNotificationsState>(() {
   return CommunityNotificationsNotifier();
 });
-

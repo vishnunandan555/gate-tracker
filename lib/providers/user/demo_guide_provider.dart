@@ -64,6 +64,8 @@ class DemoGuideNotifier extends Notifier<DemoStep> {
   Future<void> startDemo() async {
     state = DemoStep.none;
     ref.read(focusProvider.notifier).resetState();
+    await _prefs.setBool('has_seen_demo_guide', true);
+    ref.read(hasSeenDemoGuideProvider.notifier).state = true;
 
     // Force state to home tab page and start the intro
     ref.read(shellTabProvider.notifier).state = 2;

@@ -93,8 +93,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
+              final prefs = ref.read(sharedPreferencesProvider);
+              await prefs.setBool('has_seen_demo_guide', true);
+              ref.read(hasSeenDemoGuideProvider.notifier).state = true;
               ref.read(demoGuideProvider.notifier).startDemo();
             },
             style: FilledButton.styleFrom(

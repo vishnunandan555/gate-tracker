@@ -12,7 +12,7 @@ class FocusAccomplishmentsWidget extends StatefulWidget {
     super.key,
     required this.accomplishments,
     required this.accentColor,
-    this.maxWidgetHeight = 160.0,
+    this.maxWidgetHeight = 220.0,
   });
 
   @override
@@ -51,19 +51,24 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
         final decoded = jsonDecode(accomplishmentsText) as List<dynamic>;
         return Container(
           constraints: BoxConstraints(maxHeight: context.s(widget.maxWidgetHeight)),
-          padding: EdgeInsets.all(context.s(12)),
+          padding: EdgeInsets.symmetric(horizontal: context.s(10), vertical: context.s(8)),
           decoration: BoxDecoration(
             color: Colors.white.withAlpha(5),
             borderRadius: BorderRadius.circular(context.s(12)),
           ),
-          child: Scrollbar(
+          child: RawScrollbar(
             controller: _scrollController1,
-            thumbVisibility: true,
+            thumbColor: widget.accentColor.withAlpha(120),
+            radius: Radius.circular(context.s(4)),
+            thickness: context.s(3.5),
+            fadeDuration: const Duration(milliseconds: 300),
+            timeToFade: const Duration(milliseconds: 800),
+            thumbVisibility: false,
             child: SingleChildScrollView(
               controller: _scrollController1,
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: EdgeInsets.only(right: context.s(8)),
+                padding: EdgeInsets.only(right: context.s(6)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: decoded.map((catJson) {
@@ -72,7 +77,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                     final topicsList = catJson['topics'] as List<dynamic>? ?? [];
 
                     return Padding(
-                      padding: EdgeInsets.only(bottom: context.s(12)),
+                      padding: EdgeInsets.only(bottom: context.s(8)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -101,7 +106,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                 ),
                             ],
                           ),
-                          SizedBox(height: context.s(4)),
+                          SizedBox(height: context.s(2)),
                           // Topics list
                           ...topicsList.map((topicJson) {
                             final topicName = topicJson['topicName'] as String? ?? 'Topic';
@@ -109,7 +114,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                             final isCounter = topicJson['isCounter'] as bool? ?? false;
 
                             return Padding(
-                              padding: EdgeInsets.only(left: context.s(8), top: context.s(4), bottom: context.s(4)),
+                              padding: EdgeInsets.only(left: context.s(6), top: context.s(2), bottom: context.s(2)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -239,9 +244,14 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
         color: Colors.white.withAlpha(5),
         borderRadius: BorderRadius.circular(context.s(12)),
       ),
-      child: Scrollbar(
+      child: RawScrollbar(
         controller: _scrollController2,
-        thumbVisibility: true,
+        thumbColor: widget.accentColor.withAlpha(120),
+        radius: Radius.circular(context.s(4)),
+        thickness: context.s(3.5),
+        fadeDuration: const Duration(milliseconds: 300),
+        timeToFade: const Duration(milliseconds: 800),
+        thumbVisibility: false,
         child: SingleChildScrollView(
           controller: _scrollController2,
           physics: const BouncingScrollPhysics(),

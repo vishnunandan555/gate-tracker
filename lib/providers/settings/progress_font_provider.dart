@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 enum ProgressFont {
   orbitron,
@@ -14,23 +14,19 @@ enum ProgressFont {
 class ProgressFontNotifier extends Notifier<ProgressFont> {
   @override
   ProgressFont build() {
-    _load();
-    return ProgressFont.orbitron;
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final val = prefs.getString('progress_font');
     if (val != null) {
-      state = ProgressFont.values.firstWhere(
+      return ProgressFont.values.firstWhere(
         (e) => e.name == val,
         orElse: () => ProgressFont.orbitron,
       );
     }
+    return ProgressFont.orbitron;
   }
 
   Future<void> setProgressFont(ProgressFont val) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('progress_font', val.name);
     state = val;
   }

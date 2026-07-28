@@ -602,108 +602,111 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
             constraints: const BoxConstraints(maxWidth: 340),
             child: Padding(
               padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  "Session Summary",
-                  style: GoogleFonts.outfit(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text("Duration:", style: GoogleFonts.outfit(color: Colors.white54)),
-                    Text(durationStr, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Method:", style: GoogleFonts.outfit(color: Colors.white54)),
-                    Text(session.method, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Progress:", style: GoogleFonts.outfit(color: Colors.white54)),
                     Text(
-                      "+${session.progressDelta.toStringAsFixed(session.progressDelta == session.progressDelta.toInt() ? 0 : 1)}%",
+                      "Session Summary",
                       style: GoogleFonts.outfit(
-                        color: session.progressDelta > 0 ? accentColor : Colors.white,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-
-                if (session.accomplishments != null && session.accomplishments!.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    "Accomplishments:",
-                    style: GoogleFonts.outfit(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 6),
-                  FocusAccomplishmentsWidget(
-                    accomplishments: session.accomplishments,
-                    accentColor: accentColor,
-                    maxWidgetHeight: 120,
-                  ),
-                ],
-
-                const SizedBox(height: 24),
-                if (isDemoSaveStep) ...[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: accentColor.withAlpha(20),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: accentColor.withAlpha(80)),
-                    ),
-                    child: Text(
-                      "Tap Awesome to save this session and continue the walkthrough.",
-                      style: GoogleFonts.outfit(
                         color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        height: 1.4,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
-                FilledButton(
-                  key: DemoKeys.accomplishmentsSaveButton,
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                    if (isDemoSaveStep) {
-                      Future.delayed(const Duration(milliseconds: 400), () {
-                        demoNotifier.setStep(DemoStep.focusDailyGoalBar);
-                      });
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: accentColor,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text("Awesome", style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Duration:", style: GoogleFonts.outfit(color: Colors.white54)),
+                        Text(durationStr, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Method:", style: GoogleFonts.outfit(color: Colors.white54)),
+                        Text(session.method, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Progress:", style: GoogleFonts.outfit(color: Colors.white54)),
+                        Text(
+                          "+${session.progressDelta.toStringAsFixed(session.progressDelta == session.progressDelta.toInt() ? 0 : 1)}%",
+                          style: GoogleFonts.outfit(
+                            color: session.progressDelta > 0 ? accentColor : Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (session.accomplishments != null && session.accomplishments!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        "Accomplishments:",
+                        style: GoogleFonts.outfit(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      FocusAccomplishmentsWidget(
+                        accomplishments: session.accomplishments,
+                        accentColor: accentColor,
+                        maxWidgetHeight: (MediaQuery.sizeOf(context).height * 0.40).clamp(180.0, 320.0),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+                    if (isDemoSaveStep) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: accentColor.withAlpha(20),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: accentColor.withAlpha(80)),
+                        ),
+                        child: Text(
+                          "Tap Awesome to save this session and continue the walkthrough.",
+                          style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                    FilledButton(
+                      key: DemoKeys.accomplishmentsSaveButton,
+                      onPressed: () {
+                        Navigator.pop(dialogContext);
+                        if (isDemoSaveStep) {
+                          Future.delayed(const Duration(milliseconds: 400), () {
+                            demoNotifier.setStep(DemoStep.focusDailyGoalBar);
+                          });
+                        }
+                      },
+                      style: FilledButton.styleFrom(
+                        backgroundColor: accentColor,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text("Awesome", style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
           ),
         );
       },

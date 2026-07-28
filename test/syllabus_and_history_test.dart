@@ -27,8 +27,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Category Pinning & Weak Flagging Tests', () {
-    setUp(() {
+    setUp(() async {
       SharedPreferences.setMockInitialValues({});
+      setTestSharedPreferences(await SharedPreferences.getInstance());
     });
 
     test('Initial states of pinned and weak providers are empty', () {

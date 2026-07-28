@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../providers/providers.dart';
 
-class LayoutSettingsSection extends StatelessWidget {
+class LayoutSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;
   final TextStyle subtitleStyle;
 
@@ -14,7 +15,7 @@ class LayoutSettingsSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       leading: Icon(
         GoRouterState.of(context).uri.path.startsWith('/desk')
@@ -60,7 +61,7 @@ class LayoutSettingsSection extends StatelessWidget {
         style: subtitleStyle,
       ),
       onTap: () async {
-        final prefs = await SharedPreferences.getInstance();
+        final prefs = ref.read(sharedPreferencesProvider);
         if (context.mounted) {
           if (GoRouterState.of(context).uri.path.startsWith('/desk')) {
             await prefs.setBool('user_wants_desktop_ui', false);

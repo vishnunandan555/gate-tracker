@@ -20,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/router/route_resolver.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'firebase_options.dart';
 
@@ -37,6 +38,21 @@ void main() async {
       );
       if (!kIsWeb && defaultTargetPlatform != TargetPlatform.windows) {
         await GoogleSignIn.instance.initialize();
+      }
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        FlutterError.onError = (errorDetails) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+        };
+        PlatformDispatcher.instance.onError = (error, stack) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+          return true;
+        };
+        if (kDebugMode) {
+          await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+        }
       }
     } catch (e) {
       debugPrint("Firebase/GoogleSignIn initialization failed: $e");

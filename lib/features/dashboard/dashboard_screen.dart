@@ -270,7 +270,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.fastOutSlowIn,
-                    height: searchBarVisible ? context.s(64) : 0.0,
+                    height: searchBarVisible ? context.s(80) : 0.0,
                     child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 200),
                       opacity: searchBarVisible ? 1.0 : 0.0,
@@ -278,7 +278,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         child: Padding(
                           key: DemoKeys.syllabusSearchBar,
-                          padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
+                          padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(16)),
                           child: TextField(
                             controller: _searchController,
                             focusNode: _focusNode,

@@ -224,14 +224,14 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.fastOutSlowIn,
-              height: searchBarVisible ? 64.0 : 0.0,
+              height: searchBarVisible ? 80.0 : 0.0,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
                 opacity: searchBarVisible ? 1.0 : 0.0,
                 child: SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     child: TextField(
                       controller: _searchController,
                       focusNode: _focusNode,

@@ -12,6 +12,7 @@ bool isFirebaseSupported() {
   if (kIsWeb) return true;
   return defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS ||
       defaultTargetPlatform == TargetPlatform.windows;
 }
 
@@ -44,7 +45,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   @override
   Future<AuthState> build() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefs = ref.read(sharedPreferencesProvider);
     final hasChosenOffline = _prefs.getBool('has_chosen_offline') ?? false;
 
     if (!isFirebaseSupported()) {
@@ -132,15 +133,18 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         isLoading: false,
       ));
     } catch (e, stack) {
-      final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
-      state = AsyncValue.error(e, stack);
-      // Fallback to previous state
-      state = AsyncValue.data(AuthState(
-        user: FirebaseAuth.instance.currentUser,
-        isOfflineMode: currentOffline,
-        isLoading: false,
-      ));
-      rethrow;
+      debugPrint("signInWithGoogle error: $e");
+      final isCancellation = e.toString().contains('cancelled') || e.toString().contains('CANCELED');
+      if (isCancellation) {
+        final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
+        state = AsyncValue.data(AuthState(
+          user: FirebaseAuth.instance.currentUser,
+          isOfflineMode: currentOffline,
+          isLoading: false,
+        ));
+      } else {
+        state = AsyncValue.error(e, stack);
+      }
     }
   }
 

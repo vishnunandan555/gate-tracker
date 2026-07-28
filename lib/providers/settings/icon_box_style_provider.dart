@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 enum IconBoxStyle {
   filled,
@@ -13,21 +13,17 @@ class IconBoxStyleNotifier extends Notifier<IconBoxStyle> {
 
   @override
   IconBoxStyle build() {
-    _load();
-    return IconBoxStyle.filled;
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final index = prefs.getInt(_key);
     if (index != null && index >= 0 && index < IconBoxStyle.values.length) {
-      state = IconBoxStyle.values[index];
+      return IconBoxStyle.values[index];
     }
+    return IconBoxStyle.filled;
   }
 
   Future<void> setStyle(IconBoxStyle style) async {
     state = style;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setInt(_key, style.index);
   }
 }

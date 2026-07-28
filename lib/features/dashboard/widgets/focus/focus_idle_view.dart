@@ -585,13 +585,13 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     ],
                   ),
                   if (accomplishments != null && accomplishments.isNotEmpty) ...[
-                    SizedBox(height: context.s(8)),
+                    SizedBox(height: context.s(6)),
                     const Divider(color: Colors.white10),
                     SizedBox(height: context.s(4)),
                     FocusAccomplishmentsWidget(
                       accomplishments: accomplishments,
                       accentColor: accentColor,
-                      maxWidgetHeight: 120,
+                      maxWidgetHeight: 240,
                     ),
                   ],
                 ],

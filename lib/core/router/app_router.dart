@@ -3,6 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/dashboard/dashboard_shell.dart';
 import '../../features/desk/desk_dashboard_shell.dart';
+import '../../features/dashboard/settings_screen.dart';
+import '../../features/dashboard/progress_history_screen.dart';
+import '../../features/more/screens/accounts_screen.dart';
+import '../../features/more/screens/about_screen.dart';
+import '../../features/more/screens/contribute_screen.dart';
+import '../../features/more/screens/customize_ui_screen.dart';
+import '../../features/more/screens/customize_nav_bar_screen.dart';
+import '../../features/dashboard/widgets/setup_screen.dart';
+import '../../features/dashboard/widgets/agreement_screen.dart';
+import '../../features/dashboard/widgets/auth_screen.dart';
 import 'route_resolver.dart';
 
 final appRouter = GoRouter(
@@ -46,5 +56,15 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const DashboardShell()),
     GoRoute(path: '/desk', builder: (context, state) => const DeskDashboardShell()),
+    GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+    GoRoute(path: '/history', builder: (context, state) => const ProgressHistoryScreen()),
+    GoRoute(path: '/accounts', builder: (context, state) => const AccountsScreen()),
+    GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+    GoRoute(path: '/contribute', builder: (context, state) => const ContributeScreen()),
+    GoRoute(path: '/customize-ui', builder: (context, state) => const CustomizeUiScreen()),
+    GoRoute(path: '/customize-navbar', builder: (context, state) => const CustomizeNavBarScreen()),
+    GoRoute(path: '/setup', builder: (context, state) => const SetupScreen()),
+    GoRoute(path: '/agreement', builder: (context, state) => const AgreementScreen()),
+    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
   ],
 );

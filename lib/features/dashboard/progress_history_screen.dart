@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/daily_history_provider.dart';
 import '../../providers/show_projected_completion_provider.dart';
 import '../../providers/stats_provider.dart';
@@ -86,9 +85,9 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     _calendarDataAnimController.forward();
   }
 
-  Future<void> _loadPersistedSettings() async {
+  void _loadPersistedSettings() {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       setState(() {
         _isHeatmapMode = prefs.getBool('stats_is_heatmap_mode') ?? false;
       });
@@ -97,7 +96,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
 
   Future<void> _persistHeatmapMode(bool mode) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       await prefs.setBool('stats_is_heatmap_mode', mode);
     } catch (_) {}
   }

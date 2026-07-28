@@ -1,23 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 class EnableShareProgressCardNotifier extends Notifier<bool> {
   @override
   bool build() {
-    _load();
-    return true; // Enabled by default
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final val = prefs.getBool('enable_share_progress_card');
-    if (val != null) {
-      state = val;
-    }
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getBool('enable_share_progress_card') ?? true;
   }
 
   Future<void> setEnabled(bool val) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool('enable_share_progress_card', val);
     state = val;
   }

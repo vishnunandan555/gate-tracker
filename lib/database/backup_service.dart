@@ -128,12 +128,18 @@ class BackupService {
     if (version < 14) {
       // categoryId was added to focusSessions in schema v14.
       // Old backups have no such field; explicitly null so restore ignores it.
-      final sessions = payload['focusSessions'] as List<dynamic>? ?? [];
-      for (final fs in sessions) {
-        if (fs is Map<String, dynamic>) {
-          fs.putIfAbsent('categoryId', () => null);
+      final rawSessions = payload['focusSessions'] as List<dynamic>? ?? [];
+      final newSessions = <Map<String, dynamic>>[];
+      for (final fs in rawSessions) {
+        if (fs is Map) {
+          final map = Map<String, dynamic>.from(fs);
+          if (!map.containsKey('categoryId')) {
+            map['categoryId'] = null;
+          }
+          newSessions.add(map);
         }
       }
+      payload['focusSessions'] = newSessions;
     }
 
     final syllabusCategoriesData = payload['syllabusCategories'] as List<dynamic>?;
@@ -279,7 +285,7 @@ class BackupService {
               durationSeconds: durationSeconds,
               accomplishments: Value(accomplishments),
               progressDelta: Value(progressDelta),
-              categoryId: Value(categoryId),
+              categoryId: categoryId != null ? Value(categoryId) : const Value.absent(),
             ));
           }
         }

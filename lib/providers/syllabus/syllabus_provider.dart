@@ -7,8 +7,19 @@ import '../../database/syllabus_preset.dart';
 import '../providers.dart';
 
 
+SharedPreferences? _fallbackSharedPreferences;
+
+void setTestSharedPreferences(SharedPreferences prefs) {
+  _fallbackSharedPreferences = prefs;
+}
+
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase());
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) => throw UnimplementedError());
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  if (_fallbackSharedPreferences != null) {
+    return _fallbackSharedPreferences!;
+  }
+  throw UnimplementedError('sharedPreferencesProvider must be overridden in ProviderScope or set via setTestSharedPreferences');
+});
 
 // Stream of categories
 final syllabusCategoriesProvider = StreamProvider<List<SyllabusCategory>>((ref) {
@@ -476,7 +487,7 @@ class SyllabusController extends Notifier<AsyncValue<void>> {
     await _db.resetSyllabusTrackingData();
 
     // Clear weak categories/topics in SharedPreferences & Riverpod providers
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.remove('weak_category_ids');
     await prefs.remove('weak_topic_ids');
     ref.read(weakCategoriesProvider.notifier).state = {};
@@ -557,16 +568,12 @@ final manuallyExpandedCompletedSyllabusCategoriesProvider =
 class PinnedCategoriesNotifier extends Notifier<Set<int>> {
   @override
   Set<int> build() {
-    _load();
-    return {};
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final list = prefs.getStringList('pinned_category_ids');
     if (list != null) {
-      state = list.map(int.tryParse).whereType<int>().toSet();
+      return list.map(int.tryParse).whereType<int>().toSet();
     }
+    return {};
   }
 
   Future<void> toggle(int id) async {
@@ -577,7 +584,7 @@ class PinnedCategoriesNotifier extends Notifier<Set<int>> {
       newState.add(id);
     }
     state = newState;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList('pinned_category_ids', state.map((e) => e.toString()).toList());
   }
 }
@@ -589,16 +596,12 @@ final pinnedCategoriesProvider = NotifierProvider<PinnedCategoriesNotifier, Set<
 class WeakCategoriesNotifier extends Notifier<Set<int>> {
   @override
   Set<int> build() {
-    _load();
-    return {};
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final list = prefs.getStringList('weak_category_ids');
     if (list != null) {
-      state = list.map(int.tryParse).whereType<int>().toSet();
+      return list.map(int.tryParse).whereType<int>().toSet();
     }
+    return {};
   }
 
   Future<void> toggle(int id) async {
@@ -609,7 +612,7 @@ class WeakCategoriesNotifier extends Notifier<Set<int>> {
       newState.add(id);
     }
     state = newState;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList('weak_category_ids', state.map((e) => e.toString()).toList());
   }
 }
@@ -621,16 +624,12 @@ final weakCategoriesProvider = NotifierProvider<WeakCategoriesNotifier, Set<int>
 class WeakTopicsNotifier extends Notifier<Set<int>> {
   @override
   Set<int> build() {
-    _load();
-    return {};
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final list = prefs.getStringList('weak_topic_ids');
     if (list != null) {
-      state = list.map(int.tryParse).whereType<int>().toSet();
+      return list.map(int.tryParse).whereType<int>().toSet();
     }
+    return {};
   }
 
   Future<void> toggle(int id) async {
@@ -641,7 +640,7 @@ class WeakTopicsNotifier extends Notifier<Set<int>> {
       newState.add(id);
     }
     state = newState;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList('weak_topic_ids', state.map((e) => e.toString()).toList());
   }
 }

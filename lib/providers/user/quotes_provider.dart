@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../providers.dart';
 
 const String _kQuotesCacheKey = 'cached_quotes';
 const String _kQuotesUrl =
@@ -41,7 +41,7 @@ class QuotesNotifier extends Notifier<List<String>> {
 
   Future<void> _init() async {
     // Step 1: Load from cache immediately for fast offline-first response.
-    final cached = await _loadFromCache();
+    final cached = _loadFromCache();
     if (cached.isNotEmpty) {
       state = cached;
     }
@@ -50,9 +50,9 @@ class QuotesNotifier extends Notifier<List<String>> {
     _fetchAndCache();
   }
 
-  Future<List<String>> _loadFromCache() async {
+  List<String> _loadFromCache() {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       final raw = prefs.getString(_kQuotesCacheKey);
       if (raw != null) {
         final decoded = json.decode(raw);
@@ -79,7 +79,7 @@ class QuotesNotifier extends Notifier<List<String>> {
           // Update state with remote quotes.
           state = quotes;
           // Persist to cache.
-          final prefs = await SharedPreferences.getInstance();
+          final prefs = ref.read(sharedPreferencesProvider);
           await prefs.setString(_kQuotesCacheKey, json.encode(quotes));
         }
       }
@@ -104,18 +104,13 @@ class FocusQuotesEnabledNotifier extends Notifier<bool> {
 
   @override
   bool build() {
-    _load();
-    return false; // Default: disabled
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    state = prefs.getBool(_kKey) ?? false;
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getBool(_kKey) ?? false;
   }
 
   Future<void> setEnabled(bool enabled) async {
     state = enabled;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool(_kKey, enabled);
   }
 }

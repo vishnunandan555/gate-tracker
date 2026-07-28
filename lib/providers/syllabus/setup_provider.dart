@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../providers.dart';
 
 class SetupNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     return prefs.getBool('has_completed_setup') ?? false;
   }
 
   Future<void> completeSetup() async {
     state = const AsyncValue.loading();
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool('has_completed_setup', true);
     await prefs.setBool('force_onboarding', false);
     
@@ -23,10 +22,9 @@ class SetupNotifier extends AsyncNotifier<bool> {
 
   Future<void> resetSetup({bool forceOnboarding = false}) async {
     state = const AsyncValue.loading();
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool('has_completed_setup', false);
     await prefs.setBool('force_onboarding', forceOnboarding);
-    await prefs.setBool('has_seen_demo_guide', false);
     state = const AsyncValue.data(false);
   }
 }

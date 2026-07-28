@@ -15,6 +15,7 @@ import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
 import '../../../database/app_database.dart';
 import '../../../providers/rollover_provider.dart';
+import '../../../providers/stats_provider.dart';
 
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
@@ -289,6 +290,55 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   }
 
   Future<void> _handleFinishSetup() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final forceOnboarding = prefs.getBool('force_onboarding') ?? false;
+
+    if (forceOnboarding && mounted) {
+      final preserveHistory = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF18181B),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(
+            'Preserve User Stats & History?',
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+          ),
+          content: Text(
+            'All previous user stats, study velocity logs, and completion history will be cleared unless preserved. Do you want to preserve your previous stats and history?',
+            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(
+                'No (Clear History)',
+                style: GoogleFonts.outfit(color: Colors.redAccent, fontWeight: FontWeight.bold),
+              ),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: FilledButton.styleFrom(
+                backgroundColor: ref.read(overallProgressColorProvider),
+                foregroundColor: Colors.black,
+              ),
+              child: Text(
+                'Yes (Preserve)',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (preserveHistory == false) {
+        final db = ref.read(appDatabaseProvider);
+        await db.delete(db.syllabusProgressLogs).go();
+        await db.delete(db.dailyHistory).go();
+        ref.invalidate(progressLogsProvider);
+      }
+    }
+
     setState(() => _isLoading = true);
     try {
       // 1. Save Profile Display Name

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 enum OverallUiScale {
   xs,
@@ -29,23 +29,19 @@ extension OverallUiScaleExt on OverallUiScale {
 class OverallUiScaleNotifier extends Notifier<OverallUiScale> {
   @override
   OverallUiScale build() {
-    _load();
-    return OverallUiScale.normal;
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     final val = prefs.getString('overall_ui_scale');
     if (val != null) {
-      state = OverallUiScale.values.firstWhere(
+      return OverallUiScale.values.firstWhere(
         (e) => e.name == val,
         orElse: () => OverallUiScale.normal,
       );
     }
+    return OverallUiScale.normal;
   }
 
   Future<void> setScale(OverallUiScale val) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('overall_ui_scale', val.name);
     state = val;
   }

@@ -14,6 +14,7 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
+    setTestSharedPreferences(await SharedPreferences.getInstance());
     db = AppDatabase.forTesting(NativeDatabase.memory());
     await db.transaction(() async {
       await db.delete(db.syllabusTasks).go();

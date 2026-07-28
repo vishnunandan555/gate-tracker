@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../providers.dart';
 
 int _memoryCachedPage = 0;
 
@@ -12,9 +12,9 @@ class HomeCarouselPageNotifier extends Notifier<int> {
     return _memoryCachedPage;
   }
 
-  Future<void> _loadFromPrefs() async {
+  void _loadFromPrefs() {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       final page = prefs.getInt(_key);
       if (page != null) {
         _memoryCachedPage = page;
@@ -29,7 +29,7 @@ class HomeCarouselPageNotifier extends Notifier<int> {
     _memoryCachedPage = page;
     state = page;
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = ref.read(sharedPreferencesProvider);
       await prefs.setInt(_key, page);
     } catch (_) {}
   }
