@@ -46,6 +46,7 @@ export 'settings/target_date_provider.dart';
 // User, Profile & Community Domain
 export 'user/carousel_page_provider.dart';
 export 'user/community_notifications_provider.dart';
+export 'user/completion_scrolled_provider.dart';
 export 'user/demo_guide_provider.dart';
 export 'user/nav_bar_provider.dart';
 export 'user/notice_board_provider.dart';

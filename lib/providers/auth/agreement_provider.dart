@@ -3,7 +3,7 @@ import '../providers.dart';
 
 class AgreementNotifier extends AsyncNotifier<bool> {
   @override
-  Future<bool> build() async {
+  bool build() {
     final prefs = ref.read(sharedPreferencesProvider);
     return prefs.getBool('has_agreed_legal') ?? false;
   }

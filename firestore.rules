@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // User profile and synced data rules
+    match /users/{userId} {
+      allow read, delete: if isAuthenticated() && request.auth.uid == userId;
+
+      // Create and update rules with payload size guard (< 1 MB) and schema check
+      allow create, update: if isAuthenticated()
+        && request.auth.uid == userId
+        && request.resource.data.size() < 1048576 // Max 1 MB Firestore limit
+        && request.resource.data.keys().hasAll(['data', 'lastSyncedAt'])
+        && request.resource.data.data.version is number;
+
+      // Nested collections sync (Subjects, Progress history)
+      match /{document=**} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+  }
+}

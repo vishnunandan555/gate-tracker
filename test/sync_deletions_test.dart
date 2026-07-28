@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:drift/drift.dart' hide isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -328,5 +329,27 @@ void main() {
     final merged = await syncNotifier.mergeData(localData, remoteData);
     final categories = merged['syllabusCategories'] as List<dynamic>;
     expect(categories.first['name'], 'Local Category');
+  });
+
+  test('purgeOldDeletedItems hard-deletes tombstones older than age threshold', () async {
+    final catId = await db.addSyllabusCategory('Old Cat', 0xFF0000FF, position: 0);
+    await db.deleteSyllabusCategory(catId);
+
+    // Update lastInteractedAt to 10 days ago
+    final tenDaysAgo = DateTime.now().subtract(const Duration(days: 10));
+    await (db.update(db.syllabusCategories)).write(
+      SyllabusCategoriesCompanion(lastInteractedAt: Value(tenDaysAgo)),
+    );
+    await (db.update(db.syllabusTopics)).write(
+      SyllabusTopicsCompanion(lastInteractedAt: Value(tenDaysAgo)),
+    );
+
+    // Run purge pass
+    await db.purgeOldDeletedItems(maxAge: const Duration(days: 7));
+
+    final cats = await db.select(db.syllabusCategories).get();
+    final tops = await db.select(db.syllabusTopics).get();
+    expect(cats, isEmpty);
+    expect(tops, isEmpty);
   });
 }

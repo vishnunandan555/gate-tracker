@@ -29,8 +29,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
   final List<Animation<double>> _itemFadeList = [];
   final List<Animation<Offset>> _itemSlideList = [];
 
-  static const int _itemCount = 9;
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +42,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _headerCtrl, curve: Curves.easeOutCubic));
 
-    for (int i = 0; i < _itemCount; i++) {
+    const maxItems = 16;
+    for (int i = 0; i < maxItems; i++) {
       final ctrl = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 480),
@@ -62,7 +61,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     }
 
     _headerCtrl.forward();
-    for (int i = 0; i < _itemCount; i++) {
+    for (int i = 0; i < _itemCtrlList.length; i++) {
       Future.delayed(Duration(milliseconds: 100 + i * 60), () {
         if (mounted && i < _itemCtrlList.length) _itemCtrlList[i].forward();
       });
@@ -344,6 +343,11 @@ class _MoreHeader extends ConsumerWidget {
                 width: isDesktop ? 48 : context.s(42),
                 height: isDesktop ? 48 : context.s(42),
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.app_shortcut_rounded,
+                  size: isDesktop ? 48 : context.s(42),
+                  color: accentColor,
+                ),
               ),
               SizedBox(width: isDesktop ? 10 : context.s(8)),
               Row(

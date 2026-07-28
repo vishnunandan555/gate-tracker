@@ -127,15 +127,11 @@ class FocusAccomplishmentTopic {
   });
 
   Map<String, dynamic> toJson() => {
-        'topicName': topicTitle,
         'topicTitle': topicTitle,
-        'tasks': taskTitles,
         'taskTitles': taskTitles,
         if (counterDelta != 0) ...{
           'isCounter': true,
           'counterDelta': counterDelta,
-          'currentCount': counterDelta,
-          'initialCount': 0,
         },
       };
 
@@ -145,8 +141,7 @@ class FocusAccomplishmentTopic {
       taskTitles: (json['taskTitles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
           (json['tasks'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
           [],
-      counterDelta: (json['counterDelta'] as num?)?.toInt() ??
-          ((json['currentCount'] as num?)?.toInt() ?? 0) - ((json['initialCount'] as num?)?.toInt() ?? 0),
+      counterDelta: (json['counterDelta'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -274,8 +269,10 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     ref.onDispose(() {
       _timer?.cancel();
     });
-    _loadSelection();
-    _recoverInterruptedSession();
+    Future.microtask(() async {
+      await _loadSelection();
+      await _recoverInterruptedSession();
+    });
 
     // Listen to changes in the syllabus provider to update accomplishments dynamically in-memory
     ref.listen<AsyncValue<List<SyllabusCategoryWithTopics>>>(syllabusProvider, (prev, next) {
@@ -440,6 +437,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     _previousSegmentSeconds = 0;
     _previousTotalSecondsFocused = 0;
 
+    HapticFeedback.selectionClick();
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
@@ -450,6 +448,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
   void pauseSession() {
     if (state.status != FocusStatus.focusing && state.status != FocusStatus.breakTime) return;
+    HapticFeedback.selectionClick();
     _timer?.cancel();
     if (_segmentStartTime != null) {
       final elapsedSegmentSeconds = DateTime.now().difference(_segmentStartTime!).inSeconds;
@@ -464,6 +463,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
   void resumeSession() {
     if (state.status != FocusStatus.paused) return;
+    HapticFeedback.selectionClick();
     state = state.copyWith(
       status: state.isBreakActive ? FocusStatus.breakTime : FocusStatus.focusing,
     );
@@ -471,6 +471,9 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
   }
+
+  void pauseBreak() => pauseSession();
+  void resumeBreak() => resumeSession();
 
   Future<void> checkAccomplishments() async {
     if (state.status == FocusStatus.idle) return;

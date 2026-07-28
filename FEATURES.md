@@ -59,6 +59,8 @@ service cloud.firestore {
 2. **Resource Explorer & Reference Links**
 3. **Enhanced Consistency Grid Analytics**
 4. **Desktop Onboarding & Tutorial Flow**: Desktop-friendly tooltip sequence / welcome onboarding for new desktop users once Desktop UI is finalized.
+5. **Light & Adaptive System Theme Support**: Optional light mode theme with system-adaptive brightness toggling.
+6. **Desktop Keyboard Navigation & Shortcuts**: Support for Tab key traversal across interactive cards and keyboard shortcuts (e.g., Space to pause/resume focus session, `/` for quick search).
 
 ---
 

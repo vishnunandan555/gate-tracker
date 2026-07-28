@@ -3,29 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../database/app_database.dart';
-import '../../providers/subject_provider.dart';
 import '../../widgets/pill_progress_widget.dart';
-import '../../providers/syllabus_provider.dart';
-import '../../providers/completion_provider.dart';
+import '../../providers/providers.dart';
 import 'widgets/syllabus_category_header.dart';
 import 'widgets/syllabus_topic_card.dart';
 import 'widgets/syllabus_customization_sheets.dart';
 import '../../utils/ui_scaling.dart';
 import '../../utils/demo_keys.dart';
-
-
-class CompletionIsScrolledNotifier extends Notifier<bool> {
-  @override
-  bool build() => false;
-
-  void setScrolled(bool val) {
-    state = val;
-  }
-}
-
-final completionIsScrolledProvider = NotifierProvider<CompletionIsScrolledNotifier, bool>(() {
-  return CompletionIsScrolledNotifier();
-});
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});

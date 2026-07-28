@@ -905,17 +905,29 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Expanded(
-                      child: Text(
-                        name,
-                        style: GoogleFonts.outfit(
-                          color: Colors.white38,
-                          fontSize: 9.5,
-                          height: 1.15,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Builder(
+                      builder: (_) {
+                        String subtitle = name;
+                        if (id != "CUSTOM") {
+                          final presets = branchPresets[id.toUpperCase()];
+                          if (presets != null && presets.isNotEmpty) {
+                            final catCount = presets.length;
+                            final topicCount = presets.fold<int>(0, (acc, cat) => acc + cat.topics.length);
+                            subtitle = "$catCount Subjects · $topicCount Topics";
+                          }
+                        }
+                        return Text(
+                          subtitle,
+                          style: GoogleFonts.outfit(
+                            color: isSelected ? accentColor.withAlpha(200) : Colors.white38,
+                            fontSize: 9.5,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            height: 1.15,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      },
                     ),
                   ],
                 ),

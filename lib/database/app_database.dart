@@ -1018,6 +1018,29 @@ class AppDatabase extends _$AppDatabase {
       }
     });
   }
+
+  /// Hard-deletes soft-deleted tombstones (where isDeleted == true) older than [maxAge].
+  /// Keeps SQLite storage minimal and prunes tombstones from Cloud Firestore sync payloads.
+  Future<void> purgeOldDeletedItems({Duration maxAge = const Duration(days: 7)}) async {
+    final cutoff = DateTime.now().subtract(maxAge);
+    await transaction(() async {
+      await (delete(syllabusProgressLogs)
+            ..where((l) => l.isDeleted.equals(true) & l.lastInteractedAt.isSmallerThanValue(cutoff)))
+          .go();
+      await (delete(customTasks)
+            ..where((t) => t.isDeleted.equals(true) & t.lastInteractedAt.isSmallerThanValue(cutoff)))
+          .go();
+      await (delete(syllabusTasks)
+            ..where((t) => t.isDeleted.equals(true) & t.lastInteractedAt.isSmallerThanValue(cutoff)))
+          .go();
+      await (delete(syllabusTopics)
+            ..where((t) => t.isDeleted.equals(true) & t.lastInteractedAt.isSmallerThanValue(cutoff)))
+          .go();
+      await (delete(syllabusCategories)
+            ..where((c) => c.isDeleted.equals(true) & c.lastInteractedAt.isSmallerThanValue(cutoff)))
+          .go();
+    });
+  }
 }
 
 enum StudyDayRollover {

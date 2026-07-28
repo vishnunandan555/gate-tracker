@@ -31,6 +31,8 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     if (_mode == 'frozen' && _frozenColor != null) {
       return _frozenColor!;
     }
+    // Note: Randomizing _autoColor on cold launch in 'auto' mode is by design —
+    // accent color refreshes each session unless frozen by the user in settings.
     _autoColor ??= AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
     return _autoColor!;
   }

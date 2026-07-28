@@ -38,6 +38,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
   void _onTabSelected(int index) {
     setState(() => _currentIndex = index);
     ref.read(categoryOrderLockProvider.notifier).unlockAndResort();
+    ref.read(syncProvider.notifier).syncIfPending();
   }
 
   @override

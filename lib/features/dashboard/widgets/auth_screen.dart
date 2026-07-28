@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../providers/auth_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:go_router/go_router.dart';
+import '../../../providers/providers.dart';
+import '../../../database/backup_service.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -13,6 +17,7 @@ class AuthScreen extends ConsumerStatefulWidget {
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isGoogleLoading = false;
   bool _isOfflineLoading = false;
+  bool _isImportLoading = false;
 
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isGoogleLoading = true);
@@ -49,6 +54,51 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       }
     } finally {
       if (mounted) setState(() => _isOfflineLoading = false);
+    }
+  }
+
+  Future<void> _handleImportBackup() async {
+    setState(() => _isImportLoading = true);
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      if (result != null && result.files.isNotEmpty) {
+        final bytes = await result.files.first.readAsBytes();
+        final jsonString = utf8.decode(bytes);
+        final payload = jsonDecode(jsonString) as Map<String, dynamic>;
+        final db = ref.read(appDatabaseProvider);
+        await BackupService.restoreDatabase(db, payload);
+        await ref.read(setupCompletedProvider.notifier).completeSetup();
+        await ref.read(authProvider.notifier).chooseOfflineMode();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF0D3320),
+              content: Text(
+                'Backup restored successfully! Welcome back.',
+                style: GoogleFonts.outfit(color: const Color(0xFF34D399)),
+              ),
+            ),
+          );
+          context.go('/');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFF1F080A),
+            content: Text(
+              'Failed to import backup: $e',
+              style: GoogleFonts.outfit(color: Colors.redAccent),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isImportLoading = false);
     }
   }
 
@@ -151,7 +201,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           icon: Icons.phonelink_setup_rounded,
                           accentColor: Colors.white70,
                           isLoading: _isOfflineLoading,
-                          isDisabled: _isGoogleLoading,
+                          isDisabled: _isGoogleLoading || _isImportLoading,
                           buttonText: "USE LOCALLY",
                           buttonIcon: const Icon(
                             Icons.cloud_off_rounded,
@@ -159,6 +209,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             size: 18,
                           ),
                           onTap: _handleOfflineMode,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Option 3: Import Backup (.json)
+                        _buildAuthOptionCard(
+                          title: "Restore Backup (.json)",
+                          description: "Already have a backup file? Import your JSON data to restore all your study progress instantly.",
+                          icon: Icons.unarchive_rounded,
+                          accentColor: Colors.amberAccent,
+                          isLoading: _isImportLoading,
+                          isDisabled: _isGoogleLoading || _isOfflineLoading,
+                          buttonText: "IMPORT BACKUP FILE",
+                          buttonIcon: const Icon(
+                            Icons.file_upload_rounded,
+                            color: Colors.black,
+                            size: 18,
+                          ),
+                          onTap: _handleImportBackup,
                         ),
                         const SizedBox(height: 48),
                       ],

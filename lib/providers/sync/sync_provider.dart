@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // SharedPreferences is accessed via sharedPreferencesProvider (injected at startup)
@@ -11,6 +12,19 @@ import '../../database/backup_service.dart';
 import '../../database/schema_version.dart';
 import '../../database/syllabus_preset.dart';
 import '../providers.dart';
+
+class HasCheckedVersionNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void setChecked(bool val) {
+    state = val;
+  }
+}
+
+final hasCheckedVersionProvider = NotifierProvider<HasCheckedVersionNotifier, bool>(() {
+  return HasCheckedVersionNotifier();
+});
 
 final syncPayloadSizeProvider = FutureProvider<double>((ref) async {
   final notifier = ref.watch(syncProvider.notifier);
@@ -62,6 +76,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   DateTime? _lastFirestoreWriteTime;
   Timer? _syncTimer;
   Timer? _throttleTimer;
+  Timer? _retryTimer;
+  int _retryCount = 0;
 
   bool get hasPendingChanges => _hasPendingChanges;
 
@@ -72,6 +88,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     ref.onDispose(() {
       WidgetsBinding.instance.removeObserver(this);
       _syncTimer?.cancel();
+      _throttleTimer?.cancel();
+      _retryTimer?.cancel();
     });
     return SyncState(status: SyncStatus.idle);
   }
@@ -83,6 +101,10 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         _syncTimer?.cancel();
         _syncTimer = null;
         _firstPendingTime = null;
+        autoSync();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      if (_hasPendingChanges && this.state.status != SyncStatus.syncing) {
         autoSync();
       }
     }
@@ -214,6 +236,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   // Helper: Export local database to backup JSON format
   Future<Map<String, dynamic>> exportLocalData() async {
+    await _db.purgeOldDeletedItems();
     final exported = await BackupService.exportDatabase(_db);
     exported['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
     exported['hasCompletedSetup'] = true;
@@ -666,6 +689,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return false;
 
+    await _db.purgeOldDeletedItems();
     await _updateSyncState(status: SyncStatus.syncing);
     try {
       final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
@@ -882,11 +906,13 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
         if (cachedDoc.exists && cachedDoc.data()?['data'] != null) {
           final cachedCloudData = cachedDoc.data()!['data'] as Map<String, dynamic>;
-          if (areDataEqual(localData, cachedCloudData)) {
+          final isEqual = await compute(_areDataEqualIsolate, [localData, cachedCloudData]);
+          if (isEqual) {
             DateTime? cloudLastSynced;
             final ts = cachedDoc.data()?['lastSyncedAt'];
             if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
             await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
+            _clearRetry();
             return;
           }
         }
@@ -900,23 +926,27 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         // Cloud is empty. Safe to upload local data.
         await _throttledFirestoreWrite(user.uid, localData);
         await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now().toUtc());
+        _clearRetry();
         return;
       }
 
       final cloudData = doc.data()!['data'] as Map<String, dynamic>;
 
-      if (areDataEqual(localData, cloudData)) {
+      final isCloudEqual = await compute(_areDataEqualIsolate, [localData, cloudData]);
+      if (isCloudEqual) {
         // Already matching, just update local timestamp if cloud is newer, otherwise do nothing
         DateTime? cloudLastSynced;
         final ts = doc.data()?['lastSyncedAt'];
         if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
         await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
+        _clearRetry();
         return;
       }
 
       // Conflict/Difference: Auto-merge!
       final merged = await mergeData(localData, cloudData);
-      if (!areDataEqual(localData, merged)) {
+      final isMergedEqual = await compute(_areDataEqualIsolate, [localData, merged]);
+      if (!isMergedEqual) {
         await _restoreLocalData(merged);
       }
 
@@ -929,6 +959,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       merged['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
       await _throttledFirestoreWrite(user.uid, merged);
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now().toUtc());
+      _clearRetry();
     } catch (e, stack) {
       debugPrint("Auto-sync error: $e\n$stack");
       _hasPendingChanges = true;
@@ -938,16 +969,48 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
           e.toString().toLowerCase().contains('unavailable');
       final msg = isNetworkError ? "No internet connection — Sync paused" : e.toString();
       await _updateSyncState(status: SyncStatus.error, errorMessage: msg);
+      _scheduleRetry();
     }
   }
 
-  bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
+  void _clearRetry() {
+    _retryTimer?.cancel();
+    _retryTimer = null;
+    _retryCount = 0;
+  }
+
+  void _scheduleRetry() {
+    _retryTimer?.cancel();
+    final delaySeconds = _retryCount == 0
+        ? 15
+        : _retryCount == 1
+            ? 30
+            : 60;
+    _retryTimer = Timer(Duration(seconds: delaySeconds), () {
+      if (_hasPendingChanges && state.status != SyncStatus.syncing) {
+        _retryCount++;
+        autoSync();
+      }
+    });
+  }
+
+void _logSyncDiff(String message) {
+  if (kDebugMode) {
+    debugPrint(message);
+  }
+}
+
+bool _areDataEqualIsolate(List<Map<String, dynamic>> pair) {
+  return areDataEqual(pair[0], pair[1]);
+}
+
+bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
     try {
       // 1. Compare hideDownloadBanner (default to false)
       final localHideBanner = local['hideDownloadBanner'] ?? false;
       final cloudHideBanner = cloud['hideDownloadBanner'] ?? false;
       if (localHideBanner != cloudHideBanner) {
-        debugPrint("Sync diff: hideDownloadBanner ($localHideBanner vs $cloudHideBanner)");
+        _logSyncDiff("Sync diff: hideDownloadBanner ($localHideBanner vs $cloudHideBanner)");
         return false;
       }
 
@@ -955,7 +1018,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       final localCustom = local['customTasks'] as List? ?? [];
       final cloudCustom = cloud['customTasks'] as List? ?? [];
       if (localCustom.length != cloudCustom.length) {
-        debugPrint("Sync diff: custom tasks count (${localCustom.length} vs ${cloudCustom.length})");
+        _logSyncDiff("Sync diff: custom tasks count (${localCustom.length} vs ${cloudCustom.length})");
         return false;
       }
 
@@ -967,13 +1030,13 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         final key = "${ct['content']}_${ct['createdAt']}";
         final lt = localCustomMap[key];
         if (lt == null) {
-          debugPrint("Sync diff: cloud custom task not found in local ($key)");
+          _logSyncDiff("Sync diff: cloud custom task not found in local ($key)");
           return false;
         }
         if (lt['isCompleted'] != ct['isCompleted'] ||
             lt['position'] != ct['position'] ||
             (lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false)) {
-          debugPrint("Sync diff: custom task mismatch ($key) completion: ${lt['isCompleted']} vs ${ct['isCompleted']}, position: ${lt['position']} vs ${ct['position']}, isDeleted: ${lt['isDeleted']} vs ${ct['isDeleted']}");
+          _logSyncDiff("Sync diff: custom task mismatch ($key) completion: ${lt['isCompleted']} vs ${ct['isCompleted']}, position: ${lt['position']} vs ${ct['position']}, isDeleted: ${lt['isDeleted']} vs ${ct['isDeleted']}");
           return false;
         }
       }
@@ -982,14 +1045,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       final localFocus = local['focusSessions'] as List? ?? [];
       final cloudFocus = cloud['focusSessions'] as List? ?? [];
       if (localFocus.length != cloudFocus.length) {
-        debugPrint("Sync diff: focus sessions count (${localFocus.length} vs ${cloudFocus.length})");
+        _logSyncDiff("Sync diff: focus sessions count (${localFocus.length} vs ${cloudFocus.length})");
         return false;
       }
 
       final localFsTimes = localFocus.map((fs) => fs['startTime'] as String).toSet();
       final cloudFsTimes = cloudFocus.map((fs) => fs['startTime'] as String).toSet();
       if (localFsTimes.length != cloudFsTimes.length || !localFsTimes.containsAll(cloudFsTimes)) {
-        debugPrint("Sync diff: focus sessions start times mismatch");
+        _logSyncDiff("Sync diff: focus sessions start times mismatch");
         return false;
       }
 

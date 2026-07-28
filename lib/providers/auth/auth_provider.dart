@@ -41,11 +41,10 @@ class AuthState {
 }
 
 class AuthNotifier extends AsyncNotifier<AuthState> {
-  late SharedPreferences _prefs;
+  SharedPreferences get _prefs => ref.read(sharedPreferencesProvider);
 
   @override
   Future<AuthState> build() async {
-    _prefs = ref.read(sharedPreferencesProvider);
     final hasChosenOffline = _prefs.getBool('has_chosen_offline') ?? false;
 
     if (!isFirebaseSupported()) {
@@ -326,7 +325,8 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         isOfflineMode: false,
         isLoading: false,
       ));
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint("deleteAccount error: $e\n$stack");
       final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
       state = AsyncValue.data(AuthState(
         user: FirebaseAuth.instance.currentUser,
@@ -343,7 +343,12 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     if (user != null) {
       final uid = user.uid;
       // Delete FirebaseAuth user first so if re-authentication is required, Firestore data isn't deleted prematurely
-      await user.delete();
+      try {
+        await user.delete();
+      } catch (e) {
+        debugPrint("Error deleting FirebaseAuth user account: $e");
+        rethrow;
+      }
       try {
         await FirebaseFirestore.instance.collection('users').doc(uid).delete();
       } catch (e) {

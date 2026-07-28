@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -234,6 +235,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                     taskTapDetails = details;
                   },
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     final isBeingCompleted = !task.isCompleted;
                     ref
                         .read(syllabusControllerProvider.notifier)
@@ -370,6 +372,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                       FilledButton.icon(
                         onPressed: topic.currentCount > 0
                             ? () {
+                                HapticFeedback.lightImpact();
                                 ref.read(syllabusControllerProvider.notifier).updateCounterValue(
                                       topic.id,
                                       topic.currentCount - 1,
@@ -407,6 +410,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                       FilledButton.icon(
                         onPressed: topic.currentCount < topic.maxCount
                             ? () {
+                                HapticFeedback.lightImpact();
                                 ref.read(syllabusControllerProvider.notifier).updateCounterValue(
                                       topic.id,
                                       topic.currentCount + 1,

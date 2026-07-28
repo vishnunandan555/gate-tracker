@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"gateletics","appId":"1:981770496770:android:bf38f16f882e62fade701b","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"gateletics","configurations":{"android":"1:981770496770:android:bf38f16f882e62fade701b","web":"1:981770496770:web:eafda970bce41b91de701b"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "gateletics",
+          "appId": "1:981770496770:android:bf38f16f882e62fade701b",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gateletics",
+          "configurations": {
+            "android": "1:981770496770:android:bf38f16f882e62fade701b",
+            "web": "1:981770496770:web:eafda970bce41b91de701b"
+          }
+        }
+      }
+    }
+  }
+}

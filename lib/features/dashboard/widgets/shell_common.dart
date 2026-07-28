@@ -185,11 +185,9 @@ void checkAndInitSync(WidgetRef ref) {
   }
 }
 
-bool _hasCheckedVersionThisSession = false;
-
 Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
-  if (_hasCheckedVersionThisSession) return;
-  _hasCheckedVersionThisSession = true;
+  if (ref.read(hasCheckedVersionProvider)) return;
+  ref.read(hasCheckedVersionProvider.notifier).setChecked(true);
   try {
     final prefs = ref.read(sharedPreferencesProvider);
     final packageInfo = ref.read(packageInfoProvider);
