@@ -84,3 +84,14 @@ service cloud.firestore {
   - Grouped 39 provider files into 7 domain subfolders (`auth/`, `sync/`, `syllabus/`, `focus/`, `history/`, `settings/`, `user/`).
   - Created central `providers.dart` barrel file with root forwarders for zero breaking changes.
   - Cleaned up verbose/negative boolean provider names and unified font size scaling providers.
+
+### 📌 Milestone 0.5: Security, Stability & UI Audit Polish (v1.3.0-beta.3) (COMPLETED ✅)
+- [x] **Firestore Security Rules & Payload Size Limit:** Created `firestore.rules` enforcing user authentication check (`request.auth.uid == userId`) and 1 MB payload limits (`request.resource.data.size() < 1048576`) on both root documents and sub-collections.
+- [x] **Missing Nav Slot Route Safety:** Added explicit `GoRoute` entries for `/resources`, `/planner`, `/socials`, and `/notifications` routing to public `NavBarComingSoonScreen` to prevent 404 router errors or blank screens.
+- [x] **Production Release Log Silence:** Wrapped all raw `debugPrint` statements in `sync_provider.dart` with `kDebugMode` guards to protect sensitive task/topic titles from `adb logcat` in release builds.
+- [x] **Focus Session Interrupted Recovery Guards:** Capped session recovery to 4 hours max (`elapsed < 14400`) and added automatic key purging for stale or expired recovery data in `focus_provider.dart`.
+- [x] **Share Card Pixel Density Normalization:** Replaced static pixel ratio in `share_progress_card.dart` with dynamic device pixel density `View.of(context).devicePixelRatio.clamp(2.0, 3.5)`.
+- [x] **Web Custom Profile Photo Resolution:** Improved base64 decoding and http/blob URL resolution in `profile_provider.dart` for Web custom profile pictures.
+- [x] **Modular Sync Equality & Unit Test Suite:** Decomposed 250+ line `areDataEqual()` in `sync_provider.dart` into entity-level helpers and created `test/sync_equality_test.dart`.
+- [x] **Dashboard Empty State UI:** Built `DashboardEmptyState` widget displaying an empty state illustration and "Start Setup" button when a branch has zero topics.
+- [x] **Android 13+ Material You Adaptive Icon Support:** Configured `adaptive_icon_monochrome` with transparent foreground & monochrome PNG assets for Pixel launcher dynamic theme support.
