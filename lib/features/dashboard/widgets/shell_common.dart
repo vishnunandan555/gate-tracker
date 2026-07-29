@@ -429,12 +429,11 @@ void showConflictDetailsDialog(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white.withAlpha(5)),
             ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length,
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              itemBuilder: (context, index) {
-                return Padding(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: items.map((item) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,14 +442,14 @@ void showConflictDetailsDialog(
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          items[index],
+                          item,
                           style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10),
                         ),
                       ),
                     ],
                   ),
-                );
-              },
+                )).toList(),
+              ),
             ),
           ),
         ],

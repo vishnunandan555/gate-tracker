@@ -314,6 +314,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
     final branch = ref.watch(selectedBranchProvider);
     final stats = ref.watch(completionStatsProvider).value;
     final streak = ref.watch(currentStreakProvider);
+    final profileImage = ref.watch(displayProfileImageProvider);
 
     final activeFocusSecondsAsync = ref.watch(_isYesterday ? yesterdayFocusDurationProvider : todayFocusDurationProvider);
     final activeFocusSeconds = activeFocusSecondsAsync.value ?? 0;
@@ -336,7 +337,10 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
     final targetGoalSeconds = dailyGoalMins * 60;
     final goalRatio = targetGoalSeconds > 0 ? (activeFocusSeconds / targetGoalSeconds).clamp(0.0, 1.0) : 0.0;
 
-    final showHeaderPhoto = _showProfilePhoto && _showName;
+    // Avatar shown only when Name is ON.
+    // Photo toggle controls *what* shows inside: real image (ON) or first letter (OFF).
+    // Name OFF → entire avatar hidden, regardless of Photo toggle.
+    final showHeaderPhoto = _showName;
     final headerTitle = _showName
         ? (displayName != null && displayName.isNotEmpty ? displayName : "GATE Aspirant")
         : (_isYesterday ? "Yesterday's Stats" : "Today's Stats");
@@ -499,16 +503,24 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                               CircleAvatar(
                                 radius: 20,
                                 backgroundColor: widget.accentColor.withAlpha(40),
-                                child: Text(
-                                  displayName != null && displayName.isNotEmpty
-                                      ? displayName[0].toUpperCase()
-                                      : "C",
-                                  style: GoogleFonts.outfit(
-                                    color: widget.accentColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                // Photo toggle ON + real image available → show image
+                                backgroundImage: (_showProfilePhoto && profileImage != null)
+                                    ? profileImage
+                                    : null,
+                                child: (_showProfilePhoto && profileImage != null)
+                                    // Image is shown via backgroundImage; no text child needed
+                                    ? null
+                                    // Photo OFF (or no image) + Name ON → first letter
+                                    : (_showName && displayName != null && displayName.isNotEmpty)
+                                        ? Text(
+                                            displayName[0].toUpperCase(),
+                                            style: GoogleFonts.outfit(
+                                              color: widget.accentColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          )
+                                        : null,
                               ),
                               const SizedBox(width: 12),
                             ],
