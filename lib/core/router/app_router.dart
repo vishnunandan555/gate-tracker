@@ -66,5 +66,37 @@ final appRouter = GoRouter(
     GoRoute(path: '/setup', builder: (context, state) => const SetupScreen()),
     GoRoute(path: '/agreement', builder: (context, state) => const AgreementScreen()),
     GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
+    GoRoute(
+      path: '/resources',
+      builder: (context, state) => const NavBarComingSoonScreen(
+        title: 'Resource Explorer',
+        description: 'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
+        icon: Icons.library_books_rounded,
+      ),
+    ),
+    GoRoute(
+      path: '/planner',
+      builder: (context, state) => const NavBarComingSoonScreen(
+        title: 'Revision Planner',
+        description: 'Spaced-repetition revision schedules and exam countdowns are coming in the next update!',
+        icon: Icons.edit_calendar_rounded,
+      ),
+    ),
+    GoRoute(
+      path: '/socials',
+      builder: (context, state) => const NavBarComingSoonScreen(
+        title: 'Friends & Socials',
+        description: 'Study groups, accountability partners, and friend leaderboards will be available in an upcoming release!',
+        icon: Icons.group_rounded,
+      ),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (context, state) => const NavBarComingSoonScreen(
+        title: 'Notifications & Reminders',
+        description: 'Custom study reminders and alerts will be configurable in an upcoming update!',
+        icon: Icons.notifications_active_rounded,
+      ),
+    ),
   ],
 );

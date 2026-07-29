@@ -123,14 +123,16 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
   }
 
   Future<void> _captureAndShare() async {
+    final targetPixelRatio = View.of(context).devicePixelRatio.clamp(2.0, 3.5);
     setState(() => _isSharing = true);
     try {
       await Future.delayed(const Duration(milliseconds: 300));
+      if (!mounted) return;
 
       final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) throw Exception("Failed to get render boundary");
 
-      final image = await boundary.toImage(pixelRatio: 3.0);
+      final image = await boundary.toImage(pixelRatio: targetPixelRatio);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) throw Exception("Failed to convert image to bytes");
 
@@ -182,15 +184,17 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
   }
 
   Future<void> _captureAndSave() async {
+    final targetPixelRatio = View.of(context).devicePixelRatio.clamp(2.0, 3.5);
     setState(() => _isSaving = true);
     try {
       // Allow widget to render fully
       await Future.delayed(const Duration(milliseconds: 300));
+      if (!mounted) return;
 
       final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) throw Exception("Failed to get render boundary");
 
-      final image = await boundary.toImage(pixelRatio: 3.0);
+      final image = await boundary.toImage(pixelRatio: targetPixelRatio);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) throw Exception("Failed to convert image to bytes");
 

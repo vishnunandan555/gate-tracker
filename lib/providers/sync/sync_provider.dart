@@ -176,7 +176,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         );
       }
     } catch (e) {
-      debugPrint("Error loading sync state from prefs: $e");
+      if (kDebugMode) debugPrint("Error loading sync state from prefs: $e");
     }
   }
 
@@ -216,7 +216,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         await prefs.remove('last_sync_error');
       }
     } catch (e) {
-      debugPrint("Error saving sync state to prefs: $e");
+      if (kDebugMode) debugPrint("Error saving sync state to prefs: $e");
     }
   }
 
@@ -227,7 +227,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       await prefs.remove('last_synced_at');
       await prefs.remove('last_sync_error');
     } catch (e) {
-      debugPrint("Error clearing sync state: $e");
+      if (kDebugMode) debugPrint("Error clearing sync state: $e");
     }
     state = SyncState(status: SyncStatus.idle);
   }
@@ -677,7 +677,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       final logs = await _db.select(_db.syllabusProgressLogs).get();
       if (logs.any((l) => !l.isDeleted)) return true;
     } catch (e) {
-      debugPrint("Error checking local modifications: $e");
+      if (kDebugMode) debugPrint("Error checking local modifications: $e");
       return true;
     }
     return false;
@@ -961,7 +961,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now().toUtc());
       _clearRetry();
     } catch (e, stack) {
-      debugPrint("Auto-sync error: $e\n$stack");
+      if (kDebugMode) debugPrint("Auto-sync error: $e\n$stack");
       _hasPendingChanges = true;
       final isNetworkError = e.toString().toLowerCase().contains('network') ||
           e.toString().toLowerCase().contains('socket') ||
@@ -994,6 +994,11 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     });
   }
 
+  bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
+    return _areDataEqualIsolate([local, cloud]);
+  }
+}
+
 void _logSyncDiff(String message) {
   if (kDebugMode) {
     debugPrint(message);
@@ -1004,273 +1009,321 @@ bool _areDataEqualIsolate(List<Map<String, dynamic>> pair) {
   return areDataEqual(pair[0], pair[1]);
 }
 
-bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
-    try {
-      // 1. Compare hideDownloadBanner (default to false)
-      final localHideBanner = local['hideDownloadBanner'] ?? false;
-      final cloudHideBanner = cloud['hideDownloadBanner'] ?? false;
-      if (localHideBanner != cloudHideBanner) {
-        _logSyncDiff("Sync diff: hideDownloadBanner ($localHideBanner vs $cloudHideBanner)");
-        return false;
-      }
+int? _parseSyncInt(dynamic val) {
+  if (val == null) return null;
+  if (val is num) return val.toInt();
+  return int.tryParse(val.toString());
+}
 
-      // 2. Compare custom tasks
-      final localCustom = local['customTasks'] as List? ?? [];
-      final cloudCustom = cloud['customTasks'] as List? ?? [];
-      if (localCustom.length != cloudCustom.length) {
-        _logSyncDiff("Sync diff: custom tasks count (${localCustom.length} vs ${cloudCustom.length})");
-        return false;
-      }
-
-      final localCustomMap = <String, Map<String, dynamic>>{
-        for (var ct in localCustom) "${ct['content']}_${ct['createdAt']}": Map<String, dynamic>.from(ct)
-      };
-
-      for (final ct in cloudCustom) {
-        final key = "${ct['content']}_${ct['createdAt']}";
-        final lt = localCustomMap[key];
-        if (lt == null) {
-          _logSyncDiff("Sync diff: cloud custom task not found in local ($key)");
-          return false;
-        }
-        if (lt['isCompleted'] != ct['isCompleted'] ||
-            lt['position'] != ct['position'] ||
-            (lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false)) {
-          _logSyncDiff("Sync diff: custom task mismatch ($key) completion: ${lt['isCompleted']} vs ${ct['isCompleted']}, position: ${lt['position']} vs ${ct['position']}, isDeleted: ${lt['isDeleted']} vs ${ct['isDeleted']}");
-          return false;
-        }
-      }
-
-      // 3. Compare focus sessions
-      final localFocus = local['focusSessions'] as List? ?? [];
-      final cloudFocus = cloud['focusSessions'] as List? ?? [];
-      if (localFocus.length != cloudFocus.length) {
-        _logSyncDiff("Sync diff: focus sessions count (${localFocus.length} vs ${cloudFocus.length})");
-        return false;
-      }
-
-      final localFsTimes = localFocus.map((fs) => fs['startTime'] as String).toSet();
-      final cloudFsTimes = cloudFocus.map((fs) => fs['startTime'] as String).toSet();
-      if (localFsTimes.length != cloudFsTimes.length || !localFsTimes.containsAll(cloudFsTimes)) {
-        _logSyncDiff("Sync diff: focus sessions start times mismatch");
-        return false;
-      }
-
-      // 4. Compare daily history
-      final localHist = local['dailyHistory'] as List? ?? [];
-      final cloudHist = cloud['dailyHistory'] as List? ?? [];
-      if (localHist.length != cloudHist.length) {
-        debugPrint("Sync diff: daily history count (${localHist.length} vs ${cloudHist.length})");
-        return false;
-      }
-
-      final localDhDates = localHist.map((dh) => dh['dateStr'] as String).toSet();
-      final cloudDhDates = cloudHist.map((dh) => dh['dateStr'] as String).toSet();
-      if (localDhDates.length != cloudDhDates.length || !localDhDates.containsAll(cloudDhDates)) {
-        debugPrint("Sync diff: daily history dates mismatch");
-        return false;
-      }
-
-      // 5. Compare syllabus categories
-      final localSylCats = local['syllabusCategories'] as List? ?? [];
-      final cloudSylCats = cloud['syllabusCategories'] as List? ?? [];
-      if (localSylCats.length != cloudSylCats.length) {
-        debugPrint("Sync diff: syllabus categories count (${localSylCats.length} vs ${cloudSylCats.length})");
-        return false;
-      }
-
-      // Use the same composite key (name_color_position) as mergeData for consistency
-      String catCompositeKey(Map<String, dynamic> c) => "${c['name']}_${_parseInt(c['color']) ?? 0}_${_parseInt(c['position']) ?? 0}";
-
-      final localCatsMap = <String, Map<String, dynamic>>{
-        for (var c in localSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
-      };
-      final cloudCatsMap = <String, Map<String, dynamic>>{
-        for (var c in cloudSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
-      };
-
-      // Check cloud → local
-      for (final cc in cloudSylCats) {
-        final key = catCompositeKey(Map<String, dynamic>.from(cc));
-        final lc = localCatsMap[key];
-        if (lc == null) {
-          debugPrint("Sync diff: cloud syllabus category not found in local ($key)");
-          return false;
-        }
-        if ((lc['isDeleted'] ?? false) != (cc['isDeleted'] ?? false) ||
-            _parseInt(lc['position']) != _parseInt(cc['position'])) {
-          debugPrint("Sync diff: syllabus category mismatch ($key) isDeleted: ${lc['isDeleted']} vs ${cc['isDeleted']}, position: ${lc['position']} vs ${cc['position']}");
-          return false;
-        }
-      }
-      // Check local → cloud (catches local-only items)
-      for (final lc in localSylCats) {
-        final key = catCompositeKey(Map<String, dynamic>.from(lc));
-        if (!cloudCatsMap.containsKey(key)) {
-          debugPrint("Sync diff: local syllabus category not found in cloud ($key)");
-          return false;
-        }
-      }
-
-      // 6. Compare syllabus topics
-      final localSylTops = local['syllabusTopics'] as List? ?? [];
-      final cloudSylTops = cloud['syllabusTopics'] as List? ?? [];
-      if (localSylTops.length != cloudSylTops.length) {
-        debugPrint("Sync diff: syllabus topics count (${localSylTops.length} vs ${cloudSylTops.length})");
-        return false;
-      }
-
-      final localCatIdToNameMap = {for (var c in localSylCats) _parseInt(c['id']): c['name'] as String};
-      final localCatNameToColorMap = {for (var c in localSylCats) c['name'] as String: _parseInt(c['color']) ?? 0};
-      final cloudCatIdToNameMap = {for (var c in cloudSylCats) _parseInt(c['id']): c['name'] as String};
-      final cloudCatNameToColorMap = {for (var c in cloudSylCats) c['name'] as String: _parseInt(c['color']) ?? 0};
-
-      final localTopicMap = <String, Map<String, dynamic>>{};
-      for (var t in localSylTops) {
-        final catId = _parseInt(t['categoryId']);
-        final catName = localCatIdToNameMap[catId] ?? 'Unknown';
-        final catColor = localCatNameToColorMap[catName] ?? 0;
-        final key = "${catName}_$catColor/${t['name']}";
-        localTopicMap[key] = Map<String, dynamic>.from(t);
-      }
-
-      for (final ct in cloudSylTops) {
-        final catName = cloudCatIdToNameMap[_parseInt(ct['categoryId'])] ?? 'Unknown';
-        final catColor = cloudCatNameToColorMap[catName] ?? 0;
-        final key = "${catName}_$catColor/${ct['name']}";
-        final lt = localTopicMap[key];
-        if (lt == null) {
-          debugPrint("Sync diff: cloud syllabus topic not found in local ($key)");
-          return false;
-        }
-        if ((lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false) ||
-            (lt['isCounter'] ?? false) != (ct['isCounter'] ?? false) ||
-            _parseInt(lt['currentCount']) != _parseInt(ct['currentCount']) ||
-            _parseInt(lt['maxCount']) != _parseInt(ct['maxCount']) ||
-            lt['resourceUrl'] != ct['resourceUrl'] ||
-            _parseInt(lt['position']) != _parseInt(ct['position'])) {
-          debugPrint("Sync diff: syllabus topic mismatch ($key) isDeleted: ${lt['isDeleted']} vs ${ct['isDeleted']}, isCounter: ${lt['isCounter']} vs ${ct['isCounter']}, currentCount: ${lt['currentCount']} vs ${ct['currentCount']}, maxCount: ${lt['maxCount']} vs ${ct['maxCount']}, resourceUrl: ${lt['resourceUrl']} vs ${ct['resourceUrl']}, position: ${lt['position']} vs ${ct['position']}");
-          return false;
-        }
-      }
-
-      // 7. Compare syllabus tasks
-      final localTasks = local['syllabusTasks'] as List? ?? [];
-      final cloudTasks = cloud['syllabusTasks'] as List? ?? [];
-      if (localTasks.length != cloudTasks.length) {
-        debugPrint("Sync diff: syllabus tasks count (${localTasks.length} vs ${cloudTasks.length})");
-        return false;
-      }
-
-      final localTopicIdToNameMap = <int, String>{};
-      for (var t in localSylTops) {
-        final catId = _parseInt(t['categoryId']);
-        final catName = localCatIdToNameMap[catId] ?? 'Unknown';
-        final topicId = _parseInt(t['id']);
-        if (topicId != null) {
-          localTopicIdToNameMap[topicId] = "$catName/${t['name']}";
-        }
-      }
-      final cloudTopicIdToNameMap = <int, String>{};
-      for (var t in cloudSylTops) {
-        final catId = _parseInt(t['categoryId']);
-        final catName = cloudCatIdToNameMap[catId] ?? 'Unknown';
-        final topicId = _parseInt(t['id']);
-        if (topicId != null) {
-          cloudTopicIdToNameMap[topicId] = "$catName/${t['name']}";
-        }
-      }
-
-      final localTaskMap = <String, Map<String, dynamic>>{};
-      for (var t in localTasks) {
-        final topicPath = localTopicIdToNameMap[_parseInt(t['topicId'])] ?? 'Unknown/Unknown';
-        final key = "$topicPath/${t['name'] ?? ''}";
-        localTaskMap[key] = Map<String, dynamic>.from(t);
-      }
-
-      for (final ct in cloudTasks) {
-        final topicPath = cloudTopicIdToNameMap[_parseInt(ct['topicId'])] ?? 'Unknown/Unknown';
-        final key = "$topicPath/${ct['name'] ?? ''}";
-        final lt = localTaskMap[key];
-        if (lt == null) {
-          debugPrint("Sync diff: cloud syllabus task not found in local ($key)");
-          return false;
-        }
-        if (lt['isCompleted'] != ct['isCompleted'] ||
-            (lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false) ||
-            _parseInt(lt['position']) != _parseInt(ct['position'])) {
-          debugPrint("Sync diff: task mismatch ($key) completion: ${lt['isCompleted']} vs ${ct['isCompleted']}, isDeleted: ${lt['isDeleted']} vs ${ct['isDeleted']}, position: ${lt['position']} vs ${ct['position']}");
-          return false;
-        }
-      }
-
-      // 8. Compare syllabus progress logs
-      final localLogs = local['syllabusProgressLogs'] as List? ?? [];
-      final cloudLogs = cloud['syllabusProgressLogs'] as List? ?? [];
-      if (localLogs.length != cloudLogs.length) {
-        debugPrint("Sync diff: progress logs count (${localLogs.length} vs ${cloudLogs.length})");
-        return false;
-      }
-
-      // Build task mappings for local and cloud
-      final localTaskIdToNameMap = <int, String>{};
-      for (var t in localTasks) {
-        final topicPath = localTopicIdToNameMap[_parseInt(t['topicId'])] ?? 'Unknown/Unknown';
-        final taskId = _parseInt(t['id']);
-        if (taskId != null) {
-          localTaskIdToNameMap[taskId] = "$topicPath/${t['name'] ?? ''}";
-        }
-      }
-      final cloudTaskIdToNameMap = <int, String>{};
-      for (var t in cloudTasks) {
-        final topicPath = cloudTopicIdToNameMap[_parseInt(t['topicId'])] ?? 'Unknown/Unknown';
-        final taskId = _parseInt(t['id']);
-        if (taskId != null) {
-          cloudTaskIdToNameMap[taskId] = "$topicPath/${t['name'] ?? ''}";
-        }
-      }
-
-      String getLocalLogPathKey(Map<String, dynamic> log) {
-        final topicPath = localTopicIdToNameMap[_parseInt(log['topicId'])] ?? 'Unknown/Unknown';
-        final taskId = _parseInt(log['taskId']);
-        final taskPath = taskId != null ? localTaskIdToNameMap[taskId] ?? 'Unknown/Unknown/Unknown' : "$topicPath/none";
-        return "${log['timestamp']}_${log['delta']}_$taskPath";
-      }
-
-      String getCloudLogPathKey(Map<String, dynamic> log) {
-        final topicPath = cloudTopicIdToNameMap[_parseInt(log['topicId'])] ?? 'Unknown/Unknown';
-        final taskId = _parseInt(log['taskId']);
-        final taskPath = taskId != null ? cloudTaskIdToNameMap[taskId] ?? 'Unknown/Unknown/Unknown' : "$topicPath/none";
-        return "${log['timestamp']}_${log['delta']}_$taskPath";
-      }
-
-      final localLogMap = <String, Map<String, dynamic>>{
-        for (var l in localLogs) getLocalLogPathKey(Map<String, dynamic>.from(l)): Map<String, dynamic>.from(l)
-      };
-
-      for (final cl in cloudLogs) {
-        final key = getCloudLogPathKey(Map<String, dynamic>.from(cl));
-        final ll = localLogMap[key];
-        if (ll == null) {
-          debugPrint("Sync diff: cloud syllabus progress log not found in local ($key)");
-          return false;
-        }
-        if ((ll['isDeleted'] ?? false) != (cl['isDeleted'] ?? false)) {
-          debugPrint("Sync diff: progress log mismatch ($key) isDeleted: ${ll['isDeleted']} vs ${cl['isDeleted']}");
-          return false;
-        }
-      }
-
-      return true;
-    } catch (e, stack) {
-      debugPrint("AreDataEqual check exception: $e\n$stack");
+bool _areCustomTasksEqual(List localCustom, List cloudCustom) {
+  if (localCustom.length != cloudCustom.length) {
+    _logSyncDiff("Sync diff: custom tasks count (${localCustom.length} vs ${cloudCustom.length})");
+    return false;
+  }
+  final localCustomMap = <String, Map<String, dynamic>>{
+    for (var ct in localCustom) "${ct['content']}_${ct['createdAt']}": Map<String, dynamic>.from(ct)
+  };
+  for (final ct in cloudCustom) {
+    final key = "${ct['content']}_${ct['createdAt']}";
+    final lt = localCustomMap[key];
+    if (lt == null) {
+      _logSyncDiff("Sync diff: cloud custom task not found in local ($key)");
       return false;
     }
+    if (lt['isCompleted'] != ct['isCompleted'] ||
+        lt['position'] != ct['position'] ||
+        (lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false)) {
+      _logSyncDiff("Sync diff: custom task mismatch ($key)");
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _areFocusSessionsEqual(List localFocus, List cloudFocus) {
+  if (localFocus.length != cloudFocus.length) {
+    _logSyncDiff("Sync diff: focus sessions count (${localFocus.length} vs ${cloudFocus.length})");
+    return false;
+  }
+  final localFsTimes = localFocus.map((fs) => fs['startTime'] as String).toSet();
+  final cloudFsTimes = cloudFocus.map((fs) => fs['startTime'] as String).toSet();
+  if (localFsTimes.length != cloudFsTimes.length || !localFsTimes.containsAll(cloudFsTimes)) {
+    _logSyncDiff("Sync diff: focus sessions start times mismatch");
+    return false;
+  }
+  return true;
+}
+
+bool _areDailyHistoryEqual(List localHist, List cloudHist) {
+  if (localHist.length != cloudHist.length) {
+    _logSyncDiff("Sync diff: daily history count (${localHist.length} vs ${cloudHist.length})");
+    return false;
+  }
+  final localDhDates = localHist.map((dh) => dh['dateStr'] as String).toSet();
+  final cloudDhDates = cloudHist.map((dh) => dh['dateStr'] as String).toSet();
+  if (localDhDates.length != cloudDhDates.length || !localDhDates.containsAll(cloudDhDates)) {
+    _logSyncDiff("Sync diff: daily history dates mismatch");
+    return false;
+  }
+  return true;
+}
+
+bool _areSyllabusCategoriesEqual(List localSylCats, List cloudSylCats) {
+  if (localSylCats.length != cloudSylCats.length) {
+    _logSyncDiff("Sync diff: syllabus categories count (${localSylCats.length} vs ${cloudSylCats.length})");
+    return false;
+  }
+  String catCompositeKey(Map<String, dynamic> c) => "${c['name']}_${_parseSyncInt(c['color']) ?? 0}_${_parseSyncInt(c['position']) ?? 0}";
+
+  final localCatsMap = <String, Map<String, dynamic>>{
+    for (var c in localSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
+  };
+  final cloudCatsMap = <String, Map<String, dynamic>>{
+    for (var c in cloudSylCats) catCompositeKey(Map<String, dynamic>.from(c)): Map<String, dynamic>.from(c)
+  };
+
+  for (final cc in cloudSylCats) {
+    final key = catCompositeKey(Map<String, dynamic>.from(cc));
+    final lc = localCatsMap[key];
+    if (lc == null) {
+      _logSyncDiff("Sync diff: cloud syllabus category not found in local ($key)");
+      return false;
+    }
+    if ((lc['isDeleted'] ?? false) != (cc['isDeleted'] ?? false) ||
+        _parseSyncInt(lc['position']) != _parseSyncInt(cc['position'])) {
+      _logSyncDiff("Sync diff: syllabus category mismatch ($key)");
+      return false;
+    }
+  }
+  for (final lc in localSylCats) {
+    final key = catCompositeKey(Map<String, dynamic>.from(lc));
+    if (!cloudCatsMap.containsKey(key)) {
+      _logSyncDiff("Sync diff: local syllabus category not found in cloud ($key)");
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _areSyllabusTopicsEqual(List localSylTops, List cloudSylTops, List localSylCats, List cloudSylCats) {
+  if (localSylTops.length != cloudSylTops.length) {
+    _logSyncDiff("Sync diff: syllabus topics count (${localSylTops.length} vs ${cloudSylTops.length})");
+    return false;
+  }
+
+  final localCatIdToNameMap = {for (var c in localSylCats) _parseSyncInt(c['id']): c['name'] as String};
+  final localCatNameToColorMap = {for (var c in localSylCats) c['name'] as String: _parseSyncInt(c['color']) ?? 0};
+  final cloudCatIdToNameMap = {for (var c in cloudSylCats) _parseSyncInt(c['id']): c['name'] as String};
+  final cloudCatNameToColorMap = {for (var c in cloudSylCats) c['name'] as String: _parseSyncInt(c['color']) ?? 0};
+
+  final localTopicMap = <String, Map<String, dynamic>>{};
+  for (var t in localSylTops) {
+    final catId = _parseSyncInt(t['categoryId']);
+    final catName = localCatIdToNameMap[catId] ?? 'Unknown';
+    final catColor = localCatNameToColorMap[catName] ?? 0;
+    final key = "${catName}_$catColor/${t['name']}";
+    localTopicMap[key] = Map<String, dynamic>.from(t);
+  }
+
+  for (final ct in cloudSylTops) {
+    final catName = cloudCatIdToNameMap[_parseSyncInt(ct['categoryId'])] ?? 'Unknown';
+    final catColor = cloudCatNameToColorMap[catName] ?? 0;
+    final key = "${catName}_$catColor/${ct['name']}";
+    final lt = localTopicMap[key];
+    if (lt == null) {
+      _logSyncDiff("Sync diff: cloud syllabus topic not found in local ($key)");
+      return false;
+    }
+    if ((lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false) ||
+        (lt['isCounter'] ?? false) != (ct['isCounter'] ?? false) ||
+        _parseSyncInt(lt['currentCount']) != _parseSyncInt(ct['currentCount']) ||
+        _parseSyncInt(lt['maxCount']) != _parseSyncInt(ct['maxCount']) ||
+        lt['resourceUrl'] != ct['resourceUrl'] ||
+        _parseSyncInt(lt['position']) != _parseSyncInt(ct['position'])) {
+      _logSyncDiff("Sync diff: syllabus topic mismatch ($key)");
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _areSyllabusTasksEqual(List localTasks, List cloudTasks, List localSylTops, List cloudSylTops, List localSylCats, List cloudSylCats) {
+  if (localTasks.length != cloudTasks.length) {
+    _logSyncDiff("Sync diff: syllabus tasks count (${localTasks.length} vs ${cloudTasks.length})");
+    return false;
+  }
+
+  final localCatIdToNameMap = {for (var c in localSylCats) _parseSyncInt(c['id']): c['name'] as String};
+  final cloudCatIdToNameMap = {for (var c in cloudSylCats) _parseSyncInt(c['id']): c['name'] as String};
+
+  final localTopicIdToNameMap = <int, String>{};
+  for (var t in localSylTops) {
+    final catId = _parseSyncInt(t['categoryId']);
+    final catName = localCatIdToNameMap[catId] ?? 'Unknown';
+    final topicId = _parseSyncInt(t['id']);
+    if (topicId != null) {
+      localTopicIdToNameMap[topicId] = "$catName/${t['name']}";
+    }
+  }
+  final cloudTopicIdToNameMap = <int, String>{};
+  for (var t in cloudSylTops) {
+    final catId = _parseSyncInt(t['categoryId']);
+    final catName = cloudCatIdToNameMap[catId] ?? 'Unknown';
+    final topicId = _parseSyncInt(t['id']);
+    if (topicId != null) {
+      cloudTopicIdToNameMap[topicId] = "$catName/${t['name']}";
+    }
+  }
+
+  final localTaskMap = <String, Map<String, dynamic>>{};
+  for (var t in localTasks) {
+    final topicPath = localTopicIdToNameMap[_parseSyncInt(t['topicId'])] ?? 'Unknown/Unknown';
+    final key = "$topicPath/${t['name'] ?? ''}";
+    localTaskMap[key] = Map<String, dynamic>.from(t);
+  }
+
+  for (final ct in cloudTasks) {
+    final topicPath = cloudTopicIdToNameMap[_parseSyncInt(ct['topicId'])] ?? 'Unknown/Unknown';
+    final key = "$topicPath/${ct['name'] ?? ''}";
+    final lt = localTaskMap[key];
+    if (lt == null) {
+      _logSyncDiff("Sync diff: cloud syllabus task not found in local ($key)");
+      return false;
+    }
+    if (lt['isCompleted'] != ct['isCompleted'] ||
+        (lt['isDeleted'] ?? false) != (ct['isDeleted'] ?? false) ||
+        _parseSyncInt(lt['position']) != _parseSyncInt(ct['position'])) {
+      _logSyncDiff("Sync diff: task mismatch ($key)");
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _areProgressLogsEqual(List localLogs, List cloudLogs, List localTasks, List cloudTasks, List localSylTops, List cloudSylTops, List localSylCats, List cloudSylCats) {
+  if (localLogs.length != cloudLogs.length) {
+    _logSyncDiff("Sync diff: progress logs count (${localLogs.length} vs ${cloudLogs.length})");
+    return false;
+  }
+
+  final localCatIdToNameMap = {for (var c in localSylCats) _parseSyncInt(c['id']): c['name'] as String};
+  final cloudCatIdToNameMap = {for (var c in cloudSylCats) _parseSyncInt(c['id']): c['name'] as String};
+
+  final localTopicIdToNameMap = <int, String>{};
+  for (var t in localSylTops) {
+    final catId = _parseSyncInt(t['categoryId']);
+    final catName = localCatIdToNameMap[catId] ?? 'Unknown';
+    final topicId = _parseSyncInt(t['id']);
+    if (topicId != null) {
+      localTopicIdToNameMap[topicId] = "$catName/${t['name']}";
+    }
+  }
+  final cloudTopicIdToNameMap = <int, String>{};
+  for (var t in cloudSylTops) {
+    final catId = _parseSyncInt(t['categoryId']);
+    final catName = cloudCatIdToNameMap[catId] ?? 'Unknown';
+    final topicId = _parseSyncInt(t['id']);
+    if (topicId != null) {
+      cloudTopicIdToNameMap[topicId] = "$catName/${t['name']}";
+    }
+  }
+
+  final localTaskIdToNameMap = <int, String>{};
+  for (var t in localTasks) {
+    final topicPath = localTopicIdToNameMap[_parseSyncInt(t['topicId'])] ?? 'Unknown/Unknown';
+    final taskId = _parseSyncInt(t['id']);
+    if (taskId != null) {
+      localTaskIdToNameMap[taskId] = "$topicPath/${t['name'] ?? ''}";
+    }
+  }
+  final cloudTaskIdToNameMap = <int, String>{};
+  for (var t in cloudTasks) {
+    final topicPath = cloudTopicIdToNameMap[_parseSyncInt(t['topicId'])] ?? 'Unknown/Unknown';
+    final taskId = _parseSyncInt(t['id']);
+    if (taskId != null) {
+      cloudTaskIdToNameMap[taskId] = "$topicPath/${t['name'] ?? ''}";
+    }
+  }
+
+  String getLocalLogPathKey(Map<String, dynamic> log) {
+    final topicPath = localTopicIdToNameMap[_parseSyncInt(log['topicId'])] ?? 'Unknown/Unknown';
+    final taskId = _parseSyncInt(log['taskId']);
+    final taskPath = taskId != null ? localTaskIdToNameMap[taskId] ?? 'Unknown/Unknown/Unknown' : "$topicPath/none";
+    return "${log['timestamp']}_${log['delta']}_$taskPath";
+  }
+
+  String getCloudLogPathKey(Map<String, dynamic> log) {
+    final topicPath = cloudTopicIdToNameMap[_parseSyncInt(log['topicId'])] ?? 'Unknown/Unknown';
+    final taskId = _parseSyncInt(log['taskId']);
+    final taskPath = taskId != null ? cloudTaskIdToNameMap[taskId] ?? 'Unknown/Unknown/Unknown' : "$topicPath/none";
+    return "${log['timestamp']}_${log['delta']}_$taskPath";
+  }
+
+  final localLogMap = <String, Map<String, dynamic>>{
+    for (var l in localLogs) getLocalLogPathKey(Map<String, dynamic>.from(l)): Map<String, dynamic>.from(l)
+  };
+
+  for (final cl in cloudLogs) {
+    final key = getCloudLogPathKey(Map<String, dynamic>.from(cl));
+    final ll = localLogMap[key];
+    if (ll == null) {
+      _logSyncDiff("Sync diff: cloud syllabus progress log not found in local ($key)");
+      return false;
+    }
+    if ((ll['isDeleted'] ?? false) != (cl['isDeleted'] ?? false)) {
+      _logSyncDiff("Sync diff: progress log mismatch ($key)");
+      return false;
+    }
+  }
+  return true;
+}
+
+bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
+  try {
+    // 1. Compare hideDownloadBanner (default to false)
+    final localHideBanner = local['hideDownloadBanner'] ?? false;
+    final cloudHideBanner = cloud['hideDownloadBanner'] ?? false;
+    if (localHideBanner != cloudHideBanner) {
+      _logSyncDiff("Sync diff: hideDownloadBanner ($localHideBanner vs $cloudHideBanner)");
+      return false;
+    }
+
+    // 2. Compare custom tasks
+    if (!_areCustomTasksEqual(local['customTasks'] as List? ?? [], cloud['customTasks'] as List? ?? [])) return false;
+
+    // 3. Compare focus sessions
+    if (!_areFocusSessionsEqual(local['focusSessions'] as List? ?? [], cloud['focusSessions'] as List? ?? [])) return false;
+
+    // 4. Compare daily history
+    if (!_areDailyHistoryEqual(local['dailyHistory'] as List? ?? [], cloud['dailyHistory'] as List? ?? [])) return false;
+
+    // 5. Compare syllabus categories
+    final localSylCats = local['syllabusCategories'] as List? ?? [];
+    final cloudSylCats = cloud['syllabusCategories'] as List? ?? [];
+    if (!_areSyllabusCategoriesEqual(localSylCats, cloudSylCats)) return false;
+
+    // 6. Compare syllabus topics
+    final localSylTops = local['syllabusTopics'] as List? ?? [];
+    final cloudSylTops = cloud['syllabusTopics'] as List? ?? [];
+    if (!_areSyllabusTopicsEqual(localSylTops, cloudSylTops, localSylCats, cloudSylCats)) return false;
+
+    // 7. Compare syllabus tasks
+    final localTasks = local['syllabusTasks'] as List? ?? [];
+    final cloudTasks = cloud['syllabusTasks'] as List? ?? [];
+    if (!_areSyllabusTasksEqual(localTasks, cloudTasks, localSylTops, cloudSylTops, localSylCats, cloudSylCats)) return false;
+
+    // 8. Compare syllabus progress logs
+    final localLogs = local['syllabusProgressLogs'] as List? ?? [];
+    final cloudLogs = cloud['syllabusProgressLogs'] as List? ?? [];
+    if (!_areProgressLogsEqual(localLogs, cloudLogs, localTasks, cloudTasks, localSylTops, cloudSylTops, localSylCats, cloudSylCats)) return false;
+
+    return true;
+  } catch (e, stack) {
+    _logSyncDiff("AreDataEqual check exception: $e\n$stack");
+    return false;
   }
 }
 
 final syncProvider = NotifierProvider<SyncNotifier, SyncState>(() {
   return SyncNotifier();
 });
-
-

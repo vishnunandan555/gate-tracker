@@ -231,7 +231,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         return const KeepAliveWrapper(child: CustomizeNavBarScreen());
       case 'socials':
         return const KeepAliveWrapper(
-          child: _NavBarComingSoonScreen(
+          child: NavBarComingSoonScreen(
             title: 'Friends & Socials',
             description: 'Study groups, accountability partners, and friend leaderboards will be available in an upcoming release!',
             icon: Icons.group_rounded,
@@ -239,7 +239,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         );
       case 'resources':
         return const KeepAliveWrapper(
-          child: _NavBarComingSoonScreen(
+          child: NavBarComingSoonScreen(
             title: 'Resource Explorer',
             description: 'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
             icon: Icons.library_books_rounded,
@@ -247,7 +247,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         );
       case 'planner':
         return const KeepAliveWrapper(
-          child: _NavBarComingSoonScreen(
+          child: NavBarComingSoonScreen(
             title: 'Revision Planner',
             description: 'Spaced-repetition revision schedules and exam countdowns are coming in the next update!',
             icon: Icons.edit_calendar_rounded,
@@ -255,7 +255,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         );
       case 'notifications':
         return const KeepAliveWrapper(
-          child: _NavBarComingSoonScreen(
+          child: NavBarComingSoonScreen(
             title: 'Notifications & Reminders',
             description: 'Custom study reminders and alerts will be configurable in an upcoming update!',
             icon: Icons.notifications_active_rounded,
@@ -1348,12 +1348,13 @@ class DemoGuideBanner extends ConsumerWidget {
   }
 }
 
-class _NavBarComingSoonScreen extends StatelessWidget {
+class NavBarComingSoonScreen extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
 
-  const _NavBarComingSoonScreen({
+  const NavBarComingSoonScreen({
+    super.key,
     required this.title,
     required this.description,
     required this.icon,

@@ -293,7 +293,8 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
         final start = DateTime.tryParse(recoveryStart);
         if (start != null) {
           final elapsed = DateTime.now().difference(start).inSeconds;
-          if (elapsed > 0 && elapsed < 86400) {
+          // Only recover sessions started within reasonable max limit (4 hours = 14400s)
+          if (elapsed > 0 && elapsed < 14400) {
             FocusMethod recoveredMethod = state.selectedMethod;
             if (recoveryMethodStr != null) {
               recoveredMethod = FocusMethod.values.firstWhere(
@@ -305,12 +306,17 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
               status: FocusStatus.paused,
               selectedMethod: recoveredMethod,
               sessionStartTime: start,
-              totalSecondsFocused: elapsed.clamp(0, 86400),
+              totalSecondsFocused: elapsed.clamp(0, 14400),
               elapsedSeconds: 0, // Interval counter — reset to 0 so timer display starts fresh on resume
             );
             _previousTotalSecondsFocused = elapsed; // Total focused time is recovered
             _previousSegmentSeconds = 0; // No segment was in progress — starts fresh on resume
+          } else {
+            // Stale or expired recovery data (>= 4 hours) — purge keys
+            await _clearSessionRecovery();
           }
+        } else {
+          await _clearSessionRecovery();
         }
       }
     } catch (_) {}

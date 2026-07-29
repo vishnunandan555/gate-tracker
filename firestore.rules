@@ -19,7 +19,10 @@ service cloud.firestore {
 
       // Nested collections sync (Subjects, Progress history)
       match /{document=**} {
-        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read, delete: if isAuthenticated() && request.auth.uid == userId;
+        allow create, update: if isAuthenticated()
+          && request.auth.uid == userId
+          && request.resource.data.size() < 1048576; // Max 1 MB Firestore limit
       }
     }
   }

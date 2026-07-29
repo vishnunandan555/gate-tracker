@@ -8,6 +8,7 @@ import '../../providers/providers.dart';
 import 'widgets/syllabus_category_header.dart';
 import 'widgets/syllabus_topic_card.dart';
 import 'widgets/syllabus_customization_sheets.dart';
+import 'widgets/dashboard_empty_state.dart';
 import '../../utils/ui_scaling.dart';
 import '../../utils/demo_keys.dart';
 
@@ -316,12 +317,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
 
                 if (isSyllabusEmpty)
-                  SliverFillRemaining(
+                  const SliverFillRemaining(
                     hasScrollBody: false,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.s(32.0), vertical: context.s(24.0)),
-                      child: const WelcomeWidget(),
-                    ),
+                    child: DashboardEmptyState(),
                   )
                 else ...[
                   // 1. BEST MATCH IF APPLICABLE

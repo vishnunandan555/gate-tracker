@@ -157,15 +157,14 @@ final displayProfileImageProvider = Provider<ImageProvider?>((ref) {
   if (profile.profilePhotoMode == 'custom') {
     if (profile.customProfilePhotoPath != null) {
       if (kIsWeb) {
-        if (profile.customProfilePhotoPath!.startsWith('data:image') ||
-            !profile.customProfilePhotoPath!.contains('/')) {
-          try {
-            final cleanBase64 = profile.customProfilePhotoPath!.contains(',')
-                ? profile.customProfilePhotoPath!.split(',')[1]
-                : profile.customProfilePhotoPath!;
-            return MemoryImage(base64Decode(cleanBase64));
-          } catch (_) {}
+        final path = profile.customProfilePhotoPath!;
+        if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('blob:')) {
+          return NetworkImage(path);
         }
+        try {
+          final cleanBase64 = path.contains(',') ? path.split(',')[1] : path;
+          return MemoryImage(base64Decode(cleanBase64.trim()));
+        } catch (_) {}
         return null;
       } else {
         final file = io.File(profile.customProfilePhotoPath!);
