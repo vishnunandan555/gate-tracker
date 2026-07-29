@@ -740,7 +740,11 @@ h2 {
   margin-top: 18px;
 }
 
-.download-opt-btn {
+.download-opt-btn,
+.download-opt-btn:visited,
+.download-opt-btn:active,
+.download-opt-btn:focus,
+.download-opt-btn > span:first-child {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -755,18 +759,42 @@ h2 {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.download-opt-btn > span:first-child {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
 .download-opt-btn:hover {
   border-color: var(--accent-color);
   background: var(--card-hover-bg);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px var(--accent-glow);
   text-decoration: none !important;
+  color: var(--text-main) !important;
+}
+
+.download-opt-btn:hover > span:first-child {
+  color: var(--text-main) !important;
 }
 
 .download-opt-meta {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.download-opt-filename {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: var(--text-muted);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  display: block;
 }
 
 .download-opt-ext {
@@ -892,4 +920,191 @@ h2 {
     padding: 18px;
   }
 }
+
+/* Release Track Switcher Component */
+.whats-new-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 48px;
+  margin-bottom: 16px;
+}
+
+.whats-new-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.track-switcher-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.track-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.track-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 18px;
+  border-radius: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  user-select: none;
+}
+
+.track-tab:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .track-tab:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+#track-prod-btn.active {
+  background: #10b981;
+  color: #000000 !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+#track-beta-btn.active {
+  background: #f59e0b;
+  color: #000000 !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.track-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.track-tab.active .track-dot {
+  width: 0;
+  height: 0;
+  margin: 0;
+  opacity: 0;
+  transform: scale(0);
+}
+
+.track-dot.prod-dot {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.track-dot.beta-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+.track-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.track-badge-prod {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.track-badge-beta {
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Official Google Play Badge SVG Button */
+.google-play-badge-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+  line-height: 0;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.google-play-badge-link:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.google-play-badge-svg {
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Light Mode Defaults for SVG Badge (White background, Dark text) */
+.play-badge-bg {
+  fill: #ffffff;
+  stroke: #d0d0d0;
+  stroke-width: 0.6px;
+  transition: fill 0.3s ease, stroke 0.2s ease;
+}
+
+.play-badge-text {
+  fill: #292929;
+  transition: fill 0.3s ease;
+}
+
+/* Dark Mode Overrides for SVG Badge (Black background, White text) */
+[data-theme="dark"] .play-badge-bg {
+  fill: #000000;
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 0.8px;
+}
+
+[data-theme="dark"] .play-badge-text {
+  fill: #ffffff;
+}
+
+[data-theme="dark"] .google-play-badge-link:hover {
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.5));
+}
+
 

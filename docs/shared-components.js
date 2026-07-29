@@ -2,7 +2,7 @@
  * GATEletics Shared Components (Header, Footer, Theme Manager)
  */
 (function () {
-  // 1. Theme Initialization
+  // 1. Immediate Theme Initialization
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -42,17 +42,22 @@
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     themeToggleBtn.textContent = currentTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
 
-    themeToggleBtn.addEventListener('click', () => {
+    themeToggleBtn.onclick = function () {
       const activeTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
       themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
-    });
+    };
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFooter();
+      setupThemeToggle();
+    });
+  } else {
     renderFooter();
     setupThemeToggle();
-  });
+  }
 })();

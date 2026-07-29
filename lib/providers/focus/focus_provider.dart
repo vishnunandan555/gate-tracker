@@ -758,6 +758,19 @@ final todayFocusDurationProvider = StreamProvider<int>((ref) {
   return db.watchTodayFocusDurationSeconds(rollover: rollover);
 });
 
+// Streams and fetching for yesterday's sessions
+final yesterdayFocusSessionsProvider = StreamProvider<List<FocusSession>>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final rollover = ref.watch(studyDayRolloverProvider);
+  return db.watchYesterdayFocusSessions(rollover: rollover);
+});
+
+final yesterdayFocusDurationProvider = StreamProvider<int>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final rollover = ref.watch(studyDayRolloverProvider);
+  return db.watchYesterdayFocusDurationSeconds(rollover: rollover);
+});
+
 // Smart quotes engine loading from JSON file
 class FocusQuotesState {
   final List<String> focusQuotes;

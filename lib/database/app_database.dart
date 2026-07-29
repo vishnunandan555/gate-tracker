@@ -866,7 +866,8 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteOldFocusSessions({StudyDayRollover rollover = StudyDayRollover.overnight}) async {
     final now = DateTime.now();
     final todayStart = getStudyDayStart(now, rollover: rollover);
-    await (delete(focusSessions)..where((t) => t.startTime.isSmallerThanValue(todayStart))).go();
+    final yesterdayStart = todayStart.subtract(const Duration(days: 1));
+    await (delete(focusSessions)..where((t) => t.startTime.isSmallerThanValue(yesterdayStart))).go();
   }
 
   Stream<List<FocusSession>> watchTodayFocusSessions({StudyDayRollover rollover = StudyDayRollover.overnight}) {
@@ -891,6 +892,32 @@ class AppDatabase extends _$AppDatabase {
 
   Stream<int> watchTodayFocusDurationSeconds({StudyDayRollover rollover = StudyDayRollover.overnight}) {
     return watchTodayFocusSessions(rollover: rollover).map((sessions) {
+      return sessions.fold(0, (sum, s) => sum + s.durationSeconds);
+    });
+  }
+
+  Stream<List<FocusSession>> watchYesterdayFocusSessions({StudyDayRollover rollover = StudyDayRollover.overnight}) {
+    final now = DateTime.now();
+    final todayStart = getStudyDayStart(now, rollover: rollover);
+    final yesterdayStart = todayStart.subtract(const Duration(days: 1));
+    return (select(focusSessions)
+          ..where((t) => t.startTime.isBiggerOrEqualValue(yesterdayStart) & t.startTime.isSmallerThanValue(todayStart))
+          ..orderBy([(t) => OrderingTerm(expression: t.startTime, mode: OrderingMode.desc)]))
+        .watch();
+  }
+
+  Future<List<FocusSession>> getYesterdayFocusSessions({StudyDayRollover rollover = StudyDayRollover.overnight}) async {
+    final now = DateTime.now();
+    final todayStart = getStudyDayStart(now, rollover: rollover);
+    final yesterdayStart = todayStart.subtract(const Duration(days: 1));
+    return (select(focusSessions)
+          ..where((t) => t.startTime.isBiggerOrEqualValue(yesterdayStart) & t.startTime.isSmallerThanValue(todayStart))
+          ..orderBy([(t) => OrderingTerm(expression: t.startTime, mode: OrderingMode.desc)]))
+        .get();
+  }
+
+  Stream<int> watchYesterdayFocusDurationSeconds({StudyDayRollover rollover = StudyDayRollover.overnight}) {
+    return watchYesterdayFocusSessions(rollover: rollover).map((sessions) {
       return sessions.fold(0, (sum, s) => sum + s.durationSeconds);
     });
   }

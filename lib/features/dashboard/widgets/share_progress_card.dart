@@ -36,9 +36,49 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
   bool _isSaving = false;
   bool _isSharing = false;
 
+  bool _isYesterday = false;
   bool _showAccomplishments = true;
   bool _showProfilePhoto = true;
   bool _showName = true;
+
+  Widget _buildDaySegmentChip({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final accent = widget.accentColor;
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected ? accent : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? Colors.black : Colors.white54,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                color: isSelected ? Colors.black : Colors.white54,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildToggleChip({
     required IconData icon,
@@ -108,7 +148,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
         await SharePlus.instance.share(
           ShareParams(
             files: [file],
-            text: 'My progress today on GATEletics! 🚀',
+            text: _isYesterday ? 'My study progress from yesterday on GATEletics! 🚀' : 'My progress today on GATEletics! 🚀',
           ),
         );
       } else {
@@ -120,7 +160,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
         await SharePlus.instance.share(
           ShareParams(
             files: [xFile],
-            text: 'My progress today on GATEletics! 🚀',
+            text: _isYesterday ? 'My study progress from yesterday on GATEletics! 🚀' : 'My progress today on GATEletics! 🚀',
           ),
         );
       }
@@ -275,28 +315,31 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
     final stats = ref.watch(completionStatsProvider).value;
     final streak = ref.watch(currentStreakProvider);
 
-    final todayFocusSecondsAsync = ref.watch(todayFocusDurationProvider);
-    final todayFocusSeconds = todayFocusSecondsAsync.value ?? 0;
+    final activeFocusSecondsAsync = ref.watch(_isYesterday ? yesterdayFocusDurationProvider : todayFocusDurationProvider);
+    final activeFocusSeconds = activeFocusSecondsAsync.value ?? 0;
     final dailyGoalMins = ref.watch(dailyFocusGoalProvider);
 
-    final todaySessionsAsync = ref.watch(todayFocusSessionsProvider);
-    final todaySessions = todaySessionsAsync.value ?? [];
-    final todayProgressDelta = todaySessions.fold<double>(0.0, (sum, s) => sum + s.progressDelta);
+    final activeSessionsAsync = ref.watch(_isYesterday ? yesterdayFocusSessionsProvider : todayFocusSessionsProvider);
+    final activeSessions = activeSessionsAsync.value ?? [];
+    final activeProgressDelta = activeSessions.fold<double>(0.0, (sum, s) => sum + s.progressDelta);
 
     final now = DateTime.now();
+    final cardDate = _isYesterday ? now.subtract(const Duration(days: 1)) : now;
     final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final dateStr = "${months[now.month - 1]} ${now.day}, ${now.year}";
+    final dateStr = "${months[cardDate.month - 1]} ${cardDate.day}, ${cardDate.year}";
 
-    final totalMin = (todayFocusSeconds / 60).floor();
+    final totalMin = (activeFocusSeconds / 60).floor();
     final hrStr = (totalMin / 60).floor().toString();
     final minStr = (totalMin % 60).toString();
     final timeStudiedStr = totalMin >= 60 ? "${hrStr}h ${minStr}m" : "$totalMin min";
     final goalStr = "${(dailyGoalMins / 60).toStringAsFixed(1).replaceAll('.0', '')}h";
     final targetGoalSeconds = dailyGoalMins * 60;
-    final goalRatio = targetGoalSeconds > 0 ? (todayFocusSeconds / targetGoalSeconds).clamp(0.0, 1.0) : 0.0;
+    final goalRatio = targetGoalSeconds > 0 ? (activeFocusSeconds / targetGoalSeconds).clamp(0.0, 1.0) : 0.0;
 
     final showHeaderPhoto = _showProfilePhoto && _showName;
-    final headerTitle = _showName ? (displayName != null && displayName.isNotEmpty ? displayName : "GATE Aspirant") : "Today's Stats";
+    final headerTitle = _showName
+        ? (displayName != null && displayName.isNotEmpty ? displayName : "GATE Aspirant")
+        : (_isYesterday ? "Yesterday's Stats" : "Today's Stats");
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -304,6 +347,34 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Day Selector Segment (Today vs Yesterday)
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(12),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildDaySegmentChip(
+                  label: "Today",
+                  icon: Icons.today_rounded,
+                  isSelected: !_isYesterday,
+                  onTap: () => setState(() => _isYesterday = false),
+                ),
+                _buildDaySegmentChip(
+                  label: "Yesterday",
+                  icon: Icons.history_rounded,
+                  isSelected: _isYesterday,
+                  onTap: () => setState(() => _isYesterday = true),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
           // Toggle Chips
           Wrap(
             spacing: 8,
@@ -607,7 +678,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                      FittedBox(
                                        fit: BoxFit.scaleDown,
                                        child: Text(
-                                         "+${todayProgressDelta.toStringAsFixed(todayProgressDelta == todayProgressDelta.toInt() ? 0 : 1)}%",
+                                         "+${activeProgressDelta.toStringAsFixed(activeProgressDelta == activeProgressDelta.toInt() ? 0 : 1)}%",
                                          style: GoogleFonts.orbitron(color: Colors.tealAccent, fontSize: 13, fontWeight: FontWeight.bold),
                                        ),
                                      ),
@@ -615,7 +686,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                      FittedBox(
                                        fit: BoxFit.scaleDown,
                                        child: Text(
-                                         "Today's Gain",
+                                         _isYesterday ? "Yesterday's Gain" : "Today's Gain",
                                          style: GoogleFonts.outfit(color: Colors.white54, fontSize: 9),
                                        ),
                                      ),
@@ -675,7 +746,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                         if (_showAccomplishments) ...[
                           const SizedBox(height: 28),
                           Text(
-                            "TODAY'S ACCOMPLISHMENTS",
+                            _isYesterday ? "YESTERDAY'S ACCOMPLISHMENTS" : "TODAY'S ACCOMPLISHMENTS",
                             style: GoogleFonts.outfit(
                               color: Colors.white30,
                               fontSize: 10,
@@ -687,7 +758,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                           Expanded(
                             child: Consumer(
                               builder: (context, ref, child) {
-                                final focusHistoryAsync = ref.watch(todayFocusSessionsProvider);
+                                final focusHistoryAsync = ref.watch(_isYesterday ? yesterdayFocusSessionsProvider : todayFocusSessionsProvider);
                                 return focusHistoryAsync.when(
                                   data: (sessions) {
                                     final accomplishmentsList = _getTodayAccomplishments(sessions);
