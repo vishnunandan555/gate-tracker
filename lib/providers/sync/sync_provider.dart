@@ -995,7 +995,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
-    return _areDataEqualIsolate([local, cloud]);
+    return _areDataEqualInternal(local, cloud);
   }
 }
 
@@ -1006,7 +1006,7 @@ void _logSyncDiff(String message) {
 }
 
 bool _areDataEqualIsolate(List<Map<String, dynamic>> pair) {
-  return areDataEqual(pair[0], pair[1]);
+  return _areDataEqualInternal(pair[0], pair[1]);
 }
 
 int? _parseSyncInt(dynamic val) {
@@ -1279,6 +1279,10 @@ bool _areProgressLogsEqual(List localLogs, List cloudLogs, List localTasks, List
 }
 
 bool areDataEqual(Map<String, dynamic> local, Map<String, dynamic> cloud) {
+  return _areDataEqualInternal(local, cloud);
+}
+
+bool _areDataEqualInternal(Map<String, dynamic> local, Map<String, dynamic> cloud) {
   try {
     // 1. Compare hideDownloadBanner (default to false)
     final localHideBanner = local['hideDownloadBanner'] ?? false;
