@@ -286,9 +286,9 @@ header {
 }
 
 .hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: block;
+  width: fit-content;
+  margin: 0 auto 16px auto;
   padding: 6px 16px;
   border-radius: 20px;
   background: var(--badge-bg);
@@ -298,7 +298,6 @@ header {
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 20px;
 }
 
 .logo-box {
@@ -327,6 +326,11 @@ header {
   margin: 0 0 16px 0;
   letter-spacing: 0.01em;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .hero p {
@@ -572,7 +576,17 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.02em;
   margin-top: 0;
+  margin-bottom: 12px;
   color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guide-content h3 svg {
+  flex-shrink: 0;
+  color: var(--accent-color);
 }
 
 .guide-content ol {
@@ -824,41 +838,173 @@ h2 {
   }
 }
 
+/* Hamburger & Mobile Navigation Drawer System */
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 18px;
+  padding: 6px 12px;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  user-select: none;
+}
+
+.hamburger-btn:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--accent-color);
+}
+
+.nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+body.drawer-open .nav-backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  max-width: 85vw;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--bg-color);
+  border-right: 1px solid var(--border-color);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+  box-shadow: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+body.drawer-open .nav-drawer {
+  transform: translateX(0);
+  visibility: visible;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 769px) {
+  .nav-drawer,
+  .nav-backdrop {
+    display: none !important;
+  }
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+.nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 18px;
+}
+
+.nav-drawer-close {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-drawer-close:hover {
+  color: var(--text-main);
+  border-color: var(--accent-color);
+  background: var(--card-hover-bg);
+}
+
+.nav-drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.nav-drawer-link:hover {
+  color: var(--text-main) !important;
+  background: var(--card-hover-bg);
+  padding-left: 20px;
+}
+
+.nav-drawer-link.active {
+  color: var(--accent-color) !important;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  font-weight: 600;
+}
+
 /* Mobile Responsiveness & Breakpoints */
 @media (max-width: 768px) {
   .nav-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 16px;
   }
 
   .nav-controls {
-    justify-content: space-between;
-    width: 100%;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  
-  .nav-controls::-webkit-scrollbar {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    overflow-x: visible;
   }
 
   .nav-links {
-    display: flex;
-    gap: 14px;
-    white-space: nowrap;
+    display: none !important;
   }
 
-  .nav-links a,
-  .nav-links a:visited {
-    font-size: 13px;
-    padding: 4px 10px;
-    border-radius: 14px;
-    background: var(--badge-bg);
-    border: 1px solid var(--badge-border);
+  .hamburger-btn {
+    display: inline-flex;
   }
 
   .container {
@@ -962,8 +1108,8 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 7px 18px;
+  gap: 0;
+  padding: 7px 20px;
   border-radius: 24px;
   border: none;
   background: transparent;
@@ -991,7 +1137,7 @@ h2 {
   background: #10b981;
   color: #000000 !important;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
 }
 
 #track-beta-btn.active {
@@ -1006,14 +1152,19 @@ h2 {
   height: 7px;
   border-radius: 50%;
   display: inline-block;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-right: 8px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              margin-right 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.25s ease,
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
 }
 
 .track-tab.active .track-dot {
   width: 0;
   height: 0;
-  margin: 0;
+  margin-right: 0;
   opacity: 0;
   transform: scale(0);
 }

@@ -138,11 +138,13 @@
 
         <!-- OS Detected Dynamic Download Button -->
         <button id="hero-download-btn" class="btn-secondary" onclick="handleDynamicDownloadClick()">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
+          <span id="hero-download-icon" style="display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </span>
           <span id="hero-download-text">Download Apps</span>
         </button>
 
@@ -300,7 +302,10 @@
 
     <!-- Interactive Platform Action Buttons (Home Screen Downloads Section) -->
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 52px; margin-bottom: 18px;">
-      <h2 id="downloads" style="margin: 0;">📦 Downloads & Platforms</h2>
+      <h2 id="downloads" style="margin: 0; display: inline-flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        <span>Downloads & Platforms</span>
+      </h2>
       <span id="home-stable-version-box" style="font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); display: inline-flex; align-items: center;">
         Stable
       </span>
@@ -353,7 +358,10 @@
 
     <!-- What's New Section (GitHub Latest Release Notes) -->
     <div class="whats-new-header">
-      <h2 id="whats-new" class="whats-new-title">🎉 What's New in Latest Release</h2>
+      <h2 id="whats-new" class="whats-new-title">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+        <span>What's New in Latest Release</span>
+      </h2>
       <div class="track-switcher-wrap">
         <div class="track-switcher" role="tablist" aria-label="Release Track">
           <button id="track-prod-btn" class="track-tab active" role="tab" aria-selected="true" onclick="setReleaseTrack('prod')">
@@ -551,12 +559,12 @@
       const userAgent = window.navigator.userAgent.toLowerCase();
       const heroBtnText = document.getElementById('hero-download-text');
       
-      if (userAgent.indexOf('win') !== -1) {
+      if (userAgent.indexOf('android') !== -1) {
+        detectedOS = 'android';
+        if (heroBtnText) heroBtnText.textContent = 'Get it on Google Play';
+      } else if (userAgent.indexOf('win') !== -1) {
         detectedOS = 'windows';
         if (heroBtnText) heroBtnText.textContent = 'Download for Windows';
-      } else if (userAgent.indexOf('android') !== -1) {
-        detectedOS = 'android';
-        if (heroBtnText) heroBtnText.textContent = 'Download for Android';
       } else if (userAgent.indexOf('linux') !== -1 || userAgent.indexOf('x11') !== -1) {
         detectedOS = 'linux';
         if (heroBtnText) heroBtnText.textContent = 'Download for Linux';
@@ -567,7 +575,11 @@
     }
 
     function handleDynamicDownloadClick() {
-      openDownloadModal(detectedOS);
+      if (detectedOS === 'android') {
+        window.open('https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics', '_blank');
+      } else {
+        openDownloadModal(detectedOS);
+      }
     }
 
     function openDownloadModal(platform) {
