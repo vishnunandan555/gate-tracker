@@ -792,6 +792,25 @@ h2 {
   color: var(--text-main) !important;
 }
 
+/* Beta track: tint the button label text to beta-orange */
+.download-opt-btn.beta-mode > span:first-child {
+  color: #f97316 !important;
+  transition: color 0.25s ease;
+}
+
+.download-opt-btn.beta-mode {
+  border-color: rgba(249, 115, 22, 0.25);
+}
+
+.download-opt-btn.beta-mode:hover {
+  border-color: #f97316;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.18);
+}
+
+.download-opt-btn.beta-mode:hover > span:first-child {
+  color: #f97316 !important;
+}
+
 .download-opt-meta {
   display: flex;
   flex-direction: column;

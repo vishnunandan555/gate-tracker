@@ -194,6 +194,16 @@
         }
       }
 
+      // Toggle beta-mode styling on all download option buttons
+      const allOptBtns = document.querySelectorAll('.download-opt-btn');
+      allOptBtns.forEach(btn => {
+        if (track === 'beta') {
+          btn.classList.add('beta-mode');
+        } else {
+          btn.classList.remove('beta-mode');
+        }
+      });
+
       const data = releaseData[track];
       if (data) {
         renderAssets(data, track);
