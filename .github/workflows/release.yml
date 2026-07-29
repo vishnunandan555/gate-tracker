@@ -4,10 +4,13 @@ on:
   push:
     tags:
       - 'v*' # Triggers on tag push starting with 'v' (e.g., v1.0.0)
+    branches:
+      - main # Warm up and maintain build caches on main branch
   workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
 
 permissions:
   contents: write # Required to create/upload release assets
+  actions: read # Required to download workflow run raw build logs
 
 env:
   VERSION: ''
@@ -23,7 +26,7 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs='-Xmx3072m -XX:+UseParallelGC'"
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Extract Version
         run: |
@@ -36,7 +39,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Java Development Kit (JDK)
-        uses: actions/setup-java@v4.7.0
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -47,7 +50,7 @@ jobs:
           cache-read-only: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2.18.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
@@ -56,18 +59,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Cache Drift Code Generation
-        uses: actions/cache@v4.2.0
-        with:
-          path: |
-            .dart_tool
-            lib/**/*.g.dart
-          key: ${{ runner.os }}-${{ github.job }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ github.job }}-drift-
-
       - name: Run Build Runner (Drift Models)
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build
 
       - name: Build Android APK
         run: flutter build apk --release
@@ -78,7 +71,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/gateletics-${{ env.VERSION }}-android.apk
 
       - name: Upload Android Artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4
         with:
           name: android-build
           path: artifacts/
@@ -93,7 +86,7 @@ jobs:
       CL: "/MP" # Enable multi-threaded MSBuild C++ parallel compilation
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Extract Version
         shell: pwsh
@@ -109,10 +102,12 @@ jobs:
       - name: Install Inno Setup
         shell: powershell
         run: |
-          choco install innosetup --yes --no-progress
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue) -and -not (Test-Path "C:\Program Files (x86)\Inno Setup 6\iscc.exe")) {
+            choco install innosetup --yes --no-progress
+          }
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2.18.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
@@ -121,18 +116,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Cache Drift Code Generation
-        uses: actions/cache@v4.2.0
-        with:
-          path: |
-            .dart_tool
-            lib/**/*.g.dart
-          key: ${{ runner.os }}-${{ github.job }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ github.job }}-drift-
-
       - name: Run Build Runner (Drift Models)
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build
 
       - name: Strip Firebase from Windows C++ Build
         shell: bash
@@ -154,7 +139,7 @@ jobs:
             -Destination "./gateletics-windows-${{ env.VERSION }}-setup.exe"
 
       - name: Upload Windows Artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
@@ -169,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Extract Version
         run: |
@@ -187,7 +172,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends clang cmake ninja-build pkg-config libgtk-3-dev dpkg wget
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2.18.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
@@ -196,18 +181,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Cache Drift Code Generation
-        uses: actions/cache@v4.2.0
-        with:
-          path: |
-            .dart_tool
-            lib/**/*.g.dart
-          key: ${{ runner.os }}-${{ github.job }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ github.job }}-drift-
-
       - name: Run Build Runner (Drift Models)
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build
 
       - name: Build Linux Desktop App
         run: flutter build linux --release
@@ -282,7 +257,7 @@ jobs:
           rm -rf debian_pkg
 
       - name: Upload Linux Artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: |
@@ -298,7 +273,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Extract Version
         run: |
@@ -311,7 +286,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2.18.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.x'
           channel: 'stable'
@@ -320,18 +295,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Cache Drift Code Generation
-        uses: actions/cache@v4.2.0
-        with:
-          path: |
-            .dart_tool
-            lib/**/*.g.dart
-          key: ${{ runner.os }}-${{ github.job }}-drift-${{ hashFiles('**/pubspec.lock', 'lib/database/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ github.job }}-drift-
-
       - name: Run Build Runner (Drift Models)
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build
 
       - name: Build Web App
         run: flutter build web --release
@@ -347,7 +312,53 @@ jobs:
           vercel-version: 54.17.1
 
   # -------------------------------------------------------------------------
-  # Job 5: Pull and Publish to GitHub Releases
+  # Job 5: Collect Raw Build Logs (Beta Builds Only)
+  # -------------------------------------------------------------------------
+  collect-beta-logs:
+    name: Collect Beta Build Logs
+    needs: [build-android, build-windows, build-linux, build-web]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && !failed()
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version & Check Beta Status
+        id: check_beta
+        run: |
+          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            PUB_VERSION=$(grep '^version: ' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+            VERSION="v${PUB_VERSION}"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+          if [[ "${VERSION,,}" =~ beta ]]; then
+            echo "IS_BETA=true" >> $GITHUB_OUTPUT
+            echo "Beta build detected ($VERSION). Proceeding with log collection."
+          else
+            echo "IS_BETA=false" >> $GITHUB_OUTPUT
+            echo "Proper build detected ($VERSION). Skipping log collection."
+          fi
+
+      - name: Fetch & Package Raw Build Logs
+        if: steps.check_beta.outputs.IS_BETA == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p raw-logs
+          gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" > raw-logs/raw-build-logs-${{ env.VERSION }}.zip
+
+      - name: Upload Beta Build Logs Artifact
+        if: steps.check_beta.outputs.IS_BETA == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-build-logs-${{ env.VERSION }}
+          path: raw-logs/raw-build-logs-${{ env.VERSION }}.zip
+
+  # -------------------------------------------------------------------------
+  # Job 6: Pull and Publish to GitHub Releases
   # -------------------------------------------------------------------------
   create-release:
     name: Create Consolidated GitHub Release
@@ -355,7 +366,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Extract Version
         run: |
@@ -371,25 +382,25 @@ jobs:
         run: mkdir -p release-files
 
       - name: Download Android Artifacts
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4
         with:
           name: android-build
           path: release-files
 
       - name: Download Windows Artifacts
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4
         with:
           name: windows-build
           path: release-files
 
       - name: Download Linux Artifacts
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4
         with:
           name: linux-build
           path: release-files
 
       - name: Publish Compiled Packages to GitHub Release
-        uses: softprops/action-gh-release@v2.2.1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
