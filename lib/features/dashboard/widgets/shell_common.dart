@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'changelog_dialog.dart';
 import '../../../providers/providers.dart';
+
+// ... (keep alive wrapper omitted in between)
+
 
 class KeepAliveWrapper extends StatefulWidget {
   final Widget child;
@@ -230,12 +233,9 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
                 ),
                 const SizedBox(width: 12),
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    final Uri url = Uri.parse('https://github.com/vishnunandan555/gateletics/releases');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    }
+                    showChangelogDialog(context, version: packageInfo.version);
                   },
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

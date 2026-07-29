@@ -8,6 +8,7 @@ import '../../../providers/package_info_provider.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../providers/desktop_update_provider.dart';
 import '../../../utils/ui_scaling.dart';
+import '../../dashboard/widgets/changelog_dialog.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
@@ -114,7 +115,10 @@ class AboutScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _Badge(label: 'v${packageInfo.version}'),
+                      _Badge(
+                        label: 'v${packageInfo.version} • What\'s New',
+                        onTap: () => showChangelogDialog(context, version: packageInfo.version),
+                      ),
                       const SizedBox(width: 8),
                       _Badge(label: 'Build ${packageInfo.buildNumber}'),
                     ],
@@ -325,7 +329,8 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
 
 class _Badge extends StatefulWidget {
   final String label;
-  const _Badge({required this.label});
+  final VoidCallback? onTap;
+  const _Badge({required this.label, this.onTap});
 
   @override
   State<_Badge> createState() => _BadgeState();
@@ -340,7 +345,7 @@ class _BadgeState extends State<_Badge> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
       onTapCancel: () => setState(() => _isPressed = false),
-      onTap: () {},
+      onTap: widget.onTap,
       child: AnimatedScale(
         scale: _isPressed ? 0.92 : 1.0,
         duration: const Duration(milliseconds: 120),
