@@ -318,7 +318,7 @@ jobs:
     name: Collect Beta Build Logs
     needs: [build-android, build-windows, build-linux, build-web]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && !failed()
+    if: success()
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
