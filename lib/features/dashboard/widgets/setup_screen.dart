@@ -6,6 +6,7 @@ import '../../../providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
 import '../../../database/app_database.dart';
+import '../../../core/theme/colors.dart';
 
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
@@ -449,6 +450,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       case 6:
         return _buildStepTrackingOption(accentColor);
       case 7:
+        return _buildStepAccentColor(accentColor);
+      case 8:
         return _buildStepReview(accentColor);
       default:
         return _buildStepProfile(accentColor);
@@ -1207,14 +1210,344 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     );
   }
 
-  // --- Step 7: Review & Finalize Summary ---
+  // --- Step 7: Accent Color & UI Customization ---
+  Widget _buildStepAccentColor(Color accentColor) {
+    final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
+    final isAuto = colorNotifier.mode == 'auto';
+
+    int r = (accentColor.r * 255).round().clamp(0, 255);
+    int g = (accentColor.g * 255).round().clamp(0, 255);
+    int b = (accentColor.b * 255).round().clamp(0, 255);
+
+    return Column(
+      key: const ValueKey(7),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          "CHOOSE ACCENT THEME",
+          style: GoogleFonts.jersey15(
+            fontSize: context.s(24),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Personalize your app's accent color. Select auto-changing dynamic themes, pick a preset, or define your own color.",
+          style: GoogleFonts.outfit(
+            fontSize: context.s(13),
+            color: Colors.white38,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 24),
+
+        // Live Preview Box
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF131316),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: accentColor.withValues(alpha: 0.35), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: accentColor.withValues(alpha: 0.12),
+                blurRadius: 16,
+                spreadRadius: 2,
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "LIVE UI PREVIEW",
+                    style: GoogleFonts.orbitron(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      isAuto ? "AUTO DYNAMIC" : "#${accentColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}",
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: accentColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Sample Progress Bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: 0.68,
+                  minHeight: 8,
+                  backgroundColor: Colors.white10,
+                  valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.local_fire_department_rounded, color: accentColor, size: 14),
+                        const SizedBox(width: 4),
+                        Text(
+                          "STREAK: 14 DAYS",
+                          style: GoogleFonts.jersey15(color: accentColor, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: accentColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        "Sample Action",
+                        style: GoogleFonts.outfit(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Auto-change option
+        GestureDetector(
+          onTap: () => colorNotifier.setAutoMode(),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isAuto ? accentColor.withValues(alpha: 0.08) : const Color(0xFF131316),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isAuto ? accentColor : Colors.white10,
+                width: isAuto ? 1.5 : 1.0,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.brightness_auto_rounded, color: isAuto ? accentColor : Colors.white60, size: 24),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Auto-Change Color",
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.cyanAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              "RECOMMENDED",
+                              style: GoogleFonts.orbitron(color: Colors.cyanAccent, fontSize: 8, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Automatically shifts accent colors every session for a fresh visual look.",
+                        style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isAuto) Icon(Icons.check_circle_rounded, color: accentColor, size: 20),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        Text(
+          "PRESET NEON COLORS",
+          style: GoogleFonts.orbitron(
+            fontSize: context.s(10),
+            fontWeight: FontWeight.bold,
+            color: Colors.white70,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Lock your theme to a specific high-contrast neon shade.",
+          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: AppColors.neonCycle.map((presetColor) {
+            final isSelected = !isAuto && colorNotifier.frozenColor?.toARGB32() == presetColor.toARGB32();
+            return GestureDetector(
+              onTap: () => colorNotifier.setFrozenColor(presetColor),
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: presetColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? Colors.white : Colors.white24,
+                    width: isSelected ? 2.5 : 1.2,
+                  ),
+                  boxShadow: [
+                    if (isSelected)
+                      BoxShadow(
+                        color: presetColor.withValues(alpha: 0.5),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                  ],
+                ),
+                child: isSelected
+                    ? const Icon(Icons.check_rounded, color: Colors.black, size: 18)
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 20),
+
+        Text(
+          "PICK CUSTOM COLOR (RGB)",
+          style: GoogleFonts.orbitron(
+            fontSize: context.s(10),
+            fontWeight: FontWeight.bold,
+            color: Colors.white70,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Fine-tune exact Red, Green, and Blue sliders to create any custom color.",
+          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+        ),
+        const SizedBox(height: 12),
+
+        // Custom RGB Sliders
+        _buildRgbSlider("R", r, Colors.redAccent, (val) {
+          final newColor = Color.fromARGB(255, val.round(), g, b);
+          colorNotifier.setFrozenColor(newColor);
+        }),
+        _buildRgbSlider("G", g, Colors.greenAccent, (val) {
+          final newColor = Color.fromARGB(255, r, val.round(), b);
+          colorNotifier.setFrozenColor(newColor);
+        }),
+        _buildRgbSlider("B", b, Colors.blueAccent, (val) {
+          final newColor = Color.fromARGB(255, r, g, val.round());
+          colorNotifier.setFrozenColor(newColor);
+        }),
+
+        const SizedBox(height: 32),
+        _buildNavigationRow(
+          accentColor: accentColor,
+          onBack: () => setState(() => _currentStep = _selectedBranch == "CUSTOM" ? 5 : 6),
+          onNext: () => setState(() => _currentStep = 8),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRgbSlider(String label, int value, Color activeColor, ValueChanged<double> onChanged) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 16,
+          child: Text(
+            label,
+            style: GoogleFonts.orbitron(color: activeColor, fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+        ),
+        Expanded(
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: activeColor,
+              inactiveTrackColor: Colors.white10,
+              thumbColor: Colors.white,
+              trackHeight: 3,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+            ),
+            child: Slider(
+              value: value.toDouble(),
+              min: 0,
+              max: 255,
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 32,
+          child: Text(
+            "$value",
+            textAlign: TextAlign.end,
+            style: GoogleFonts.orbitron(color: Colors.white70, fontSize: 11),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // --- Step 8: Review & Finalize Summary ---
   Widget _buildStepReview(Color accentColor) {
     final remainingDays = _targetDate.difference(DateTime.now()).inDays;
     final displayDays = remainingDays > 0 ? remainingDays : 0;
     final formattedDate = "${_getMonthName(_targetDate.month)} ${_targetDate.day}, ${_targetDate.year}";
+    final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
 
     return Column(
-      key: const ValueKey(7),
+      key: const ValueKey(8),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
@@ -1258,6 +1591,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               _buildSummaryItem("Day Rollover", _studyDayRollover == StudyDayRollover.overnight ? "Late Night (04:00 AM)" : "Midnight (12:00 AM)", Icons.alarm_rounded, accentColor),
               const Divider(color: Colors.white10, height: 24),
               _buildSummaryItem("Syllabus Setup", _usePreset ? "$_selectedBranch Preset Loaded" : "Empty (Custom)", Icons.auto_awesome_rounded, accentColor),
+              const Divider(color: Colors.white10, height: 24),
+              _buildSummaryItem("Accent Theme", colorNotifier.mode == 'auto' ? "Dynamic Auto-change" : "Custom Accent (#${accentColor.toARGB32().toRadixString(16).substring(2).toUpperCase()})", Icons.palette_rounded, accentColor),
             ],
           ),
         ),
@@ -1283,7 +1618,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 16),
         TextButton(
-          onPressed: () => setState(() => _currentStep = _selectedBranch == "CUSTOM" ? 5 : 6),
+          onPressed: () => setState(() => _currentStep = 7),
           child: Text(
             "GO BACK",
             style: GoogleFonts.outfit(

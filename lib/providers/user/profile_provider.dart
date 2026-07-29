@@ -79,6 +79,16 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
   Future<void> setCustomProfilePhotoPath(String? path) async {
     final prefs = ref.read(sharedPreferencesProvider);
+    final oldPath = state.customProfilePhotoPath;
+
+    // Evict old FileImage from memory cache if present
+    if (oldPath != null && !kIsWeb && oldPath.startsWith('/')) {
+      try {
+        final oldFile = io.File(oldPath);
+        PaintingBinding.instance.imageCache.evict(FileImage(oldFile));
+      } catch (_) {}
+    }
+
     if (path == null) {
       await prefs.remove('custom_profile_photo_path');
       state = state.copyWith(clearCustomProfilePhotoPath: true);
@@ -89,7 +99,26 @@ class ProfileNotifier extends Notifier<ProfileState> {
           final sourceFile = io.File(path);
           if (await sourceFile.exists()) {
             final docsDir = await getApplicationDocumentsDirectory();
-            final savedImage = await sourceFile.copy('${docsDir.path}/profile_avatar.png');
+            // Clean up old custom profile photo files in documents directory
+            try {
+              final entities = docsDir.listSync();
+              for (final entity in entities) {
+                if (entity is io.File &&
+                    (entity.path.contains('profile_avatar') ||
+                        entity.path.contains('custom_profile_'))) {
+                  if (entity.path != sourceFile.path) {
+                    try {
+                      entity.deleteSync();
+                    } catch (_) {}
+                  }
+                }
+              }
+            } catch (_) {}
+
+            // Save with unique timestamp to ensure fresh image caching
+            final targetPath =
+                '${docsDir.path}/custom_profile_${DateTime.now().millisecondsSinceEpoch}.png';
+            final savedImage = await sourceFile.copy(targetPath);
             persistentPath = savedImage.path;
           }
         } catch (_) {}

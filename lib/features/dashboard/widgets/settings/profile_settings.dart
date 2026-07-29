@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/profile_provider.dart';
@@ -129,28 +127,18 @@ class ProfileSettingsSection extends ConsumerWidget {
                 final result = await FilePicker.pickFiles(
                   type: FileType.image,
                 );
-                if (result != null) {
-                  final file = result.files.single;
+                if (result != null && result.files.isNotEmpty) {
+                  final file = result.files.first;
                   final bytes = await file.readAsBytes();
-                  if (file.path != null) {
-                    final path = file.path!;
-                    String savedPath = path;
-                    if (!kIsWeb) {
-                      final dir = await getApplicationDocumentsDirectory();
-                      final targetFile = File('${dir.path}/custom_profile_${DateTime.now().millisecondsSinceEpoch}.png');
-                      await File(path).copy(targetFile.path);
-                      savedPath = targetFile.path;
-                    } else {
-                      savedPath = 'data:image/png;base64,${base64Encode(bytes)}';
-                    }
-
-                    await ref.read(profileProvider.notifier).setCustomProfilePhotoPath(savedPath);
-                    await ref.read(profileProvider.notifier).setProfilePhotoMode('custom');
+                  String savedPath;
+                  if (file.path != null && !kIsWeb) {
+                    savedPath = file.path!;
                   } else {
-                    final savedPath = 'data:image/png;base64,${base64Encode(bytes)}';
-                    await ref.read(profileProvider.notifier).setCustomProfilePhotoPath(savedPath);
-                    await ref.read(profileProvider.notifier).setProfilePhotoMode('custom');
+                    savedPath = 'data:image/png;base64,${base64Encode(bytes)}';
                   }
+
+                  await ref.read(profileProvider.notifier).setCustomProfilePhotoPath(savedPath);
+                  await ref.read(profileProvider.notifier).setProfilePhotoMode('custom');
                 }
               }
             },

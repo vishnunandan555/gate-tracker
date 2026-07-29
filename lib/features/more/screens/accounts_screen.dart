@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../providers/auth_provider.dart';
 import '../../../providers/profile_provider.dart';
@@ -416,19 +414,15 @@ class _HeroProfileCard extends ConsumerWidget {
               color: accentColor,
               onTap: () async {
                 Navigator.pop(ctx);
-                final result =
-                    await FilePicker.pickFiles(type: FileType.image);
-                if (result != null) {
-                  final file = result.files.single;
+                final result = await FilePicker.pickFiles(
+                  type: FileType.image,
+                );
+                if (result != null && result.files.isNotEmpty) {
+                  final file = result.files.first;
                   final bytes = await file.readAsBytes();
                   String savedPath;
                   if (file.path != null && !kIsWeb) {
-                    final dir =
-                        await getApplicationDocumentsDirectory();
-                    final targetFile = File(
-                        '${dir.path}/custom_profile_${DateTime.now().millisecondsSinceEpoch}.png');
-                    await File(file.path!).copy(targetFile.path);
-                    savedPath = targetFile.path;
+                    savedPath = file.path!;
                   } else {
                     savedPath =
                         'data:image/png;base64,${base64Encode(bytes)}';
