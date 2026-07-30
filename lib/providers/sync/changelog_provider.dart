@@ -7,6 +7,7 @@ class ChangelogItem {
   final String date;
   final String title;
   final List<String> changes;
+  final String body;
   final String githubUrl;
 
   const ChangelogItem({
@@ -14,6 +15,7 @@ class ChangelogItem {
     required this.date,
     required this.title,
     required this.changes,
+    required this.body,
     required this.githubUrl,
   });
 
@@ -22,7 +24,7 @@ class ChangelogItem {
     final version = rawTag.replaceFirst(RegExp(r'^v'), '');
     final name = json['name'] as String? ?? 'v$version';
     final publishedAt = json['published_at'] as String? ?? '';
-    final body = json['body'] as String? ?? '';
+    final rawBody = (json['body'] as String? ?? '').replaceAll('\r\n', '\n').trim();
     final htmlUrl = json['html_url'] as String? ?? 'https://github.com/vishnunandan555/gateletics/releases';
 
     String dateStr = '';
@@ -35,7 +37,7 @@ class ChangelogItem {
     }
 
     final changes = <String>[];
-    final lines = body.split('\n');
+    final lines = rawBody.split('\n');
     for (var line in lines) {
       line = line.trim();
       if (line.isEmpty || line.startsWith('#')) continue;
@@ -54,11 +56,13 @@ class ChangelogItem {
       version: version,
       date: dateStr,
       title: name.isNotEmpty ? name : 'GATEletics v$version',
-      changes: changes.isEmpty ? [body] : changes,
+      changes: changes.isEmpty ? (rawBody.isNotEmpty ? [rawBody] : ['No detailed notes provided.']) : changes,
+      body: rawBody.isNotEmpty ? rawBody : 'No release notes provided.',
       githubUrl: htmlUrl,
     );
   }
 }
+
 
 final changelogFamilyProvider = FutureProvider.family<ChangelogItem, String?>((ref, requestedVersion) async {
   final cleanRequested = requestedVersion?.replaceFirst(RegExp(r'^v'), '').split('+').first.trim();

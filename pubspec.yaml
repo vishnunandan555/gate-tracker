@@ -68,6 +68,7 @@ dependencies:
   flutter_svg: ^2.3.0
   share_plus: ^13.2.1
   tutorial_coach_mark: ^1.2.9
+  flutter_markdown: ^0.7.5
 
 
 dev_dependencies:

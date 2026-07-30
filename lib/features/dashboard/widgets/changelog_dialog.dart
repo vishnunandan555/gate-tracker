@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,23 +40,24 @@ class ChangelogDialog extends ConsumerWidget {
       ),
       contentPadding: EdgeInsets.zero,
       content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480, maxHeight: 560),
+        constraints: const BoxConstraints(maxWidth: 520, maxHeight: 600),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               decoration: BoxDecoration(
                 color: Colors.white.withAlpha(6),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
                 border: Border(bottom: BorderSide(color: Colors.white.withAlpha(12))),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(9),
                     decoration: BoxDecoration(
                       color: themeAccent.withAlpha(25),
                       shape: BoxShape.circle,
@@ -64,15 +66,18 @@ class ChangelogDialog extends ConsumerWidget {
                     child: Icon(
                       Icons.auto_awesome_rounded,
                       color: themeAccent,
-                      size: 22,
+                      size: 20,
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
                             Text(
                               "What's New",
@@ -83,7 +88,6 @@ class ChangelogDialog extends ConsumerWidget {
                                 letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
@@ -113,6 +117,7 @@ class ChangelogDialog extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 8),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
@@ -153,7 +158,7 @@ class ChangelogDialog extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.wifi_off_rounded,
                           color: Colors.white38,
                           size: 36,
@@ -178,59 +183,121 @@ class ChangelogDialog extends ConsumerWidget {
                   ),
                 ),
                 data: (changelog) {
-                  return ListView(
-                    padding: const EdgeInsets.all(20),
-                    children: [
-                      if (changelog.title.isNotEmpty && changelog.title != "v$cleanVersion") ...[
-                        Text(
-                          changelog.title,
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                        if (changelog.date.isNotEmpty) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            "Released on ${changelog.date}",
-                            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
-                          ),
-                        ],
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Bullet changes
-                      ...changelog.changes.map((changeLine) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2.0),
-                                child: Icon(
-                                  Icons.check_circle_outline_rounded,
-                                  color: themeAccent,
-                                  size: 15,
-                                ),
+                  return SelectionArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (changelog.title.isNotEmpty &&
+                              changelog.title != "v$cleanVersion" &&
+                              changelog.title != "GATEletics v$cleanVersion") ...[
+                            Text(
+                              changelog.title,
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  changeLine,
-                                  style: GoogleFonts.outfit(
-                                    color: Colors.white.withAlpha(230),
-                                    fontSize: 13,
-                                    height: 1.4,
-                                  ),
-                                ),
+                            ),
+                            if (changelog.date.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                "Released on ${changelog.date}",
+                                style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
                               ),
                             ],
+                            const SizedBox(height: 14),
+                          ] else if (changelog.date.isNotEmpty) ...[
+                            Text(
+                              "Released on ${changelog.date}",
+                              style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                            ),
+                            const SizedBox(height: 14),
+                          ],
+
+                          // Markdown Body
+                          MarkdownBody(
+                            data: changelog.body,
+                            selectable: false,
+                            onTapLink: (text, href, title) async {
+                              if (href != null && href.isNotEmpty) {
+                                final uri = Uri.parse(href);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                }
+                              }
+                            },
+                            styleSheet: MarkdownStyleSheet(
+                              p: GoogleFonts.outfit(
+                                color: Colors.white.withAlpha(225),
+                                fontSize: 13,
+                                height: 1.45,
+                              ),
+                              h1: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                height: 1.3,
+                              ),
+                              h2: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                height: 1.3,
+                              ),
+                              h3: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                height: 1.3,
+                              ),
+                              h4: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              listBullet: GoogleFonts.outfit(
+                                color: themeAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                              listBulletPadding: const EdgeInsets.only(right: 6),
+                              code: GoogleFonts.firaCode(
+                                color: themeAccent,
+                                backgroundColor: Colors.white.withAlpha(12),
+                                fontSize: 11.5,
+                              ),
+                              codeblockDecoration: BoxDecoration(
+                                color: const Color(0xFF101012),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white.withAlpha(16)),
+                              ),
+                              codeblockPadding: const EdgeInsets.all(12),
+                              blockquote: GoogleFonts.outfit(
+                                color: Colors.white70,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 12.5,
+                              ),
+                              blockquoteDecoration: BoxDecoration(
+                                color: themeAccent.withAlpha(15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border(left: BorderSide(color: themeAccent, width: 3)),
+                              ),
+                              blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              horizontalRuleDecoration: BoxDecoration(
+                                border: Border(top: BorderSide(color: Colors.white.withAlpha(20), width: 1)),
+                              ),
+                              a: GoogleFonts.outfit(
+                                color: themeAccent,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        );
-                      }),
-                    ],
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
@@ -255,7 +322,7 @@ class ChangelogDialog extends ConsumerWidget {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       }
                     },
-                    icon: Icon(Icons.open_in_new_rounded, size: 14, color: Colors.white54),
+                    icon: const Icon(Icons.open_in_new_rounded, size: 14, color: Colors.white54),
                     label: Text(
                       "GitHub Notes",
                       style: GoogleFonts.outfit(
