@@ -61,6 +61,8 @@ service cloud.firestore {
 4. **Desktop Onboarding & Tutorial Flow**: Desktop-friendly tooltip sequence / welcome onboarding for new desktop users once Desktop UI is finalized.
 5. **Light & Adaptive System Theme Support**: Optional light mode theme with system-adaptive brightness toggling.
 6. **Desktop Keyboard Navigation & Shortcuts**: Support for Tab key traversal across interactive cards and keyboard shortcuts (e.g., Space to pause/resume focus session, `/` for quick search).
+7. **Target Duration Capping for Interrupted Sessions**: Automatically cap recovered timer durations to the set target or interval limit for fixed methods (e.g. Pomodoro, 45/15) during session recovery.
+8. **Persistent Background Focus Service & Lockscreen Notifications**: System notification on Android/iOS lock screen showing active focus timer progress with pause/stop action controls.
 
 ---
 

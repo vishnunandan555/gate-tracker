@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../providers/focus/focus_provider.dart';
 import '../../../../utils/ui_scaling.dart';
 
 class FocusAccomplishmentsWidget extends StatefulWidget {
@@ -48,7 +49,11 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
     // Check if it is a JSON array
     if (accomplishmentsText.startsWith('[')) {
       try {
-        final decoded = jsonDecode(accomplishmentsText) as List<dynamic>;
+        final decodedList = jsonDecode(accomplishmentsText) as List<dynamic>;
+        final accomplishments = decodedList
+            .map((catJson) => FocusAccomplishment.fromJson(catJson as Map<String, dynamic>))
+            .toList();
+
         return Container(
           constraints: BoxConstraints(maxHeight: context.s(widget.maxWidgetHeight)),
           padding: EdgeInsets.symmetric(horizontal: context.s(10), vertical: context.s(8)),
@@ -71,11 +76,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                 padding: EdgeInsets.only(right: context.s(6)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: decoded.map((catJson) {
-                    final catName = catJson['categoryName'] as String? ?? 'Category';
-                    final catDelta = (catJson['categoryDelta'] ?? 0.0) as double;
-                    final topicsList = catJson['topics'] as List<dynamic>? ?? [];
-
+                  children: accomplishments.map((cat) {
                     return Padding(
                       padding: EdgeInsets.only(bottom: context.s(8)),
                       child: Column(
@@ -87,7 +88,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                             children: [
                               Expanded(
                                 child: Text(
-                                  catName,
+                                  cat.categoryName,
                                   style: GoogleFonts.outfit(
                                     fontWeight: FontWeight.bold,
                                     fontSize: context.s(14),
@@ -95,9 +96,9 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                   ),
                                 ),
                               ),
-                              if (catDelta > 0.0)
+                              if (cat.categoryDelta > 0.0)
                                 Text(
-                                  "+${catDelta.toStringAsFixed(catDelta == catDelta.toInt() ? 0 : 1)}%",
+                                  "+${cat.categoryDelta.toStringAsFixed(cat.categoryDelta == cat.categoryDelta.toInt() ? 0 : 1)}%",
                                   style: GoogleFonts.outfit(
                                     fontWeight: FontWeight.bold,
                                     fontSize: context.s(14),
@@ -108,88 +109,55 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                           ),
                           SizedBox(height: context.s(2)),
                           // Topics list
-                          ...topicsList.map((topicJson) {
-                            final topicName = topicJson['topicName'] as String? ?? 'Topic';
-                            final topicDelta = (topicJson['topicDelta'] ?? 0.0) as double;
-                            final isCounter = topicJson['isCounter'] as bool? ?? false;
-
+                          ...cat.topics.map((topic) {
                             return Padding(
-                              padding: EdgeInsets.only(left: context.s(6), top: context.s(2), bottom: context.s(2)),
+                              padding: EdgeInsets.only(
+                                left: context.s(6),
+                                top: context.s(2),
+                                bottom: context.s(2),
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Topic Header: Bold, slightly smaller, +b% in accentColor
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          topicName,
-                                          style: GoogleFonts.outfit(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: context.s(13),
-                                            color: Colors.white70,
+                                  if (topic.isCounter) ...[
+                                    // Counter Topic: Topic Name on left, +counterDelta on right
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            topic.topicName,
+                                            style: GoogleFonts.outfit(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: context.s(13),
+                                              color: Colors.white70,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      if (!isCounter && topicDelta > 0.0)
-                                        Text(
-                                          "+${topicDelta.toStringAsFixed(topicDelta == topicDelta.toInt() ? 0 : 1)}%",
-                                          style: GoogleFonts.outfit(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: context.s(12),
-                                            color: widget.accentColor,
+                                        if (topic.counterDelta > 0)
+                                          Text(
+                                            "+${topic.counterDelta}",
+                                            style: GoogleFonts.outfit(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: context.s(13),
+                                              color: widget.accentColor,
+                                            ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                  // Subtasks or Counter details
-                                  if (isCounter) ...[
-                                    Builder(
-                                      builder: (context) {
-                                        final current = topicJson['currentCount'] as int? ?? 0;
-                                        final initial = topicJson['initialCount'] as int? ?? 0;
-                                        final countDelta = current - initial;
-
-                                        return Padding(
-                                          padding: EdgeInsets.only(left: context.s(8), top: context.s(2)),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.arrow_forward_rounded, color: Colors.white24, size: context.s(12)),
-                                              SizedBox(width: context.s(6)),
-                                              Text(
-                                                "count: ",
-                                                style: GoogleFonts.outfit(
-                                                  color: Colors.white38,
-                                                  fontSize: context.s(12),
-                                                ),
-                                              ),
-                                              Text(
-                                                "+${topicDelta.toStringAsFixed(topicDelta == topicDelta.toInt() ? 0 : 1)}% ",
-                                                style: GoogleFonts.outfit(
-                                                  color: widget.accentColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: context.s(12),
-                                                ),
-                                              ),
-                                              Text(
-                                                "(+$countDelta)",
-                                                style: GoogleFonts.outfit(
-                                                  color: widget.accentColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: context.s(12),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
+                                      ],
                                     ),
                                   ] else ...[
-                                    // Checklist tasks
-                                    ...(topicJson['tasks'] as List<dynamic>? ?? []).map((taskName) {
+                                    // Checklist tasks topic header
+                                    Text(
+                                      topic.topicName,
+                                      style: GoogleFonts.outfit(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: context.s(13),
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                    ...topic.tasks.map((taskName) {
                                       return Padding(
-                                        padding: EdgeInsets.only(left: context.s(12), top: context.s(2)),
+                                        padding: EdgeInsets.only(left: context.s(10), top: context.s(2)),
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
@@ -204,7 +172,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                             SizedBox(width: context.s(6)),
                                             Expanded(
                                               child: Text(
-                                                taskName as String? ?? '',
+                                                taskName,
                                                 style: GoogleFonts.outfit(
                                                   color: Colors.white54,
                                                   fontSize: context.s(12),
@@ -231,6 +199,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
           ),
         );
       } catch (e) {
+
         // Fallback below if JSON decode fails
         debugPrint("Error parsing achievements JSON: $e");
       }

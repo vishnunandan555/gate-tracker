@@ -234,14 +234,16 @@ void main() {
         categoryDelta: 15.5,
         topics: [
           const FocusAccomplishmentTopic(
-            topicTitle: 'Sorting Algorithms',
-            taskTitles: ['Quicksort', 'Mergesort'],
+            topicName: 'Sorting Algorithms',
+            tasks: ['Quicksort', 'Mergesort'],
             counterDelta: 0,
+            isCounter: false,
           ),
           const FocusAccomplishmentTopic(
-            topicTitle: 'Graph Theory',
-            taskTitles: [],
+            topicName: 'Graph Theory',
+            tasks: [],
             counterDelta: 3,
+            isCounter: true,
           ),
         ],
       );
@@ -252,9 +254,34 @@ void main() {
       expect(decoded.categoryName, 'Algorithms');
       expect(decoded.categoryDelta, 15.5);
       expect(decoded.topics.length, 2);
+      expect(decoded.topics.first.topicName, 'Sorting Algorithms');
       expect(decoded.topics.first.topicTitle, 'Sorting Algorithms');
-      expect(decoded.topics.first.taskTitles, containsAll(['Quicksort', 'Mergesort']));
+      expect(decoded.topics.first.tasks, containsAll(['Quicksort', 'Mergesort']));
+      expect(decoded.topics.last.isCounter, isTrue);
       expect(decoded.topics.last.counterDelta, 3);
     });
+
+    test('Parses legacy JSON format correctly with backward compatibility', () {
+      final legacyJson = {
+        'categoryName': 'Computer Networks',
+        'categoryDelta': 1.7,
+        'topics': [
+          {
+            'topicTitle': 'Routing Protocols',
+            'taskTitles': [],
+            'isCounter': true,
+            'counterDelta': 5,
+          }
+        ]
+      };
+
+      final decoded = FocusAccomplishment.fromJson(legacyJson);
+      expect(decoded.categoryName, 'Computer Networks');
+      expect(decoded.categoryDelta, 1.7);
+      expect(decoded.topics.first.topicName, 'Routing Protocols');
+      expect(decoded.topics.first.isCounter, isTrue);
+      expect(decoded.topics.first.counterDelta, 5);
+    });
   });
+
 }

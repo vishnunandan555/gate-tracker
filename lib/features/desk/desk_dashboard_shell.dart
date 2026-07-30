@@ -12,6 +12,7 @@ import '../dashboard/home_screen.dart';
 import '../dashboard/progress_history_screen.dart';
 import '../dashboard/more_screen.dart';
 import '../../core/config/brand_config.dart';
+import '../dashboard/widgets/focus/focus_recovery_dialog.dart';
 import '../../providers/providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,6 +52,19 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
         showSyncConflictDialog(context, ref, progressColor);
       }
     });
+
+    ref.listen<FocusRecoveryData?>(
+      focusProvider.select((s) => s.pendingRecoveryData),
+      (previous, next) {
+        if (next != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              showFocusRecoveryDialog(context, next, progressColor, ref);
+            }
+          });
+        }
+      },
+    );
 
     final overallScale = ref.watch(overallUiScaleProvider).scaleFactor;
     final updateState = ref.watch(desktopUpdateProvider);

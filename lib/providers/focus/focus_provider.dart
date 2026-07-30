@@ -116,35 +116,52 @@ enum FocusStatus {
 }
 
 class FocusAccomplishmentTopic {
-  final String topicTitle;
-  final List<String> taskTitles;
+  final String topicName;
+  final List<String> tasks;
   final int counterDelta;
+  final bool isCounter;
 
   const FocusAccomplishmentTopic({
-    required this.topicTitle,
-    required this.taskTitles,
+    required this.topicName,
+    this.tasks = const [],
     this.counterDelta = 0,
+    this.isCounter = false,
   });
 
+  // Alias getters for backward compatibility
+  String get topicTitle => topicName;
+  List<String> get taskTitles => tasks;
+
   Map<String, dynamic> toJson() => {
-        'topicTitle': topicTitle,
-        'taskTitles': taskTitles,
-        if (counterDelta != 0) ...{
-          'isCounter': true,
-          'counterDelta': counterDelta,
-        },
+        'topicName': topicName,
+        'topicTitle': topicName,
+        'tasks': tasks,
+        'taskTitles': tasks,
+        'isCounter': isCounter,
+        'counterDelta': counterDelta,
+        'currentCount': counterDelta,
+        'initialCount': 0,
       };
 
   factory FocusAccomplishmentTopic.fromJson(Map<String, dynamic> json) {
+    final title = json['topicName'] as String? ?? json['topicTitle'] as String? ?? '';
+    final isCounter = json['isCounter'] as bool? ?? (((json['counterDelta'] as num?)?.toInt() ?? 0) != 0);
+    final delta = (json['counterDelta'] as num?)?.toInt() ??
+        (((json['currentCount'] as num?)?.toInt() ?? 0) - ((json['initialCount'] as num?)?.toInt() ?? 0));
+
+    final taskList = (json['tasks'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+        (json['taskTitles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+        [];
+
     return FocusAccomplishmentTopic(
-      topicTitle: json['topicTitle'] as String? ?? json['topicName'] as String? ?? '',
-      taskTitles: (json['taskTitles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
-          (json['tasks'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
-          [],
-      counterDelta: (json['counterDelta'] as num?)?.toInt() ?? 0,
+      topicName: title,
+      tasks: taskList,
+      counterDelta: delta,
+      isCounter: isCounter,
     );
   }
 }
+
 
 class FocusAccomplishment {
   final String categoryName;
@@ -175,6 +192,22 @@ class FocusAccomplishment {
   }
 }
 
+class FocusRecoveryData {
+  final FocusMethod method;
+  final DateTime startTime;
+  final int activeSeconds;
+  final int closedSeconds;
+  final int totalSeconds;
+
+  const FocusRecoveryData({
+    required this.method,
+    required this.startTime,
+    required this.activeSeconds,
+    required this.closedSeconds,
+    required this.totalSeconds,
+  });
+}
+
 class FocusSessionState {
   final FocusStatus status;
   final FocusMethod selectedMethod;
@@ -187,6 +220,7 @@ class FocusSessionState {
   final List<FocusAccomplishment> sessionAccomplishments;
   final DateTime? sessionStartTime;
   final bool isBreakActive;
+  final FocusRecoveryData? pendingRecoveryData;
 
   FocusSessionState({
     required this.status,
@@ -200,6 +234,7 @@ class FocusSessionState {
     required this.sessionAccomplishments,
     required this.isBreakActive,
     this.sessionStartTime,
+    this.pendingRecoveryData,
   });
 
   FocusSessionState copyWith({
@@ -214,6 +249,8 @@ class FocusSessionState {
     List<FocusAccomplishment>? sessionAccomplishments,
     DateTime? sessionStartTime,
     bool? isBreakActive,
+    FocusRecoveryData? pendingRecoveryData,
+    bool clearPendingRecoveryData = false,
   }) {
     return FocusSessionState(
       status: status ?? this.status,
@@ -227,6 +264,7 @@ class FocusSessionState {
       sessionAccomplishments: sessionAccomplishments ?? this.sessionAccomplishments,
       sessionStartTime: sessionStartTime ?? this.sessionStartTime,
       isBreakActive: isBreakActive ?? this.isBreakActive,
+      pendingRecoveryData: clearPendingRecoveryData ? null : (pendingRecoveryData ?? this.pendingRecoveryData),
     );
   }
 
@@ -243,6 +281,7 @@ class FocusSessionState {
       sessionAccomplishments: const [],
       sessionStartTime: null,
       isBreakActive: false,
+      pendingRecoveryData: null,
     );
   }
 
@@ -287,14 +326,21 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
   Future<void> _recoverInterruptedSession() async {
     try {
       final prefs = ref.read(sharedPreferencesProvider);
-      final recoveryStart = prefs.getString('focus_session_recovery_start');
+      final recoveryStartStr = prefs.getString('focus_session_recovery_start');
       final recoveryMethodStr = prefs.getString('focus_session_recovery_method');
-      if (recoveryStart != null && state.status == FocusStatus.idle) {
-        final start = DateTime.tryParse(recoveryStart);
+      final lastTickStr = prefs.getString('focus_session_recovery_last_tick');
+      final savedActiveSecs = prefs.getInt('focus_session_recovery_active_seconds');
+
+      if (recoveryStartStr != null && state.status == FocusStatus.idle) {
+        final start = DateTime.tryParse(recoveryStartStr);
+        final lastTick = lastTickStr != null ? DateTime.tryParse(lastTickStr) : null;
+
         if (start != null) {
-          final elapsed = DateTime.now().difference(start).inSeconds;
+          final now = DateTime.now();
+          final totalElapsed = now.difference(start).inSeconds;
+
           // Only recover sessions started within reasonable max limit (4 hours = 14400s)
-          if (elapsed > 0 && elapsed < 14400) {
+          if (totalElapsed > 0 && totalElapsed < 14400) {
             FocusMethod recoveredMethod = state.selectedMethod;
             if (recoveryMethodStr != null) {
               recoveredMethod = FocusMethod.values.firstWhere(
@@ -302,15 +348,31 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
                 orElse: () => state.selectedMethod,
               );
             }
+
+            int activeSecs = savedActiveSecs ?? 0;
+            if (activeSecs <= 0 && lastTick != null) {
+              activeSecs = lastTick.difference(start).inSeconds.clamp(0, totalElapsed);
+            }
+            if (activeSecs <= 0) {
+              activeSecs = 0; // If killed before first tick, active time was <1s
+            }
+
+            int closedSecs = totalElapsed - activeSecs;
+            if (closedSecs < 0) closedSecs = 0;
+
+            final recoveryData = FocusRecoveryData(
+              method: recoveredMethod,
+              startTime: start,
+              activeSeconds: activeSecs,
+              closedSeconds: closedSecs,
+              totalSeconds: totalElapsed,
+            );
+
             state = state.copyWith(
-              status: FocusStatus.paused,
               selectedMethod: recoveredMethod,
               sessionStartTime: start,
-              totalSecondsFocused: elapsed.clamp(0, 14400),
-              elapsedSeconds: 0, // Interval counter — reset to 0 so timer display starts fresh on resume
+              pendingRecoveryData: recoveryData,
             );
-            _previousTotalSecondsFocused = elapsed; // Total focused time is recovered
-            _previousSegmentSeconds = 0; // No segment was in progress — starts fresh on resume
           } else {
             // Stale or expired recovery data (>= 4 hours) — purge keys
             await _clearSessionRecovery();
@@ -322,10 +384,48 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     } catch (_) {}
   }
 
+  Future<void> resolveRecoveryKeepActive() async {
+    final data = state.pendingRecoveryData;
+    if (data == null) return;
+
+    state = state.copyWith(
+      clearPendingRecoveryData: true,
+      sessionStartTime: data.startTime,
+      selectedMethod: data.method,
+    );
+
+    _previousTotalSecondsFocused = data.activeSeconds;
+    await stopSession();
+  }
+
+  Future<void> resolveRecoveryKeepFull() async {
+    final data = state.pendingRecoveryData;
+    if (data == null) return;
+
+    state = state.copyWith(
+      clearPendingRecoveryData: true,
+      sessionStartTime: data.startTime,
+      selectedMethod: data.method,
+    );
+
+    _previousTotalSecondsFocused = data.totalSeconds;
+    await stopSession();
+  }
+
+  Future<void> resolveRecoveryDiscard() async {
+    await _clearSessionRecovery();
+    state = FocusSessionState.initial().copyWith(
+      selectedMethod: state.selectedMethod,
+      customTimerMinutes: state.customTimerMinutes,
+    );
+  }
+
   Future<void> _clearSessionRecovery() async {
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       await prefs.remove('focus_session_recovery_start');
+      await prefs.remove('focus_session_recovery_last_tick');
+      await prefs.remove('focus_session_recovery_active_seconds');
       await prefs.remove('focus_session_recovery_method');
     } catch (_) {}
   }
@@ -402,6 +502,8 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       await prefs.setString('focus_session_recovery_start', startTime.toIso8601String());
+      await prefs.setString('focus_session_recovery_last_tick', startTime.toIso8601String());
+      await prefs.setInt('focus_session_recovery_active_seconds', 0);
       await prefs.setString('focus_session_recovery_method', state.selectedMethod.name);
     } catch (_) {}
 
@@ -515,9 +617,10 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
             categoryDelta += topicDelta;
 
             topicList.add(FocusAccomplishmentTopic(
-              topicTitle: topic.name,
-              taskTitles: const [],
+              topicName: topic.name,
+              tasks: const [],
               counterDelta: delta,
+              isCounter: true,
             ));
           }
         } else {
@@ -534,8 +637,9 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
             categoryDelta += topicDelta;
 
             topicList.add(FocusAccomplishmentTopic(
-              topicTitle: topic.name,
-              taskTitles: completedTasks,
+              topicName: topic.name,
+              tasks: completedTasks,
+              isCounter: false,
             ));
           }
         }
@@ -651,9 +755,14 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
       final target = isDemoActive ? 10 : state.currentTargetSeconds;
       final isFreestyle = isDemoActive ? false : state.details.isCountUp;
 
-
       int nextElapsed = _previousSegmentSeconds + elapsedSegmentSeconds;
       int nextTotalFocused = _previousTotalSecondsFocused + elapsedSegmentSeconds;
+
+      try {
+        final prefs = ref.read(sharedPreferencesProvider);
+        prefs.setString('focus_session_recovery_last_tick', now.toIso8601String());
+        prefs.setInt('focus_session_recovery_active_seconds', nextTotalFocused);
+      } catch (_) {}
 
       if (!isFreestyle && nextElapsed >= target) {
         // Interval completed!

@@ -18,6 +18,7 @@ import '../more/screens/contribute_screen.dart';
 import '../more/screens/customize_nav_bar_screen.dart';
 import 'widgets/app_bar_title.dart';
 import 'widgets/countdown_widget.dart';
+import 'widgets/focus/focus_recovery_dialog.dart';
 import '../../utils/demo_keys.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -108,6 +109,19 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         showSyncConflictDialog(context, ref, progressColor);
       }
     });
+
+    ref.listen<FocusRecoveryData?>(
+      focusProvider.select((s) => s.pendingRecoveryData),
+      (previous, next) {
+        if (next != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              showFocusRecoveryDialog(context, next, progressColor, ref);
+            }
+          });
+        }
+      },
+    );
 
     final overallScale = ref.watch(overallUiScaleProvider).scaleFactor;
 

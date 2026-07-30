@@ -41,21 +41,20 @@ class ChangelogDialog extends ConsumerWidget {
       ),
       contentPadding: EdgeInsets.zero,
       content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 520, maxHeight: 600),
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 580),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
               decoration: BoxDecoration(
                 color: Colors.white.withAlpha(6),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
                 border: Border(bottom: BorderSide(color: Colors.white.withAlpha(12))),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(9),
@@ -70,42 +69,19 @@ class ChangelogDialog extends ConsumerWidget {
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: [
-                            Text(
-                              "What's New",
-                              style: GoogleFonts.orbitron(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: themeAccent.withAlpha(35),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: themeAccent.withAlpha(90)),
-                              ),
-                              child: Text(
-                                "v$cleanVersion",
-                                style: GoogleFonts.outfit(
-                                  color: themeAccent,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          "What's New",
+                          style: GoogleFonts.orbitron(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -118,12 +94,11 @@ class ChangelogDialog extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
                     tooltip: 'Close',
-                    padding: EdgeInsets.zero,
+                    padding: const EdgeInsets.all(4),
                     constraints: const BoxConstraints(),
                   ),
                 ],
@@ -190,9 +165,40 @@ class ChangelogDialog extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Version pill badge & date bar
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            runSpacing: 6,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: themeAccent.withAlpha(30),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: themeAccent.withAlpha(80)),
+                                ),
+                                child: Text(
+                                  "v$cleanVersion",
+                                  style: GoogleFonts.outfit(
+                                    color: themeAccent,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              if (changelog.date.isNotEmpty)
+                                Text(
+                                  "Released on ${changelog.date}",
+                                  style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12),
+                                ),
+                            ],
+                          ),
+
                           if (changelog.title.isNotEmpty &&
                               changelog.title != "v$cleanVersion" &&
-                              changelog.title != "GATEletics v$cleanVersion") ...[
+                              changelog.title != "${BrandConfig.appName} v$cleanVersion") ...[
+                            const SizedBox(height: 12),
                             Text(
                               changelog.title,
                               style: GoogleFonts.outfit(
@@ -201,21 +207,9 @@ class ChangelogDialog extends ConsumerWidget {
                                 fontSize: 15,
                               ),
                             ),
-                            if (changelog.date.isNotEmpty) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                "Released on ${changelog.date}",
-                                style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
-                              ),
-                            ],
-                            const SizedBox(height: 14),
-                          ] else if (changelog.date.isNotEmpty) ...[
-                            Text(
-                              "Released on ${changelog.date}",
-                              style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
-                            ),
-                            const SizedBox(height: 14),
                           ],
+
+                          const SizedBox(height: 14),
 
                           // Markdown Body
                           MarkdownBody(

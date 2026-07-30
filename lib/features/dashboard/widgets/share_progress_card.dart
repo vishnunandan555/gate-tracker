@@ -273,19 +273,16 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
       if (acc.trim().startsWith('[')) {
         try {
           final decoded = jsonDecode(acc) as List<dynamic>;
-          for (final cat in decoded) {
-            final catName = cat['categoryName'] as String? ?? 'Category';
-            final topics = cat['topics'] as List<dynamic>? ?? [];
-            for (final topic in topics) {
-              final topicName = topic['topicName'] as String? ?? 'Topic';
-              if (topic['isCounter'] == true) {
-                final current = topic['currentCount'] as int? ?? 0;
-                final initial = topic['initialCount'] as int? ?? 0;
-                final diff = current - initial;
+          for (final item in decoded) {
+            final cat = FocusAccomplishment.fromJson(item as Map<String, dynamic>);
+            final catName = cat.categoryName.isNotEmpty ? cat.categoryName : 'Category';
+            for (final topic in cat.topics) {
+              final topicName = topic.topicName.isNotEmpty ? topic.topicName : 'Topic';
+              if (topic.isCounter) {
+                final diff = topic.counterDelta;
                 list.add('$catName > $topicName (+$diff)');
               } else {
-                final tasks = topic['tasks'] as List<dynamic>? ?? [];
-                for (final t in tasks) {
+                for (final t in topic.tasks) {
                   list.add('$catName > $topicName > $t');
                 }
               }
@@ -293,6 +290,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
           }
         } catch (_) {}
       } else {
+
         // Fallback for legacy text accomplishments
         final lines = acc.split('\n');
         String currentCatTopic = '';
