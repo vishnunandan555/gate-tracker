@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'core/theme/app_theme.dart';
+import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
 import 'database/app_database.dart';
 import 'providers/syllabus_provider.dart';
@@ -139,7 +140,7 @@ class GateTrackerApp extends ConsumerWidget {
 
     if (!hasAgreed) {
       return MaterialApp(
-        title: 'GATEletics',
+        title: BrandConfig.appName,
         theme: AppTheme.darkTheme,
         home: const AgreementScreen(),
         debugShowCheckedModeBanner: false,
@@ -148,7 +149,7 @@ class GateTrackerApp extends ConsumerWidget {
 
     if (authState != null && !authState.isOfflineMode && authState.user == null) {
       return MaterialApp(
-        title: 'GATEletics',
+        title: BrandConfig.appName,
         theme: AppTheme.darkTheme,
         home: const AuthScreen(),
         debugShowCheckedModeBanner: false,
@@ -157,7 +158,7 @@ class GateTrackerApp extends ConsumerWidget {
 
     if (!hasSetup) {
       return MaterialApp(
-        title: 'GATEletics',
+        title: BrandConfig.appName,
         theme: AppTheme.darkTheme,
         home: const SetupScreen(),
         debugShowCheckedModeBanner: false,
@@ -165,7 +166,7 @@ class GateTrackerApp extends ConsumerWidget {
     }
 
     return MaterialApp.router(
-      title: 'GATEletics',
+      title: BrandConfig.appName,
       theme: AppTheme.darkTheme,
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,

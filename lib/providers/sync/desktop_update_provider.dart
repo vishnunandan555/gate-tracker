@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package_info_provider.dart';
+import '../../core/config/brand_config.dart';
 
 class DesktopReleaseInfo {
   final String latestVersion;
@@ -30,7 +31,7 @@ class DesktopReleaseInfo {
   factory DesktopReleaseInfo.fromJson(Map<String, dynamic> json) {
     final tagName = (json['tag_name'] as String? ?? '').replaceFirst(RegExp(r'^v'), '');
     final notes = json['body'] as String? ?? '';
-    final url = json['html_url'] as String? ?? 'https://github.com/vishnunandan555/gateletics/releases';
+    final url = json['html_url'] as String? ?? BrandConfig.githubReleasesUrl;
 
     String? winInstaller;
     String? winZip;
@@ -181,7 +182,7 @@ class DesktopUpdateNotifier extends Notifier<DesktopUpdateState> {
     for (int attempt = 1; attempt <= 5; attempt++) {
       try {
         final response = await http.get(
-          Uri.parse('https://api.github.com/repos/vishnunandan555/gateletics/releases/latest'),
+          Uri.parse(BrandConfig.githubLatestReleaseApi),
           headers: {'Accept': 'application/vnd.github.v3+json'},
         ).timeout(const Duration(seconds: 10));
 
@@ -233,7 +234,7 @@ class DesktopUpdateNotifier extends Notifier<DesktopUpdateState> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://api.github.com/repos/vishnunandan555/gateletics/releases/latest'),
+        Uri.parse(BrandConfig.githubLatestReleaseApi),
         headers: {'Accept': 'application/vnd.github.v3+json'},
       ).timeout(const Duration(seconds: 12));
 

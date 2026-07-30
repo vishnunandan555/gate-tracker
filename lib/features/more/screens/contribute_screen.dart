@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/config/brand_config.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../utils/ui_scaling.dart';
 
@@ -20,7 +21,7 @@ class ContributeScreen extends ConsumerWidget {
         description: 'Explore the open source codebase, star the repo, or build custom features.',
         color: const Color(0xFF00F0FF),
         actionLabel: 'Open GitHub',
-        onTap: () => _launch('https://github.com/vishnunandan555/gateletics'),
+        onTap: () => _launch(BrandConfig.githubRepoUrl),
       ),
       _ContributeCardData(
         icon: Icons.bug_report_rounded,
@@ -28,12 +29,12 @@ class ContributeScreen extends ConsumerWidget {
         description: 'Found a problem or unexpected behavior? Submit an issue report directly.',
         color: const Color(0xFFFF5E00),
         actionLabel: 'Report Bug',
-        onTap: () => _launch('https://github.com/vishnunandan555/gateletics/issues'),
+        onTap: () => _launch(BrandConfig.githubIssuesUrl),
       ),
       _ContributeCardData(
         icon: Icons.school_rounded,
         title: 'Request Your Exam / Branch',
-        description: 'Need GATE EE, ECE, ME, Civil, or another branch added to GATEletics?',
+        description: 'Need GATE EE, ECE, ME, Civil, or another branch added to ${BrandConfig.appName}?',
         color: const Color(0xFFE040FB),
         actionLabel: 'Request Exam',
         isPlaceholder: true,
@@ -116,7 +117,7 @@ class ContributeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'GATEletics is completely open-source. Help us expand exam coverage, improve progress tracking, and build community resources.',
+                    '${BrandConfig.appName} is completely open-source. Help us expand exam coverage, improve progress tracking, and build community resources.',
                     style: GoogleFonts.outfit(
                       color: Colors.white60,
                       fontSize: context.s(12),

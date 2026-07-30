@@ -11,6 +11,7 @@ import 'desk_dashboard_screen.dart';
 import '../dashboard/home_screen.dart';
 import '../dashboard/progress_history_screen.dart';
 import '../dashboard/more_screen.dart';
+import '../../core/config/brand_config.dart';
 import '../../providers/providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -78,7 +79,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'A new GATEletics update (v${updateState.releaseInfo!.latestVersion}) is available!',
+                        'A new ${BrandConfig.appName} update (v${updateState.releaseInfo!.latestVersion}) is available!',
                         style: GoogleFonts.outfit(
                           color: Colors.white,
                           fontSize: 12.5,
@@ -208,7 +209,7 @@ class _DeskSidebar extends StatelessWidget {
                   if (!isCompact) ...[
                     const SizedBox(width: 8),
                     Text(
-                      'GATEletics',
+                      BrandConfig.appName,
                       style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontSize: 17,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import '../../core/config/brand_config.dart';
 
 class ChangelogItem {
   final String version;
@@ -25,7 +26,7 @@ class ChangelogItem {
     final name = json['name'] as String? ?? 'v$version';
     final publishedAt = json['published_at'] as String? ?? '';
     final rawBody = (json['body'] as String? ?? '').replaceAll('\r\n', '\n').trim();
-    final htmlUrl = json['html_url'] as String? ?? 'https://github.com/vishnunandan555/gateletics/releases';
+    final htmlUrl = json['html_url'] as String? ?? BrandConfig.githubReleasesUrl;
 
     String dateStr = '';
     if (publishedAt.isNotEmpty) {
@@ -55,7 +56,7 @@ class ChangelogItem {
     return ChangelogItem(
       version: version,
       date: dateStr,
-      title: name.isNotEmpty ? name : 'GATEletics v$version',
+      title: name.isNotEmpty ? name : '${BrandConfig.appName} v$version',
       changes: changes.isEmpty ? (rawBody.isNotEmpty ? [rawBody] : ['No detailed notes provided.']) : changes,
       body: rawBody.isNotEmpty ? rawBody : 'No release notes provided.',
       githubUrl: htmlUrl,
@@ -63,12 +64,11 @@ class ChangelogItem {
   }
 }
 
-
 final changelogFamilyProvider = FutureProvider.family<ChangelogItem, String?>((ref, requestedVersion) async {
   final cleanRequested = requestedVersion?.replaceFirst(RegExp(r'^v'), '').split('+').first.trim();
 
   final response = await http.get(
-    Uri.parse('https://api.github.com/repos/vishnunandan555/gateletics/releases'),
+    Uri.parse('https://api.github.com/repos/${BrandConfig.githubOwner}/${BrandConfig.githubRepo}/releases'),
   ).timeout(const Duration(seconds: 5));
 
   if (response.statusCode == 200) {

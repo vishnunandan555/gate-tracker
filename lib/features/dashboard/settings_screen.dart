@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/config/brand_config.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
 import '../../providers/desktop_update_provider.dart';
@@ -104,7 +105,7 @@ class SettingsScreen extends ConsumerWidget {
 
     final versionText = Center(
       child: Text(
-        'GATEletics v${packageInfo.version}',
+        '${BrandConfig.appName} v${packageInfo.version}',
         style: TextStyle(
           color: Colors.white.withValues(alpha: 0.3),
           fontSize: 10,
@@ -233,7 +234,7 @@ class _DesktopUpdateSettingsTile extends ConsumerWidget {
           style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold, fontSize: 11),
         ),
       );
-      subtitleText = '🔥 GATEletics v${updateState.releaseInfo!.latestVersion} is available!';
+      subtitleText = '🔥 ${BrandConfig.appName} v${updateState.releaseInfo!.latestVersion} is available!';
     } else if (updateState.status == DesktopUpdateStatus.upToDate) {
       trailingWidget = Icon(Icons.check_circle_outline_rounded, color: Colors.greenAccent, size: 20);
       subtitleText = 'You are using the latest version';

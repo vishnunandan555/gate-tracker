@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
+import '../../../../core/config/brand_config.dart';
 import '../../../../database/app_database.dart';
 import '../../../../providers/profile_provider.dart';
 import '../../../../providers/selected_branch_provider.dart';
@@ -479,7 +480,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              "GATELETICS",
+                              BrandConfig.appName.toUpperCase(),
                               style: GoogleFonts.orbitron(
                                 color: Colors.white,
                                 fontSize: 13,

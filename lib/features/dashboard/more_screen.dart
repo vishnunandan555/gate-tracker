@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/config/brand_config.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
 import '../../utils/ui_scaling.dart';
@@ -149,7 +150,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                 ),
                 child: Center(
                   child: Text(
-                    'GATEletics v${packageInfo.version}',
+                    '${BrandConfig.appName} v${packageInfo.version}',
                     style: GoogleFonts.outfit(
                       color: Colors.white.withValues(alpha: 0.22),
                       fontSize: isDesktop ? 11 : context.s(10),
@@ -205,7 +206,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
       ),
       _MoreMenuItemData(
         icon: Icons.info_outline_rounded,
-        label: 'About GATEletics',
+        label: 'About ${BrandConfig.appName}',
         subtitle: 'App info, developer details and credits',
         color: const Color(0xFF39FF14),
         comingSoon: false,

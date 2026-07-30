@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/config/brand_config.dart';
 import '../../../providers/agreement_provider.dart';
 
 class AgreementScreen extends StatefulWidget {
@@ -21,25 +22,25 @@ TERMS OF SERVICE
 Last updated: June 25, 2026
 
 1. Acceptance of Terms
-By using GATEletics ("App"), you agree to be bound by these Terms. If you disagree with any part of the terms, you may not use the App.
+By using ${BrandConfig.appName} ("App"), you agree to be bound by these Terms. If you disagree with any part of the terms, you may not use the App.
 
 2. License to Use
 We grant you a personal, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial educational purposes on devices owned or controlled by you.
 
 3. Intellectual Property
-The App, its original features, and source code are open-source and licensed under the GNU AGPLv3 License. You may modify and redistribute it under the terms of the GNU AGPLv3 License, but the official Play Store version and brand name "GATEletics" are represented by the developer.
+${BrandConfig.openSourceNotice} You may modify and redistribute it under the terms of the GNU AGPLv3 License, but the official Play Store version and brand name "${BrandConfig.appName}" are represented by the developer.
 
 4. Limitation of Liability & "As-Is" Clause
-The App is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. Vishnu Nandan shall not be liable for any damages arising out of your use of, or inability to use, the App. This includes loss of study data, device issues, or syllabus errors.
+The App is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. ${BrandConfig.companyName} shall not be liable for any damages arising out of your use of, or inability to use, the App. This includes loss of study data, device issues, or syllabus errors.
 
 5. Changes to Terms
 We reserve the right to modify or replace these Terms at any time. Your continued use of the App after changes constitutes acceptance of the new Terms.
 
 6. Contact Us
-For questions regarding these Terms, contact: vishnunandan555@gmail.com
+For questions regarding these Terms, contact: ${BrandConfig.supportEmail}
 
 7. Disclaimer of Affiliation
-GATEletics is an independent educational tool developed to assist student preparation. This App is not affiliated with, authorized by, sponsored by, or associated with the Graduate Aptitude Test in Engineering (GATE) or its official organizing institutes (IISc, IITs, or NCB-GATE).
+${BrandConfig.legalDisclaimer}
 """;
 
   final String _privacyText = """
@@ -60,7 +61,7 @@ The App does not use any third-party analytics, advertising networks, or trackin
 Our App does not collect any information from children or anyone else, making it fully compliant with COPPA and global privacy standards.
 
 4. Contact Us
-If you have any questions about this Privacy Policy, please contact us at: vishnunandan555@gmail.com
+If you have any questions about this Privacy Policy, please contact us at: ${BrandConfig.supportEmail}
 """;
 
   void _showDocumentDialog(String title, String content) {
@@ -138,7 +139,7 @@ If you have any questions about this Privacy Policy, please contact us at: vishn
                         const SizedBox(height: 20),
                         Center(
                           child: Text(
-                            "GATELETICS",
+                            BrandConfig.appName.toUpperCase(),
                             style: GoogleFonts.outfit(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -162,7 +163,7 @@ If you have any questions about this Privacy Policy, please contact us at: vishn
 
                         // Welcome Message
                         Text(
-                          "Welcome to GATEletics. Before you begin tracking your syllabus progress, please take a moment to read and accept our legal terms.",
+                          "Welcome to ${BrandConfig.appName}. Before you begin tracking your syllabus progress, please take a moment to read and accept our legal terms.",
                           style: GoogleFonts.outfit(
                             color: Colors.white70,
                             fontSize: 13.5,

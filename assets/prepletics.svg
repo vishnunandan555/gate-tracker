@@ -1,0 +1,19 @@
+<svg viewBox="0 0 820 690" xmlns="http://www.w3.org/2000/svg">
+  <!-- Letter P outer shape with true transparent hole for the counter -->
+  <path fill-rule="evenodd" fill="#000000" d="
+           M230,120
+           L540,120
+           A50,50 0 0,1 590,170
+           L590,370
+           A50,50 0 0,1 540,420
+           L320,420
+           L320,630
+           L230,630
+           Z
+           M230,210 L500,210 L500,330 L230,330 Z"/>
+
+  <!-- Triple chevron arrows: thickness -10%, top/bottom gap -25% -->
+  <polygon points="230,221 265,270 230,319 261,319 296,270 261,221" fill="#000000"/>
+  <polygon points="276,221 311,270 276,319 307,319 342,270 307,221" fill="#000000"/>
+  <polygon points="322,221 357,270 322,319 353,319 388,270 353,221" fill="#000000"/>
+</svg>

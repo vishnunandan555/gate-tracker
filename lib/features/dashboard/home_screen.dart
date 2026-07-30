@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/config/brand_config.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../providers/syllabus_provider.dart';
@@ -67,7 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           side: BorderSide(color: accentColor.withValues(alpha: 0.15), width: 1.5),
         ),
         title: Text(
-          "Welcome to GATEletics!",
+          "Welcome to ${BrandConfig.appName}!",
           style: GoogleFonts.orbitron(
             fontWeight: FontWeight.bold,
             color: Colors.white,

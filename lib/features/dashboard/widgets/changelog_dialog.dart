@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/config/brand_config.dart';
 import '../../../providers/providers.dart';
 import '../../../providers/sync/changelog_provider.dart';
 
@@ -108,7 +109,7 @@ class ChangelogDialog extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          "GATEletics Release Notes",
+                          "${BrandConfig.appName} Release Notes",
                           style: GoogleFonts.outfit(
                             color: Colors.white54,
                             fontSize: 12,
@@ -316,7 +317,7 @@ class ChangelogDialog extends ConsumerWidget {
                   TextButton.icon(
                     onPressed: () async {
                       final url = Uri.parse(
-                        changelogAsync.value?.githubUrl ?? 'https://github.com/vishnunandan555/gateletics/releases',
+                        changelogAsync.value?.githubUrl ?? BrandConfig.githubReleasesUrl,
                       );
                       if (await canLaunchUrl(url)) {
                         await launchUrl(url, mode: LaunchMode.externalApplication);

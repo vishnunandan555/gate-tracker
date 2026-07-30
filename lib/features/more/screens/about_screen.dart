@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/config/brand_config.dart';
 import '../../../providers/package_info_provider.dart';
 import '../../../providers/subject_provider.dart';
 import '../../../providers/desktop_update_provider.dart';
@@ -27,7 +28,7 @@ class AboutScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'About GATEletics',
+          'About ${BrandConfig.appName}',
           style: GoogleFonts.outfit(
             color: Colors.white,
             fontSize: 17,
@@ -74,35 +75,21 @@ class AboutScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // Brand Typography
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'GATE',
-                        style: GoogleFonts.boldonse(
-                          fontSize: 22,
-                          height: 1.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'LETICS',
-                        style: GoogleFonts.orbitron(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
-                          height: 1.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    BrandConfig.appName,
+                    style: GoogleFonts.orbitron(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      height: 1.0,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 8),
 
                   // Tagline
                   Text(
-                    'GATE Exam Preparation & Progress Tracker',
+                    BrandConfig.appTagline,
                     style: GoogleFonts.outfit(
                       color: Colors.white38,
                       fontSize: context.s(12),
@@ -136,7 +123,7 @@ class AboutScreen extends ConsumerWidget {
                   child: _LinkButton(
                     icon: Icons.language_rounded,
                     label: 'Website',
-                    url: 'https://vishnunandan555.github.io/gateletics/',
+                    url: BrandConfig.docsUrl,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -144,7 +131,7 @@ class AboutScreen extends ConsumerWidget {
                   child: _LinkButton(
                     assetIcon: 'assets/github.png',
                     label: 'GitHub',
-                    url: 'https://github.com/vishnunandan555/gateletics',
+                    url: BrandConfig.githubRepoUrl,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -152,7 +139,7 @@ class AboutScreen extends ConsumerWidget {
                   child: _LinkButton(
                     icon: Icons.shop_rounded,
                     label: 'Play Store',
-                    url: 'https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics',
+                    url: BrandConfig.playStoreUrl,
                   ),
                 ),
               ],
@@ -169,13 +156,13 @@ class AboutScreen extends ConsumerWidget {
                   _InfoRow(
                     icon: Icons.person_rounded,
                     label: 'Developer',
-                    value: 'Vishnu Nandan',
+                    value: BrandConfig.companyName,
                   ),
                   Divider(color: Colors.white10, height: 24),
                   _InfoRow(
                     icon: Icons.business_center_rounded,
                     label: 'Package',
-                    value: 'com.vishnunandan.gateletics',
+                    value: BrandConfig.androidPackageId,
                   ),
                   Divider(color: Colors.white10, height: 24),
                   _InfoRow(
@@ -194,7 +181,7 @@ class AboutScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(14),
               borderRadius: BorderRadius.circular(14),
               child: Text(
-                'GATEletics is an independent educational tool and is not affiliated with, authorized by, or associated with GATE or its organizing institutes (IISc, IITs, or NCB-GATE).',
+                BrandConfig.legalDisclaimer,
                 style: GoogleFonts.outfit(
                   color: Colors.white38,
                   fontSize: context.s(11),
@@ -212,7 +199,7 @@ class AboutScreen extends ConsumerWidget {
               children: [
                 const _TextLink(
                   label: 'Terms of Service',
-                  url: 'https://vishnunandan555.github.io/gateletics/terms.html',
+                  url: BrandConfig.termsUrl,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -220,7 +207,7 @@ class AboutScreen extends ConsumerWidget {
                 ),
                 const _TextLink(
                   label: 'Privacy Policy',
-                  url: 'https://vishnunandan555.github.io/gateletics/privacy.html',
+                  url: BrandConfig.privacyUrl,
                 ),
               ],
             ),

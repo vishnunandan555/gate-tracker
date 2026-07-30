@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/config/brand_config.dart';
 import '../../providers/providers.dart';
 import 'dashboard_screen.dart';
 import 'home_screen.dart';
@@ -695,7 +696,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       case DemoStep.homeWelcome:
         _runSpotlight("homeWelcome", [
           makeTarget("progressCard", DemoKeys.homeProgressCard,
-            "Welcome to GATEletics. This carousel shows your overall syllabus progress, subject-level completion percentages, and quick resource links.",
+            "Welcome to ${BrandConfig.appName}. This carousel shows your overall syllabus progress, subject-level completion percentages, and quick resource links.",
             stepNumber: 1, align: ContentAlign.bottom,
           ),
         ], () { ref.read(demoGuideProvider.notifier).setStep(DemoStep.homeCountdown); });
