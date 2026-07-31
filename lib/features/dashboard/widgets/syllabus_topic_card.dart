@@ -4,14 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../database/app_database.dart';
-import '../../../providers/syllabus_provider.dart';
-import '../../../providers/topic_font_size_provider.dart';
-import '../../../providers/task_font_size_provider.dart';
-import '../../../providers/overall_ui_scale_provider.dart';
+import '../../../providers/providers.dart';
 import '../../../widgets/progress_bar.dart';
 import 'syllabus_customization_sheets.dart';
 import '../../../utils/ui_scaling.dart';
-import '../../../providers/demo_guide_provider.dart';
 
 class SyllabusTopicCard extends ConsumerWidget {
   final SyllabusTopicWithTasks topicWithTasks;
@@ -372,7 +368,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                       FilledButton.icon(
                         onPressed: topic.currentCount > 0
                             ? () {
-                                HapticFeedback.lightImpact();
+                                ref.read(hapticSettingsProvider.notifier).trigger();
                                 ref.read(syllabusControllerProvider.notifier).updateCounterValue(
                                       topic.id,
                                       topic.currentCount - 1,
@@ -410,7 +406,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                       FilledButton.icon(
                         onPressed: topic.currentCount < topic.maxCount
                             ? () {
-                                HapticFeedback.lightImpact();
+                                ref.read(hapticSettingsProvider.notifier).trigger();
                                 ref.read(syllabusControllerProvider.notifier).updateCounterValue(
                                       topic.id,
                                       topic.currentCount + 1,

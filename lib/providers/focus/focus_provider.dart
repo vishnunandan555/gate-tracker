@@ -545,7 +545,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     _previousSegmentSeconds = 0;
     _previousTotalSecondsFocused = 0;
 
-    HapticFeedback.selectionClick();
+    ref.read(hapticSettingsProvider.notifier).trigger(HapticIntensity.medium);
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
@@ -556,7 +556,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
   void pauseSession() {
     if (state.status != FocusStatus.focusing && state.status != FocusStatus.breakTime) return;
-    HapticFeedback.selectionClick();
+    ref.read(hapticSettingsProvider.notifier).trigger(HapticIntensity.medium);
     _timer?.cancel();
     if (_segmentStartTime != null) {
       final elapsedSegmentSeconds = DateTime.now().difference(_segmentStartTime!).inSeconds;
@@ -571,7 +571,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
 
   void resumeSession() {
     if (state.status != FocusStatus.paused) return;
-    HapticFeedback.selectionClick();
+    ref.read(hapticSettingsProvider.notifier).trigger(HapticIntensity.medium);
     state = state.copyWith(
       status: state.isBreakActive ? FocusStatus.breakTime : FocusStatus.focusing,
     );

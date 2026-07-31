@@ -6,6 +6,7 @@ import '../../../../providers/focus_provider.dart';
 import '../../../../providers/daily_history_provider.dart';
 import '../../../../providers/rollover_provider.dart';
 import '../../../../providers/category_autosort_provider.dart';
+import '../../../../providers/settings/haptic_settings_provider.dart';
 import '../../../../database/app_database.dart';
 
 class TimerSettingsSection extends ConsumerWidget {
@@ -179,6 +180,80 @@ class TimerSettingsSection extends ConsumerWidget {
             if (result != null) {
               await ref.read(studyDayRolloverProvider.notifier).setRollover(result);
             }
+          },
+        ),
+        const Divider(color: Colors.white10, height: 1),
+        Builder(
+          builder: (context) {
+            final hapticState = ref.watch(hapticSettingsProvider);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SwitchListTile(
+                  activeThumbColor: accentColor,
+                  secondary: Icon(Icons.vibration_rounded, color: accentColor),
+                  title: Text('Haptic Touch Feedback', style: titleStyle),
+                  subtitle: Text(
+                    'Tactile vibration on task toggles, counters & timer actions',
+                    style: subtitleStyle,
+                  ),
+                  value: hapticState.isEnabled,
+                  onChanged: (val) {
+                    ref.read(hapticSettingsProvider.notifier).setEnabled(val);
+                    if (val) {
+                      ref.read(hapticSettingsProvider.notifier).trigger();
+                    }
+                  },
+                ),
+                if (hapticState.isEnabled) ...[
+                  const Divider(color: Colors.white10, height: 1),
+                  ListTile(
+                    leading: Icon(Icons.tune_rounded, color: accentColor),
+                    title: Text('Vibration Intensity', style: titleStyle),
+                    subtitle: Text(
+                      'Strength of touch feedback on mobile devices',
+                      style: subtitleStyle,
+                    ),
+                    trailing: DropdownButtonHideUnderline(
+                      child: DropdownButton<HapticIntensity>(
+                        value: hapticState.intensity,
+                        dropdownColor: const Color(0xFF18181B),
+                        alignment: Alignment.centerRight,
+                        icon: Icon(Icons.arrow_drop_down, color: accentColor),
+                        style: TextStyle(color: accentColor),
+                        items: HapticIntensity.values.map((intensity) {
+                          String label;
+                          switch (intensity) {
+                            case HapticIntensity.light:
+                              label = 'Light';
+                              break;
+                            case HapticIntensity.medium:
+                              label = 'Medium';
+                              break;
+                            case HapticIntensity.heavy:
+                              label = 'Heavy';
+                              break;
+                          }
+                          return DropdownMenuItem(
+                            value: intensity,
+                            child: Text(
+                              label,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            ref.read(hapticSettingsProvider.notifier).setIntensity(val);
+                            ref.read(hapticSettingsProvider.notifier).trigger(val);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            );
           },
         ),
 

@@ -849,7 +849,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 1.65,
+            childAspectRatio: 1.50,
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
           ),
@@ -862,10 +862,13 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             final isSelected = _selectedBranch == id;
 
             return GestureDetector(
-              onTap: () => setState(() {
-                _selectedBranch = id;
-                _usePreset = id != "CUSTOM";
-              }),
+              onTap: () {
+                ref.read(hapticSettingsProvider.notifier).selectionClick();
+                setState(() {
+                  _selectedBranch = id;
+                  _usePreset = id != "CUSTOM";
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
@@ -888,7 +891,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                             color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(icon, color: isSelected ? accentColor : Colors.white60, size: 26),
+                          child: Icon(icon, color: isSelected ? accentColor : Colors.white60, size: 24),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -906,25 +909,72 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     const SizedBox(height: 6),
                     Builder(
                       builder: (_) {
-                        String subtitle = name;
-                        if (id != "CUSTOM") {
-                          final presets = branchPresets[id.toUpperCase()];
-                          if (presets != null && presets.isNotEmpty) {
-                            final catCount = presets.length;
-                            final topicCount = presets.fold<int>(0, (acc, cat) => acc + cat.topics.length);
-                            subtitle = "$catCount Subjects · $topicCount Topics";
-                          }
+                        if (id == "CUSTOM") {
+                          return Text(
+                            name,
+                            style: GoogleFonts.outfit(
+                              color: isSelected ? accentColor.withAlpha(200) : Colors.white38,
+                              fontSize: 9.5,
+                              height: 1.15,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          );
                         }
-                        return Text(
-                          subtitle,
-                          style: GoogleFonts.outfit(
-                            color: isSelected ? accentColor.withAlpha(200) : Colors.white38,
-                            fontSize: 9.5,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            height: 1.15,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+
+                        final presets = branchPresets[id.toUpperCase()];
+                        int catCount = 0;
+                        int topicCount = 0;
+                        int taskCount = 0;
+                        if (presets != null && presets.isNotEmpty) {
+                          catCount = presets.length;
+                          topicCount = presets.fold<int>(0, (acc, cat) => acc + cat.topics.length);
+                          taskCount = presets.fold<int>(
+                            0,
+                            (acc, cat) => acc + cat.topics.fold<int>(0, (tAcc, t) => tAcc + t.tasks.length),
+                          );
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              name,
+                              style: GoogleFonts.outfit(
+                                color: Colors.white38,
+                                fontSize: 9.0,
+                                height: 1.1,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 3),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? accentColor.withValues(alpha: 0.18)
+                                    : Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? accentColor.withValues(alpha: 0.35)
+                                      : Colors.white.withValues(alpha: 0.08),
+                                ),
+                              ),
+                              child: Text(
+                                "$catCount Subs · $topicCount Topics · $taskCount Tasks",
+                                style: GoogleFonts.outfit(
+                                  color: isSelected ? accentColor : Colors.white70,
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -1662,28 +1712,65 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     VoidCallback? onNext,
     String nextLabel = "NEXT",
   }) {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final isReOnboarding = prefs.getBool('force_onboarding') ?? false;
+
     if (onBack == null) {
-      return Center(
-        child: SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: onNext,
-            style: FilledButton.styleFrom(
-              backgroundColor: accentColor,
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            ),
-            child: Text(
-              nextLabel,
-              style: GoogleFonts.outfit(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-                letterSpacing: 0.5,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: onNext,
+              style: FilledButton.styleFrom(
+                backgroundColor: accentColor,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              child: Text(
+                nextLabel,
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
           ),
-        ),
+          if (isReOnboarding) ...[
+            const SizedBox(height: 10),
+            TextButton.icon(
+              onPressed: () async {
+                // Strict Safety Check: Verify force_onboarding is true before allowing exit
+                final currentForce = prefs.getBool('force_onboarding') ?? false;
+                if (!currentForce) return;
+
+                ref.read(hapticSettingsProvider.notifier).selectionClick();
+
+                // Restore setup state and clear force_onboarding flag
+                await prefs.setBool('has_completed_setup', true);
+                await prefs.setBool('force_onboarding', false);
+                await ref.read(setupCompletedProvider.notifier).completeSetup();
+              },
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                size: 14,
+                color: Colors.white.withValues(alpha: 0.45),
+              ),
+              label: Text(
+                "CANCEL & RETURN TO DASHBOARD",
+                style: GoogleFonts.outfit(
+                  color: Colors.white.withValues(alpha: 0.45),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          ],
+        ],
       );
     }
 

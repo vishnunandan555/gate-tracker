@@ -72,7 +72,7 @@ class SettingsScreen extends ConsumerWidget {
       );
     }
 
-    final appSettingsHeader = buildHeader('TIMER & SYLLABUS GOALS');
+    final appSettingsHeader = buildHeader('TIMER & SYSTEM PREFERENCES');
     final appSettingsContent = buildSettingsGroup(
       TimerSettingsSection(
         titleStyle: titleStyle,

@@ -18,7 +18,7 @@ class IconBoxStyleNotifier extends Notifier<IconBoxStyle> {
     if (index != null && index >= 0 && index < IconBoxStyle.values.length) {
       return IconBoxStyle.values[index];
     }
-    return IconBoxStyle.filled;
+    return IconBoxStyle.separated;
   }
 
   Future<void> setStyle(IconBoxStyle style) async {

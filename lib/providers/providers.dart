@@ -35,6 +35,7 @@ export 'settings/font_size_settings_provider.dart';
 export 'settings/glow_strength_provider.dart';
 export 'settings/graph_glow_settings_provider.dart';
 export 'settings/home_widget_settings_provider.dart';
+export 'settings/haptic_settings_provider.dart';
 export 'settings/icon_box_style_provider.dart';
 export 'settings/overall_ui_scale_provider.dart';
 export 'settings/progress_font_provider.dart';
