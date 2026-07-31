@@ -3,9 +3,7 @@ name: Build & Release App
 on:
   push:
     tags:
-      - 'v*' # Triggers on tag push starting with 'v' (e.g., v1.0.0)
-    branches:
-      - main # Warm up and maintain build caches on main branch
+      - 'v*' # Triggers on tag push starting with 'v' (e.g., v1.0.0, v1.3.0-beta.4)
   workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
 
 permissions:
