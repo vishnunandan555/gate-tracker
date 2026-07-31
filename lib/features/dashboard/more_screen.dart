@@ -11,6 +11,7 @@ import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
 import '../more/screens/contribute_screen.dart';
 import '../more/screens/customize_ui_screen.dart';
+import '../resources/resource_explorer_screen.dart';
 import 'settings_screen.dart';
 
 /// The "More" hub screen — replaces the old Settings tab.
@@ -229,15 +230,10 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
       _MoreMenuItemData(
         icon: Icons.library_books_rounded,
         label: 'Resource Explorer',
-        subtitle: 'Curated revision resources and formulas',
+        subtitle: 'Curated playlists, courses & study resources',
         color: accentColor,
-        comingSoon: true,
-        onTap: (ctx) => _showPreviewModal(
-          ctx,
-          'Resource Explorer',
-          'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
-          accentColor,
-        ),
+        comingSoon: false,
+        onTap: (ctx) => _pushPage(ctx, const ResourceExplorerScreen()),
       ),
       _MoreMenuItemData(
         icon: Icons.edit_calendar_rounded,

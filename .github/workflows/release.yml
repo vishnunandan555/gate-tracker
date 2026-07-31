@@ -344,14 +344,16 @@ jobs:
 
       - name: Fetch & Package Raw Build Logs
         if: steps.check_beta.outputs.IS_BETA == 'true'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p raw-logs
-          gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" > raw-logs/raw-build-logs-${{ env.VERSION }}.zip
+          gh api -H "Accept: application/vnd.github+json" "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" > raw-logs/raw-build-logs-${{ env.VERSION }}.zip || true
 
       - name: Upload Beta Build Logs Artifact
         if: steps.check_beta.outputs.IS_BETA == 'true'
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: beta-build-logs-${{ env.VERSION }}

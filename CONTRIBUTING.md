@@ -107,6 +107,58 @@ Adding a **break** quote (without placeholder):
 
 ---
 
+## 3. Contributing to `resources.json` (Curated Study Resources)
+
+Help fellow GATE aspirants by adding high-quality, free video playlists, university course materials, NPTEL series, drive links, or documentation resources!
+
+> [!NOTE]
+> **Mirroring Rule**: When adding or updating a study resource in `resources.json`, please also update the human-readable Markdown file **`RESOURCE.md`** in the repository root so both machine-readable JSON and repository documentation remain in sync!
+
+### Structure
+
+`resources.json` is a JSON array of resource objects:
+
+```json
+{
+  "id": "cs_da_c_khurana",
+  "branches": ["CS", "DA"],
+  "subject": "C Programming",
+  "title": "C Programming Complete Playlist",
+  "source": "Amit Khurana",
+  "platform": "YouTube",
+  "url": "https://youtube.com/playlist?list=PLC36xJgs4dxG-IqARhc23jYTDMYt7yvZP",
+  "lectureCount": 88,
+  "type": "Playlist",
+  "description": "Detailed C programming concept lectures with GATE PYQ walkthroughs."
+}
+```
+
+### Fields Guide
+
+| Field | Type | Description | Example |
+|---|---|---|---|
+| `id` | `String` | Unique lower-case string identifier | `"cs_da_dsa_khurana"` |
+| `branches` | `Array<String>` | Engineering paper codes applicable | `["CS", "DA"]` or `["CS", "EC", "EE"]` |
+| `subject` | `String` | Target subject name | `"Data Structures & Algorithms"` |
+| `title` | `String` | Descriptive title of the playlist / course | `"DSA Full Course by Amit Khurana"` |
+| `source` | `String` | Channel author, educator, or platform name | `"Amit Khurana"`, `"GoClasses"` |
+| `platform` | `String` | Platform type (`YouTube`, `Website`, `Drive`, `PDF`, `NPTEL`) | `"YouTube"` |
+| `url` | `String` | Direct HTTPS link to playlist / course | `"https://youtube.com/..."` |
+| `lectureCount` | `Number` | Total video or lecture count | `298` |
+| `type` | `String` | Resource type (`Playlist`, `Full Course`, `Notes`, `Drive Folder`) | `"Playlist"` |
+| `description` | `String` | Short summary of what the course covers | `"Complete DSA series covering trees and DP."` |
+
+### Supported Branch Codes
+- `CS`: Computer Science & IT
+- `DA`: Data Science & AI
+- `EC`: Electronics & Communication
+- `EE`: Electrical Engineering
+- `CE`: Civil Engineering
+- `ME`: Mechanical Engineering
+- `CH`: Chemical Engineering
+
+---
+
 ## Step-by-Step Contribution Guide
 
 ### 1. Fork the Repository

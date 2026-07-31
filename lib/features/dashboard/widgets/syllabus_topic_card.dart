@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/models/topic_resource_data.dart';
 import '../../../database/app_database.dart';
 import '../../../providers/providers.dart';
 import '../../../widgets/progress_bar.dart';
@@ -34,20 +35,10 @@ class SyllabusTopicCard extends ConsumerWidget {
     final isExpanded = forceExpanded || expandedSet.contains(topic.id);
     final isWeak = ref.watch(weakTopicsProvider).contains(topic.id);
 
-    final rawUrl = topic.resourceUrl ?? '';
-    String url = '';
-    String label = 'Open Resource';
-    String note = '';
-    if (rawUrl.trim().isNotEmpty) {
-      final parts = rawUrl.trim().split('|');
-      url = parts[0];
-      if (parts.length > 1 && parts[1].trim().isNotEmpty) {
-        label = parts[1].trim();
-      }
-      if (parts.length > 2) {
-        note = parts[2].trim();
-      }
-    }
+    final resData = TopicResourceData.parse(topic.resourceUrl);
+    final url = resData.url;
+    final label = resData.label;
+    final note = resData.note;
 
     final overallScale = ref.watch(overallUiScaleProvider).scaleFactor;
     final topicScaleFactor = ref.watch(topicFontSizeProvider).scaleFactor;
@@ -456,14 +447,8 @@ class SyllabusTopicCard extends ConsumerWidget {
     final position = details.globalPosition;
     final isWeak = ref.read(weakTopicsProvider).contains(topic.id);
 
-    final rawUrl = topic.resourceUrl ?? '';
-    String note = '';
-    if (rawUrl.trim().isNotEmpty) {
-      final parts = rawUrl.trim().split('|');
-      if (parts.length > 2) {
-        note = parts[2].trim();
-      }
-    }
+    final resData = TopicResourceData.parse(topic.resourceUrl);
+    final note = resData.note;
     final noteLabel = note.isEmpty ? 'Add Note' : 'Edit Note';
     final noteIcon = note.isEmpty ? Icons.note_add_rounded : Icons.edit_note_rounded;
 

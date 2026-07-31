@@ -53,3 +53,6 @@ export 'user/nav_bar_provider.dart';
 export 'user/notice_board_provider.dart';
 export 'user/profile_provider.dart';
 export 'user/quotes_provider.dart';
+
+// Resources & Catalog Domain
+export 'resources/resources_provider.dart';

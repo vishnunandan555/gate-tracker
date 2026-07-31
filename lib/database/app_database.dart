@@ -733,6 +733,46 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> revertToTaskCard(int topicId, String name) async {
+    await transaction(() async {
+      final now = DateTime.now();
+      await (update(syllabusTopics)..where((t) => t.id.equals(topicId))).write(
+        SyllabusTopicsCompanion(
+          name: Value(name),
+          isCounter: const Value(false),
+          currentCount: const Value(0),
+          maxCount: const Value(0),
+          lastInteractedAt: Value(now),
+        ),
+      );
+
+      // Check if any subtasks exist for this topic (including soft-deleted ones)
+      final existingTasks = await (select(syllabusTasks)..where((t) => t.topicId.equals(topicId))).get();
+      if (existingTasks.isNotEmpty) {
+        // Un-delete existing tasks
+        await (update(syllabusTasks)..where((t) => t.topicId.equals(topicId))).write(
+          SyllabusTasksCompanion(
+            isDeleted: const Value(false),
+            lastInteractedAt: Value(now),
+          ),
+        );
+      } else {
+        // Auto-create standard default subtasks so topic isn't empty
+        final defaultTasks = ['Lectures / Notes', 'Practice PYQs', 'Revision'];
+        for (int i = 0; i < defaultTasks.length; i++) {
+          await into(syllabusTasks).insert(
+            SyllabusTasksCompanion.insert(
+              topicId: topicId,
+              name: defaultTasks[i],
+              position: i,
+              lastInteractedAt: Value(now),
+            ),
+          );
+        }
+      }
+    });
+  }
+
   Future<void> updateCounterCard(int topicId, String name, int currentCount, int maxCount, String? resourceUrl) async {
     await (update(syllabusTopics)..where((t) => t.id.equals(topicId))).write(
       SyllabusTopicsCompanion(
@@ -743,6 +783,32 @@ class AppDatabase extends _$AppDatabase {
         lastInteractedAt: Value(DateTime.now()),
       ),
     );
+  }
+
+  Future<int> addCounterTopic(int categoryId, String name, int maxCount, String? resourceUrl) async {
+    return await transaction(() async {
+      final existing = await (select(syllabusTopics)..where((t) => t.categoryId.equals(categoryId) & t.isDeleted.equals(false))).get();
+      final pos = existing.length;
+      final id = await into(syllabusTopics).insert(
+        SyllabusTopicsCompanion.insert(
+          categoryId: categoryId,
+          name: name,
+          position: pos,
+          isCounter: const Value(true),
+          currentCount: const Value(0),
+          maxCount: Value(maxCount),
+          resourceUrl: Value(resourceUrl),
+          lastInteractedAt: Value(DateTime.now()),
+        ),
+      );
+      await updateSyllabusCategoryInteraction(categoryId);
+      return id;
+    });
+  }
+
+  Future<bool> hasTopicSubtasks(int topicId) async {
+    final tasks = await (select(syllabusTasks)..where((t) => t.topicId.equals(topicId))).get();
+    return tasks.isNotEmpty;
   }
 
   Future<void> updateCounterValue(int topicId, int newCount) async {

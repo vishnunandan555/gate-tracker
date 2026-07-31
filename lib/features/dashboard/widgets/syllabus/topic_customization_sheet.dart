@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
 import '../../../../providers/syllabus_provider.dart';
 
@@ -247,30 +248,28 @@ void showDeleteSyllabusTopicConfirm(BuildContext context, SyllabusTopic topic, C
 
 // Edit Topic Note Dialog
 void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color accentColor, WidgetRef ref) {
-  String existingNote = '';
-  final rawUrl = topic.resourceUrl ?? '';
-  if (rawUrl.trim().isNotEmpty) {
-    final parts = rawUrl.trim().split('|');
-    if (parts.length > 2) {
-      existingNote = parts[2].trim();
-    }
-  }
-
-  final noteController = TextEditingController(text: existingNote);
+  final existingData = TopicResourceData.parse(topic.resourceUrl);
+  final noteController = TextEditingController(text: existingData.note);
 
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF18181B),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: Text(
-        'ADD NOTE / RESOURCE LINK',
-        style: GoogleFonts.jersey15(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: accentColor,
-          letterSpacing: 0.8,
-        ),
+      title: Row(
+        children: [
+          Icon(Icons.edit_note_rounded, color: accentColor, size: 22),
+          const SizedBox(width: 8),
+          Text(
+            existingData.note.isEmpty ? 'ADD TOPIC NOTE' : 'EDIT TOPIC NOTE',
+            style: GoogleFonts.jersey15(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: accentColor,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -299,31 +298,49 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
         ],
       ),
       actions: [
-        if (existingNote.isNotEmpty)
-          TextButton(
-            onPressed: () {
-              ref.read(syllabusControllerProvider.notifier).updateTopicResourceUrl(topic.id, null);
-              Navigator.pop(context);
-            },
-            child: Text('CLEAR NOTE', style: GoogleFonts.outfit(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-          ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final newNote = noteController.text.trim();
-            final newUrl = newNote.isNotEmpty ? '||$newNote' : null;
-            ref.read(syllabusControllerProvider.notifier).updateTopicResourceUrl(topic.id, newUrl);
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: accentColor,
-            foregroundColor: Colors.black,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-          child: Text('SAVE NOTE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (existingData.note.isNotEmpty)
+              IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 22),
+                tooltip: 'Clear Note',
+                onPressed: () {
+                  final updated = existingData.copyWith(note: '');
+                  ref.read(syllabusControllerProvider.notifier).updateTopicResourceUrl(topic.id, updated.encode());
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cleared topic note')),
+                  );
+                },
+              )
+            else
+              const SizedBox(width: 48),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    final newNote = noteController.text.trim();
+                    final updated = existingData.copyWith(note: newNote);
+                    ref.read(syllabusControllerProvider.notifier).updateTopicResourceUrl(topic.id, updated.encode());
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentColor,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                  ),
+                  child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     ),

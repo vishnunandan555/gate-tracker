@@ -348,6 +348,23 @@ class SyllabusController extends Notifier<AsyncValue<void>> {
     _triggerSync();
   }
 
+  Future<void> addCounterTopic(int categoryId, String name, int maxCount, String? resourceLink) async {
+    await _db.addCounterTopic(categoryId, name, maxCount, resourceLink);
+    _triggerSync();
+  }
+
+  Future<bool> hasTopicSubtasks(int topicId) async {
+    return await _db.hasTopicSubtasks(topicId);
+  }
+
+  Future<void> revertToTaskCard(int id, String name) async {
+    await _db.transaction(() async {
+      await _db.revertToTaskCard(id, name);
+      await _db.updateSyllabusCategoryInteractionByTopicId(id);
+    });
+    _triggerSync();
+  }
+
   Future<void> updateCounterCard(int id, String name, int currentCount, int maxCount, String? resourceLink) async {
     final syllabusVal = ref.read(syllabusProvider).value;
     int oldCount = 0;

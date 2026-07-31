@@ -398,28 +398,43 @@ void showConflictDetailsDialog(
     }
   }
 
-  final onlyLocalSessionLabels = onlyLocalSessions.map((s) {
+  final validOnlyLocalSessions = onlyLocalSessions.where((s) => ((s['durationSeconds'] ?? 0) as num) > 0).toList();
+  final validOnlyCloudSessions = onlyCloudSessions.where((s) => ((s['durationSeconds'] ?? 0) as num) > 0).toList();
+
+  final onlyLocalSessionLabels = validOnlyLocalSessions.map((s) {
     final method = s['method'] as String? ?? 'Freestyle';
-    final dur = ((s['durationSeconds'] ?? 0) as num).toInt() ~/ 60;
-    return "$method Session (${dur}m) on ${formatSessionTime(s['startTime'] as String)}";
+    final durSec = ((s['durationSeconds'] ?? 0) as num).toInt();
+    final durStr = durSec >= 60 ? '${durSec ~/ 60}m' : '${durSec}s';
+    return "$method Session ($durStr) on ${formatSessionTime(s['startTime'] as String)}";
   }).toList();
 
-  final onlyCloudSessionLabels = onlyCloudSessions.map((s) {
+  final onlyCloudSessionLabels = validOnlyCloudSessions.map((s) {
     final method = s['method'] as String? ?? 'Freestyle';
-    final dur = ((s['durationSeconds'] ?? 0) as num).toInt() ~/ 60;
-    return "$method Session (${dur}m) on ${formatSessionTime(s['startTime'] as String)}";
+    final durSec = ((s['durationSeconds'] ?? 0) as num).toInt();
+    final durStr = durSec >= 60 ? '${durSec ~/ 60}m' : '${durSec}s';
+    return "$method Session ($durStr) on ${formatSessionTime(s['startTime'] as String)}";
   }).toList();
+
+  final statItems = <_ComparisonStat>[
+    _ComparisonStat("Focus Sessions", "${localSessions.length}", "${cloudSessions.length}", localSessions.length != cloudSessions.length, localSessions.isEmpty && cloudSessions.isEmpty),
+    _ComparisonStat("Hours Studied", "${localHours.toStringAsFixed(1)}h", "${cloudHours.toStringAsFixed(1)}h", (localHours - cloudHours).abs() > 0.05, localHours == 0.0 && cloudHours == 0.0),
+    _ComparisonStat("Syllabus Tasks", "$localTasks completed", "$cloudTasks completed", localTasks != cloudTasks, localTasks == 0 && cloudTasks == 0),
+    _ComparisonStat("Videos Tracked", "$localVideos completed", "$cloudVideos completed", localVideos != cloudVideos, localVideos == 0 && cloudVideos == 0),
+    _ComparisonStat("Last Study Session", formatTime(localSessions), formatTime(cloudSessions), formatTime(localSessions) != formatTime(cloudSessions), localSessions.isEmpty && cloudSessions.isEmpty),
+  ];
+
+  final relevantStats = statItems.where((item) => item.isDifferent || !item.isZero).toList();
 
   Widget buildConflictSection(String title, List<String> items, Color color) {
     if (items.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(top: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: color, fontSize: 10),
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: color, fontSize: 10.5, letterSpacing: 0.5),
           ),
           const SizedBox(height: 6),
           Container(
@@ -427,23 +442,23 @@ void showConflictDetailsDialog(
             decoration: BoxDecoration(
               color: Colors.white.withAlpha(5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withAlpha(5)),
+              border: Border.all(color: Colors.white.withAlpha(8)),
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: items.map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(vertical: 3.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.check_circle_outline_rounded, color: color, size: 12),
+                      Icon(Icons.check_circle_outline_rounded, color: color, size: 13),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           item,
-                          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10),
+                          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11),
                         ),
                       ),
                     ],
@@ -464,7 +479,7 @@ void showConflictDetailsDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         "Data Comparison Details",
-        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+        style: GoogleFonts.jersey15(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20, letterSpacing: 0.8),
       ),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -473,34 +488,55 @@ void showConflictDetailsDialog(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Center(
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF27272A),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        "METRIC",
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white38, fontSize: 10.5),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
                       child: Text(
                         "LOCAL DEVICE",
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: accentColor, fontSize: 11),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: accentColor, fontSize: 10.5),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Center(
+                    Expanded(
+                      flex: 3,
                       child: Text(
                         "CLOUD BACKUP",
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.cyanAccent, fontSize: 11),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.cyanAccent, fontSize: 10.5),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              _buildStatComparisonRow("Focus Sessions", "${localSessions.length}", "${cloudSessions.length}"),
-              _buildStatComparisonRow("Hours Studied", "${localHours.toStringAsFixed(1)}h", "${cloudHours.toStringAsFixed(1)}h"),
-              _buildStatComparisonRow("Syllabus Tasks", "$localTasks completed", "$cloudTasks completed"),
-              _buildStatComparisonRow("Videos Tracked", "$localVideos completed", "$cloudVideos completed"),
-              _buildStatComparisonRow("Last Study Session", formatTime(localSessions), formatTime(cloudSessions)),
-              
+              const SizedBox(height: 8),
+
+              if (relevantStats.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: Text(
+                      "Local device and cloud backup data match!",
+                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 12),
+                    ),
+                  ),
+                )
+              else
+                ...relevantStats.map((s) => _buildStatComparisonRow(s.label, s.localVal, s.cloudVal, s.isDifferent, accentColor)),
+
               buildConflictSection("COMPLETED LOCALLY ONLY (${onlyLocalCompleted.length})", onlyLocalCompleted, accentColor),
               buildConflictSection("SESSIONS RECORDED LOCALLY ONLY (${onlyLocalSessionLabels.length})", onlyLocalSessionLabels, accentColor),
               buildConflictSection("COMPLETED IN CLOUD ONLY (${onlyCloudCompleted.length})", onlyCloudCompleted, Colors.cyanAccent),
@@ -512,59 +548,66 @@ void showConflictDetailsDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Close', style: TextStyle(color: accentColor)),
+          child: Text('Close', style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold)),
         ),
       ],
     ),
   );
 }
 
-Widget _buildStatComparisonRow(String label, String localVal, String cloudVal) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+class _ComparisonStat {
+  final String label;
+  final String localVal;
+  final String cloudVal;
+  final bool isDifferent;
+  final bool isZero;
+
+  _ComparisonStat(this.label, this.localVal, this.cloudVal, this.isDifferent, this.isZero);
+}
+
+Widget _buildStatComparisonRow(String label, String localVal, String cloudVal, bool isDifferent, Color accentColor) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 6),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.08) : const Color(0xFF27272A),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.35) : Colors.transparent,
+      ),
+    ),
+    child: Row(
       children: [
-        Center(
+        Expanded(
+          flex: 4,
           child: Text(
             label,
-            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.w600),
+            style: GoogleFonts.outfit(
+              color: isDifferent ? Colors.white : Colors.white70,
+              fontSize: 11.5,
+              fontWeight: isDifferent ? FontWeight.bold : FontWeight.w500,
+            ),
           ),
         ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(4),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  localVal,
-                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            localVal,
+            style: GoogleFonts.outfit(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            cloudVal,
+            style: GoogleFonts.outfit(
+              color: isDifferent ? Colors.cyanAccent : Colors.white,
+              fontSize: 11.5,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(4),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  cloudVal,
-                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     ),

@@ -13,6 +13,7 @@ import '../../features/more/screens/customize_nav_bar_screen.dart';
 import '../../features/dashboard/widgets/setup_screen.dart';
 import '../../features/dashboard/widgets/agreement_screen.dart';
 import '../../features/dashboard/widgets/auth_screen.dart';
+import '../../features/resources/resource_explorer_screen.dart';
 import 'route_resolver.dart';
 
 final appRouter = GoRouter(
@@ -68,11 +69,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
     GoRoute(
       path: '/resources',
-      builder: (context, state) => const NavBarComingSoonScreen(
-        title: 'Resource Explorer',
-        description: 'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
-        icon: Icons.library_books_rounded,
-      ),
+      builder: (context, state) => const ResourceExplorerScreen(),
     ),
     GoRoute(
       path: '/planner',
