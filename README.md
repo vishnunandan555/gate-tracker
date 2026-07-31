@@ -37,7 +37,7 @@ GATEletics maintains two distinct release tracks on Google Play Store and GitHub
 | Track | Target Audience | Version Format | Status Badge | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | 🟢 **Stable Release** | General Users | Proper Releases (e.g. `v1.3.0`) | [![Stable Release](https://img.shields.io/github/v/release/vishnunandan555/gateletics?label=Stable%20Release&logo=googleplay&color=00C853)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Fully tested, stable releases available on Google Play Store production channel & GitHub. |
-| 🟠 **Beta Version** | Early Testers | Beta Builds (e.g. `v1.3.0-beta.3`) | [![Beta Version](https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta%20Version&logo=googleplay&color=FF9100)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Early access builds in Google Play Open Testing with latest preview features & early patches. |
+| 🟠 **Beta Version** | Early Testers | Beta Builds (e.g. `v1.3.0-beta.4`) | [![Beta Version](https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta%20Version&logo=googleplay&color=FF9100)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Early access builds in Google Play Open Testing with latest preview features & early patches. |
 
 > **Note:** The status badges above dynamically reflect the latest version published to each track. Whichever version is newest (e.g., a new `v1.3.1-beta.2` build vs stable `v1.3.1`) will automatically update in real-time.
 
@@ -45,34 +45,39 @@ GATEletics maintains two distinct release tracks on Google Play Store and GitHub
 
 ## ✨ Feature Showcase
 
-### 🏠 1. Unified Home Dashboard
+### 🔍 1. Curated Resource Explorer & Counter Cards
+* **Resource Explorer Catalog (`/resources`):** Browse curated video playlists and full courses for CS, DA, EC, EE, ME, CE, and CH with search, platform badges, and lecture counts.
+* **Instant 7-Day Caching:** 0ms instant loading from local storage with background 7-day auto-refresh over GitHub.
+* **Direct Syllabus Attachment:** Convert resources into interactive Counter Cards or attach resource links and study notes directly to syllabus topics with cloud sync support.
+
+### 🏠 2. Unified Home Dashboard
 * **Real-Time GATE Countdown:** Ticking `DAYS : HRS : MINS : SECS` timer configured for target GATE exam dates.
 * **Balanced Layout Symmetry:** Adaptive spacing system with equal vertical padding between the navigation bar, 7-day consistency grid, preparation button, and carousel widgets.
 * **Motivational Quotes:** Inspirational study quotes cached locally with single-tap title interaction.
 * **7-Day Consistency Grid:** Interactive day tracker showing goal achievement status for past, current, and upcoming days.
 
-### 📋 2. Notice Board Task Suite
+### 📋 3. Notice Board Task Suite
 * **Smooth Animated Transitions:** Seamless `250ms` cross-fade and vertical glide transition between the main dashboard and Notice Board.
 * **Task Management:** Add, complete, and organize daily tasks and quick to-dos.
 * **Dynamic Header Badge:** Solid accent-colored badge counter on the Notice Board header button indicating active pending tasks.
 
-### ⏱️ 3. Interactive Study Focus Workspace
+### ⏱️ 4. Interactive Study Focus Workspace
 * **Flexible Focus Timers:** Supports Count-Up (Freestyle), Pomodoro (25m/5m), and Ultradian (90m/20m) study sessions.
 * **Real-Time Clock Overlay:** Displays the actual clock time (e.g. `07:44 PM`) directly under the top focus mode indicator.
 * **Ambient Glow Animations:** Dynamic pulsing radial glow effects and active wave/ripple visualizers.
 * **Accomplishments & History:** Save study logs to the local database, track current streaks, and review historical focus distribution.
 
-### 📸 4. Daily Progress Sharing Card
+### 📸 5. Daily Progress Sharing Card
 * **Story Format Export:** Generate high-resolution, story-format progress graphics containing daily study time, current streak, and syllabus completion deltas.
 * **Privacy Controls:** Toggle checklist items, profile photo, and name visibility before sharing.
 * **Native System Sharing:** Direct integration with OS share sheets to post progress to social media and messaging apps.
 
-### 📚 5. Multi-Branch Syllabus Management
+### 📚 6. Multi-Branch Syllabus Management
 * **7 GATE Branch Presets:** Pre-configured syllabus structure for **CS**, **DA**, **EC**, **EE**, **CE**, **ME**, and **CH**.
 * **Hierarchical Structure:** Categories $\rightarrow$ Subjects $\rightarrow$ Topics $\rightarrow$ Subtasks with automatic progress percentage rollups.
 * **Atomic Transactions:** Atomic Drift database updates to eliminate UI flickering during progress writes.
 
-### ☁️ 6. Offline-First Sync & Data Privacy
+### ☁️ 7. Offline-First Sync & Data Privacy
 * **Local-First Architecture:** All actions occur instantly on your device; sync executes silently in the background.
 * **Google Auth & Multi-Device Merge:** Log in with Google to sync databases across devices with automatic merge conflict resolution.
 * **Complete Privacy Control:** Full support for local data resets, database flushing, and compliant account deletion.
@@ -87,7 +92,7 @@ GATEletics is available natively across Desktop, Mobile, and Web platforms:
 | :--- | :--- | :--- | :--- |
 | **🌐 Web App** | [gateletics.vercel.app](https://gateletics.vercel.app/) | Live PWA | Full PWA web application, runs offline in any browser |
 | **📱 Android (Stable Release)** | [Google Play Store](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Stable APK](https://github.com/vishnunandan555/gateletics/releases) | Stable Release (`v1.3.0`) | Official Google Play Store production release |
-| **🧪 Android (Beta Version)** | [Play Store Open Testing](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Beta APK](https://github.com/vishnunandan555/gateletics/releases) | Beta Version (`v1.3.0-beta.3`) | Google Play Open Testing channel for pre-release testing |
+| **🧪 Android (Beta Version)** | [Play Store Open Testing](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Beta APK](https://github.com/vishnunandan555/gateletics/releases) | Beta Version (`v1.3.0-beta.4`) | Google Play Open Testing channel for pre-release testing |
 | **🪟 Windows** | [Download Setup / ZIP](https://github.com/vishnunandan555/gateletics/releases) | Desktop Installer | Windows Setup Installer (`-setup.exe`) & Portable ZIP (`.zip`) |
 | **🐧 Linux** | [Download AppImage / DEB](https://github.com/vishnunandan555/gateletics/releases) | Linux Packages | Standalone AppImage (`.AppImage`), Debian package (`.deb`), & Tarball (`.tar.gz`) |
 

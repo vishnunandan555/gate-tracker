@@ -21,7 +21,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   The `-beta.X` suffix automatically triggers GitHub Actions Pre-Release publishing.
 # - Stable Releases (v1.3.X.Y stage): Set to `1.3.0+25` when fully battle-tested!
 # -----------------------------------------------------------------------------
-version: 1.3.0-beta.3+23
+version: 1.3.0-beta.4+24
 
 environment:
   sdk: ^3.12.0
