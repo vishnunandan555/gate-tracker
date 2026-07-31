@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/config/brand_config.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/package_info_provider.dart';
+import '../../providers/settings/icon_box_style_provider.dart';
 import '../../utils/ui_scaling.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
@@ -176,7 +177,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         icon: Icons.tune_rounded,
         label: 'Customize UI',
         subtitle: 'Theme color, fonts, animations & navigation',
-        color: const Color(0xFF00F0FF),
+        color: accentColor,
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const CustomizeUiScreen()),
       ),
@@ -184,7 +185,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         icon: Icons.manage_accounts_rounded,
         label: 'Accounts and Sign In',
         subtitle: 'Cloud sync, account details and security',
-        color: const Color(0xFFE040FB),
+        color: accentColor,
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const AccountsScreen()),
       ),
@@ -200,7 +201,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         icon: Icons.volunteer_activism_rounded,
         label: 'Contribute to Community',
         subtitle: 'Contribute on GitHub and report issues',
-        color: const Color(0xFFFF5E00),
+        color: accentColor,
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const ContributeScreen()),
       ),
@@ -208,7 +209,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         icon: Icons.info_outline_rounded,
         label: 'About ${BrandConfig.appName}',
         subtitle: 'App info, developer details and credits',
-        color: const Color(0xFF39FF14),
+        color: accentColor,
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const AboutScreen()),
       ),
@@ -216,52 +217,52 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         icon: Icons.group_rounded,
         label: 'Friends & Socials',
         subtitle: 'Study groups and accountability partners',
-        color: const Color(0xFF4C73FF),
+        color: accentColor,
         comingSoon: true,
         onTap: (ctx) => _showPreviewModal(
           ctx,
           'Friends & Socials',
           'Study groups, accountability partners, and friend leaderboards will be available in an upcoming release!',
-          const Color(0xFF4C73FF),
+          accentColor,
         ),
       ),
       _MoreMenuItemData(
         icon: Icons.library_books_rounded,
         label: 'Resource Explorer',
         subtitle: 'Curated revision resources and formulas',
-        color: const Color(0xFF00B0FF),
+        color: accentColor,
         comingSoon: true,
         onTap: (ctx) => _showPreviewModal(
           ctx,
           'Resource Explorer',
           'Community-curated formulas, PYQ solutions, and recommended lecture notes will be released soon!',
-          const Color(0xFF00B0FF),
+          accentColor,
         ),
       ),
       _MoreMenuItemData(
         icon: Icons.edit_calendar_rounded,
         label: 'Revision Planner',
         subtitle: 'Spaced repetition planner and calendars',
-        color: const Color(0xFF00FFCC),
+        color: accentColor,
         comingSoon: true,
         onTap: (ctx) => _showPreviewModal(
           ctx,
           'Revision Planner',
           'Automated spaced-repetition revision schedules and exam countdowns are coming in the next update!',
-          const Color(0xFF00FFCC),
+          accentColor,
         ),
       ),
       _MoreMenuItemData(
         icon: Icons.notifications_active_rounded,
         label: 'Notifications & Reminders',
         subtitle: 'Configure reminders and custom study alerts',
-        color: const Color(0xFFFFAD00),
+        color: accentColor,
         comingSoon: true,
         onTap: (ctx) => _showPreviewModal(
           ctx,
           'Notifications & Reminders',
           'Custom daily study reminders and revision alerts will be configurable in an upcoming update!',
-          const Color(0xFFFFAD00),
+          accentColor,
         ),
       ),
     ];
@@ -458,7 +459,7 @@ class _MoreMenuItemData {
 
 // ── Menu item widget ───────────────────────────────────────────────────────────
 
-class _MoreMenuItem extends StatefulWidget {
+class _MoreMenuItem extends ConsumerStatefulWidget {
   final _MoreMenuItemData item;
   final Color accentColor;
   final bool isDesktop;
@@ -470,10 +471,10 @@ class _MoreMenuItem extends StatefulWidget {
   });
 
   @override
-  State<_MoreMenuItem> createState() => _MoreMenuItemState();
+  ConsumerState<_MoreMenuItem> createState() => _MoreMenuItemState();
 }
 
-class _MoreMenuItemState extends State<_MoreMenuItem>
+class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressCtrl;
   late final Animation<double> _scaleAnim;
@@ -504,12 +505,170 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
     final item = widget.item;
     final isDesktop = widget.isDesktop;
     final isDisabled = item.comingSoon;
+    final boxStyle = ref.watch(iconBoxStyleProvider);
 
     final cardHeight = isDesktop ? 64.0 : context.s(60.0);
     final iconBoxSize = isDesktop ? 44.0 : context.s(42.0);
     final iconSize = isDesktop ? 22.0 : context.s(20.0);
     final borderRadius = BorderRadius.circular(isDesktop ? 14 : context.s(14));
 
+    if (boxStyle == IconBoxStyle.separated) {
+      // Separated External Icon Layout (Image 2 style)
+      return Padding(
+        padding: EdgeInsets.only(bottom: isDesktop ? 10 : context.s(8)),
+        child: AnimatedBuilder(
+          animation: _pressCtrl,
+          builder: (context, child) {
+            final glowOpacity = _pressCtrl.value * 0.25;
+            return Transform.scale(
+              scale: _scaleAnim.value,
+              child: GestureDetector(
+                onTapDown: isDisabled
+                    ? null
+                    : (_) {
+                        setState(() => _pressed = true);
+                        _pressCtrl.forward();
+                      },
+                onTapUp: isDisabled
+                    ? null
+                    : (_) {
+                        setState(() => _pressed = false);
+                        _pressCtrl.reverse();
+                        item.onTap?.call(context);
+                      },
+                onTapCancel: isDisabled
+                    ? null
+                    : () {
+                        setState(() => _pressed = false);
+                        _pressCtrl.reverse();
+                      },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Standalone icon outside the box on the left - perfectly centered
+                    SizedBox(
+                      width: isDesktop ? 40 : context.s(36),
+                      height: cardHeight,
+                      child: Center(
+                        child: Icon(
+                          item.icon,
+                          color: isDisabled
+                              ? item.color.withValues(alpha: 0.45)
+                              : item.color,
+                          size: isDesktop ? 30 : context.s(26),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: isDesktop ? 10 : context.s(8)),
+                    // Card Box containing Title/Subtitle & Circular Action Arrow Button
+                    Expanded(
+                      child: Container(
+                        height: cardHeight,
+                        decoration: BoxDecoration(
+                          color: isDisabled
+                              ? const Color(0xFF131316)
+                              : const Color(0xFF16161B),
+                          borderRadius: borderRadius,
+                          border: Border.all(
+                            color: _pressed
+                                ? item.color.withValues(alpha: 0.45)
+                                : Colors.white.withValues(alpha: 0.06),
+                            width: 1.0,
+                          ),
+                          boxShadow: [
+                            if (_pressed)
+                              BoxShadow(
+                                color: item.color.withValues(alpha: glowOpacity),
+                                blurRadius: 18,
+                                spreadRadius: 1,
+                              ),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isDesktop ? 16 : context.s(14),
+                          vertical: isDesktop ? 8 : context.s(8),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          item.label,
+                                          style: GoogleFonts.outfit(
+                                            color: isDisabled
+                                                ? Colors.white.withValues(alpha: 0.4)
+                                                : Colors.white,
+                                            fontSize: isDesktop ? 15 : context.s(14),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      if (item.comingSoon) ...[
+                                        SizedBox(width: context.s(7)),
+                                        _ComingSoonBadge(
+                                          color: item.color,
+                                          isDesktop: isDesktop,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    item.subtitle,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white.withValues(
+                                          alpha: isDisabled ? 0.25 : 0.45),
+                                      fontSize: isDesktop ? 11 : context.s(10.5),
+                                      height: 1.2,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: isDesktop ? 8 : context.s(6)),
+                            // Solid accent-colored circle button with BLACK arrow inside
+                            Container(
+                              width: isDesktop ? 32 : context.s(28),
+                              height: isDesktop ? 32 : context.s(28),
+                              decoration: BoxDecoration(
+                                color: isDisabled
+                                    ? item.color.withValues(alpha: 0.35)
+                                    : item.color,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: isDisabled ? Colors.black45 : Colors.black,
+                                  size: isDesktop ? 18 : context.s(16),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    // Integrated / Outlined / Minimal Card Layouts
     return Padding(
       padding: EdgeInsets.only(bottom: isDesktop ? 10 : context.s(8)),
       child: AnimatedBuilder(
@@ -566,30 +725,8 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
                 ),
                 child: Row(
                   children: [
-                    // Integrated icon badge container on the left
-                    Container(
-                      width: iconBoxSize,
-                      height: iconBoxSize,
-                      decoration: BoxDecoration(
-                        color: item.color.withValues(alpha: isDisabled ? 0.08 : 0.14),
-                        borderRadius: BorderRadius.circular(isDesktop ? 11 : context.s(10)),
-                        border: Border.all(
-                          color: item.color.withValues(alpha: isDisabled ? 0.15 : 0.28),
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          item.icon,
-                          color: isDisabled
-                              ? item.color.withValues(alpha: 0.45)
-                              : item.color,
-                          size: iconSize,
-                        ),
-                      ),
-                    ),
+                    _buildIconWidget(boxStyle, item, isDisabled, iconBoxSize, iconSize, isDesktop),
                     SizedBox(width: isDesktop ? 14 : context.s(12)),
-                    // Label and Subtitle text block
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -650,6 +787,71 @@ class _MoreMenuItemState extends State<_MoreMenuItem>
         },
       ),
     );
+  }
+
+  Widget _buildIconWidget(
+    IconBoxStyle boxStyle,
+    _MoreMenuItemData item,
+    bool isDisabled,
+    double iconBoxSize,
+    double iconSize,
+    bool isDesktop,
+  ) {
+    switch (boxStyle) {
+      case IconBoxStyle.outlined:
+        return Container(
+          width: iconBoxSize,
+          height: iconBoxSize,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(isDesktop ? 11 : context.s(10)),
+            border: Border.all(
+              color: item.color.withValues(alpha: isDisabled ? 0.20 : 0.55),
+              width: 1.5,
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              item.icon,
+              color: isDisabled ? item.color.withValues(alpha: 0.45) : item.color,
+              size: iconSize,
+            ),
+          ),
+        );
+      case IconBoxStyle.minimal:
+        return SizedBox(
+          width: iconBoxSize * 0.8,
+          height: iconBoxSize,
+          child: Center(
+            child: Icon(
+              item.icon,
+              color: isDisabled ? item.color.withValues(alpha: 0.45) : item.color,
+              size: iconSize * 1.15,
+            ),
+          ),
+        );
+      case IconBoxStyle.filled:
+      default:
+        return Container(
+          width: iconBoxSize,
+          height: iconBoxSize,
+          decoration: BoxDecoration(
+            color: item.color.withValues(alpha: isDisabled ? 0.08 : 0.14),
+            borderRadius: BorderRadius.circular(isDesktop ? 11 : context.s(10)),
+            border: Border.all(
+              color: item.color.withValues(alpha: isDisabled ? 0.15 : 0.28),
+              width: 1.0,
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              item.icon,
+              color: isDisabled ? item.color.withValues(alpha: 0.45) : item.color,
+              size: iconSize,
+            ),
+          ),
+        );
+    }
   }
 }
 

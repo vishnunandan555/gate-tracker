@@ -3,8 +3,8 @@ import '../providers.dart';
 
 enum IconBoxStyle {
   filled,
+  separated,
   outlined,
-  subtle,
   minimal,
 }
 

@@ -62,5 +62,7 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="http" />
         </intent>
+        <!-- Explicit Google Play Services package query for Android 11+ / Target SDK 36 -->
+        <package android:name="com.google.android.gms" />
     </queries>
 </manifest>

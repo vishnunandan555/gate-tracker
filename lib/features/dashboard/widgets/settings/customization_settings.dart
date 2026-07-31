@@ -12,6 +12,7 @@ import '../../../../providers/task_font_size_provider.dart';
 import '../../../../providers/overall_ui_scale_provider.dart';
 import '../../../../providers/focus_animation_provider.dart';
 import '../../../../providers/quotes_provider.dart';
+import '../../../../providers/settings/icon_box_style_provider.dart';
 
 class CustomizationSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;
@@ -312,6 +313,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
     final isAuto = colorNotifier.mode == 'auto';
 
     final currentFont = ref.watch(progressFontProvider);
+    final currentIconBoxStyle = ref.watch(iconBoxStyleProvider);
     final currentScale = ref.watch(overallUiScaleProvider);
     final currentCategorySize = ref.watch(categoryFontSizeProvider);
     final currentTopicSize = ref.watch(topicFontSizeProvider);
@@ -635,6 +637,53 @@ class CustomizationSettingsSection extends ConsumerWidget {
               onChanged: (val) {
                 if (val != null) {
                   ref.read(progressFontProvider.notifier).setProgressFont(val);
+                }
+              },
+            ),
+          ),
+        ),
+        const Divider(color: Colors.white10, height: 1),
+        ListTile(
+          leading: Icon(Icons.grid_view_rounded, color: currentColor),
+          title: Text('More Menu Card Style', style: titleStyle),
+          subtitle: Text(
+            'Icon & box layout style for More Options screen',
+            style: subtitleStyle,
+          ),
+          trailing: DropdownButtonHideUnderline(
+            child: DropdownButton<IconBoxStyle>(
+              value: currentIconBoxStyle,
+              dropdownColor: const Color(0xFF18181B),
+              alignment: Alignment.centerRight,
+              icon: Icon(Icons.arrow_drop_down, color: currentColor),
+              style: TextStyle(color: currentColor),
+              items: IconBoxStyle.values.map((style) {
+                String label;
+                switch (style) {
+                  case IconBoxStyle.filled:
+                    label = 'Integrated Box';
+                    break;
+                  case IconBoxStyle.separated:
+                    label = 'Separated Icon';
+                    break;
+                  case IconBoxStyle.outlined:
+                    label = 'Outlined Glass';
+                    break;
+                  case IconBoxStyle.minimal:
+                    label = 'Minimal Icon';
+                    break;
+                }
+                return DropdownMenuItem(
+                  value: style,
+                  child: Text(
+                    label,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(iconBoxStyleProvider.notifier).setStyle(val);
                 }
               },
             ),
