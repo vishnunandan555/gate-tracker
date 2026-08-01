@@ -43,6 +43,7 @@ export 'settings/projected_completion_provider.dart';
 export 'settings/rollover_provider.dart';
 export 'settings/share_card_settings_provider.dart';
 export 'settings/target_date_provider.dart';
+export 'settings/more_item_order_provider.dart';
 
 // User, Profile & Community Domain
 export 'user/carousel_page_provider.dart';

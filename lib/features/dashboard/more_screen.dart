@@ -1,11 +1,10 @@
+import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/brand_config.dart';
-import '../../providers/subject_provider.dart';
-import '../../providers/package_info_provider.dart';
-import '../../providers/settings/icon_box_style_provider.dart';
+import '../../providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
@@ -117,18 +116,47 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                 horizontal: isDesktop ? 32 : context.s(16),
                 vertical: isDesktop ? 6 : context.s(4),
               ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final item = items[index];
-                    final fadeAnim = index < _itemFadeList.length
-                        ? _itemFadeList[index]
-                        : const AlwaysStoppedAnimation(1.0);
-                    final slideAnim = index < _itemSlideList.length
-                        ? _itemSlideList[index]
-                        : const AlwaysStoppedAnimation(Offset.zero);
+              sliver: SliverReorderableList(
+                itemCount: items.length,
+                // ignore: deprecated_member_use
+                onReorder: (oldIndex, newIndex) {
+                  ref.read(moreItemOrderProvider.notifier).reorder(oldIndex, newIndex);
+                },
+                proxyDecorator: (Widget child, int index, Animation<double> animation) {
+                  return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) {
+                      final double animValue = Curves.easeInOut.transform(animation.value);
+                      final item = items[index];
+                      return Transform.scale(
+                        scale: lerpDouble(1.0, 1.02, animValue)!,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: _MoreMenuItem(
+                            item: item,
+                            accentColor: accentColor,
+                            isDesktop: isDesktop,
+                            isDragging: true,
+                          ),
+                        ),
+                      );
+                    },
+                    child: child,
+                  );
+                },
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  final fadeAnim = index < _itemFadeList.length
+                      ? _itemFadeList[index]
+                      : const AlwaysStoppedAnimation(1.0);
+                  final slideAnim = index < _itemSlideList.length
+                      ? _itemSlideList[index]
+                      : const AlwaysStoppedAnimation(Offset.zero);
 
-                    return FadeTransition(
+                  return ReorderableDelayedDragStartListener(
+                    key: ValueKey(item.id),
+                    index: index,
+                    child: FadeTransition(
                       opacity: fadeAnim,
                       child: SlideTransition(
                         position: slideAnim,
@@ -138,10 +166,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                           isDesktop: isDesktop,
                         ),
                       ),
-                    );
-                  },
-                  childCount: items.length,
-                ),
+                    ),
+                  );
+                },
               ),
             ),
             SliverToBoxAdapter(
@@ -173,8 +200,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     BuildContext context,
     WidgetRef ref,
   ) {
-    return [
-      _MoreMenuItemData(
+    final navBarSlots = ref.watch(navBarSlotsProvider);
+    final savedOrder = ref.watch(moreItemOrderProvider);
+
+    final Map<String, _MoreMenuItemData> rawMap = {
+      'customizer': _MoreMenuItemData(
+        id: 'customizer',
         icon: Icons.tune_rounded,
         label: 'Customize UI',
         subtitle: 'Theme color, fonts, animations & navigation',
@@ -182,7 +213,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const CustomizeUiScreen()),
       ),
-      _MoreMenuItemData(
+      'accounts': _MoreMenuItemData(
+        id: 'accounts',
         icon: Icons.manage_accounts_rounded,
         label: 'Account and Sync',
         subtitle: 'Cloud sync, account details and security',
@@ -190,7 +222,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const AccountsScreen()),
       ),
-      _MoreMenuItemData(
+      'settings': _MoreMenuItemData(
+        id: 'settings',
         icon: Icons.settings_rounded,
         label: 'Settings',
         subtitle: 'Explore app settings, backup & data controls',
@@ -198,7 +231,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const SettingsScreen()),
       ),
-      _MoreMenuItemData(
+      'contribute': _MoreMenuItemData(
+        id: 'contribute',
         icon: Icons.volunteer_activism_rounded,
         label: 'Contribute to Community',
         subtitle: 'Contribute on GitHub and report issues',
@@ -206,7 +240,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const ContributeScreen()),
       ),
-      _MoreMenuItemData(
+      'about': _MoreMenuItemData(
+        id: 'about',
         icon: Icons.info_outline_rounded,
         label: 'About ${BrandConfig.appName}',
         subtitle: 'App info, developer details and credits',
@@ -214,7 +249,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const AboutScreen()),
       ),
-      _MoreMenuItemData(
+      'socials': _MoreMenuItemData(
+        id: 'socials',
         icon: Icons.group_rounded,
         label: 'Friends & Socials',
         subtitle: 'Study groups and accountability partners',
@@ -227,7 +263,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
           accentColor,
         ),
       ),
-      _MoreMenuItemData(
+      'resources': _MoreMenuItemData(
+        id: 'resources',
         icon: Icons.library_books_rounded,
         label: 'Resource Explorer',
         subtitle: 'Curated playlists, courses & study resources',
@@ -235,7 +272,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         comingSoon: false,
         onTap: (ctx) => _pushPage(ctx, const ResourceExplorerScreen()),
       ),
-      _MoreMenuItemData(
+      'planner': _MoreMenuItemData(
+        id: 'planner',
         icon: Icons.edit_calendar_rounded,
         label: 'Revision Planner',
         subtitle: 'Spaced repetition planner and calendars',
@@ -248,7 +286,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
           accentColor,
         ),
       ),
-      _MoreMenuItemData(
+      'notifications': _MoreMenuItemData(
+        id: 'notifications',
         icon: Icons.notifications_active_rounded,
         label: 'Notifications & Reminders',
         subtitle: 'Configure reminders and custom study alerts',
@@ -261,7 +300,25 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
           accentColor,
         ),
       ),
-    ];
+    };
+
+    final List<_MoreMenuItemData> result = [];
+
+    // Add saved order items if not in bottom nav bar
+    for (final id in savedOrder) {
+      if (rawMap.containsKey(id) && !navBarSlots.contains(id)) {
+        result.add(rawMap[id]!);
+      }
+    }
+
+    // Add any remaining items not yet in result and not in bottom nav bar
+    for (final entry in rawMap.entries) {
+      if (!navBarSlots.contains(entry.key) && !result.any((item) => item.id == entry.key)) {
+        result.add(entry.value);
+      }
+    }
+
+    return result;
   }
 
   void _pushPage(BuildContext context, Widget targetScreen) {
@@ -436,6 +493,7 @@ class _MoreHeader extends ConsumerWidget {
 // ── Menu item data ─────────────────────────────────────────────────────────────
 
 class _MoreMenuItemData {
+  final String id;
   final IconData icon;
   final String label;
   final String subtitle;
@@ -444,6 +502,7 @@ class _MoreMenuItemData {
   final void Function(BuildContext context)? onTap;
 
   const _MoreMenuItemData({
+    required this.id,
     required this.icon,
     required this.label,
     required this.subtitle,
@@ -459,11 +518,13 @@ class _MoreMenuItem extends ConsumerStatefulWidget {
   final _MoreMenuItemData item;
   final Color accentColor;
   final bool isDesktop;
+  final bool isDragging;
 
   const _MoreMenuItem({
     required this.item,
     required this.accentColor,
     required this.isDesktop,
+    this.isDragging = false,
   });
 
   @override
@@ -515,7 +576,6 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
         child: AnimatedBuilder(
           animation: _pressCtrl,
           builder: (context, child) {
-            final glowOpacity = _pressCtrl.value * 0.25;
             return Transform.scale(
               scale: _scaleAnim.value,
               child: GestureDetector(
@@ -566,17 +626,17 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                               : const Color(0xFF16161B),
                           borderRadius: borderRadius,
                           border: Border.all(
-                            color: _pressed
+                            color: (_pressed || widget.isDragging)
                                 ? item.color.withValues(alpha: 0.45)
                                 : Colors.white.withValues(alpha: 0.06),
                             width: 1.0,
                           ),
                           boxShadow: [
-                            if (_pressed)
+                            if (_pressed || widget.isDragging)
                               BoxShadow(
-                                color: item.color.withValues(alpha: glowOpacity),
-                                blurRadius: 18,
-                                spreadRadius: 1,
+                                color: item.color.withValues(alpha: 0.45),
+                                blurRadius: 22,
+                                spreadRadius: 2,
                               ),
                           ],
                         ),
@@ -670,7 +730,6 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
       child: AnimatedBuilder(
         animation: _pressCtrl,
         builder: (context, child) {
-          final glowOpacity = _pressCtrl.value * 0.25;
           return Transform.scale(
             scale: _scaleAnim.value,
             child: GestureDetector(
@@ -701,17 +760,17 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                       : const Color(0xFF16161B),
                   borderRadius: borderRadius,
                   border: Border.all(
-                    color: _pressed
+                    color: (_pressed || widget.isDragging)
                         ? item.color.withValues(alpha: 0.45)
                         : Colors.white.withValues(alpha: 0.06),
                     width: 1.0,
                   ),
                   boxShadow: [
-                    if (_pressed)
+                    if (_pressed || widget.isDragging)
                       BoxShadow(
-                        color: item.color.withValues(alpha: glowOpacity),
-                        blurRadius: 18,
-                        spreadRadius: 1,
+                        color: item.color.withValues(alpha: 0.45),
+                        blurRadius: 22,
+                        spreadRadius: 2,
                       ),
                   ],
                 ),
