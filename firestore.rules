@@ -6,6 +6,16 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Helper function to validate sync payload (supports both GZip Base64 String & Uncompressed Map)
+    function isValidSyncPayload() {
+      return request.resource.data.keys().hasAll(['data', 'lastSyncedAt'])
+        && (
+          (request.resource.data.compressed == true && request.resource.data.data is string)
+          || (request.resource.data.data is map)
+          || (request.resource.data.data is string)
+        );
+    }
+
     // User profile and synced data rules
     match /users/{userId} {
       allow read, delete: if isAuthenticated() && request.auth.uid == userId;
@@ -14,7 +24,7 @@ service cloud.firestore {
       allow create, update: if isAuthenticated()
         && request.auth.uid == userId
         && request.resource.data.size() < 1048576 // Max 1 MB Firestore limit
-        && request.resource.data.keys().hasAll(['data', 'lastSyncedAt']);
+        && isValidSyncPayload();
 
       // Nested collections sync (Subjects, Progress history)
       match /{document=**} {

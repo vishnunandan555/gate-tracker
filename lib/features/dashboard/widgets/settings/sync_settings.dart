@@ -541,28 +541,28 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                             const SizedBox(height: 12),
                             Row(
                               children: [
-                                // Dynamic 1-2 Word Status Badge (50% Equal Width, 42px Height)
+                                // Dynamic 1-2 Word Status Badge (50% Equal Width, 34px Height)
                                 Expanded(
                                   child: Container(
-                                    height: 42,
+                                    height: 34,
                                     padding: const EdgeInsets.symmetric(horizontal: 10),
                                     decoration: BoxDecoration(
                                       color: statusConfig.color.withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(8),
                                       border: Border.all(color: statusConfig.color.withValues(alpha: 0.3)),
                                     ),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Icon(statusConfig.icon, size: 16, color: statusConfig.color),
-                                        const SizedBox(width: 8),
+                                        Icon(statusConfig.icon, size: 14, color: statusConfig.color),
+                                        const SizedBox(width: 6),
                                         Flexible(
                                           child: Text(
                                             statusConfig.label,
                                             style: GoogleFonts.outfit(
                                               color: statusConfig.color,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 12,
+                                              fontSize: 11.5,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -572,10 +572,10 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                // Premium Filled Optimize Button (50% Equal Width, 42px Height)
+                                // Premium Filled Optimize Button (50% Equal Width, 34px Height)
                                 Expanded(
                                   child: SizedBox(
-                                    height: 42,
+                                    height: 34,
                                     child: FilledButton.icon(
                                       onPressed: () {
                                         Navigator.of(context).push(
@@ -588,13 +588,13 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                         backgroundColor: widget.accentColor,
                                         foregroundColor: Colors.black,
                                         elevation: 2,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                         padding: const EdgeInsets.symmetric(horizontal: 8),
                                       ),
-                                      icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                                      icon: const Icon(Icons.auto_awesome_rounded, size: 14),
                                       label: Text(
                                         'Optimize',
-                                        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold),
+                                        style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ),

@@ -13,16 +13,26 @@ Server-side security rules for Firestore ensure all cloud sync payloads are vali
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId} {
-      // Allow read/write only if the authenticated user matches the document ID
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    function isAuthenticated() {
+      return request.auth != null;
+    }
 
-      // Schema and payload size validation
-      allow create, update: if request.auth != null
+    function isValidSyncPayload() {
+      return request.resource.data.keys().hasAll(['data', 'lastSyncedAt'])
+        && (
+          (request.resource.data.compressed == true && request.resource.data.data is string)
+          || (request.resource.data.data is map)
+          || (request.resource.data.data is string)
+        );
+    }
+
+    match /users/{userId} {
+      allow read, delete: if isAuthenticated() && request.auth.uid == userId;
+
+      allow create, update: if isAuthenticated()
         && request.auth.uid == userId
-        && request.resource.data.size() < 1048576 // Max 1 MB limit
-        && request.resource.data.keys().hasAll(['data', 'lastSyncedAt'])
-        && request.resource.data.data.version is number;
+        && request.resource.data.size() < 1048576
+        && isValidSyncPayload();
     }
   }
 }
@@ -66,7 +76,7 @@ service cloud.firestore {
 ---
 
 ## ⚡ Technical & Architecture Documentation
-- **Firestore 1 MB Document Limit & Sync Compression Strategy**: See [FIRESTORE_LIMIT_PROBLEM.md](file:///home/vishnunandan555/Projects/gate-tracker/FIRESTORE_LIMIT_PROBLEM.md) for full problem analysis, live monitoring UI, and solution options (Option A, B, C).
+- **Firestore 1 MB Document Limit & Cloud Sync Optimization Suite**: Fully resolved in v1.4.0 via Pure-Dart Base64 GZip payload compression (`package:archive`), proactive 900 KB auto-sync safety guards, selective passive data toggles, historical data pruning (6M / 1Y) with cutoff date warning banners, and `SyncOptimizationScreen`.
 
 ---
 
