@@ -1,6 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:drift/drift.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import 'app_database.dart';
 import 'schema_version.dart';
+
+enum ImportMode {
+  full,
+  activeOnly,
+  passiveOnly,
+}
 
 class BackupService {
   // Export local database to a standard serialized Map payload
@@ -100,7 +112,11 @@ class BackupService {
   }
 
   // Restore database tables from a serialized Map payload
-  static Future<void> restoreDatabase(AppDatabase db, Map<String, dynamic> payload) async {
+  static Future<void> restoreDatabase(
+    AppDatabase db,
+    Map<String, dynamic> payload, {
+    ImportMode importMode = ImportMode.full,
+  }) async {
     final version = (payload['version'] as num?)?.toInt() ?? 1;
     // Version migration shims — normalize old payloads before restore
     if (version < 9) {
@@ -142,12 +158,16 @@ class BackupService {
       payload['focusSessions'] = newSessions;
     }
 
-    final syllabusCategoriesData = payload['syllabusCategories'] as List<dynamic>?;
-    final syllabusTopicsData = payload['syllabusTopics'] as List<dynamic>?;
-    final syllabusTasksData = payload['syllabusTasks'] as List<dynamic>?;
-    final focusSessionsData = payload['focusSessions'] as List<dynamic>?;
-    final dailyHistoryData = payload['dailyHistory'] as List<dynamic>?;
-    final customTasksData = payload['customTasks'] as List<dynamic>?;
+    final restoreActive = importMode == ImportMode.full || importMode == ImportMode.activeOnly;
+    final restorePassive = importMode == ImportMode.full || importMode == ImportMode.passiveOnly;
+
+    final syllabusCategoriesData = restoreActive ? payload['syllabusCategories'] as List<dynamic>? : null;
+    final syllabusTopicsData = restoreActive ? payload['syllabusTopics'] as List<dynamic>? : null;
+    final syllabusTasksData = restoreActive ? payload['syllabusTasks'] as List<dynamic>? : null;
+    final customTasksData = restoreActive ? payload['customTasks'] as List<dynamic>? : null;
+
+    final focusSessionsData = restorePassive ? payload['focusSessions'] as List<dynamic>? : null;
+    final dailyHistoryData = restorePassive ? payload['dailyHistory'] as List<dynamic>? : null;
 
     await db.transaction(() async {
       // Restore syllabus-based tables if present in backup
@@ -340,5 +360,51 @@ class BackupService {
         }
       }
     });
+  }
+
+  static Future<bool> exportBackupToFile(AppDatabase db) async {
+    try {
+      final exportPayload = await exportDatabase(db);
+      final json = const JsonEncoder.withIndent('  ').convert(exportPayload);
+
+      String? path;
+      if (kIsWeb) {
+        final bytes = Uint8List.fromList(utf8.encode(json));
+        path = await FilePicker.saveFile(
+          dialogTitle: 'Save backup to device',
+          fileName: 'gateletics_backup.json',
+          bytes: bytes,
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.android ||
+                 defaultTargetPlatform == TargetPlatform.iOS) {
+        final tempDir = await getTemporaryDirectory();
+        final tempFile = File('${tempDir.path}/gateletics_backup.json');
+        await tempFile.writeAsString(json);
+
+        final params = SaveFileDialogParams(
+          sourceFilePath: tempFile.path,
+          fileName: 'gateletics_backup.json',
+        );
+        path = await FlutterFileDialog.saveFile(params: params);
+      } else {
+        final bytes = Uint8List.fromList(utf8.encode(json));
+        path = await FilePicker.saveFile(
+          dialogTitle: 'Save backup to device',
+          fileName: 'gateletics_backup.json',
+          bytes: bytes,
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+        if (path != null) {
+          final file = File(path);
+          await file.writeAsBytes(bytes);
+        }
+      }
+      return path != null;
+    } catch (_) {
+      return false;
+    }
   }
 }

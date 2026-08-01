@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/sync_provider.dart';
 import '../../../../providers/hide_download_banner_provider.dart';
+import '../../../more/screens/sync_optimization_screen.dart';
 
 class SyncSettingsSection extends ConsumerStatefulWidget {
   final Color accentColor;
@@ -257,6 +258,8 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     if (!isFirebaseSupported()) {
@@ -493,6 +496,160 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                       },
                       loading: () => const SizedBox.shrink(),
                       error: (err, stack) => const SizedBox.shrink(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                // ── Cloud Storage Controls Status Card ──
+                Consumer(
+                  builder: (context, ref, child) {
+                    final syncStatsEnabled = ref.watch(syncStatsEnabledProvider);
+                    final syncCompressed = ref.watch(syncCompressedProvider);
+                    final asyncPayloadSize = ref.watch(syncPayloadSizeProvider);
+
+                    final sizeKb = asyncPayloadSize.maybeWhen(
+                      data: (sizeMb) => sizeMb * 1024,
+                      orElse: () => 0.0,
+                    );
+
+                    final statusConfig = _getCloudStatusConfig(sizeKb);
+                    final recommendationText = _getRecommendationText(sizeKb, syncStatsEnabled, syncCompressed);
+
+                    final isHealthy = sizeKb < 500;
+                    final recColor = isHealthy ? Colors.white38 : statusConfig.color;
+
+                    return Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: Colors.white10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Cloud Storage Controls',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                // Dynamic 1-2 Word Status Badge (50% Equal Width, 42px Height)
+                                Expanded(
+                                  child: Container(
+                                    height: 42,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: statusConfig.color.withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: statusConfig.color.withValues(alpha: 0.3)),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(statusConfig.icon, size: 16, color: statusConfig.color),
+                                        const SizedBox(width: 8),
+                                        Flexible(
+                                          child: Text(
+                                            statusConfig.label,
+                                            style: GoogleFonts.outfit(
+                                              color: statusConfig.color,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                // Premium Filled Optimize Button (50% Equal Width, 42px Height)
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 42,
+                                    child: FilledButton.icon(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => SyncOptimizationScreen(accentColor: widget.accentColor),
+                                          ),
+                                        );
+                                      },
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: widget.accentColor,
+                                        foregroundColor: Colors.black,
+                                        elevation: 2,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      ),
+                                      icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                                      label: Text(
+                                        'Optimize',
+                                        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            // Dynamic Recommendation Area
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: isHealthy
+                                    ? Colors.white.withValues(alpha: 0.02)
+                                    : recColor.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: isHealthy
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : recColor.withValues(alpha: 0.2),
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.lightbulb_outline_rounded, size: 14, color: recColor),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Recommendation: ',
+                                            style: GoogleFonts.outfit(
+                                              color: recColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: recommendationText,
+                                            style: GoogleFonts.outfit(
+                                              color: isHealthy ? Colors.white38 : Colors.white70,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -824,5 +981,91 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
         backgroundColor: Colors.green,
       ),
     );
+  }
+}
+
+class _CloudStatusConfig {
+  final String label;
+  final Color color;
+  final IconData icon;
+
+  _CloudStatusConfig({
+    required this.label,
+    required this.color,
+    required this.icon,
+  });
+}
+
+_CloudStatusConfig _getCloudStatusConfig(double sizeKb) {
+  if (sizeKb >= 1024) {
+    return _CloudStatusConfig(
+      label: 'Sync Blocked',
+      color: Colors.red,
+      icon: Icons.block_rounded,
+    );
+  } else if (sizeKb >= 1000) {
+    return _CloudStatusConfig(
+      label: 'Payload Warning',
+      color: Colors.redAccent,
+      icon: Icons.error_outline_rounded,
+    );
+  } else if (sizeKb >= 900) {
+    return _CloudStatusConfig(
+      label: 'Limit Nearing',
+      color: Colors.deepOrangeAccent,
+      icon: Icons.warning_amber_rounded,
+    );
+  } else if (sizeKb >= 800) {
+    return _CloudStatusConfig(
+      label: 'Critical',
+      color: Colors.orangeAccent,
+      icon: Icons.warning_amber_rounded,
+    );
+  } else if (sizeKb >= 700) {
+    return _CloudStatusConfig(
+      label: 'Attention',
+      color: Colors.amberAccent,
+      icon: Icons.info_outline_rounded,
+    );
+  } else if (sizeKb >= 600) {
+    return _CloudStatusConfig(
+      label: 'Moderate',
+      color: Colors.yellowAccent,
+      icon: Icons.info_outline_rounded,
+    );
+  } else if (sizeKb >= 500) {
+    return _CloudStatusConfig(
+      label: 'Fair',
+      color: Colors.lightGreenAccent,
+      icon: Icons.check_circle_outline_rounded,
+    );
+  } else {
+    return _CloudStatusConfig(
+      label: 'All Good',
+      color: const Color(0xFF00E5FF),
+      icon: Icons.check_circle_rounded,
+    );
+  }
+}
+
+String _getRecommendationText(double sizeKb, bool syncStatsEnabled, bool syncCompressed) {
+  if (sizeKb >= 1024) {
+    return '1024 KB limit reached! Prune historical stats or disable passive stats sync immediately to resume cloud backup.';
+  } else if (sizeKb >= 1000) {
+    return 'Critical payload warning! Prune old records or disable passive stats sync to avoid sync blockage.';
+  } else if (sizeKb >= 800) {
+    if (!syncCompressed) {
+      return 'Payload size is critical. Enable GZip Payload Compression immediately or prune historical stats.';
+    } else {
+      return 'Payload is near limit despite compression. Prune historical stats (older than 6M/1Y) or disable passive stats sync.';
+    }
+  } else if (sizeKb >= 500) {
+    if (!syncCompressed) {
+      return 'Enable GZip Payload Compression to reduce cloud storage usage by ~80%.';
+    } else {
+      return 'Compression is active and payload size is stable.';
+    }
+  } else {
+    return 'Storage is healthy. No action required.';
   }
 }

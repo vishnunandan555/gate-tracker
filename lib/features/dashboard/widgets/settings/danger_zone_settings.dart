@@ -118,6 +118,47 @@ class DangerZoneSettingsSection extends ConsumerWidget {
 
       if (!context.mounted) return;
 
+      final importMode = await showDialog<ImportMode>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF18181B),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: const Text('Select Restore Mode'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose which portion of the backup file to restore into your device database:',
+                style: TextStyle(color: Colors.white70, fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.inventory_2_rounded, color: Colors.cyanAccent),
+                title: const Text('Restore Everything', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: const Text('Overwrites active syllabus, tasks, and focus history', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                onTap: () => Navigator.pop(ctx, ImportMode.full),
+              ),
+              const Divider(color: Colors.white10),
+              ListTile(
+                leading: const Icon(Icons.topic_rounded, color: Colors.greenAccent),
+                title: const Text('Active Data Only', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: const Text('Restores syllabus categories, topics, & checklists only', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                onTap: () => Navigator.pop(ctx, ImportMode.activeOnly),
+              ),
+              const Divider(color: Colors.white10),
+              ListTile(
+                leading: const Icon(Icons.analytics_rounded, color: Colors.orangeAccent),
+                title: const Text('Passive Data Only', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: const Text('Restores focus timer logs & study statistics history only', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                onTap: () => Navigator.pop(ctx, ImportMode.passiveOnly),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      if (importMode == null || !context.mounted) return;
+
       // Show loading indicator during restore (can take 1-4s on large backups)
       showDialog(
         context: context,
@@ -130,7 +171,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         final payload = jsonDecode(raw);
         final db = ref.read(appDatabaseProvider);
 
-        await BackupService.restoreDatabase(db, payload);
+        await BackupService.restoreDatabase(db, payload, importMode: importMode);
         ref.read(syncProvider.notifier).clearDatabaseCaches();
 
         if (context.mounted) Navigator.of(context).pop(); // dismiss loading

@@ -184,7 +184,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
       ),
       _MoreMenuItemData(
         icon: Icons.manage_accounts_rounded,
-        label: 'Accounts and Sign In',
+        label: 'Account and Sync',
         subtitle: 'Cloud sync, account details and security',
         color: accentColor,
         comingSoon: false,

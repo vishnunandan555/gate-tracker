@@ -319,7 +319,7 @@ class ChangelogDialog extends ConsumerWidget {
                     },
                     icon: const Icon(Icons.open_in_new_rounded, size: 14, color: Colors.white54),
                     label: Text(
-                      "GitHub Notes",
+                      "GitHub",
                       style: GoogleFonts.outfit(
                         color: Colors.white54,
                         fontSize: 12,
