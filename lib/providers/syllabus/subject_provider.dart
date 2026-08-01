@@ -10,7 +10,7 @@ final overallProgressColorProvider = NotifierProvider<OverallProgressColorNotifi
 });
 
 class OverallProgressColorNotifier extends Notifier<Color> {
-  String _mode = 'auto'; // 'auto' or 'frozen'
+  String _mode = 'auto'; // 'auto', 'frozen', or 'device'
   Color? _frozenColor;
   Color? _autoColor;
 
@@ -28,7 +28,7 @@ class OverallProgressColorNotifier extends Notifier<Color> {
         _frozenColor = Color(value);
       }
     }
-    if (_mode == 'frozen' && _frozenColor != null) {
+    if ((_mode == 'frozen' || _mode == 'device') && _frozenColor != null) {
       return _frozenColor!;
     }
     // Note: Randomizing _autoColor on cold launch in 'auto' mode is by design —
@@ -55,14 +55,23 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     state = color;
   }
 
+  Future<void> setDeviceMode(Color systemColor) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setString('accent_color_mode', 'device');
+    await prefs.setString('frozen_accent_color', systemColor.toARGB32().toRadixString(16));
+    _mode = 'device';
+    _frozenColor = systemColor;
+    state = systemColor;
+  }
+
   void randomize() {
-    if (_mode == 'frozen') return;
+    if (_mode == 'frozen' || _mode == 'device') return;
     _autoColor = AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
     state = _autoColor!;
   }
 
   void next() {
-    if (_mode == 'frozen') return;
+    if (_mode == 'frozen' || _mode == 'device') return;
     final currentIdx = AppColors.neonCycle.indexOf(state);
     final nextIdx = (currentIdx + 1) % AppColors.neonCycle.length;
     _autoColor = AppColors.neonCycle[nextIdx];

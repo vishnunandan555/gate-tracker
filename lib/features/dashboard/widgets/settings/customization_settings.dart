@@ -58,6 +58,8 @@ class CustomizationSettingsSection extends ConsumerWidget {
               child: StatefulBuilder(
                 builder: (context, setDialogState) {
                   final isAuto = colorNotifier.mode == 'auto';
+                  final isDevice = colorNotifier.mode == 'device';
+                  final systemPrimary = Theme.of(context).colorScheme.primary;
                   final previewColor = Color.fromARGB(255, r, g, b);
 
                   return SingleChildScrollView(
@@ -121,6 +123,53 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        InkWell(
+                          onTap: () {
+                            colorNotifier.setDeviceMode(systemPrimary);
+                            Navigator.pop(context);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: isDevice
+                                  ? currentColor.withAlpha(38)
+                                  : Colors.white10,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isDevice ? currentColor : Colors.transparent,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.phonelink_setup_rounded,
+                                  color: isDevice ? currentColor : Colors.white70,
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    'Use Device Accent Color',
+                                    style: GoogleFonts.outfit(
+                                      color: isDevice ? Colors.white : Colors.white70,
+                                      fontSize: 15,
+                                      fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                if (isDevice)
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    color: currentColor,
+                                    size: 20,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         Text(
                           'Preset Colors:',
@@ -138,7 +187,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             runSpacing: 12,
                             alignment: WrapAlignment.center,
                             children: AppColors.neonCycle.map((color) {
-                              final isSelected = !isAuto &&
+                              final isSelected = !isAuto && !isDevice &&
                                   colorNotifier.frozenColor?.toARGB32() == color.toARGB32();
 
                               return InkWell(
@@ -311,6 +360,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
     final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
     final currentColor = ref.watch(overallProgressColorProvider);
     final isAuto = colorNotifier.mode == 'auto';
+    final isDevice = colorNotifier.mode == 'device';
 
     final currentFont = ref.watch(progressFontProvider);
     final currentIconBoxStyle = ref.watch(iconBoxStyleProvider);
@@ -321,12 +371,16 @@ class CustomizationSettingsSection extends ConsumerWidget {
 
     final accentColorContent = ListTile(
       leading: Icon(
-        isAuto ? Icons.brightness_auto_rounded : Icons.color_lens_rounded,
+        isAuto
+            ? Icons.brightness_auto_rounded
+            : (isDevice ? Icons.phonelink_setup_rounded : Icons.color_lens_rounded),
         color: currentColor,
       ),
       title: Text('Theme Accent Color', style: titleStyle),
       subtitle: Text(
-        isAuto ? 'Dynamic color auto-cycling' : 'Frozen custom color',
+        isAuto
+            ? 'Dynamic color auto-cycling'
+            : (isDevice ? 'System device accent color' : 'Frozen custom color'),
         style: subtitleStyle,
       ),
       trailing: Container(

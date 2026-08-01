@@ -55,14 +55,13 @@ service cloud.firestore {
 ---
 
 ## 🔮 Upcoming Milestone 2 Features (Planned)
-1. **Spaced Repetition Revision Scheduler**
-2. **Resource Explorer & Reference Links**
-3. **Enhanced Consistency Grid Analytics**
-4. **Desktop Onboarding & Tutorial Flow**: Desktop-friendly tooltip sequence / welcome onboarding for new desktop users once Desktop UI is finalized.
-5. **Light & Adaptive System Theme Support**: Optional light mode theme with system-adaptive brightness toggling.
-6. **Desktop Keyboard Navigation & Shortcuts**: Support for Tab key traversal across interactive cards and keyboard shortcuts (e.g., Space to pause/resume focus session, `/` for quick search).
-7. **Target Duration Capping for Interrupted Sessions**: Automatically cap recovered timer durations to the set target or interval limit for fixed methods (e.g. Pomodoro, 45/15) during session recovery.
-8. **Persistent Background Focus Service & Lockscreen Notifications**: System notification on Android/iOS lock screen showing active focus timer progress with pause/stop action controls.
+1. **Spaced Repetition Revision Scheduler**: SM-2 algorithm based revision planner per syllabus topic.
+2. **Resource Explorer & Reference Links** (COMPLETED ✅): Multi-branch `ResourceExplorerScreen` (`/resources`).
+3. **Enhanced Consistency Grid Analytics**: Detailed habit & focus consistency visualizer.
+4. **Desktop Onboarding & Tutorial Flow**: Deferred until Desktop UI is finalized.
+5. **Device & System Accent Theme Support** (COMPLETED ✅): Dynamic Material 3 / system device accent color support (`setDeviceMode`).
+6. **Interrupted Focus Session Recovery** (COMPLETED ✅): 4h cap with recovery modal allowing Active vs Full duration restoration.
+7. **Persistent Background Focus Notifications**: Planned for future mobile release.
 
 ---
 
