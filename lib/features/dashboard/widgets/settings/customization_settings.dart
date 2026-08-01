@@ -59,7 +59,6 @@ class CustomizationSettingsSection extends ConsumerWidget {
                 builder: (context, setDialogState) {
                   final isAuto = colorNotifier.mode == 'auto';
                   final isDevice = colorNotifier.mode == 'device';
-                  final systemPrimary = Theme.of(context).colorScheme.primary;
                   final previewColor = Color.fromARGB(255, r, g, b);
 
                   return SingleChildScrollView(
@@ -123,52 +122,66 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        InkWell(
-                          onTap: () {
-                            colorNotifier.setDeviceMode(systemPrimary);
-                            Navigator.pop(context);
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: isDevice
-                                  ? currentColor.withAlpha(38)
-                                  : Colors.white10,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: isDevice ? currentColor : Colors.transparent,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Row(
+                        Builder(
+                          builder: (context) {
+                            final systemAccent = ref.watch(systemAccentColorProvider);
+                            if (systemAccent == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.phonelink_setup_rounded,
-                                  color: isDevice ? currentColor : Colors.white70,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    'Use Device Accent Color',
-                                    style: GoogleFonts.outfit(
-                                      color: isDevice ? Colors.white : Colors.white70,
-                                      fontSize: 15,
-                                      fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
+                                const SizedBox(height: 10),
+                                InkWell(
+                                  onTap: () {
+                                    colorNotifier.setDeviceMode(systemAccent);
+                                    Navigator.pop(context);
+                                  },
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: isDevice
+                                          ? currentColor.withAlpha(38)
+                                          : Colors.white10,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: isDevice ? currentColor : Colors.transparent,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phonelink_setup_rounded,
+                                          color: isDevice ? currentColor : Colors.white70,
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Text(
+                                            'Use Device Accent Color',
+                                            style: GoogleFonts.outfit(
+                                              color: isDevice ? Colors.white : Colors.white70,
+                                              fontSize: 15,
+                                              fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                        if (isDevice)
+                                          Icon(
+                                            Icons.check_circle_rounded,
+                                            color: currentColor,
+                                            size: 20,
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                if (isDevice)
-                                  Icon(
-                                    Icons.check_circle_rounded,
-                                    color: currentColor,
-                                    size: 20,
-                                  ),
                               ],
-                            ),
-                          ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 20),
                         Text(

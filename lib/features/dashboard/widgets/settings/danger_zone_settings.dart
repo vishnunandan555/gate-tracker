@@ -322,7 +322,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.cyanAccent, foregroundColor: Colors.black),
+            style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: Colors.black),
             child: const Text('Redo'),
           ),
         ],

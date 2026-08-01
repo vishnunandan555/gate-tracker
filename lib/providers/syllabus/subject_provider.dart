@@ -4,10 +4,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/colors.dart';
 import '../providers.dart';
 
+import '../../services/system_color_service.dart';
+
 // Progress Color Provider using standard Notifier
 final overallProgressColorProvider = NotifierProvider<OverallProgressColorNotifier, Color>(() {
   return OverallProgressColorNotifier();
 });
+
+// Track detected system dynamic accent color (null if unsupported/not detected)
+final systemAccentColorProvider = NotifierProvider<SystemAccentColorNotifier, Color?>(() {
+  return SystemAccentColorNotifier();
+});
+
+class SystemAccentColorNotifier extends Notifier<Color?> {
+  @override
+  Color? build() {
+    _fetchNativeSystemColor();
+    return null;
+  }
+
+  Future<void> _fetchNativeSystemColor() async {
+    final nativeColor = await SystemColorService.getSystemAccentColor();
+    if (nativeColor != null) {
+      state = nativeColor;
+    }
+  }
+
+  void setSystemAccent(Color? color) {
+    if (color != null) {
+      state = color;
+    } else {
+      _fetchNativeSystemColor();
+    }
+  }
+}
 
 class OverallProgressColorNotifier extends Notifier<Color> {
   String _mode = 'auto'; // 'auto', 'frozen', or 'device'

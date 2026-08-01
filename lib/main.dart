@@ -6,19 +6,15 @@ import 'core/theme/app_theme.dart';
 import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
 import 'database/app_database.dart';
-import 'providers/syllabus_provider.dart';
-import 'providers/agreement_provider.dart';
-import 'providers/setup_provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/daily_history_provider.dart';
+import 'providers/providers.dart';
 import 'features/dashboard/widgets/agreement_screen.dart';
 import 'features/dashboard/widgets/auth_screen.dart';
 import 'features/dashboard/widgets/setup_screen.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
-import 'providers/package_info_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/router/route_resolver.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -140,38 +136,49 @@ class GateTrackerApp extends ConsumerWidget {
     final authState = authAsync.value;
     final hasSetup = setupAsync.value ?? false;
 
-    if (!hasAgreed) {
-      return MaterialApp(
-        title: BrandConfig.appName,
-        theme: AppTheme.darkTheme,
-        home: const AgreementScreen(),
-        debugShowCheckedModeBanner: false,
-      );
-    }
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        final systemColor = darkDynamic?.primary ?? lightDynamic?.primary;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(systemAccentColorProvider.notifier).setSystemAccent(systemColor);
+        });
 
-    if (authState != null && !authState.isOfflineMode && authState.user == null) {
-      return MaterialApp(
-        title: BrandConfig.appName,
-        theme: AppTheme.darkTheme,
-        home: const AuthScreen(),
-        debugShowCheckedModeBanner: false,
-      );
-    }
+        final theme = AppTheme.darkTheme(darkDynamic: darkDynamic);
 
-    if (!hasSetup) {
-      return MaterialApp(
-        title: BrandConfig.appName,
-        theme: AppTheme.darkTheme,
-        home: const SetupScreen(),
-        debugShowCheckedModeBanner: false,
-      );
-    }
+        if (!hasAgreed) {
+          return MaterialApp(
+            title: BrandConfig.appName,
+            theme: theme,
+            home: const AgreementScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
 
-    return MaterialApp.router(
-      title: BrandConfig.appName,
-      theme: AppTheme.darkTheme,
-      routerConfig: appRouter,
-      debugShowCheckedModeBanner: false,
+        if (authState != null && !authState.isOfflineMode && authState.user == null) {
+          return MaterialApp(
+            title: BrandConfig.appName,
+            theme: theme,
+            home: const AuthScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+
+        if (!hasSetup) {
+          return MaterialApp(
+            title: BrandConfig.appName,
+            theme: theme,
+            home: const SetupScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+
+        return MaterialApp.router(
+          title: BrandConfig.appName,
+          theme: theme,
+          routerConfig: appRouter,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

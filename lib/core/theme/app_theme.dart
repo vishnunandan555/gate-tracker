@@ -4,16 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
 class AppTheme {
-  static ThemeData get darkTheme {
+  static ThemeData darkTheme({ColorScheme? darkDynamic}) {
+    final colorScheme = darkDynamic ??
+        const ColorScheme.dark(
+          primary: Colors.cyanAccent,
+          secondary: Colors.cyan,
+          surface: AppColors.surface,
+        );
+
     return ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: const Color(0xFF09090B), // Zinc 950
       cardColor: AppColors.cardBackground, // Zinc 900
-      colorScheme: const ColorScheme.dark(
-        primary: Colors.cyanAccent,
-        secondary: Colors.cyan,
-        surface: AppColors.surface,
-      ),
+      colorScheme: colorScheme,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       dividerColor: Colors.transparent,

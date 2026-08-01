@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../database/app_database.dart';
 import '../../providers/providers.dart';
 import '../../utils/ui_scaling.dart';
+import '../more/screens/contribute_screen.dart';
 
 class ResourceExplorerScreen extends ConsumerStatefulWidget {
   const ResourceExplorerScreen({super.key});
@@ -42,6 +43,64 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
     return prefs.getString('user_selected_branch') ?? 'CS';
   }
 
+  void _showContributeInfoDialog(BuildContext context, Color accentColor) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF18181B),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.info_rounded, color: accentColor, size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'Contribute Resources',
+              style: GoogleFonts.outfit(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Found a high-quality GATE lecture series, playlist, or study resource to share? You can contribute your favorite resources to GATEletics to help fellow aspirants!',
+          style: GoogleFonts.outfit(
+            color: Colors.white70,
+            fontSize: 13.5,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Close',
+              style: GoogleFonts.outfit(color: Colors.white54),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ContributeScreen()),
+              );
+            },
+            icon: const Icon(Icons.volunteer_activism_rounded, size: 16),
+            label: Text(
+              'Contribute',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: accentColor,
+              foregroundColor: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final accentColor = ref.watch(overallProgressColorProvider);
@@ -72,11 +131,11 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh_rounded, color: accentColor),
-            tooltip: 'Refresh Catalog',
+            icon: Icon(Icons.info_rounded, color: accentColor),
+            tooltip: 'Contribute Resources',
             onPressed: () {
               ref.read(hapticSettingsProvider.notifier).selectionClick();
-              ref.read(resourcesProvider.notifier).refresh();
+              _showContributeInfoDialog(context, accentColor);
             },
           ),
         ],
@@ -198,7 +257,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                             ),
                             IconButton(
                               icon: Icon(Icons.refresh_rounded, color: accentColor, size: 20),
-                              tooltip: 'Force refresh resources from GitHub',
+                              tooltip: 'Refresh Catalog',
                               onPressed: () {
                                 ref.read(hapticSettingsProvider.notifier).selectionClick();
                                 ref.read(resourcesProvider.notifier).forceRefresh();
