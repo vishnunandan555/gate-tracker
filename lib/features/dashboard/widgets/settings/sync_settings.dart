@@ -601,52 +601,50 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
-                            // Dynamic Recommendation Area
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: isHealthy
-                                    ? Colors.white.withValues(alpha: 0.02)
-                                    : recColor.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: isHealthy
-                                      ? Colors.white.withValues(alpha: 0.06)
-                                      : recColor.withValues(alpha: 0.2),
+                            if (!isHealthy) ...[
+                              const SizedBox(height: 10),
+                              // Dynamic Recommendation Area
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: recColor.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: recColor.withValues(alpha: 0.2),
+                                  ),
                                 ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.lightbulb_outline_rounded, size: 14, color: recColor),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Recommendation: ',
-                                            style: GoogleFonts.outfit(
-                                              color: recColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 11,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.lightbulb_outline_rounded, size: 14, color: recColor),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: 'Recommendation: ',
+                                              style: GoogleFonts.outfit(
+                                                color: recColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 11,
+                                              ),
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: recommendationText,
-                                            style: GoogleFonts.outfit(
-                                              color: isHealthy ? Colors.white38 : Colors.white70,
-                                              fontSize: 11,
+                                            TextSpan(
+                                              text: recommendationText,
+                                              style: GoogleFonts.outfit(
+                                                color: Colors.white70,
+                                                fontSize: 11,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),

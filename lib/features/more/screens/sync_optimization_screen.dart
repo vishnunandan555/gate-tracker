@@ -125,8 +125,8 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
     final String badgeText = hasSavings
         ? 'SAVED ${savedKb.toStringAsFixed(1)} KB (${savedPct.toStringAsFixed(0)}%)'
         : (_selectedPruneDays != null && _syncStatsEnabled)
-            ? 'NO RECORDS >$_selectedPruneDays DAYS OLD'
-            : 'CURRENT CONFIG';
+            ? 'NO DATA TO PRUNE'
+            : 'NO CHANGE';
     final Color badgeColor = hasSavings
         ? Colors.greenAccent
         : (_selectedPruneDays != null && _syncStatsEnabled)
@@ -272,7 +272,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             _buildCardHeader('2. Select Optimization Controls'),
             const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.fromLTRB(14, 4, 14, 12),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(16),
@@ -285,6 +285,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     dense: true,
+                    visualDensity: VisualDensity.compact,
                     value: _syncStatsEnabled,
                     activeThumbColor: widget.accentColor,
                     onChanged: (val) {
@@ -301,7 +302,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      'Syncs focus sessions, daily history & syllabus progress logs',
+                      'Syncs study sessions, daily logs & timeline history',
                       style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
                     ),
                   ),
@@ -311,6 +312,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     dense: true,
+                    visualDensity: VisualDensity.compact,
                     value: _syncCompressed,
                     activeThumbColor: widget.accentColor,
                     onChanged: (val) {
@@ -321,7 +323,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      'GZip Base64 Compression, will reduce payload size by ~80%',
+                      'Reduces cloud payload size by ~80% using GZip Base64',
                       style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
                     ),
                   ),

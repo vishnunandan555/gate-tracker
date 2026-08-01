@@ -77,10 +77,12 @@ GATEletics maintains two distinct release tracks on Google Play Store and GitHub
 * **Hierarchical Structure:** Categories $\rightarrow$ Subjects $\rightarrow$ Topics $\rightarrow$ Subtasks with automatic progress percentage rollups.
 * **Atomic Transactions:** Atomic Drift database updates to eliminate UI flickering during progress writes.
 
-### ☁️ 7. Offline-First Sync & Data Privacy
+### ☁️ 7. Offline-First Sync & Cloud Optimization Suite
 * **Local-First Architecture:** All actions occur instantly on your device; sync executes silently in the background.
+* **Pure-Dart Base64 GZip Compression:** Automatically compresses cloud payloads using `package:archive` (~80% compression ratio), extending single document Firestore storage capacity to 5.0 MB+ (5–10 years of study history).
+* **Dedicated Cloud Sync Optimization Hub (`SyncOptimizationScreen`):** Live payload meter, itemized breakdown (Categories, Topics, Tasks, Notes/Links, Focus Sessions, History, Logs), real-time byte calculations, `Sync Passive Data` switch, `Enable Payload GZip Compression` switch, and historical data pruning (Keep Past 1 Year / Keep Past 6 Months) with dynamic cutoff date warnings.
 * **Google Auth & Multi-Device Merge:** Log in with Google to sync databases across devices with automatic merge conflict resolution.
-* **Complete Privacy Control:** Full support for local data resets, database flushing, and compliant account deletion.
+* **Complete Privacy & Backup Control:** Safety JSON database backup exporter prior to optimization, selective backup imports (`activeOnly`, `passiveOnly`, `full`), local data resets, and compliant account deletion.
 
 ---
 

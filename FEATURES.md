@@ -96,3 +96,12 @@ service cloud.firestore {
 - [x] **Modular Sync Equality & Unit Test Suite:** Decomposed 250+ line `areDataEqual()` in `sync_provider.dart` into entity-level helpers and created `test/sync_equality_test.dart`.
 - [x] **Dashboard Empty State UI:** Built `DashboardEmptyState` widget displaying an empty state illustration and "Start Setup" button when a branch has zero topics.
 - [x] **Android 13+ Material You Adaptive Icon Support:** Configured `adaptive_icon_monochrome` with transparent foreground & monochrome PNG assets for Pixel launcher dynamic theme support.
+
+### 📌 Milestone 1.4: Cloud Sync Optimization & Provider Modularization Suite (v1.4.0) (COMPLETED ✅)
+- [x] **Sync Provider Modularization:** Decomposed monolith `sync_provider.dart` into decoupled domain files (`sync_models.dart`, `sync_preferences.dart`, `sync_encoding.dart`, `sync_data_mapper.dart`, `sync_provider.dart`).
+- [x] **Pure-Dart Base64 GZip Payload Compression:** Added pure-Dart Base64 GZip payload encoding (`package:archive`), expanding Firestore storage capacity to 5.0 MB+ (~80% compression ratio).
+- [x] **Cloud Sync Optimization Hub (`SyncOptimizationScreen`):** Dedicated optimization screen displaying live payload meters, itemized breakdown (Categories, Topics, Tasks, Notes/Links, Focus Sessions, History, Logs), real-time section byte calculations, `Sync Passive Data` switch, `Enable Payload GZip Compression` switch, and `Historical Data Pruning` (6M / 1Y) with cutoff date warning banners (`Warning: all historical data before [Date] will be deleted`).
+- [x] **Safety JSON Backup Exporter:** Prompts automatic full JSON database backup export prior to executing pruning or cloud optimization.
+- [x] **Proactive 900 KB Auto-Sync Guard:** Automatic safety pause when uncompressed payloads approach 900 KB to protect Firestore data from 1 MB document limits.
+- [x] **Selective Backup Import:** Added `ImportMode` (`full`, `activeOnly`, `passiveOnly`) to `BackupService` for selective restoration of active syllabus vs passive focus history.
+- [x] **Automated Test Coverage:** Added unit test suites `test/sync_compression_test.dart` and `test/backup_selective_import_test.dart` (72/72 tests passing).
