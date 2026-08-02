@@ -8,22 +8,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
-import '../../../../providers/agreement_provider.dart';
 import '../../../../providers/setup_provider.dart';
-import '../../../../providers/auth_provider.dart';
 import '../../../../providers/syllabus_provider.dart';
-import '../../../../providers/focus_provider.dart';
-import '../../../../providers/quotes_provider.dart';
-import '../../../../providers/category_font_size_provider.dart';
-import '../../../../providers/topic_font_size_provider.dart';
-import '../../../../providers/task_font_size_provider.dart';
-import '../../../../providers/overall_ui_scale_provider.dart';
-import '../../../../providers/subject_provider.dart';
 import '../../../../providers/sync_provider.dart';
-import '../../../../providers/stats_provider.dart';
 import '../../../../database/backup_service.dart';
 import '../../../../providers/demo_guide_provider.dart';
-import '../../../../providers/community_notifications_provider.dart';
 
 
 class DangerZoneSettingsSection extends ConsumerWidget {
@@ -211,99 +200,6 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     }
   }
 
-  Future<void> _performReset(BuildContext context, WidgetRef ref, {required bool everything}) async {
-    final title = everything ? 'Reset Everything' : 'Reset Tracking Data';
-    final content = everything
-        ? 'This will clear ALL your sources, links, and progress. This cannot be undone.'
-        : 'This will reset all your progress counts to zero but keep your sources and links.';
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(title),
-        content: Text(
-          content,
-          style: const TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('Reset'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true || !context.mounted) return;
-
-    try {
-      if (everything) {
-        final db = ref.read(appDatabaseProvider);
-        await db.wipeDatabaseData();
-
-        final prefs = ref.read(sharedPreferencesProvider);
-        await prefs.clear();
-
-        await ref.read(authProvider.notifier).resetAuthChoice();
-
-        ref.invalidate(authProvider);
-        ref.invalidate(syllabusProvider);
-        ref.invalidate(progressLogsProvider);
-        ref.read(focusProvider.notifier).resetState();
-        ref.invalidate(todayFocusSessionsProvider);
-        ref.invalidate(todayFocusDurationProvider);
-        ref.invalidate(dailyFocusGoalProvider);
-        ref.invalidate(focusQuotesEnabledProvider);
-
-        ref.invalidate(agreementProvider);
-        ref.invalidate(setupCompletedProvider);
-        ref.invalidate(communityNotificationsProvider);
-        ref.invalidate(categoryFontSizeProvider);
-        ref.invalidate(topicFontSizeProvider);
-        ref.invalidate(taskFontSizeProvider);
-        ref.invalidate(overallUiScaleProvider);
-        await ref.read(overallProgressColorProvider.notifier).setAutoMode();
-      } else {
-        await ref.read(syllabusControllerProvider.notifier).resetTrackingData();
-
-        final db = ref.read(appDatabaseProvider);
-        await db.delete(db.focusSessions).go();
-        await db.delete(db.dailyHistory).go();
-        await db.delete(db.customTasks).go();
-
-        ref.invalidate(syllabusProvider);
-        ref.invalidate(progressLogsProvider);
-        ref.invalidate(todayFocusSessionsProvider);
-        ref.invalidate(todayFocusDurationProvider);
-        ref.invalidate(dailyFocusGoalProvider);
-
-        try {
-          final syncNotifier = ref.read(syncProvider.notifier);
-          await syncNotifier.uploadLocalToCloud();
-        } catch (_) {}
-      }
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(everything ? 'System reset!' : 'Progress reset!')),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reset failed: $e')),
-        );
-      }
-    }
-  }
-
   Future<void> _performRedoOnboarding(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -370,38 +266,6 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 900;
 
-    final resetDataContent = ExpansionTile(
-        iconColor: Colors.redAccent,
-        collapsedIconColor: Colors.redAccent.withValues(alpha: 0.5),
-        leading: const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
-        title: Text(
-          'Reset Data',
-          style: titleStyle.copyWith(color: Colors.redAccent),
-        ),
-        children: [
-          ListTile(
-            leading: const Icon(Icons.history_rounded, color: Colors.redAccent),
-            title: Text('Reset Tracking Data', style: titleStyle),
-            subtitle: Text(
-              'Set all progress counts to zero',
-              style: subtitleStyle,
-            ),
-            onTap: () => _performReset(context, ref, everything: false),
-          ),
-          const Divider(color: Colors.white10, height: 1),
-          ListTile(
-            leading: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent),
-            title: Text('Reset Everything', style: titleStyle),
-            subtitle: Text(
-              'Clear sources, links, and progress',
-              style: subtitleStyle,
-            ),
-            onTap: () => _performReset(context, ref, everything: true),
-          ),
-          const SizedBox(height: 8),
-        ],
-      );
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -443,7 +307,6 @@ class DangerZoneSettingsSection extends ConsumerWidget {
             ),
             onTap: () => _performRedoDemo(context, ref),
           ),
-        resetDataContent,
       ],
     );
   }

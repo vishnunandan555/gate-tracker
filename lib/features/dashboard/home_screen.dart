@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../core/config/brand_config.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/profile_provider.dart';
-import '../../providers/syllabus_provider.dart';
 import '../../utils/ui_scaling.dart';
 import '../../providers/focus_provider.dart';
 import 'widgets/home_carousel.dart';
 import 'widgets/home/active_focus_wave_widget.dart';
 import 'widgets/home/home_countdown_timer.dart';
+import 'widgets/home/home_onboarding_popup.dart';
+import 'widgets/home/home_task_dialogs.dart';
 import '../../providers/glow_strength_provider.dart';
 import '../../providers/focus_animation_provider.dart';
 import '../../providers/rollover_provider.dart';
@@ -50,72 +50,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final isDesktop = MediaQuery.sizeOf(context).width > 900;
       if (!hasSeen && ref.read(demoGuideProvider) == DemoStep.none && !isDesktop) {
         Future.delayed(const Duration(milliseconds: 600), () {
-          if (mounted) _showOnboardingPopup(context);
+          if (mounted) showOnboardingPopup(context, ref);
         });
       }
     });
   }
-
-  void _showOnboardingPopup(BuildContext context) {
-    final accentColor = ref.read(overallProgressColorProvider);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF131316),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: accentColor.withValues(alpha: 0.15), width: 1.5),
-        ),
-        title: Text(
-          "Welcome to ${BrandConfig.appName}!",
-          style: GoogleFonts.orbitron(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 16,
-            letterSpacing: 0.5,
-          ),
-        ),
-        content: Text(
-          "Would you like to take a quick, 2-minute interactive tour of the app to learn how to track syllabus categories, start focus sessions, and view your study analytics?",
-          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              final prefs = ref.read(sharedPreferencesProvider);
-              await prefs.setBool('has_seen_demo_guide', true);
-              ref.read(hasSeenDemoGuideProvider.notifier).state = true;
-            },
-            child: Text(
-              "Skip",
-              style: GoogleFonts.outfit(color: Colors.white54, fontWeight: FontWeight.bold),
-            ),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              final prefs = ref.read(sharedPreferencesProvider);
-              await prefs.setBool('has_seen_demo_guide', true);
-              ref.read(hasSeenDemoGuideProvider.notifier).state = true;
-              ref.read(demoGuideProvider.notifier).startDemo();
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: accentColor,
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: Text(
-              "Let's Go!",
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _noticeTaskController.dispose();
@@ -793,7 +732,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // Task content
               Expanded(
                 child: GestureDetector(
-                  onTap: () => _showTaskOptionsDialog(context, ref, task),
+                  onTap: () => showTaskOptionsDialog(context, ref, task),
                   behavior: HitTestBehavior.opaque,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -827,91 +766,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showTaskOptionsDialog(BuildContext context, WidgetRef ref, CustomTask task) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF131316),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.white.withAlpha(12)),
-          ),
-          title: Text(
-            "Task Options",
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit_rounded, color: Colors.cyanAccent),
-                title: Text("Edit Task", style: GoogleFonts.outfit(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(dialogContext);
-                  _showEditTaskDialog(context, ref, task);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_rounded, color: Colors.redAccent),
-                title: Text("Delete Task", style: GoogleFonts.outfit(color: Colors.white)),
-                onTap: () {
-                  ref.read(customTasksNotifierProvider.notifier).deleteTask(task.id);
-                  Navigator.pop(dialogContext);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
-    final controller = TextEditingController(text: task.content);
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF131316),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.white.withAlpha(12)),
-          ),
-          title: Text(
-            "Edit Task",
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: TextField(
-            controller: controller,
-            style: GoogleFonts.outfit(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: "Enter task details...",
-              hintStyle: GoogleFonts.outfit(color: Colors.white30),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: ref.watch(overallProgressColorProvider))),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Cancel", style: GoogleFonts.outfit(color: Colors.white30)),
-            ),
-            TextButton(
-              onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  ref.read(customTasksNotifierProvider.notifier).editTask(task.id, controller.text.trim());
-                }
-                Navigator.pop(context);
-              },
-              child: Text("Save", style: GoogleFonts.outfit(color: Colors.cyanAccent)),
-            ),
-          ],
-        );
-      },
     );
   }
 

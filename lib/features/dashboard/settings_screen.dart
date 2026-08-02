@@ -81,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
 
-    final localBackupsHeader = buildHeader('LOCAL BACKUPS & DATA');
+    final localBackupsHeader = buildHeader('DATA BACKUP & RESTORE');
     final localBackupsContent = buildSettingsGroup(
       DangerZoneSettingsSection(
         titleStyle: titleStyle,

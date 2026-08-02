@@ -19,11 +19,32 @@ import 'route_resolver.dart';
 final appRouter = GoRouter(
   initialLocation: resolveInitialRoute(),
   redirect: (context, state) {
-    if (defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS) {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+         defaultTargetPlatform == TargetPlatform.iOS)) {
       if (state.uri.path.startsWith('/desk')) {
         return '/';
       }
+    }
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+         defaultTargetPlatform == TargetPlatform.linux ||
+         defaultTargetPlatform == TargetPlatform.macOS)) {
+      if (state.uri.path == '/') {
+        return '/desk';
+      }
+    }
+    if (kIsWeb && state.uri.path == '/') {
+      if (persistedUserWantsDesktopUI == true) {
+        return '/desk';
+      }
+      try {
+        final view = PlatformDispatcher.instance.views.first;
+        final logicalWidth = view.physicalSize.width / view.devicePixelRatio;
+        if (logicalWidth > 600) {
+          return '/desk';
+        }
+      } catch (_) {}
     }
     return null;
   },
