@@ -63,7 +63,7 @@ class DemoGuideNotifier extends Notifier<DemoStep> {
 
   Future<void> startDemo() async {
     state = DemoStep.none;
-    ref.read(focusProvider.notifier).resetState();
+    await ref.read(focusProvider.notifier).resetState();
     await _prefs.setBool('has_seen_demo_guide', true);
     ref.read(hasSeenDemoGuideProvider.notifier).state = true;
 
@@ -107,7 +107,7 @@ class DemoGuideNotifier extends Notifier<DemoStep> {
   }
 
   Future<void> skipDemo() async {
-    ref.read(focusProvider.notifier).resetState();
+    await ref.read(focusProvider.notifier).resetState();
     await _prefs.setBool('has_seen_demo_guide', true);
     ref.read(hasSeenDemoGuideProvider.notifier).state = true;
     state = DemoStep.none;
@@ -115,7 +115,7 @@ class DemoGuideNotifier extends Notifier<DemoStep> {
   }
 
   Future<void> finishDemo() async {
-    ref.read(focusProvider.notifier).resetState();
+    await ref.read(focusProvider.notifier).resetState();
     await _prefs.setBool('has_seen_demo_guide', true);
     ref.read(hasSeenDemoGuideProvider.notifier).state = true;
     state = DemoStep.none;

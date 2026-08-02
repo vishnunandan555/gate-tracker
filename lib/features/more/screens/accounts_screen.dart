@@ -633,7 +633,7 @@ class _ResetDataRow extends ConsumerWidget {
         ref.invalidate(authProvider);
         ref.invalidate(syllabusProvider);
         ref.invalidate(progressLogsProvider);
-        ref.read(focusProvider.notifier).resetState();
+        await ref.read(focusProvider.notifier).resetState();
         ref.invalidate(todayFocusSessionsProvider);
         ref.invalidate(todayFocusDurationProvider);
         ref.invalidate(dailyFocusGoalProvider);

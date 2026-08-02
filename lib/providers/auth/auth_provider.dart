@@ -99,7 +99,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         try {
           googleUser = await GoogleSignIn.instance.authenticate();
         } catch (e, stack) {
-          debugPrint("Google Sign In error: $e\n$stack");
+          if (kDebugMode) debugPrint("Google Sign In error: $e\n$stack");
           final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
           final isCancellation = e.toString().contains('cancelled') || e.toString().contains('CANCELED');
           if (!isCancellation) {
@@ -132,7 +132,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         isLoading: false,
       ));
     } catch (e, stack) {
-      debugPrint("signInWithGoogle error: $e");
+      if (kDebugMode) debugPrint("signInWithGoogle error: $e");
       final isCancellation = e.toString().contains('cancelled') || e.toString().contains('CANCELED');
       if (isCancellation) {
         final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
@@ -153,14 +153,14 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       final db = ref.read(appDatabaseProvider);
       await db.wipeDatabaseData();
     } catch (e) {
-      debugPrint("Error wiping database: $e");
+      if (kDebugMode) debugPrint("Error wiping database: $e");
     }
 
     // 2. Reset setup/onboarding completion status
     try {
       await ref.read(setupCompletedProvider.notifier).resetSetup(forceOnboarding: false);
     } catch (e) {
-      debugPrint("Error resetting setup: $e");
+      if (kDebugMode) debugPrint("Error resetting setup: $e");
     }
 
     // 3. Clear all user-session-specific shared preferences keys
@@ -197,7 +197,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         await _prefs.remove(key);
       }
     } catch (e) {
-      debugPrint("Error resetting prefs: $e");
+      if (kDebugMode) debugPrint("Error resetting prefs: $e");
     }
   }
 
@@ -220,7 +220,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         await ref.read(syncProvider.notifier).clearSyncState();
       } catch (e) {
-        debugPrint("Error clearing sync state: $e");
+        if (kDebugMode) debugPrint("Error clearing sync state: $e");
       }
       state = AsyncValue.data(AuthState(
         user: null,
@@ -246,7 +246,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     try {
       await ref.read(syncProvider.notifier).clearSyncState();
     } catch (e) {
-      debugPrint("Error clearing sync state: $e");
+      if (kDebugMode) debugPrint("Error clearing sync state: $e");
     }
     state = AsyncValue.data(AuthState(
       user: null,
@@ -304,7 +304,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         try {
           await FirebaseFirestore.instance.collection('users').doc(uid).delete();
         } catch (e) {
-          debugPrint("Error deleting user Firestore data: $e");
+          if (kDebugMode) debugPrint("Error deleting user Firestore data: $e");
         }
       }
       if (isFirebaseSupported()) {
@@ -318,7 +318,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         await ref.read(syncProvider.notifier).clearSyncState();
       } catch (e) {
-        debugPrint("Error clearing sync state: $e");
+        if (kDebugMode) debugPrint("Error clearing sync state: $e");
       }
       state = AsyncValue.data(AuthState(
         user: null,
@@ -326,7 +326,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         isLoading: false,
       ));
     } catch (e, stack) {
-      debugPrint("deleteAccount error: $e\n$stack");
+      if (kDebugMode) debugPrint("deleteAccount error: $e\n$stack");
       final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
       state = AsyncValue.data(AuthState(
         user: FirebaseAuth.instance.currentUser,
@@ -346,13 +346,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         await user.delete();
       } catch (e) {
-        debugPrint("Error deleting FirebaseAuth user account: $e");
+        if (kDebugMode) debugPrint("Error deleting FirebaseAuth user account: $e");
         rethrow;
       }
       try {
         await FirebaseFirestore.instance.collection('users').doc(uid).delete();
       } catch (e) {
-        debugPrint("Error deleting user Firestore data: $e");
+        if (kDebugMode) debugPrint("Error deleting user Firestore data: $e");
       }
     }
     await _prefs.remove('account_creation_date');
@@ -373,7 +373,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         await ref.read(syncProvider.notifier).clearSyncState();
       } catch (e) {
-        debugPrint("Error clearing sync state: $e");
+        if (kDebugMode) debugPrint("Error clearing sync state: $e");
       }
       state = AsyncValue.data(AuthState(
         user: null,
@@ -399,7 +399,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         await ref.read(syncProvider.notifier).clearSyncState();
       } catch (e) {
-        debugPrint("Error clearing sync state: $e");
+        if (kDebugMode) debugPrint("Error clearing sync state: $e");
       }
       state = AsyncValue.data(AuthState(
         user: null,

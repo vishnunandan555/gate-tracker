@@ -110,18 +110,11 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         );
       }
 
-      if (state.status != SyncStatus.idle) {
-        state = state.copyWith(
-          lastSyncedAt: lastSyncedAt,
-          errorMessage: lastErrorStr,
-        );
-      } else {
-        state = SyncState(
-          status: status,
-          lastSyncedAt: lastSyncedAt,
-          errorMessage: lastErrorStr,
-        );
-      }
+      state = state.copyWith(
+        status: status != SyncStatus.idle ? status : state.status,
+        lastSyncedAt: lastSyncedAt ?? state.lastSyncedAt,
+        errorMessage: lastErrorStr ?? state.errorMessage,
+      );
     } catch (e) {
       if (kDebugMode) debugPrint("Error loading sync state from prefs: $e");
     }
@@ -477,7 +470,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     );
 
     final rawBytesLength = utf8.encode(jsonEncode(data)).length;
-    if (rawBytesLength > 900 * 1024 && payload['compressed'] != true && syncStatsEnabled) {
+    if (rawBytesLength > 900 * 1024 && payload['compressed'] != true) {
       await _updateSyncState(
         status: SyncStatus.requiresAction,
         errorMessage: 'Payload limit approaching (900+ KB). Auto-sync paused to protect cloud data.',

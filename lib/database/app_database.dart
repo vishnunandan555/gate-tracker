@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
 import 'connection/connection.dart' as conn;
 import 'schema_version.dart';
@@ -184,17 +185,22 @@ class AppDatabase extends _$AppDatabase {
             } catch (_) {}
           }
           if (from < 8) {
-            // v8 was intentionally skipped / internal build. No schema changes.
+            // v8 was an internal build version with identical schema structure. No DDL operations required.
+            if (kDebugMode) debugPrint("Database migration v7 -> v8 (no DDL changes required)");
           }
           if (from < 9) {
             try {
               await m.createTable(customTasks);
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v8->v9 notice: $e");
+            }
           }
           if (from < 10) {
             try {
               await m.addColumn(syllabusTasks, syllabusTasks.completedAt);
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v9->v10 notice: $e");
+            }
           }
           if (from < 11) {
             try {
@@ -202,7 +208,9 @@ class AppDatabase extends _$AppDatabase {
               await m.addColumn(syllabusTopics, syllabusTopics.currentCount);
               await m.addColumn(syllabusTopics, syllabusTopics.maxCount);
               await m.addColumn(syllabusTopics, syllabusTopics.resourceUrl);
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v10->v11 notice: $e");
+            }
           }
           if (from < 12) {
             try {
@@ -213,19 +221,25 @@ class AppDatabase extends _$AppDatabase {
               await m.addColumn(syllabusTasks, syllabusTasks.lastInteractedAt);
               await m.addColumn(customTasks, customTasks.isDeleted);
               await m.addColumn(customTasks, customTasks.lastInteractedAt);
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v11->v12 notice: $e");
+            }
           }
           if (from < 13) {
             try {
               await m.addColumn(dailyHistory, dailyHistory.tasksCompletedTotal);
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v12->v13 notice: $e");
+            }
           }
           if (from < 14) {
             try {
               await m.createTable(syllabusProgressLogs);
               await customStatement('CREATE INDEX IF NOT EXISTS idx_progress_logs_timestamp ON syllabus_progress_logs (timestamp);');
               await customStatement('CREATE INDEX IF NOT EXISTS idx_progress_logs_category ON syllabus_progress_logs (category_id);');
-            } catch (_) {}
+            } catch (e) {
+              if (kDebugMode) debugPrint("Migration v13->v14 notice: $e");
+            }
           }
           if (shouldSeed) {
             try {

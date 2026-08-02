@@ -484,12 +484,12 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
     _saveSelection();
   }
 
-  void resetState() {
+  Future<void> resetState() async {
     _timer?.cancel();
     _segmentStartTime = null;
     _previousSegmentSeconds = 0;
     _previousTotalSecondsFocused = 0;
-    _clearSessionRecovery();
+    await _clearSessionRecovery();
     state = FocusSessionState.initial();
   }
 

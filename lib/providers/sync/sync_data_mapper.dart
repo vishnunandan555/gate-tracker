@@ -64,13 +64,12 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
   final localSylTsks = List<Map<String, dynamic>>.from(local['syllabusTasks'] ?? []);
   final cloudSylTsks = List<Map<String, dynamic>>.from(cloud['syllabusTasks'] ?? []);
 
-  // Merge Syllabus Categories by composite key (name + color + position)
+  // Merge Syllabus Categories by composite key (name + color)
   final mergedSylCats = <String, Map<String, dynamic>>{};
   for (final c in [...localSylCats, ...cloudSylCats]) {
-    final name = c['name'] as String;
+    final name = (c['name'] as String? ?? '').trim();
     final color = _parseSyncInt(c['color']) ?? 0;
-    final position = _parseSyncInt(c['position']) ?? 0;
-    final key = "${name}_${color}_$position";
+    final key = "${name}_$color";
     if (!mergedSylCats.containsKey(key)) {
       mergedSylCats[key] = Map<String, dynamic>.from(c);
     } else {
@@ -82,15 +81,14 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
   // Helper: get Category Key for a category ID
   String getSylCatKey(dynamic catId, List<Map<String, dynamic>> catsList) {
     final targetId = _parseSyncInt(catId);
-    if (targetId == null) return 'General_0_0';
+    if (targetId == null) return 'General_0';
     final match = catsList.firstWhere(
       (c) => _parseSyncInt(c['id']) == targetId,
       orElse: () => {},
     );
-    final name = match['name'] as String? ?? 'General';
+    final name = (match['name'] as String? ?? 'General').trim();
     final color = _parseSyncInt(match['color']) ?? 0;
-    final position = _parseSyncInt(match['position']) ?? 0;
-    return "${name}_${color}_$position";
+    return "${name}_$color";
   }
 
   // Merge Syllabus Topics by Category Key & Topic Name

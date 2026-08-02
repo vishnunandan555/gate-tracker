@@ -328,7 +328,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         await db.delete(db.dailyHistory).go();
         await db.delete(db.focusSessions).go();
 
-        ref.read(focusProvider.notifier).resetState();
+        await ref.read(focusProvider.notifier).resetState();
         ref.invalidate(progressLogsProvider);
         ref.invalidate(dailyHistoryProvider);
         ref.invalidate(todayFocusSessionsProvider);

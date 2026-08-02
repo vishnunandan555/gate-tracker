@@ -48,13 +48,15 @@ final appRouter = GoRouter(
     }
     return null;
   },
-  errorBuilder: (context, state) => Scaffold(
-    backgroundColor: const Color(0xFF09090B),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline_rounded, color: Colors.cyanAccent, size: 48),
+  errorBuilder: (context, state) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    return Scaffold(
+      backgroundColor: const Color(0xFF09090B),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline_rounded, color: primaryColor, size: 48),
           const SizedBox(height: 16),
           const Text(
             'Page Not Found',
@@ -74,7 +76,8 @@ final appRouter = GoRouter(
         ],
       ),
     ),
-  ),
+  );
+},
   routes: [
     GoRoute(path: '/', builder: (context, state) => const DashboardShell()),
     GoRoute(path: '/desk', builder: (context, state) => const DeskDashboardShell()),
