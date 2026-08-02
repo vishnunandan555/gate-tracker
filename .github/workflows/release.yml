@@ -39,6 +39,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: GATEletics ${{ env.VERSION }}
+          tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
           generate_release_notes: true
@@ -112,6 +113,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: artifacts/gateletics-${{ env.VERSION }}-android.apk
+          tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
         env:
@@ -196,6 +198,7 @@ jobs:
           files: |
             gateletics-windows-${{ env.VERSION }}.zip
             gateletics-windows-${{ env.VERSION }}-setup.exe
+          tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
         env:
@@ -330,6 +333,7 @@ jobs:
             gateletics-linux-${{ env.VERSION }}.AppImage
             gateletics-linux-${{ env.VERSION }}.tar.gz
             gateletics-linux-${{ env.VERSION }}.deb
+          tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: ${{ startsWith(github.ref_name, 'v0.') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
         env:
@@ -437,6 +441,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: raw-logs/raw-build-logs-${{ env.VERSION }}.zip
+          tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: true
         env:
