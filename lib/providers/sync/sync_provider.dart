@@ -317,8 +317,10 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         ...payload,
         'lastSyncedAt': FieldValue.serverTimestamp(),
       });
+      _hasPendingChanges = false;
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now());
     } catch (e) {
+      _hasPendingChanges = true;
       await _updateSyncState(status: SyncStatus.error, errorMessage: e.toString());
     }
   }

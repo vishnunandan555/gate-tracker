@@ -20,19 +20,12 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, delete: if isAuthenticated() && request.auth.uid == userId;
 
-      // Create and update rules with payload size guard (< 1 MB) and schema check
+      // Create and update rules with top-level key count guard (< 50 fields) and payload validation.
+      // Byte size safety (< 900 KB) is enforced client-side in sync_provider.dart + Firestore 1 MB hard limit.
       allow create, update: if isAuthenticated()
         && request.auth.uid == userId
-        && request.resource.data.size() < 1048576 // Max 1 MB Firestore limit
+        && request.resource.data.keys().size() < 50
         && isValidSyncPayload();
-
-      // Nested collections sync (Subjects, Progress history)
-      match /{document=**} {
-        allow read, delete: if isAuthenticated() && request.auth.uid == userId;
-        allow create, update: if isAuthenticated()
-          && request.auth.uid == userId
-          && request.resource.data.size() < 1048576; // Max 1 MB Firestore limit
-      }
     }
   }
 }

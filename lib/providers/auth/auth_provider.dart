@@ -263,7 +263,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final uid = user.uid;
-        // Delete FirebaseAuth user first so Firestore doc is not deleted if re-auth or user deletion fails
+        // Delete user's Firestore document first while token is valid
+        try {
+          await FirebaseFirestore.instance.collection('users').doc(uid).delete();
+        } catch (e) {
+          if (kDebugMode) debugPrint("Error deleting user Firestore data: $e");
+        }
+        // Then delete FirebaseAuth user
         try {
           await user.delete();
         } on FirebaseAuthException catch (e) {
@@ -273,12 +279,6 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
           } else {
             rethrow;
           }
-        }
-        // Firestore document is deleted ONLY after FirebaseAuth user.delete() succeeds
-        try {
-          await FirebaseFirestore.instance.collection('users').doc(uid).delete();
-        } catch (e) {
-          if (kDebugMode) debugPrint("Error deleting user Firestore data: $e");
         }
       }
       if (isFirebaseSupported()) {

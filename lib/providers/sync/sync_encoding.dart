@@ -48,14 +48,20 @@ Map<String, dynamic> encodeSyncPayload(
   final shouldCompress = forceCompression || (jsonBytes.length > 800 * 1024);
 
   if (shouldCompress) {
-    final compressedBytes = GZipEncoder().encode(jsonBytes)!;
-    final base64Payload = base64Encode(compressedBytes);
-    return {
-      'compressed': true,
-      'syncStatsEnabled': syncStatsEnabled,
-      if (historyPrunedBefore != null) 'historyPrunedBefore': historyPrunedBefore.toIso8601String(),
-      'data': base64Payload,
-    };
+    try {
+      final compressedBytes = GZipEncoder().encode(jsonBytes);
+      if (compressedBytes != null) {
+        final base64Payload = base64Encode(compressedBytes);
+        return {
+          'compressed': true,
+          'syncStatsEnabled': syncStatsEnabled,
+          if (historyPrunedBefore != null) 'historyPrunedBefore': historyPrunedBefore.toIso8601String(),
+          'data': base64Payload,
+        };
+      }
+    } catch (_) {
+      // Compression fallback
+    }
   }
 
   return {

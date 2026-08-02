@@ -22,8 +22,13 @@ String _generateCodeChallenge(String verifier) {
 }
 
 Future<UserCredential> signInWithGoogleWindows() async {
-  // 1. Bind to loopback server on a random port
-  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  // 1. Bind to loopback server on a dynamic free port
+  late final HttpServer server;
+  try {
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  } catch (e) {
+    throw Exception('Unable to start local authentication server: $e. Please check your firewall permissions.');
+  }
   final port = server.port;
 
   // 2. Generate PKCE verifier and challenge

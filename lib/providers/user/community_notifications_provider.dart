@@ -165,6 +165,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
         final decoded = jsonDecode(response.body) as List<dynamic>;
         List<CommunityNotification> fetchedList = decoded
             .map((item) => CommunityNotification.fromJson(item as Map<String, dynamic>))
+            .where((item) => item.actionUrl == null || item.actionUrl!.startsWith('https://'))
             .toList();
         if (fetchedList.length > 50) {
           fetchedList = fetchedList.sublist(0, 50);
