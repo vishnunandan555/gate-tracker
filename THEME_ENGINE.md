@@ -5,27 +5,53 @@
 The Gateletics Theme Engine is a robust, modular, and fully deterministic design system built for Flutter. It completely replaces legacy partial theme overrides with explicit, immutable **ThemeSets** and independent **Mode-Aware Accent Pools**.
 
 ```
-                           ┌───────────────────────────┐
-                           │    ThemeEngineNotifier    │
-                           └─────────────┬─────────────┘
-                                         │
-                 ┌───────────────────────┴───────────────────────┐
-                 ▼                                               ▼
-     ┌───────────────────────┐                       ┌───────────────────────┐
-     │  lightAppThemeProvider│                       │  darkAppThemeProvider │
-     └───────────┬───────────┘                       └───────────┬───────────┘
-                 │                                               │
-                 ▼                                               ▼
-  ThemeData (Paper Light Set)                     ThemeData (Zinc Dark Set)
-  + Light Accent Pool                             + Dark Accent Pool
-                 │                                               │
-                 └───────────────────────┬───────────────────────┘
-                                         │
-                                         ▼
-                             ┌───────────────────────┐
-                             │  MaterialApp.router   │
-                             │   (ThemeMode.system)  │
-                             └───────────────────────┘
+                        ┌──────────────────────────────┐
+                        │   lib/core/theme/theme_sets/ │
+                        │   - standard_dark_theme      │
+                        │   - standard_light_theme     │
+                        └──────────────┬───────────────┘
+                                       │
+                                       ▼
+                        ┌──────────────────────────────┐
+                        │  lib/core/theme/presets/     │
+                        │  - handcrafted_presets.dart  │
+                        └──────────────┬───────────────┘
+                                       │ (Theme Registry)
+                                       ▼
+                        ┌──────────────────────────────┐
+                        │    ThemeEngineNotifier       │
+                        │  (Riverpod State Provider)   │
+                        └──────────────┬───────────────┘
+                                       │
+               ┌───────────────────────┴───────────────────────┐
+               ▼                                               ▼
+   ┌───────────────────────┐                       ┌───────────────────────┐
+   │ lightAppThemeProvider │                       │ darkAppThemeProvider  │
+   └───────────┬───────────┘                       └───────────┬───────────┘
+               │                                               │
+               ▼                                               ▼
+ThemeData (Paper Light Set)                     ThemeData (Zinc Dark Set)
++ Light Accent Pool                             + Dark Accent Pool
+               │                                               │
+               └───────────────────────┬───────────────────────┘
+                                       │
+                                       ▼
+                           ┌───────────────────────┐
+                           │   AppTheme.buildTheme │
+                           │  (ThemeExtension)     │
+                           └───────────┬───────────┘
+                                       │
+                                       ▼
+                           ┌───────────────────────┐
+                           │   MaterialApp.router  │
+                           │   (ThemeMode.system)  │
+                           └───────────┬───────────┘
+                                       │
+                                       ▼
+                           ┌───────────────────────┐
+                           │   UI Widgets          │
+                           │  (context.appColors)  │
+                           └───────────────────────┘
 ```
 
 ### Core Design Rules:
@@ -34,8 +60,8 @@ The Gateletics Theme Engine is a robust, modular, and fully deterministic design
 3. **Dual Independent Accent Pools**: Accent colors are completely decoupled from surface theme sets. Light Mode accents (`defaultLightAccents`) and Dark Mode accents (`defaultDarkAccents`) live in separate pools. Adding a custom accent targets either Light Mode or Dark Mode specifically.
 4. **Material You Monet Integration**: Supports native OS dynamic accent extraction (`darkDynamic.primary` / `lightDynamic.primary`) alongside manual color selection, boot accent randomization, and freeze locking.
 5. **Modular Developer Theme Files**: Custom themes are self-contained Dart files located in `lib/core/theme/theme_sets/`. Developers can create new theme files using the provided template file.
-6. **Live Reactive Modal Sync**: Open bottom sheets and popups are wrapped in `Theme(data: activeThemeData)` so ModalRoutes receive live theme updates synchronously when switching between Light, Dark, or System mode.
-7. **Native Overlay & Smooth Lerp**: System status bars and navigation bars (`SystemChrome`) auto-sync contrast with the active theme, and theme switches execute with smooth 250ms `AppThemeColors.lerp` curves.
+6. **Live Reactive Modal Sync**: Open bottom sheets and popups are wrapped in a reactive Theme widget so ModalRoutes receive live theme updates synchronously when switching between Light, Dark, or System mode.
+7. **Native Overlay & Smooth Lerp**: System status bars and navigation bars (`SystemChrome`) auto-sync contrast with the active theme, and theme switches execute with smooth Lerp curves.
 
 ---
 
@@ -55,15 +81,38 @@ lib/core/theme/
 ├── presets/
 │   └── handcrafted_presets.dart        # Central ThemeRegistry (Standard Dark & Light)
 ├── app_theme.dart                     # ThemeData builder & System UI status bar auto-sync
-├── app_theme_colors.dart              # ThemeExtension with 250ms Lerp curves & WCAG contrast
+├── app_theme_colors.dart              # ThemeExtension with Lerp curves & WCAG contrast
 └── theme_context_ext.dart             # BuildContext extension (context.appColors)
 ```
 
 ---
 
-## 3. Surface Tier Specification Matrix
+## 3. Surface Tier Inheritance & Visual Matrix
 
-Every `ThemeSetModel` explicitly defines 4 surface background tiers, 3 typography levels, and structural line opacities:
+UI components derive their background and contrast colors based on an explicit 4-tier surface stacking model:
+
+```
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │ L3 OVERLAY TIER (dialogBackground)                                    │
+ │ Floating Popups, AlertDialogs, BottomSheets                           │
+ │ Dark: #131316  │  Light: #FFFFFF                                      │
+ │ ┌────────────────────────────────────────────────────────────────────┐ │
+ │ │ L2 INTERACTIVE TIER (surfaceColor)                                 │ │
+ │ │ Text Fields, Chips, Dropdown Menus, Buttons                        │ │
+ │ │ Dark: #18181B  │  Light: #F1F5F9                                   │ │
+ │ │ ┌────────────────────────────────────────────────────────────────┐ │ │
+ │ │ │ L1 CARD TIER (cardBackground)                                  │ │ │
+ │ │ │ Stats Cards, Category Cards, Syllabus Topic Tiles              │ │ │
+ │ │ │ Dark: #131316  │  Light: #FFFFFF                                │ │ │
+ │ │ │ ┌────────────────────────────────────────────────────────────┐ │ │ │
+ │ │ │ │ BASE CANVAS TIER (scaffoldBackground)                        │ │ │ │
+ │ │ │ │ App Scaffold, Navigation Drawer, Main Background          │ │ │ │
+ │ │ │ │ Dark: #09090B  │  Light: #F8FAFC                            │ │ │ │
+ │ │ │ └────────────────────────────────────────────────────────────┘ │ │ │
+ │ │ └────────────────────────────────────────────────────────────────┘ │ │
+ │ └────────────────────────────────────────────────────────────────────┘ │
+ └────────────────────────────────────────────────────────────────────────┘
+```
 
 | Tier / Element | Property Name | Description & Purpose | Standard Dark (`zinc_dark`) | Standard Light (`paper_light`) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -81,7 +130,7 @@ Every `ThemeSetModel` explicitly defines 4 surface background tiers, 3 typograph
 
 ## 4. Dual Accent Pools & Dynamic Accent Architecture
 
-Accent colors are managed outside of surface `ThemeSetModel` objects.
+Accent colors are isolated from surface `ThemeSetModel` objects to ensure color customizations apply dynamically without altering background accessibility.
 
 ```
                            ┌───────────────────────────┐
@@ -95,7 +144,7 @@ Accent colors are managed outside of surface `ThemeSetModel` objects.
      ├───────────────────────┤                       ├───────────────────────┤
      │ Default: Bright Cyan  │                       │ Default: Dark Blue    │
      │ (#00F0FF)             │                       │ (#0284C7)             │
-     │ + User Dark Accents   │                       │ + User Light Accents  │
+     │ + Custom Dark Accents │                       │ + Custom Light Accents│
      └───────────────────────┘                       └───────────────────────┘
 ```
 
@@ -114,101 +163,41 @@ When a custom accent color is selected, `AppAccentPools.ensureContrast()` calcul
 
 ---
 
-## 5. Live Modal Route Theme Sync Architecture
+## 5. Live Modal Route Theme Inheritance Architecture
 
-In Flutter, opening a modal bottom sheet (`showModalBottomSheet`) creates an isolated `ModalRoute` sitting on top of the `Navigator` stack. By default, `ModalRoute` instances do not rebuild their internal theme context when the root `MaterialApp` changes themes.
+In Flutter, modal bottom sheets (`showModalBottomSheet`) push a new `ModalRoute` onto the `Navigator` stack. By default, modal routes inherit their initial `ThemeData` from the route context at the moment of creation and do not receive reactive updates when the parent `MaterialApp` changes mode.
 
-To guarantee instant, live theme switching inside open modals:
+To resolve this, modal route subtrees are wrapped in a reactive `Theme` builder bound to `activeAppThemeProvider`. This ensures theme changes propagate instantly into open modal sheets:
 
-```dart
-showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  backgroundColor: Colors.transparent,
-  builder: (_) => Consumer(
-    builder: (context, ref, child) {
-      final activeThemeData = ref.watch(activeAppThemeProvider);
-
-      return Theme(
-        data: activeThemeData, // Passes active Light/Dark theme directly into ModalRoute!
-        child: Builder(
-          builder: (context) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              decoration: BoxDecoration(
-                color: context.appColors.surfaceColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                border: Border.all(color: context.appColors.borderColor),
-              ),
-              child: const ThemeGallerySheet(),
-            );
-          },
-        ),
-      );
-    },
-  ),
-);
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ Navigator Root Context                                                 │
+│  └── MaterialApp (ThemeMode.system)                                    │
+│       │                                                                │
+│       ▼                                                                │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ ModalRoute (Pushed Overlay)                                      │  │
+│  │  └── Theme (Bound to activeAppThemeProvider)                     │  │
+│  │       └── AnimatedContainer (250ms Lerp Transition)              │  │
+│  │            └── ThemeGallerySheet (context.appColors)             │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 6. Developer Guide: Creating Custom Theme Files
 
-To create custom theme files, developers duplicate and edit the template file [custom_theme_template.dart](file:///home/vishnunandan555/Projects/gate-tracker/lib/core/theme/theme_sets/custom_theme_template.dart) in `lib/core/theme/theme_sets/`:
-
-```dart
-const CustomThemeBundle myCustomBundle = CustomThemeBundle(
-  id: 'my_custom_bundle',
-  name: 'My Custom Theme',
-  description: 'Custom paired theme specification.',
-  darkTheme: ThemeSetModel(...),
-  lightTheme: ThemeSetModel(...),
-);
-```
+To create custom theme files, developers duplicate and edit the template file `custom_theme_template.dart` located in `lib/core/theme/theme_sets/`.
 
 ### Registering in Preset Registry:
-Add the theme model to `HandcraftedPresets.allPresets` in `lib/core/theme/presets/handcrafted_presets.dart`:
-
-```dart
-class HandcraftedPresets {
-  static const ThemeSetModel zincDark = standardDarkTheme;
-  static const ThemeSetModel paperLight = standardLightTheme;
-
-  static List<ThemeSetModel> get allPresets => [
-        standardDarkTheme,
-        standardLightTheme,
-        myCustomDarkTheme, // Added custom theme file
-      ];
-}
-```
+Add the newly instantiated theme model to `HandcraftedPresets.allPresets` in `lib/core/theme/presets/handcrafted_presets.dart` to make it selectable within the UI Theme Gallery.
 
 ---
 
 ## 7. Accessing Theme Colors in Widgets
 
-In any Flutter widget, access the active design system colors through `context.appColors`:
-
-```dart
-Widget build(BuildContext context) {
-  final appColors = context.appColors;
-
-  return Container(
-    color: appColors.cardBackground, // L1 Card Surface
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      border: Border.all(color: appColors.borderColor),
-    ),
-    child: Text(
-      "Card Title",
-      style: TextStyle(
-        color: appColors.textPrimary,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
-}
-```
+In any Flutter widget, access active design system colors through `context.appColors`:
 
 ### Complete `AppThemeColors` Token Index:
 - `appColors.scaffoldBackground` — Canvas Background

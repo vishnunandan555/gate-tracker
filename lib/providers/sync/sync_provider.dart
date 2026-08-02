@@ -256,7 +256,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       if (hasLocalData) {
         final localData = await exportLocalData();
         localData['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
-        if (areDataEqual(localData, cloudData)) {
+        final isEqual = await compute(areDataEqualIsolate, [localData, cloudData]);
+        if (isEqual) {
           await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced);
           return false;
         }
@@ -399,9 +400,10 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
       if (dataToMerge != null) {
         final localData = await exportLocalData();
-        final merged = await mergeData(localData, dataToMerge);
+        final merged = await compute(mergeDataIsolate, [localData, dataToMerge]);
         
-        if (!areDataEqual(localData, merged)) {
+        final isAlreadyEqual = await compute(areDataEqualIsolate, [localData, merged]);
+        if (!isAlreadyEqual) {
           await _restoreLocalData(merged);
         }
 
