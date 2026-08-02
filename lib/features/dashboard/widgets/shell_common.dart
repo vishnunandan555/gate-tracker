@@ -48,7 +48,7 @@ void showSyncConflictDialog(BuildContext context, WidgetRef ref, Color accentCol
           children: [
             Text(
               "Both your local device and cloud backup contain study tracking progress. How would you like to resolve this conflict?",
-              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
@@ -134,9 +134,9 @@ class _SyncDialogOption extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withAlpha(5),
+          color: context.appColors.surfaceColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withAlpha(8)),
+          border: Border.all(color: context.appColors.borderColor),
         ),
         child: Row(
           children: [
@@ -212,7 +212,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
             duration: const Duration(seconds: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.white.withAlpha(20), width: 1),
+              side: BorderSide(color: context.appColors.borderColor, width: 1),
             ),
             content: Row(
               children: [
@@ -226,7 +226,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
                   child: Text(
                     "GATEletics updated to v${packageInfo.version}",
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -265,7 +265,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
                   child: Text(
                     "OK",
                     style: GoogleFonts.outfit(
-                      color: Colors.white70,
+                      color: context.appColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -441,9 +441,9 @@ void showConflictDetailsDialog(
           Container(
             constraints: const BoxConstraints(maxHeight: 120),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(5),
+              color: context.appColors.surfaceColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withAlpha(8)),
+              border: Border.all(color: context.appColors.borderColor),
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -459,7 +459,7 @@ void showConflictDetailsDialog(
                       Expanded(
                         child: Text(
                           item,
-                          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11),
+                          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
                         ),
                       ),
                     ],
@@ -480,7 +480,7 @@ void showConflictDetailsDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         "Data Comparison Details",
-        style: GoogleFonts.jersey15(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20, letterSpacing: 0.8),
+        style: GoogleFonts.jersey15(fontWeight: FontWeight.bold, color: context.appColors.textPrimary, fontSize: 20, letterSpacing: 0.8),
       ),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -501,7 +501,7 @@ void showConflictDetailsDialog(
                       flex: 4,
                       child: Text(
                         "METRIC",
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white38, fontSize: 10.5),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.textMuted, fontSize: 10.5),
                       ),
                     ),
                     Expanded(
@@ -531,7 +531,7 @@ void showConflictDetailsDialog(
                   child: Center(
                     child: Text(
                       "Local device and cloud backup data match!",
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 12),
+                      style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                     ),
                   ),
                 )
@@ -584,7 +584,7 @@ Widget _buildStatComparisonRow(BuildContext context, String label, String localV
           child: Text(
             label,
             style: GoogleFonts.outfit(
-              color: isDifferent ? Colors.white : Colors.white70,
+              color: isDifferent ? context.appColors.textPrimary : context.appColors.textSecondary,
               fontSize: 11.5,
               fontWeight: isDifferent ? FontWeight.bold : FontWeight.w500,
             ),
@@ -594,7 +594,7 @@ Widget _buildStatComparisonRow(BuildContext context, String label, String localV
           flex: 3,
           child: Text(
             localVal,
-            style: GoogleFonts.outfit(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.bold),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 11.5, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ),
@@ -603,7 +603,7 @@ Widget _buildStatComparisonRow(BuildContext context, String label, String localV
           child: Text(
             cloudVal,
             style: GoogleFonts.outfit(
-              color: isDifferent ? Colors.cyanAccent : Colors.white,
+              color: isDifferent ? Colors.cyanAccent : context.appColors.textPrimary,
               fontSize: 11.5,
               fontWeight: FontWeight.bold,
             ),

@@ -7,6 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../database/backup_service.dart';
 
+// Unified light palette for pre-login screens
+const Color _lightScaffold = Color(0xFFF3F4F6);
+const Color _lightCardBg = Colors.white;
+const Color _lightTextPrimary = Color(0xFF1E293B);
+const Color _lightTextSecondary = Color(0xFF475569);
+const Color _lightTextMuted = Color(0xFF94A3B8);
+
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
@@ -104,8 +111,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: isDark ? const Color(0xFF09090B) : _lightScaffold,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -127,7 +136,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             height: 80,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.white.withAlpha(20), width: 1.5),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withAlpha(20)
+                                    : Colors.black.withAlpha(20),
+                                width: 1.5,
+                              ),
                               gradient: const LinearGradient(
                                 colors: [Colors.cyanAccent, Colors.blueAccent],
                                 begin: Alignment.topLeft,
@@ -155,7 +169,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           style: GoogleFonts.orbitron(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : _lightTextPrimary,
                             letterSpacing: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -165,7 +179,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           "Choose how you want to manage your data",
                           style: GoogleFonts.outfit(
                             fontSize: 13,
-                            color: Colors.white38,
+                            color: isDark ? Colors.white38 : _lightTextMuted,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -173,8 +187,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                         // Option 1: Sign in with Google (Cloud sync)
                         _buildAuthOptionCard(
+                          isDark: isDark,
                           title: "Cloud Synchronization",
-                          description: "Backup your progress securely in the cloud and sync automatically across all your devices.",
+                          description:
+                              "Backup your progress securely in the cloud and sync automatically across all your devices.",
                           icon: Icons.backup_rounded,
                           accentColor: Colors.cyanAccent,
                           isLoading: _isGoogleLoading,
@@ -196,16 +212,19 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                         // Option 2: Use locally
                         _buildAuthOptionCard(
+                          isDark: isDark,
                           title: "100% Local Storage",
-                          description: "Store everything locally on this device. No accounts, no internet required. You can always sign in later from settings.",
+                          description:
+                              "Store everything locally on this device. No accounts, no internet required. You can always sign in later from settings.",
                           icon: Icons.phonelink_setup_rounded,
-                          accentColor: Colors.white70,
+                          // In dark: white70 (visible on dark card). In light: slate (visible on white card)
+                          accentColor: isDark ? Colors.white70 : _lightTextSecondary,
                           isLoading: _isOfflineLoading,
                           isDisabled: _isGoogleLoading || _isImportLoading,
                           buttonText: "USE LOCALLY",
-                          buttonIcon: const Icon(
+                          buttonIcon: Icon(
                             Icons.cloud_off_rounded,
-                            color: Colors.black,
+                            color: isDark ? Colors.black : Colors.white,
                             size: 18,
                           ),
                           onTap: _handleOfflineMode,
@@ -214,8 +233,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                         // Option 3: Import Backup (.json)
                         _buildAuthOptionCard(
+                          isDark: isDark,
                           title: "Restore Backup (.json)",
-                          description: "Already have a backup file? Import your JSON data to restore all your study progress instantly.",
+                          description:
+                              "Already have a backup file? Import your JSON data to restore all your study progress instantly.",
                           icon: Icons.unarchive_rounded,
                           accentColor: Colors.amberAccent,
                           isLoading: _isImportLoading,
@@ -242,6 +263,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildAuthOptionCard({
+    required bool isDark,
     required String title,
     required String description,
     required IconData icon,
@@ -255,9 +277,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(8),
+        color: isDark ? Colors.white.withAlpha(8) : _lightCardBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withAlpha(12), width: 1.2),
+        border: Border.all(
+          color: isDark ? Colors.white.withAlpha(12) : Colors.black.withAlpha(18),
+          width: 1.2,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withAlpha(10),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -277,7 +311,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 child: Text(
                   title,
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : _lightTextPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -289,7 +323,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           Text(
             description,
             style: GoogleFonts.outfit(
-              color: Colors.white60,
+              color: isDark ? Colors.white60 : _lightTextSecondary,
               fontSize: 13,
             ),
           ),
@@ -299,19 +333,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: accentColor,
               foregroundColor: Colors.black,
-              disabledBackgroundColor: Colors.white12,
-              disabledForegroundColor: Colors.white30,
+              disabledBackgroundColor: isDark
+                  ? Colors.white12
+                  : Colors.black.withAlpha(12),
+              disabledForegroundColor: isDark ? Colors.white30 : Colors.black38,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             icon: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                      color: Colors.black,
+                      color: isDark ? Colors.black : Colors.white,
                       strokeWidth: 2,
                     ),
                   )

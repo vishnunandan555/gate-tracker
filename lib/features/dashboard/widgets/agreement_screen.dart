@@ -64,15 +64,20 @@ Our App does not collect any information from children or anyone else, making it
 If you have any questions about this Privacy Policy, please contact us at: ${BrandConfig.supportEmail}
 """;
 
-  void _showDocumentDialog(String title, String content) {
+  void _showDocumentDialog(BuildContext context, String title, String content) {
+    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           title,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : const Color(0xFF1E293B),
+            fontSize: 18,
+          ),
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -82,7 +87,11 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
               physics: const BouncingScrollPhysics(),
               child: Text(
                 content,
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13.5, height: 1.6),
+                style: GoogleFonts.outfit(
+                  color: isDark ? Colors.white70 : const Color(0xFF475569),
+                  fontSize: 13.5,
+                  height: 1.6,
+                ),
               ),
             ),
           ),
@@ -102,8 +111,16 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
 
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+
+    // Unified light palette — referenced throughout, no repeated literals
+    const Color lightScaffold = Color(0xFFF3F4F6);
+    const Color lightTextPrimary = Color(0xFF1E293B);
+    const Color lightTextSecondary = Color(0xFF475569);
+    const Color lightTextMuted = Color(0xFF94A3B8);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: isDark ? const Color(0xFF09090B) : lightScaffold,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -125,7 +142,12 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                             height: 72,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(22),
-                              border: Border.all(color: Colors.white.withAlpha(20), width: 1.5),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withAlpha(20)
+                                    : Colors.black.withAlpha(20),
+                                width: 1.5,
+                              ),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
@@ -144,7 +166,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2.0,
-                              color: Colors.white,
+                              color: isDark ? Colors.white : lightTextPrimary,
                             ),
                           ),
                         ),
@@ -154,7 +176,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                             "Please review and accept our policies to continue",
                             style: GoogleFonts.outfit(
                               fontSize: 13,
-                              color: Colors.white38,
+                              color: isDark ? Colors.white38 : lightTextMuted,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -165,7 +187,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                         Text(
                           "Welcome to ${BrandConfig.appName}. Before you begin tracking your syllabus progress, please take a moment to read and accept our legal terms.",
                           style: GoogleFonts.outfit(
-                            color: Colors.white70,
+                            color: isDark ? Colors.white70 : lightTextSecondary,
                             fontSize: 13.5,
                             height: 1.6,
                           ),
@@ -176,59 +198,99 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                         // Terms Card Button
                         ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          tileColor: Colors.white.withAlpha(8),
+                          tileColor: isDark
+                              ? Colors.white.withAlpha(8)
+                              : Colors.black.withAlpha(6),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: const BorderSide(color: Colors.white10),
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withAlpha(18)
+                                  : Colors.black.withAlpha(20),
+                            ),
                           ),
                           leading: const Icon(Icons.description_rounded, color: Colors.cyanAccent),
                           title: Text(
                             "Terms of Service",
-                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                            style: GoogleFonts.outfit(
+                              color: isDark ? Colors.white : lightTextPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           subtitle: Text(
                             "Usage conditions & disclaimer",
-                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
+                            style: GoogleFonts.outfit(
+                              color: isDark ? Colors.white38 : lightTextMuted,
+                              fontSize: 11,
+                            ),
                           ),
-                          trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white54),
-                          onTap: () => _showDocumentDialog("Terms of Service", _tosText),
+                          trailing: Icon(
+                            Icons.chevron_right_rounded,
+                            color: isDark ? Colors.white54 : lightTextSecondary,
+                          ),
+                          onTap: () => _showDocumentDialog(context, "Terms of Service", _tosText),
                         ),
                         const SizedBox(height: 12),
 
                         // Privacy Card Button
                         ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          tileColor: Colors.white.withAlpha(8),
+                          tileColor: isDark
+                              ? Colors.white.withAlpha(8)
+                              : Colors.black.withAlpha(6),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: const BorderSide(color: Colors.white10),
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withAlpha(18)
+                                  : Colors.black.withAlpha(20),
+                            ),
                           ),
                           leading: const Icon(Icons.privacy_tip_rounded, color: Colors.cyanAccent),
                           title: Text(
                             "Privacy Policy",
-                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                            style: GoogleFonts.outfit(
+                              color: isDark ? Colors.white : lightTextPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           subtitle: Text(
                             "Data storage & usage details",
-                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
+                            style: GoogleFonts.outfit(
+                              color: isDark ? Colors.white38 : lightTextMuted,
+                              fontSize: 11,
+                            ),
                           ),
-                          trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white54),
-                          onTap: () => _showDocumentDialog("Privacy Policy", _privacyText),
+                          trailing: Icon(
+                            Icons.chevron_right_rounded,
+                            color: isDark ? Colors.white54 : lightTextSecondary,
+                          ),
+                          onTap: () => _showDocumentDialog(context, "Privacy Policy", _privacyText),
                         ),
-                        
+
                         const SizedBox(height: 24),
 
-                        // Agreement Toggles in a clean Card style
+                        // Agreement Toggles
                         Material(
-                          color: Colors.white.withAlpha(5),
+                          color: isDark
+                              ? Colors.white.withAlpha(5)
+                              : Colors.black.withAlpha(6),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withAlpha(8)),
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withAlpha(8)
+                                  : Colors.black.withAlpha(18),
+                            ),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                             child: Theme(
-                              data: ThemeData(unselectedWidgetColor: Colors.white30),
+                              data: ThemeData(
+                                unselectedWidgetColor: isDark ? Colors.white30 : Colors.black38,
+                              ),
                               child: Column(
                                 children: [
                                   CheckboxListTile(
@@ -238,7 +300,10 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                     value: _tosAgreed,
                                     title: Text(
                                       "I read and agree to the Terms of Service",
-                                      style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
+                                      style: GoogleFonts.outfit(
+                                        color: isDark ? Colors.white70 : lightTextSecondary,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                     controlAffinity: ListTileControlAffinity.leading,
                                     onChanged: (val) {
@@ -247,7 +312,12 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                       });
                                     },
                                   ),
-                                  const Divider(color: Colors.white10, height: 1),
+                                  Divider(
+                                    color: isDark
+                                        ? Colors.white.withAlpha(18)
+                                        : Colors.black.withAlpha(18),
+                                    height: 1,
+                                  ),
                                   CheckboxListTile(
                                     activeColor: Colors.cyanAccent,
                                     checkColor: Colors.black,
@@ -255,7 +325,10 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                     value: _privacyAgreed,
                                     title: Text(
                                       "I read and agree to the Privacy Policy",
-                                      style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
+                                      style: GoogleFonts.outfit(
+                                        color: isDark ? Colors.white70 : lightTextSecondary,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                     controlAffinity: ListTileControlAffinity.leading,
                                     onChanged: (val) {
@@ -277,7 +350,8 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                             Expanded(
                               child: OutlinedButton(
                                 onPressed: () {
-                                  if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
+                                  if (defaultTargetPlatform == TargetPlatform.android ||
+                                      defaultTargetPlatform == TargetPlatform.iOS) {
                                     SystemNavigator.pop();
                                   } else {
                                     SystemNavigator.pop();
@@ -288,12 +362,18 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
-                                  side: const BorderSide(color: Colors.white24),
-                                  foregroundColor: Colors.white70,
+                                  side: BorderSide(
+                                    color: isDark ? Colors.white24 : Colors.black26,
+                                  ),
+                                  foregroundColor: isDark ? Colors.white70 : lightTextSecondary,
                                 ),
                                 child: Text(
                                   "EXIT APP",
-                                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, letterSpacing: 0.5),
+                                  style: GoogleFonts.outfit(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.5,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
                               ),
                             ),
@@ -302,18 +382,23 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                               child: Consumer(
                                 builder: (context, ref, _) {
                                   final isEnabled = _tosAgreed && _privacyAgreed;
-
                                   return FilledButton(
                                     onPressed: isEnabled
                                         ? () async {
-                                            await ref.read(agreementProvider.notifier).acceptAgreement();
+                                            await ref
+                                                .read(agreementProvider.notifier)
+                                                .acceptAgreement();
                                           }
                                         : null,
                                     style: FilledButton.styleFrom(
                                       backgroundColor: Colors.cyanAccent,
                                       foregroundColor: Colors.black,
-                                      disabledBackgroundColor: Colors.white12,
-                                      disabledForegroundColor: Colors.white24,
+                                      disabledBackgroundColor: isDark
+                                          ? Colors.white12
+                                          : Colors.black.withAlpha(12),
+                                      disabledForegroundColor: isDark
+                                          ? Colors.white24
+                                          : Colors.black38,
                                       padding: const EdgeInsets.symmetric(vertical: 15),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(14),
@@ -321,7 +406,11 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                     ),
                                     child: Text(
                                       "AGREE & START",
-                                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, letterSpacing: 0.5),
+                                      style: GoogleFonts.outfit(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.5,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
                                   );
                                 },
