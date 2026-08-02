@@ -549,7 +549,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         return;
       }
 
-      final merged = await mergeData(localData, cloudData);
+      final merged = await compute(mergeDataIsolate, [localData, cloudData]);
       final isMergedEqual = await compute(areDataEqualIsolate, [localData, merged]);
       if (!isMergedEqual) {
         await _restoreLocalData(merged);

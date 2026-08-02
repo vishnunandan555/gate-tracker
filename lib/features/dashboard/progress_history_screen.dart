@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../providers/daily_history_provider.dart';
-import '../../providers/show_projected_completion_provider.dart';
-import '../../providers/stats_provider.dart';
-import '../../providers/focus_provider.dart';
-import '../../providers/subject_provider.dart';
-import '../../providers/syllabus_provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/completion_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../../database/app_database.dart';
 
@@ -18,7 +11,6 @@ import 'widgets/history/history_graph.dart';
 import 'widgets/history/history_streaks.dart';
 import 'widgets/history/history_pie_chart.dart';
 import 'widgets/history/history_projection.dart';
-import '../../providers/demo_guide_provider.dart';
 import '../../utils/demo_keys.dart';
 
 class ProgressHistoryScreen extends ConsumerStatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../providers/focus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'focus/focus_idle_view.dart';
 import 'focus/focus_active_view.dart';
 

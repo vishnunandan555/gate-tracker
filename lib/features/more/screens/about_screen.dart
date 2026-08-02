@@ -5,9 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
-import '../../../providers/package_info_provider.dart';
-import '../../../providers/subject_provider.dart';
-import '../../../providers/desktop_update_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/changelog_dialog.dart';
 

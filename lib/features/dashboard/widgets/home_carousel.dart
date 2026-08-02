@@ -4,13 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../providers/completion_provider.dart';
-import '../../../providers/daily_history_provider.dart';
-import '../../../providers/focus_provider.dart';
-import '../../../providers/progress_font_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
-import '../../../providers/home_carousel_page_provider.dart';
 
 class HomeCarousel extends ConsumerStatefulWidget {
   final Color accentColor;

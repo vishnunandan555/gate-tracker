@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../providers/subject_provider.dart';
-import '../../../providers/nav_bar_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
 class _NavItemOption {

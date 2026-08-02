@@ -3,24 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../providers/subject_provider.dart';
-import '../../providers/profile_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
-import '../../providers/focus_provider.dart';
 import 'widgets/home_carousel.dart';
 import 'widgets/home/active_focus_wave_widget.dart';
 import 'widgets/home/home_countdown_timer.dart';
 import 'widgets/home/home_onboarding_popup.dart';
 import 'widgets/home/home_task_dialogs.dart';
-import '../../providers/glow_strength_provider.dart';
-import '../../providers/focus_animation_provider.dart';
-import '../../providers/rollover_provider.dart';
-import '../../providers/disable_home_screen_widget_provider.dart';
-import '../../providers/disable_countdown_provider.dart';
 import '../../database/app_database.dart';
-import '../../providers/notice_board_provider.dart';
-import '../../providers/demo_guide_provider.dart';
-import '../../providers/community_notifications_provider.dart';
 import '../../utils/demo_keys.dart';
 
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/syllabus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 // Add Syllabus Task Dialog
 void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color accentColor, WidgetRef ref) {

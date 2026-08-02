@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gateletics/database/app_database.dart';
-import 'package:gateletics/providers/syllabus_provider.dart';
-import 'package:gateletics/providers/category_autosort_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class MockCategoryAutoSortNotifier extends CategoryAutoSortNotifier {
   @override

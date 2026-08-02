@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../providers/focus_provider.dart';
-import '../../../../providers/daily_history_provider.dart';
-import '../../../../providers/rollover_provider.dart';
-import '../../../../providers/category_autosort_provider.dart';
-import '../../../../providers/settings/haptic_settings_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../database/app_database.dart';
 
 class TimerSettingsSection extends ConsumerWidget {

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../providers/stats_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 
 class PieChartPainter extends CustomPainter {

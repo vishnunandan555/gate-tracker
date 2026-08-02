@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../providers/focus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/demo_keys.dart';
 import '../../../../utils/string_utils.dart';
 
@@ -10,8 +10,6 @@ import 'focus_dialogs.dart';
 import 'timer_painters.dart';
 import '../../../../utils/ui_scaling.dart';
 import 'focus_accomplishments_widget.dart';
-import '../../../../providers/enable_share_progress_card_provider.dart';
-import '../../../../providers/demo_guide_provider.dart';
 import '../share_progress_card.dart';
 
 class FocusIdleView extends ConsumerStatefulWidget {

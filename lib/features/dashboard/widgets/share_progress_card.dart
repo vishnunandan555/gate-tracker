@@ -12,11 +12,7 @@ import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 import '../../../../core/config/brand_config.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/profile_provider.dart';
-import '../../../../providers/selected_branch_provider.dart';
-import '../../../../providers/completion_provider.dart';
-import '../../../../providers/daily_history_provider.dart';
-import '../../../../providers/focus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 import 'package:share_plus/share_plus.dart';
 

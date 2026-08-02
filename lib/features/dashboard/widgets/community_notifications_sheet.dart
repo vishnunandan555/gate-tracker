@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../providers/community_notifications_provider.dart';
-import '../../../providers/subject_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
   final notifState = ref.read(communityNotificationsProvider);

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../database/backup_service.dart';
-import '../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class SyncOptimizationScreen extends ConsumerStatefulWidget {
   final Color accentColor;

@@ -8,11 +8,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
-import '../../../../providers/setup_provider.dart';
-import '../../../../providers/syllabus_provider.dart';
-import '../../../../providers/sync_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../database/backup_service.dart';
-import '../../../../providers/demo_guide_provider.dart';
 
 
 class DangerZoneSettingsSection extends ConsumerWidget {

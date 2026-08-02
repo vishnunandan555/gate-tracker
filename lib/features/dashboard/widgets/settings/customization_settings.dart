@@ -4,15 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/colors.dart';
-import '../../../../providers/subject_provider.dart';
-import '../../../../providers/progress_font_provider.dart';
-import '../../../../providers/category_font_size_provider.dart';
-import '../../../../providers/topic_font_size_provider.dart';
-import '../../../../providers/task_font_size_provider.dart';
-import '../../../../providers/overall_ui_scale_provider.dart';
-import '../../../../providers/focus_animation_provider.dart';
-import '../../../../providers/quotes_provider.dart';
-import '../../../../providers/settings/icon_box_style_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class CustomizationSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;

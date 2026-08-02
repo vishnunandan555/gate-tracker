@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/syllabus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 // Add Syllabus Topic Dialog
 void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category, WidgetRef ref) {

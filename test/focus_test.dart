@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 import 'package:gateletics/database/app_database.dart';
-import 'package:gateletics/providers/focus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'package:gateletics/utils/string_utils.dart';
 
 void main() {

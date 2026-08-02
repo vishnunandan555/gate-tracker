@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/disable_graph_glow_provider.dart';
-import '../../../../providers/swap_chart_lines_provider.dart';
-import '../../../../providers/stats_provider.dart';
-import '../../../../providers/completion_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 
 class WaveAreaChartPainter extends CustomPainter {

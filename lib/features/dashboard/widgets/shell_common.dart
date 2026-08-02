@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'changelog_dialog.dart';
-import '../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 
 // ... (keep alive wrapper omitted in between)
 

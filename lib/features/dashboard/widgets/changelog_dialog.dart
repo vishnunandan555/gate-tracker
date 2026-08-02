@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
-import '../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../providers/sync/changelog_provider.dart';
 
 void showChangelogDialog(BuildContext context, {String? version, Color? accentColor}) {

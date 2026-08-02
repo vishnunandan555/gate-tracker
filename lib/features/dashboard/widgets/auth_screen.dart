@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
-import '../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../database/backup_service.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {

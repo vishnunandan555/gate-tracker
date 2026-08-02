@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../database/app_database.dart';
-import '../../../../providers/notice_board_provider.dart';
-import '../../../../providers/subject_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 void showTaskOptionsDialog(BuildContext context, WidgetRef ref, CustomTask task) {
   showDialog(

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
-import '../../../providers/subject_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
 class ContributeScreen extends ConsumerWidget {

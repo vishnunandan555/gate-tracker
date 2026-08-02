@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/focus_provider.dart';
-import '../../../../providers/quotes_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'timer_painters.dart';
 import '../../../../utils/ui_scaling.dart';
-import '../../../../providers/glow_strength_provider.dart';
 import 'focus_accomplishments_widget.dart';
 import '../../../../utils/demo_keys.dart';
-import '../../../../providers/demo_guide_provider.dart';
 
 
 

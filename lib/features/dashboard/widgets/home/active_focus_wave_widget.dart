@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../providers/focus_animation_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class ActiveFocusWaveWidget extends ConsumerStatefulWidget {
   final Color accentColor;

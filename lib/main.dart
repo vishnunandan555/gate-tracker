@@ -6,7 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
 import 'database/app_database.dart';
-import 'providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'features/dashboard/widgets/agreement_screen.dart';
 import 'features/dashboard/widgets/auth_screen.dart';
 import 'features/dashboard/widgets/setup_screen.dart';

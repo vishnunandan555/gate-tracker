@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../providers/focus_provider.dart';
-import '../../../../providers/demo_guide_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'timer_painters.dart';
 
 // Dialog to configure daily target focus goal

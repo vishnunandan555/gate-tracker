@@ -12,6 +12,10 @@ bool areDataEqualIsolate(List<Map<String, dynamic>> pair) {
   return _areDataEqualInternal(pair[0], pair[1]);
 }
 
+Future<Map<String, dynamic>> mergeDataIsolate(List<Map<String, dynamic>> pair) async {
+  return await mergeData(pair[0], pair[1]);
+}
+
 int? _parseSyncInt(dynamic val) {
   if (val == null) return null;
   if (val is num) return val.toInt();

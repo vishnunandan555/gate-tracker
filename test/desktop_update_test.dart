@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gateletics/providers/desktop_update_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 void main() {
   group('DesktopUpdateNotifier SemVer Comparison Tests', () {

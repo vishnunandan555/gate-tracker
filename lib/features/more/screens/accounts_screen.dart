@@ -6,21 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../providers/auth_provider.dart';
-import '../../../providers/profile_provider.dart';
-import '../../../providers/subject_provider.dart';
-import '../../../providers/agreement_provider.dart';
-import '../../../providers/setup_provider.dart';
-import '../../../providers/syllabus_provider.dart';
-import '../../../providers/focus_provider.dart';
-import '../../../providers/quotes_provider.dart';
-import '../../../providers/category_font_size_provider.dart';
-import '../../../providers/topic_font_size_provider.dart';
-import '../../../providers/task_font_size_provider.dart';
-import '../../../providers/overall_ui_scale_provider.dart';
-import '../../../providers/sync_provider.dart';
-import '../../../providers/stats_provider.dart';
-import '../../../providers/community_notifications_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
 

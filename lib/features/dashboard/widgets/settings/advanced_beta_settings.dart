@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../providers/glow_strength_provider.dart';
-import '../../../../providers/profile_provider.dart';
-import '../../../../providers/disable_countdown_provider.dart';
-import '../../../../providers/disable_home_screen_widget_provider.dart';
-import '../../../../providers/disable_graph_glow_provider.dart';
-import '../../../../providers/show_projected_completion_provider.dart';
-import '../../../../providers/swap_chart_lines_provider.dart';
-import '../../../../providers/enable_share_progress_card_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class AdvancedSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;

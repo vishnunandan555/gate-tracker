@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/config/brand_config.dart';
-import '../../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 
 Future<void> showOnboardingPopup(BuildContext context, WidgetRef ref) async {
   final accentColor = ref.read(overallProgressColorProvider);

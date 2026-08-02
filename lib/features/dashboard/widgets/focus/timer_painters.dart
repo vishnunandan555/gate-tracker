@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../providers/focus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 Widget buildMethodIcon(FocusMethodDetails details, Color color, {double size = 18}) {
   return Image.asset(

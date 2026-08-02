@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class LayoutSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;

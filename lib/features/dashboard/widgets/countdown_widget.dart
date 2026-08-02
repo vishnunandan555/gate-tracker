@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../providers/subject_provider.dart';
-import '../../../providers/target_date_provider.dart';
-import '../../../providers/progress_font_provider.dart';
-import '../../../providers/disable_countdown_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class CountdownWidget extends ConsumerWidget {
   const CountdownWidget({super.key});

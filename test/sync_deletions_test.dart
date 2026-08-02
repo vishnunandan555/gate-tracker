@@ -5,8 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gateletics/database/app_database.dart';
 import 'package:gateletics/database/backup_service.dart';
-import 'package:gateletics/providers/sync_provider.dart';
-import 'package:gateletics/providers/syllabus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

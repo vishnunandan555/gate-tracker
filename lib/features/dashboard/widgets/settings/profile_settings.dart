@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 
-import '../../../../providers/auth_provider.dart';
-import '../../../../providers/profile_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 
 class ProfileSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;

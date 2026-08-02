@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../providers/auth_provider.dart';
-import '../../../../providers/sync_provider.dart';
-import '../../../../providers/hide_download_banner_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../more/screens/sync_optimization_screen.dart';
 
 class SyncSettingsSection extends ConsumerStatefulWidget {

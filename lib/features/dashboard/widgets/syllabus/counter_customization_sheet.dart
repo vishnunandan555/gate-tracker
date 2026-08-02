@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
-import '../../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 
 bool _isResourceMatchingCategory(StudyResource res, String categoryName) {
   final cat = categoryName.toLowerCase().trim();

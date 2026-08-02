@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/models/topic_resource_data.dart';
 import '../../../database/app_database.dart';
-import '../../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../../widgets/progress_bar.dart';
 import 'syllabus_customization_sheets.dart';
 import '../../../utils/ui_scaling.dart';

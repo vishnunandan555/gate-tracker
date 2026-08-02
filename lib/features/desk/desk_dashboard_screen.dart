@@ -7,10 +7,9 @@ import '../dashboard/dashboard_screen.dart';
 import '../dashboard/widgets/app_bar_title.dart';
 import '../dashboard/widgets/countdown_widget.dart';
 import '../../widgets/pill_progress_widget.dart';
-import '../../providers/syllabus_provider.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../dashboard/widgets/syllabus_category_header.dart';
 import '../dashboard/widgets/syllabus_topic_card.dart';
-import '../../providers/completion_provider.dart';
 
 class DeskDashboardScreen extends ConsumerStatefulWidget {
   const DeskDashboardScreen({super.key});

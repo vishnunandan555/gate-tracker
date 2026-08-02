@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/config/brand_config.dart';
-import '../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'dashboard_screen.dart';
 import 'home_screen.dart';
 import 'progress_history_screen.dart';

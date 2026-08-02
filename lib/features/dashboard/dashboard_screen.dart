@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../database/app_database.dart';
 import '../../widgets/pill_progress_widget.dart';
-import '../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'widgets/syllabus_category_header.dart';
 import 'widgets/syllabus_topic_card.dart';
 import 'widgets/syllabus_customization_sheets.dart';

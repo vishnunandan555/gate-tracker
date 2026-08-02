@@ -13,7 +13,7 @@ import '../dashboard/progress_history_screen.dart';
 import '../dashboard/more_screen.dart';
 import '../../core/config/brand_config.dart';
 import '../dashboard/widgets/focus/focus_recovery_dialog.dart';
-import '../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DeskDashboardShell extends ConsumerStatefulWidget {

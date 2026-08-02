@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/brand_config.dart';
-import '../../providers/providers.dart';
+import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../more/screens/about_screen.dart';
 import '../more/screens/accounts_screen.dart';
