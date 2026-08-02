@@ -109,12 +109,12 @@ class HistoryCalendar extends StatelessWidget {
             children: [
               IconButton(
                 style: IconButton.styleFrom(
-                  backgroundColor: canGoLeft ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+                  backgroundColor: canGoLeft ? context.appColors.borderColor : context.appColors.surfaceColor,
                   shape: const CircleBorder(),
                   padding: EdgeInsets.all(context.s(4)),
                 ),
                 constraints: BoxConstraints.tightFor(width: context.s(28), height: context.s(28)),
-                icon: Icon(Icons.chevron_left_rounded, color: canGoLeft ? accentColor : Colors.white24, size: context.s(18)),
+                icon: Icon(Icons.chevron_left_rounded, color: canGoLeft ? accentColor : context.appColors.textMuted, size: context.s(18)),
                 onPressed: canGoLeft ? () {
                   onMonthChanged(DateTime(selectedMonth.year, selectedMonth.month - 1));
                 } : null,

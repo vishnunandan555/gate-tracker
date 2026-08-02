@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import '../../../utils/ui_scaling.dart';
 
 
@@ -190,7 +191,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                             Text(
                               'SYLLABUS',
                               style: GoogleFonts.orbitron(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontSize: context.s(15),
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: context.s(1.0),
@@ -199,7 +200,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                             Text(
                               'COMPLETION',
                               style: GoogleFonts.orbitron(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontSize: context.s(15),
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: context.s(1.0),
@@ -223,13 +224,13 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                           children: [
                             Text(
                               '$currentStreak DAYS',
-                              style: getProgressStyle(28, Colors.white),
+                              style: getProgressStyle(28, context.appColors.textPrimary),
                             ),
                             SizedBox(height: context.s(4)),
                             Text(
                               'Daily Goal Streak',
                               style: GoogleFonts.orbitron(
-                                color: Colors.white60,
+                                color: context.appColors.textSecondary,
                                 fontSize: context.s(12),
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: context.s(0.5),
@@ -260,20 +261,27 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                     ),
                   ),
 
-                  // Card 3: Monthly / Weekly Goal progress
+                  // Card 3: Monthly Goal Radial Tracker
                   _buildCardWrapper(
                     onTap: () => widget.onTabChange(0), // Nav to Stats tab
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: context.s(64),
-                          height: context.s(64),
+                          width: context.s(56),
+                          height: context.s(56),
                           child: CustomPaint(
                             painter: NeonProgressPainter(
                               progress: monthlyProgress,
                               color: Colors.cyanAccent,
-                              strokeWidth: context.s(6),
+                              strokeWidth: context.s(5.5),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.calendar_month_rounded,
+                                color: Colors.cyanAccent,
+                                size: context.s(22),
+                              ),
                             ),
                           ),
                         ),
@@ -290,7 +298,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                             Text(
                               'monthly goal reached',
                               style: GoogleFonts.orbitron(
-                                color: Colors.white60,
+                                color: context.appColors.textSecondary,
                                 fontSize: context.s(11),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -342,7 +350,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                 width: isActive ? context.s(12) : context.s(6),
                 height: context.s(6),
                 decoration: BoxDecoration(
-                  color: isActive ? accentColor : Colors.white24,
+                  color: isActive ? accentColor : context.appColors.dividerColor,
                   borderRadius: BorderRadius.circular(context.s(3)),
                 ),
               ),
@@ -385,7 +393,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
               child: Text(
                 '${(progress * 100).toStringAsFixed(0)}%',
                 style: GoogleFonts.outfit(
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   fontSize: context.s(11),
                   fontWeight: FontWeight.bold,
                 ),
@@ -397,7 +405,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
         Text(
           label,
           style: GoogleFonts.orbitron(
-            color: Colors.white54,
+            color: context.appColors.textMuted,
             fontSize: context.s(9),
             fontWeight: FontWeight.bold,
             letterSpacing: context.s(0.5),

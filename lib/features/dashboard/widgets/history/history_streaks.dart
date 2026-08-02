@@ -130,7 +130,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.outfit(
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             fontSize: context.s(11),
             fontWeight: FontWeight.bold,
           ),
@@ -160,7 +160,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
               Text(
                 'DAYS',
                 style: GoogleFonts.orbitron(
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   fontWeight: FontWeight.w900,
                   fontSize: context.s(10),
                 ),
@@ -188,7 +188,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.outfit(
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             fontSize: context.s(11),
             fontWeight: FontWeight.bold,
           ),
@@ -217,7 +217,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
                   child: Text(
                     pctString,
                     style: GoogleFonts.orbitron(
-                      color: progressPct > 0.5 ? Colors.black : Colors.white,
+                      color: progressPct > 0.5 ? context.appColors.onAccent : context.appColors.textPrimary,
                       fontWeight: FontWeight.w900,
                       fontSize: context.s(14),
                     ),

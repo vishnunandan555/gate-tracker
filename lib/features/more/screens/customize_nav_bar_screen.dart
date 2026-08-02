@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
@@ -122,7 +123,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
         title: Text(
           'Customize Nav Bar',
           style: GoogleFonts.outfit(
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -141,7 +142,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 child: Text(
                   'NAV BAR PREVIEW',
                   style: GoogleFonts.outfit(
-                    color: Colors.white38,
+                    color: context.appColors.textMuted,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
@@ -153,9 +154,9 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
               Container(
                 height: 64,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF131318),
+                  color: context.appColors.cardBackground,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  border: Border.all(color: context.appColors.borderColor),
                 ),
                 child: Row(
                   children: [

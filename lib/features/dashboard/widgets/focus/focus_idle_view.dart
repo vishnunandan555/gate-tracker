@@ -272,7 +272,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                         child: Text(
                           "No focus sessions completed today yet.",
                           style: GoogleFonts.outfit(
-                            color: Colors.white30,
+                            color: context.appColors.textMuted,
                             fontSize: context.s(14),
                           ),
                         ),
@@ -496,7 +496,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
               child: Text(
                 time,
                 style: GoogleFonts.outfit(
-                  color: Colors.white54,
+                  color: context.appColors.textMuted,
                   fontSize: context.s(12),
                 ),
                 textAlign: TextAlign.end,

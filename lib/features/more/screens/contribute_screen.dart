@@ -68,13 +68,13 @@ class ContributeScreen extends ConsumerWidget {
         backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.appColors.textPrimary, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Contribute to Community',
           style: GoogleFonts.outfit(
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -109,7 +109,7 @@ class ContributeScreen extends ConsumerWidget {
                       Text(
                         'Built by Students, for Students',
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontSize: context.s(15),
                           fontWeight: FontWeight.bold,
                         ),
@@ -120,7 +120,7 @@ class ContributeScreen extends ConsumerWidget {
                   Text(
                     '${BrandConfig.appName} is completely open-source. Help us expand exam coverage, improve progress tracking, and build community resources.',
                     style: GoogleFonts.outfit(
-                      color: Colors.white60,
+                      color: context.appColors.textSecondary,
                       fontSize: context.s(12),
                       height: 1.4,
                     ),
@@ -134,7 +134,7 @@ class ContributeScreen extends ConsumerWidget {
             Text(
               'COMMUNITY ACTIONS',
               style: GoogleFonts.outfit(
-                color: Colors.white54,
+                color: context.appColors.textMuted,
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.1,
@@ -183,7 +183,7 @@ class ContributeScreen extends ConsumerWidget {
                       child: Text(
                         data.title,
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontSize: context.s(14),
                           fontWeight: FontWeight.bold,
                         ),
@@ -217,7 +217,7 @@ class ContributeScreen extends ConsumerWidget {
           Text(
             data.description,
             style: GoogleFonts.outfit(
-              color: Colors.white54,
+              color: context.appColors.textSecondary,
               fontSize: context.s(11.5),
               height: 1.35,
             ),
@@ -263,7 +263,7 @@ class ContributeScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.cardBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -272,14 +272,14 @@ class ContributeScreen extends ConsumerWidget {
             Expanded(
               child: Text(
                 title,
-                style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],
         ),
         content: Text(
           message,
-          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(

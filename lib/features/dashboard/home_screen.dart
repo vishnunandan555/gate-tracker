@@ -95,20 +95,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: context.appColors.scaffoldBackground,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: const Alignment(0.0, -1.5),
-            radius: 2.0,
-            colors: [
-              accentColor.withAlpha((45 * glowStrength).round().clamp(0, 255)),
-              accentColor.withAlpha((25 * glowStrength).round().clamp(0, 255)),
-              accentColor.withAlpha((12 * glowStrength).round().clamp(0, 255)),
-              accentColor.withAlpha((4 * glowStrength).round().clamp(0, 255)),
-              Colors.transparent,
-            ],
-            stops: const [0.0, 0.3, 0.6, 0.8, 1.0],
-          ),
-        ),
+        decoration: context.appColors.isLight
+            ? null
+            : BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0.0, -1.5),
+                  radius: 2.0,
+                  colors: [
+                    accentColor.withAlpha((45 * glowStrength).round().clamp(0, 255)),
+                    accentColor.withAlpha((25 * glowStrength).round().clamp(0, 255)),
+                    accentColor.withAlpha((12 * glowStrength).round().clamp(0, 255)),
+                    accentColor.withAlpha((4 * glowStrength).round().clamp(0, 255)),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.3, 0.6, 0.8, 1.0],
+                ),
+              ),
         child: SafeArea(
           bottom: false,
           child: Center(
@@ -348,7 +350,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                           Text(
                                                             greeting.line1,
                                                             style: GoogleFonts.outfit(
-                                                              color: greeting.isLine1Accent ? accentColor : Colors.white,
+                                                              color: greeting.isLine1Accent ? accentColor : context.appColors.textPrimary,
                                                               fontSize: greeting.isLine1Accent ? accentFontSize : normalFontSize,
                                                               fontWeight: greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
                                                               height: 1.1,
@@ -360,7 +362,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                             Text(
                                                               greeting.line2,
                                                               style: GoogleFonts.outfit(
-                                                                color: !greeting.isLine1Accent ? accentColor : Colors.white,
+                                                                color: !greeting.isLine1Accent ? accentColor : context.appColors.textSecondary,
                                                                 fontSize: !greeting.isLine1Accent ? accentFontSize : normalFontSize,
                                                                 fontWeight: !greeting.isLine1Accent ? FontWeight.bold : FontWeight.w500,
                                                                 height: 1.1,
@@ -778,7 +780,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   "Announcements",
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: context.s(18),
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
@@ -878,12 +880,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             padding: EdgeInsets.all(context.s(24)),
             decoration: BoxDecoration(
-              color: const Color(0xFF131316),
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(context.s(16)),
-              border: Border.all(color: Colors.white.withAlpha(8)),
+              border: Border.all(color: context.appColors.borderColor),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: Colors.black.withAlpha(10),
                   blurRadius: context.s(10),
                   offset: const Offset(0, 4),
                 ),
@@ -900,7 +902,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   "No Announcements",
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: context.s(14),
                     fontWeight: FontWeight.bold,
                   ),
@@ -909,7 +911,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   "Check back later for updates and community news.",
                   style: GoogleFonts.outfit(
-                    color: Colors.white38,
+                    color: context.appColors.textMuted,
                     fontSize: context.s(12),
                   ),
                   textAlign: TextAlign.center,
@@ -938,10 +940,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         padding: EdgeInsets.all(context.s(16)),
                         decoration: BoxDecoration(
-                          color: isUnread ? accentColor.withAlpha(16) : const Color(0xFF131316),
+                          color: isUnread
+                              ? (context.appColors.isLight ? accentColor.withAlpha(30) : accentColor.withAlpha(16))
+                              : context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(context.s(16)),
                           border: Border.all(
-                            color: isUnread ? accentColor.withAlpha(160) : Colors.white.withAlpha(10),
+                            color: isUnread ? accentColor.withAlpha(160) : context.appColors.borderColor,
                             width: isUnread ? 1.5 : 1.0,
                           ),
                           boxShadow: [
@@ -982,7 +986,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           child: Text(
                                             "NEW",
                                             style: GoogleFonts.orbitron(
-                                              color: Colors.black,
+                                              color: context.appColors.onAccent,
                                               fontSize: context.s(9),
                                               fontWeight: FontWeight.w800,
                                               letterSpacing: 0.5,
@@ -995,7 +999,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         child: Text(
                                           item.title,
                                           style: GoogleFonts.outfit(
-                                            color: isUnread ? Colors.white : Colors.white70,
+                                            color: isUnread ? context.appColors.textPrimary : context.appColors.textSecondary,
                                             fontSize: context.s(15),
                                             fontWeight: isUnread ? FontWeight.bold : FontWeight.w600,
                                           ),
@@ -1009,7 +1013,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   Text(
                                     item.date,
                                     style: GoogleFonts.outfit(
-                                      color: isUnread ? accentColor.withAlpha(200) : Colors.white30,
+                                      color: isUnread ? accentColor : context.appColors.textMuted,
                                       fontSize: context.s(11),
                                       fontWeight: isUnread ? FontWeight.w600 : FontWeight.normal,
                                     ),
@@ -1021,7 +1025,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Text(
                               item.message,
                               style: GoogleFonts.outfit(
-                                color: isUnread ? Colors.white.withAlpha(230) : Colors.white38,
+                                color: isUnread ? context.appColors.textPrimary : context.appColors.textSecondary,
                                 fontSize: context.s(13),
                                 height: 1.4,
                               ),
@@ -1079,9 +1083,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final fillStyle = ref.watch(resumeFillStyleProvider);
 
     Widget progressWidget;
-    Color labelColor = Colors.white;
-    Color iconBgColor = Colors.white;
-    Color iconColor = Colors.black;
+    Color labelColor = context.appColors.textPrimary;
+    Color iconBgColor = accentColor;
+    Color iconColor = context.appColors.onAccent;
 
     switch (fillStyle) {
       case ResumeFillStyle.rectangularFill:
@@ -1094,9 +1098,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         );
-        labelColor = progress > 0.45 ? Colors.black : Colors.white;
-        iconBgColor = progress > 0.25 ? Colors.black : Colors.white;
-        iconColor = progress > 0.25 ? accentColor : Colors.black;
+        labelColor = progress > 0.45 ? context.appColors.onAccent : context.appColors.textPrimary;
+        iconBgColor = progress > 0.25 ? context.appColors.onAccent : accentColor;
+        iconColor = progress > 0.25 ? accentColor : context.appColors.onAccent;
         break;
 
       case ResumeFillStyle.neonGradient:
@@ -1116,9 +1120,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         );
-        labelColor = Colors.white;
-        iconBgColor = Colors.white;
-        iconColor = Colors.black;
+        labelColor = context.appColors.textPrimary;
+        iconBgColor = accentColor;
+        iconColor = context.appColors.onAccent;
         break;
 
       case ResumeFillStyle.bottomMicroIndicator:
@@ -1144,9 +1148,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         );
-        labelColor = Colors.white;
-        iconBgColor = Colors.white;
-        iconColor = Colors.black;
+        labelColor = context.appColors.textPrimary;
+        iconBgColor = accentColor;
+        iconColor = context.appColors.onAccent;
         break;
     }
 
@@ -1160,9 +1164,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Container(
               height: context.s(48),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(12), // Unfilled background
+                color: context.appColors.cardBackground, // Unfilled background
                 borderRadius: BorderRadius.circular(context.s(30)),
-                border: Border.all(color: Colors.white.withAlpha(20)),
+                border: Border.all(color: context.appColors.dividerColor),
               ),
               child: Stack(
                 children: [
@@ -1254,7 +1258,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Text(
                           dayName,
                           style: GoogleFonts.outfit(
-                            color: Colors.black,
+                            color: context.appColors.onAccent,
                             fontSize: context.s(10),
                             fontWeight: FontWeight.bold,
                           ),
@@ -1263,7 +1267,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Text(
                           dayNumber,
                           style: GoogleFonts.outfit(
-                            color: Colors.black,
+                            color: context.appColors.onAccent,
                             fontSize: context.s(12),
                             fontWeight: FontWeight.bold,
                           ),
@@ -1290,7 +1294,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Container(
                       height: context.s(52),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1E1E22),
+                        color: context.appColors.cardBackground,
                         borderRadius: BorderRadius.circular(context.s(8)),
                       ),
                       child: Column(
@@ -1299,7 +1303,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Text(
                             dayName,
                             style: GoogleFonts.outfit(
-                              color: progress > 0 ? accentColor : Colors.white38,
+                              color: progress > 0 ? accentColor : context.appColors.textMuted,
                               fontSize: context.s(10),
                               fontWeight: FontWeight.bold,
                             ),
@@ -1308,7 +1312,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Text(
                             dayNumber,
                             style: GoogleFonts.outfit(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontSize: context.s(12),
                               fontWeight: FontWeight.bold,
                             ),
@@ -1328,10 +1332,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Container(
                   height: context.s(52),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E22),
+                    color: context.appColors.cardBackground,
                     borderRadius: BorderRadius.circular(context.s(8)),
                     border: Border.all(
-                      color: Colors.white.withAlpha(20),
+                      color: context.appColors.dividerColor,
                       width: context.s(1.2),
                     ),
                   ),
@@ -1341,7 +1345,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Text(
                         dayName,
                         style: GoogleFonts.outfit(
-                          color: Colors.white38,
+                          color: context.appColors.textMuted,
                           fontSize: context.s(10),
                           fontWeight: FontWeight.bold,
                         ),
@@ -1350,7 +1354,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Text(
                         dayNumber,
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(12),
                           fontWeight: FontWeight.bold,
                         ),

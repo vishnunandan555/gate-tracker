@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../database/app_database.dart';
+import '../../core/theme/theme_context_ext.dart';
 import '../../widgets/pill_progress_widget.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'widgets/syllabus_category_header.dart';
@@ -268,13 +269,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           child: TextField(
                             controller: _searchController,
                             focusNode: _focusNode,
-                            style: GoogleFonts.outfit(color: Colors.white, fontSize: context.s(14)),
+                            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: context.s(14)),
                             decoration: InputDecoration(
                               hintText: 'Search syllabus topics, notes, or tasks...',
-                              hintStyle: GoogleFonts.outfit(color: Colors.white30, fontSize: context.s(13)),
-                              prefixIcon: const Icon(Icons.search_rounded, color: Colors.white60, size: 20),
+                              hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: context.s(13)),
+                              prefixIcon: Icon(Icons.search_rounded, color: context.appColors.textSecondary, size: 20),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.clear_rounded, color: Colors.white60, size: 18),
+                                icon: Icon(Icons.clear_rounded, color: context.appColors.textSecondary, size: 18),
                                 onPressed: () {
                                   _searchController.clear();
                                   setState(() {
@@ -285,7 +286,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 },
                               ),
                               filled: true,
-                              fillColor: const Color(0xFF27272A),
+                              fillColor: context.appColors.surfaceColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(context.s(12)),
                                 borderSide: BorderSide.none,
@@ -474,7 +475,7 @@ class WelcomeWidget extends ConsumerWidget {
           style: GoogleFonts.jersey15(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.2,
           ),
           textAlign: TextAlign.center,
@@ -484,7 +485,7 @@ class WelcomeWidget extends ConsumerWidget {
           "Create your first syllabus category to start building your custom exam check-list.",
           style: GoogleFonts.outfit(
             fontSize: 13,
-            color: Colors.white38,
+            color: context.appColors.textMuted,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -499,7 +500,7 @@ class WelcomeWidget extends ConsumerWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: progressColor,
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
               elevation: 8,
               shadowColor: progressColor.withValues(alpha: 0.4),
               shape: RoundedRectangleBorder(

@@ -27,14 +27,14 @@ class AccountsScreen extends ConsumerWidget {
         backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,
+              color: context.appColors.textPrimary, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Account & Sync',
           style: GoogleFonts.outfit(
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -186,7 +186,7 @@ class _HeroProfileCard extends ConsumerWidget {
                   child: Text(
                     resolvedName,
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontSize: context.s(18),
                       fontWeight: FontWeight.bold,
                     ),
@@ -197,7 +197,7 @@ class _HeroProfileCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 6),
                 Icon(Icons.edit_rounded,
-                    size: context.s(14), color: Colors.white38),
+                    size: context.s(14), color: context.appColors.textMuted),
               ],
             ),
           ),
@@ -208,7 +208,7 @@ class _HeroProfileCard extends ConsumerWidget {
           Text(
             emailText,
             style: GoogleFonts.outfit(
-              color: Colors.white38,
+              color: context.appColors.textMuted,
               fontSize: context.s(12),
             ),
             maxLines: 1,
@@ -967,7 +967,7 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: GoogleFonts.outfit(
-        color: Colors.white38,
+        color: context.appColors.textMuted,
         fontSize: 11,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.1,

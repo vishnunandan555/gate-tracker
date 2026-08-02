@@ -156,7 +156,7 @@ class _SyncDialogOption extends StatelessWidget {
                   Text(
                     title,
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
@@ -165,7 +165,7 @@ class _SyncDialogOption extends StatelessWidget {
                   Text(
                     subtitle,
                     style: GoogleFonts.outfit(
-                      color: Colors.white30,
+                      color: context.appColors.textMuted,
                       fontSize: 10,
                     ),
                   ),

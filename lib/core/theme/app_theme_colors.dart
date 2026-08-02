@@ -38,8 +38,21 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     required this.enableGlassmorphism,
   });
 
+  bool get isLight => scaffoldBackground.computeLuminance() > 0.5;
+
+  static Color adaptAccentForLightMode(Color accent) {
+    final hsl = HSLColor.fromColor(accent);
+    if (hsl.lightness > 0.42) {
+      return hsl.withLightness(0.36).toColor();
+    }
+    return accent;
+  }
+
   factory AppThemeColors.fromModel(AppThemeDataModel model, {Color? primaryAccentOverride}) {
-    final activePrimary = primaryAccentOverride ?? model.primaryAccentColor;
+    final rawPrimary = primaryAccentOverride ?? model.primaryAccentColor;
+    final activePrimary = model.isLight
+        ? adaptAccentForLightMode(rawPrimary)
+        : rawPrimary;
     final estimatedOnAccent = ThemeData.estimateBrightnessForColor(activePrimary) == Brightness.dark
         ? Colors.white
         : Colors.black;

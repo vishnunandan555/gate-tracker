@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/theme_context_ext.dart';
 import '../../../database/backup_service.dart';
 import 'package:gateletics/providers/providers.dart';
 
@@ -134,17 +135,17 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             : Colors.white54;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0D14),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: Icon(Icons.arrow_back_rounded, color: context.appColors.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Cloud Sync Optimization',
-          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
       body: SingleChildScrollView(
@@ -559,7 +560,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
   Widget _buildCardHeader(String title) {
     return Text(
       title,
-      style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
     );
   }
 

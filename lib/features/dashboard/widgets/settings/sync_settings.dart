@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../more/screens/sync_optimization_screen.dart';
 
@@ -314,7 +315,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                           Text(
                             'Cloud Sync Disabled',
                             style: GoogleFonts.outfit(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
@@ -323,7 +324,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                           Text(
                             'Sign in to enable automatic cloud backups.',
                             style: GoogleFonts.outfit(
-                              color: Colors.white38,
+                              color: context.appColors.textMuted,
                               fontSize: 11,
                               height: 1.4,
                             ),
@@ -399,21 +400,21 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                     Text(
                                       'Local Data Storage',
                                       style: GoogleFonts.outfit(
-                                        color: Colors.white38,
+                                        color: context.appColors.textMuted,
                                         fontSize: 11,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    const Icon(
+                                    Icon(
                                       Icons.info_outline_rounded,
                                       size: 11,
-                                      color: Colors.white24,
+                                      color: context.appColors.textMuted,
                                     ),
                                     const Spacer(),
                                     Text(
                                       '$sizeKb KB',
                                       style: GoogleFonts.outfit(
-                                        color: Colors.white60,
+                                        color: context.appColors.textSecondary,
                                         fontSize: 11,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -444,16 +445,16 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                           : Icons.cloud_upload_rounded,
                                       size: 13,
                                       color: isNearLimit
-                                          ? Colors.amberAccent
-                                          : Colors.white38,
+                                          ? Colors.amber
+                                          : context.appColors.textMuted,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
                                       'Cloud Sync Payload (1 MB Limit)',
                                       style: GoogleFonts.outfit(
                                         color: isNearLimit
-                                            ? Colors.amberAccent
-                                            : Colors.white38,
+                                            ? Colors.amber
+                                            : context.appColors.textMuted,
                                         fontSize: 11,
                                         fontWeight: isNearLimit
                                             ? FontWeight.bold
@@ -465,8 +466,8 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                       '$sizeKb KB / 1024 KB ($percentStr%)',
                                       style: GoogleFonts.outfit(
                                         color: isNearLimit
-                                            ? Colors.amberAccent
-                                            : Colors.white60,
+                                            ? Colors.amber
+                                            : context.appColors.textSecondary,
                                         fontSize: 11,
                                         fontWeight: isNearLimit
                                             ? FontWeight.bold
@@ -480,8 +481,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                   borderRadius: BorderRadius.circular(4),
                                   child: LinearProgressIndicator(
                                     value: fraction,
-                                    backgroundColor:
-                                        Colors.white.withValues(alpha: 0.06),
+                                    backgroundColor: context.appColors.dividerColor,
                                     valueColor:
                                         AlwaysStoppedAnimation<Color>(payloadColor),
                                     minHeight: 5,
@@ -521,9 +521,9 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.03),
+                          color: context.appColors.surfaceColor,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.white10),
+                          border: Border.all(color: context.appColors.borderColor),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,7 +531,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                             Text(
                               'Cloud Storage Controls',
                               style: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
@@ -584,7 +584,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                       },
                                       style: FilledButton.styleFrom(
                                         backgroundColor: widget.accentColor,
-                                        foregroundColor: Colors.black,
+                                        foregroundColor: context.appColors.onAccent,
                                         elevation: 2,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -679,7 +679,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                               },
                         style: FilledButton.styleFrom(
                           backgroundColor: widget.accentColor,
-                          foregroundColor: Colors.black,
+                          foregroundColor: context.appColors.onAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),

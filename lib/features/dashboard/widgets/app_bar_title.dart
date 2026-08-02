@@ -1,3 +1,4 @@
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -144,7 +145,7 @@ class _MotivationalQuoteDialogState extends State<MotivationalQuoteDialog> {
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
             decoration: BoxDecoration(
-              color: const Color(0xFF18181B),
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: widget.accentColor.withAlpha(50),
@@ -171,7 +172,7 @@ class _MotivationalQuoteDialogState extends State<MotivationalQuoteDialog> {
                   widget.quote,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: 16,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -181,7 +182,7 @@ class _MotivationalQuoteDialogState extends State<MotivationalQuoteDialog> {
                 Text(
                   'Tap to dismiss',
                   style: GoogleFonts.outfit(
-                    color: Colors.white30,
+                    color: context.appColors.textMuted,
                     fontSize: 11,
                   ),
                 ),

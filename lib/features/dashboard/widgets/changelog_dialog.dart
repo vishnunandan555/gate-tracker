@@ -51,9 +51,9 @@ class ChangelogDialog extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(6),
+                color: context.appColors.surfaceColor,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-                border: Border(bottom: BorderSide(color: Colors.white.withAlpha(12))),
+                border: Border(bottom: BorderSide(color: context.appColors.borderColor)),
               ),
               child: Row(
                 children: [
@@ -78,7 +78,7 @@ class ChangelogDialog extends ConsumerWidget {
                         Text(
                           "What's New",
                           style: GoogleFonts.orbitron(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontWeight: FontWeight.bold,
                             fontSize: 17,
                             letterSpacing: 0.5,
@@ -88,7 +88,7 @@ class ChangelogDialog extends ConsumerWidget {
                         Text(
                           "${BrandConfig.appName} Release Notes",
                           style: GoogleFonts.outfit(
-                            color: Colors.white54,
+                            color: context.appColors.textMuted,
                             fontSize: 12,
                           ),
                         ),
@@ -97,7 +97,7 @@ class ChangelogDialog extends ConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
+                    icon: Icon(Icons.close_rounded, color: context.appColors.textMuted, size: 20),
                     tooltip: 'Close',
                     padding: const EdgeInsets.all(4),
                     constraints: const BoxConstraints(),
@@ -124,7 +124,7 @@ class ChangelogDialog extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         "Loading release notes...",
-                        style: GoogleFonts.outfit(color: Colors.white54, fontSize: 12),
+                        style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -135,16 +135,16 @@ class ChangelogDialog extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.wifi_off_rounded,
-                          color: Colors.white38,
+                          color: context.appColors.textMuted,
                           size: 36,
                         ),
                         const SizedBox(height: 12),
                         Text(
                           "No Internet Connection",
                           style: GoogleFonts.outfit(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
@@ -152,7 +152,7 @@ class ChangelogDialog extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           "Unable to fetch online release notes right now.",
-                          style: GoogleFonts.outfit(color: Colors.white54, fontSize: 12),
+                          style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -191,7 +191,7 @@ class ChangelogDialog extends ConsumerWidget {
                               if (changelog.date.isNotEmpty)
                                 Text(
                                   "Released on ${changelog.date}",
-                                  style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12),
+                                  style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                                 ),
                             ],
                           ),
@@ -203,7 +203,7 @@ class ChangelogDialog extends ConsumerWidget {
                             Text(
                               changelog.title,
                               style: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),
@@ -226,30 +226,30 @@ class ChangelogDialog extends ConsumerWidget {
                             },
                             styleSheet: MarkdownStyleSheet(
                               p: GoogleFonts.outfit(
-                                color: Colors.white.withAlpha(225),
+                                color: context.appColors.textSecondary,
                                 fontSize: 13,
                                 height: 1.45,
                               ),
                               h1: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 height: 1.3,
                               ),
                               h2: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                                 height: 1.3,
                               ),
                               h3: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                                 height: 1.3,
                               ),
                               h4: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
@@ -261,17 +261,17 @@ class ChangelogDialog extends ConsumerWidget {
                               listBulletPadding: const EdgeInsets.only(right: 6),
                               code: GoogleFonts.firaCode(
                                 color: themeAccent,
-                                backgroundColor: Colors.white.withAlpha(12),
+                                backgroundColor: context.appColors.surfaceColor,
                                 fontSize: 11.5,
                               ),
                               codeblockDecoration: BoxDecoration(
                                 color: context.appColors.cardBackground,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.white.withAlpha(16)),
+                                border: Border.all(color: context.appColors.borderColor),
                               ),
                               codeblockPadding: const EdgeInsets.all(12),
                               blockquote: GoogleFonts.outfit(
-                                color: Colors.white70,
+                                color: context.appColors.textSecondary,
                                 fontStyle: FontStyle.italic,
                                 fontSize: 12.5,
                               ),
@@ -282,7 +282,7 @@ class ChangelogDialog extends ConsumerWidget {
                               ),
                               blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               horizontalRuleDecoration: BoxDecoration(
-                                border: Border(top: BorderSide(color: Colors.white.withAlpha(20), width: 1)),
+                                border: Border(top: BorderSide(color: context.appColors.dividerColor, width: 1)),
                               ),
                               a: GoogleFonts.outfit(
                                 color: themeAccent,
@@ -303,9 +303,9 @@ class ChangelogDialog extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(4),
+                color: context.appColors.surfaceColor,
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(22)),
-                border: Border(top: BorderSide(color: Colors.white.withAlpha(10))),
+                border: Border(top: BorderSide(color: context.appColors.borderColor)),
               ),
               child: Row(
                 children: [

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 
@@ -138,7 +139,7 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
     final digitHeight = _s(context, 32);
 
     Widget buildTimeSegment(String value, String label) {
-      final style = getAccentStyle(context, 28, Colors.white, selectedFont).copyWith(
+      final style = getAccentStyle(context, 28, context.appColors.textPrimary, selectedFont).copyWith(
         height: 1.0,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
@@ -165,7 +166,7 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: Colors.white60,
+                color: context.appColors.textMuted,
                 fontSize: _s(context, 8.5),
                 letterSpacing: _s(context, 0.8),
                 fontWeight: FontWeight.w600,

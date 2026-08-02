@@ -126,7 +126,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
         title: Text(
           'Statistics',
           style: GoogleFonts.orbitron(
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             fontWeight: FontWeight.w900,
             fontSize: context.s(18),
             letterSpacing: context.s(1.5),

@@ -374,7 +374,7 @@ class _CustomThemeEditorDialogState extends ConsumerState<CustomThemeEditorDialo
                             Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Maximum 3 custom themes limit reached! Delete an existing custom theme first.')),
+                              const SnackBar(content: Text('Failed to save custom theme.')),
                             );
                           }
                         },

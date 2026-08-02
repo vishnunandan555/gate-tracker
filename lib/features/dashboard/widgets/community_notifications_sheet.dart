@@ -54,7 +54,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -84,16 +84,16 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.notifications_none_rounded, color: Colors.white24, size: 48),
+                            Icon(Icons.notifications_none_rounded, color: context.appColors.textMuted, size: 48),
                             const SizedBox(height: 12),
                             Text(
                               'No Community Notifications',
-                              style: GoogleFonts.outfit(color: Colors.white60, fontSize: 14, fontWeight: FontWeight.w600),
+                              style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'You are all caught up on syllabus updates & announcements.',
-                              style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12),
+                              style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -108,9 +108,9 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                           return Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF27272A),
+                              color: context.appColors.surfaceColor,
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: Colors.white.withAlpha(10)),
+                              border: Border.all(color: context.appColors.borderColor),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                                       Text(
                                         item.title,
                                         style: GoogleFonts.outfit(
-                                          color: Colors.white,
+                                          color: context.appColors.textPrimary,
                                           fontSize: 13.5,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -140,7 +140,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                                       Text(
                                         item.message,
                                         style: GoogleFonts.outfit(
-                                          color: Colors.white70,
+                                          color: context.appColors.textSecondary,
                                           fontSize: 12,
                                           height: 1.3,
                                         ),

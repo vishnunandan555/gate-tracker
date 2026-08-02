@@ -706,7 +706,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                           Text(
                             '${animatedHours.toStringAsFixed(1).replaceAll('.0', '')} hrs | +${animatedProgressInc.toStringAsFixed(1)}%',
                             style: GoogleFonts.orbitron(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontSize: context.s(14),
                               fontWeight: FontWeight.bold,
                             ),
@@ -715,7 +715,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                           Text(
                             'total this $timeframeNoun',
                             style: GoogleFonts.outfit(
-                              color: Colors.white38,
+                              color: context.appColors.textMuted,
                               fontSize: context.s(11),
                             ),
                           ),
@@ -784,7 +784,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                           Text(
                             "vs last $timeframeNoun",
                             style: GoogleFonts.outfit(
-                              color: Colors.white38,
+                              color: context.appColors.textMuted,
                               fontSize: context.s(10),
                               fontWeight: FontWeight.w600,
                             ),
@@ -870,7 +870,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                       Text(
                         swapChartLines ? "Syllabus Progress (+%)" : "Focused Hours",
                         style: GoogleFonts.outfit(
-                          color: Colors.white60,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(9),
                           fontWeight: FontWeight.w600,
                         ),
@@ -899,7 +899,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                       Text(
                         swapChartLines ? "Focused Hours" : "Syllabus Progress (+%)",
                         style: GoogleFonts.outfit(
-                          color: Colors.white38,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(9),
                           fontWeight: FontWeight.w600,
                         ),
@@ -960,7 +960,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                     child: Text(
                       time,
                       style: GoogleFonts.outfit(
-                        color: isSel ? Colors.black : Colors.white60,
+                        color: isSel ? context.appColors.onAccent : context.appColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: context.s(11),
                       ),
@@ -1045,7 +1045,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                 Text(
                   infoText,
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: context.s(11),
                     fontWeight: FontWeight.bold,
                   ),

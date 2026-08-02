@@ -57,7 +57,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
             Text(
               'Contribute Resources',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -67,7 +67,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
         content: Text(
           'Found a high-quality GATE lecture series, playlist, or study resource to share? You can contribute your favorite resources to GATEletics to help fellow aspirants!',
           style: GoogleFonts.outfit(
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             fontSize: 13.5,
             height: 1.4,
           ),
@@ -77,7 +77,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Close',
-              style: GoogleFonts.outfit(color: Colors.white54),
+              style: GoogleFonts.outfit(color: context.appColors.textMuted),
             ),
           ),
           FilledButton.icon(
@@ -94,7 +94,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
             ),
             style: FilledButton.styleFrom(
               backgroundColor: accentColor,
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
             ),
           ),
         ],
@@ -116,7 +116,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: Icon(Icons.arrow_back_rounded, color: context.appColors.textPrimary),
           onPressed: () {
             ref.read(hapticSettingsProvider.notifier).selectionClick();
             Navigator.of(context).pop();
@@ -126,7 +126,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
           'RESOURCE EXPLORER',
           style: GoogleFonts.jersey15(
             fontSize: context.s(22),
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.2,
           ),
         ),
@@ -153,12 +153,12 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
               const SizedBox(height: 12),
               Text(
                 'Failed to load study resources',
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 14),
               ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => ref.read(resourcesProvider.notifier).refresh(),
-                style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: Colors.black),
+                style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: context.appColors.onAccent),
                 child: const Text('Retry'),
               ),
             ],
@@ -251,7 +251,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                                   const SizedBox(height: 2),
                                   Text(
                                     'Curated lecture series & playlists for paper $activeBranch',
-                                    style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11.5),
+                                    style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11.5),
                                   ),
                                 ],
                               ),
@@ -321,14 +321,14 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                           Expanded(
                             child: TextField(
                               controller: _searchController,
-                              style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+                              style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13),
                               decoration: InputDecoration(
                                 hintText: 'Search playlists, sources...',
-                                hintStyle: GoogleFonts.outfit(color: Colors.white30, fontSize: 12),
+                                hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                                 prefixIcon: Icon(Icons.search_rounded, color: accentColor, size: 18),
                                 suffixIcon: _searchQuery.isNotEmpty
                                     ? IconButton(
-                                        icon: const Icon(Icons.clear_rounded, color: Colors.white38, size: 16),
+                                        icon: Icon(Icons.clear_rounded, color: context.appColors.textMuted, size: 16),
                                         onPressed: () {
                                           _searchController.clear();
                                         },
@@ -340,11 +340,11 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.white10),
+                                  borderSide: BorderSide(color: context.appColors.borderColor),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.white10),
+                                  borderSide: BorderSide(color: context.appColors.borderColor),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -377,14 +377,14 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                                   color: isSelected ? accentColor.withValues(alpha: 0.2) : context.appColors.cardBackground,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: isSelected ? accentColor : Colors.white10,
+                                    color: isSelected ? accentColor : context.appColors.borderColor,
                                     width: isSelected ? 1.5 : 1.0,
                                   ),
                                 ),
                                 child: Text(
                                   sub,
                                   style: GoogleFonts.outfit(
-                                    color: isSelected ? Colors.white : Colors.white60,
+                                    color: isSelected ? context.appColors.onAccent : context.appColors.textSecondary,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                     fontSize: 11,
                                   ),
@@ -407,11 +407,11 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.search_off_rounded, color: Colors.white24, size: 48),
+                        Icon(Icons.search_off_rounded, color: context.appColors.textMuted, size: 48),
                         const SizedBox(height: 12),
                         Text(
                           'No study resources matched your filters',
-                          style: GoogleFonts.outfit(color: Colors.white54, fontSize: 13),
+                          style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 13),
                         ),
                         const SizedBox(height: 12),
                         TextButton(
@@ -455,7 +455,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                               Text(
                                 subjectName.toUpperCase(),
                                 style: GoogleFonts.jersey15(
-                                  color: Colors.white,
+                                  color: context.appColors.textPrimary,
                                   fontSize: context.s(16),
                                   letterSpacing: 1.0,
                                 ),
@@ -463,7 +463,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                               const SizedBox(width: 8),
                               Text(
                                 '(${resourceList.length})',
-                                style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                                style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11),
                               ),
                             ],
                           ),
@@ -614,7 +614,7 @@ class _ResourceCardTile extends ConsumerWidget {
               const SizedBox(height: 6),
               Text(
                 'Select syllabus category for "${resource.title}":',
-                style: GoogleFonts.outfit(color: Colors.white60, fontSize: 12),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 12),
               ),
               const SizedBox(height: 12),
               Flexible(
@@ -624,7 +624,7 @@ class _ResourceCardTile extends ConsumerWidget {
                   itemBuilder: (c, i) {
                     final cat = syllabusVal[i].category;
                     return ListTile(
-                      title: Text(cat.name, style: GoogleFonts.outfit(color: Colors.white, fontSize: 13)),
+                      title: Text(cat.name, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                       trailing: Icon(Icons.add_circle_outline_rounded, color: accentColor, size: 20),
                       onTap: () {
                         ref.read(syllabusControllerProvider.notifier).addCounterTopic(
@@ -700,7 +700,7 @@ class _ResourceCardTile extends ConsumerWidget {
               // Source Name
               Text(
                 'by ${resource.source}',
-                style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.w500),
+                style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11, fontWeight: FontWeight.w500),
               ),
               const Spacer(),
 
@@ -711,12 +711,12 @@ class _ResourceCardTile extends ConsumerWidget {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: context.appColors.surfaceColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       b,
-                      style: GoogleFonts.orbitron(color: Colors.white70, fontSize: 8.5, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 8.5, fontWeight: FontWeight.bold),
                     ),
                   );
                 }).toList(),
@@ -730,7 +730,7 @@ class _ResourceCardTile extends ConsumerWidget {
           Text(
             resource.title,
             style: GoogleFonts.outfit(
-              color: Colors.white,
+              color: context.appColors.textPrimary,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -741,7 +741,7 @@ class _ResourceCardTile extends ConsumerWidget {
             Text(
               resource.description,
               style: GoogleFonts.outfit(
-                color: Colors.white38,
+                color: context.appColors.textMuted,
                 fontSize: 11.5,
                 height: 1.25,
               ),
@@ -759,7 +759,7 @@ class _ResourceCardTile extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.04),
+                    color: context.appColors.surfaceColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -769,7 +769,7 @@ class _ResourceCardTile extends ConsumerWidget {
                       const SizedBox(width: 4),
                       Text(
                         '${resource.lectureCount} Lectures',
-                        style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10.5, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 10.5, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -778,7 +778,7 @@ class _ResourceCardTile extends ConsumerWidget {
 
               // External link (Open) button
               IconButton(
-                icon: const Icon(Icons.open_in_new_rounded, color: Colors.white70, size: 18),
+                icon: Icon(Icons.open_in_new_rounded, color: context.appColors.textSecondary, size: 18),
                 tooltip: 'Open link in browser',
                 onPressed: () {
                   ref.read(hapticSettingsProvider.notifier).selectionClick();
@@ -788,7 +788,7 @@ class _ResourceCardTile extends ConsumerWidget {
 
               // Copy link button
               IconButton(
-                icon: const Icon(Icons.copy_rounded, color: Colors.white54, size: 18),
+                icon: Icon(Icons.copy_rounded, color: context.appColors.textMuted, size: 18),
                 tooltip: 'Copy URL',
                 onPressed: () {
                   ref.read(hapticSettingsProvider.notifier).selectionClick();

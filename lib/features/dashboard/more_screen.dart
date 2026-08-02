@@ -182,7 +182,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                   child: Text(
                     '${BrandConfig.appName} v${packageInfo.version}',
                     style: GoogleFonts.outfit(
-                      color: Colors.white.withValues(alpha: 0.22),
+                      color: context.appColors.textMuted,
                       fontSize: isDesktop ? 11 : context.s(10),
                     ),
                   ),
@@ -343,7 +343,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
               child: Text(
                 title,
                 style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold),
               ),
@@ -353,7 +353,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         content: Text(
           message,
           style: GoogleFonts.outfit(
-              color: Colors.white70, fontSize: 13, height: 1.4),
+              color: context.appColors.textSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(
@@ -445,7 +445,7 @@ class _MoreHeader extends ConsumerWidget {
               Text(
                 'v$version  ',
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: context.appColors.textMuted,
                   fontSize: isDesktop ? 11 : context.s(10),
                 ),
               ),

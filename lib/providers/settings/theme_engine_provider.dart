@@ -85,17 +85,13 @@ class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
   }
 
   bool createCustomTheme(AppThemeDataModel theme) {
-    if (state.customThemes.length >= 3) {
-      return false; // Max 3 custom themes limit
-    }
-
     final newTheme = theme.copyWith(
-      id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'custom_slot',
       isCustom: true,
       isPreset: false,
     );
 
-    final updatedList = [...state.customThemes, newTheme];
+    final updatedList = [newTheme];
     state = state.copyWith(
       customThemes: updatedList,
       themeMode: 'custom',
@@ -107,7 +103,7 @@ class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
 
   bool updateCustomTheme(AppThemeDataModel theme) {
     final index = state.customThemes.indexWhere((t) => t.id == theme.id);
-    if (index == -1) return false;
+    if (index == -1) return createCustomTheme(theme);
 
     final updatedList = List<AppThemeDataModel>.from(state.customThemes);
     updatedList[index] = theme;
@@ -147,16 +143,14 @@ class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
 
   bool importCustomThemeJson(String jsonStr) {
     try {
-      if (state.customThemes.length >= 3) return false;
-
       final imported = AppThemeDataModel.fromJson(jsonStr);
       final newTheme = imported.copyWith(
-        id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+        id: 'custom_slot',
         isCustom: true,
         isPreset: false,
       );
 
-      final updatedList = [...state.customThemes, newTheme];
+      final updatedList = [newTheme];
       state = state.copyWith(
         customThemes: updatedList,
         themeMode: 'custom',

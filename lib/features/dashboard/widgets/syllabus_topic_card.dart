@@ -142,7 +142,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                           Text(
                             note,
                             style: GoogleFonts.outfit(
-                              color: categoryColor,
+                              color: context.appColors.isLight ? context.appColors.textSecondary : categoryColor,
                               fontSize: taskFontSize,
                               fontWeight: FontWeight.w500,
                             ),
@@ -168,12 +168,14 @@ class SyllabusTopicCard extends ConsumerWidget {
                             color: categoryColor,
                             letterSpacing: context.s(-1.0),
                             height: 1,
-                            shadows: [
-                              Shadow(
-                                color: categoryColor.withAlpha(140),
-                                blurRadius: context.s(14),
-                              ),
-                            ],
+                            shadows: context.appColors.isLight
+                                ? null
+                                : [
+                                    Shadow(
+                                      color: categoryColor.withAlpha(140),
+                                      blurRadius: context.s(14),
+                                    ),
+                                  ],
                           ),
                         ),
                         SizedBox(height: context.s(4) * overallScale),
@@ -257,7 +259,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(context.s(5)),
                             border: Border.all(
-                              color: task.isCompleted ? categoryColor : Colors.white24,
+                              color: task.isCompleted ? categoryColor : context.appColors.borderColor,
                               width: context.s(1.5),
                             ),
                           ),

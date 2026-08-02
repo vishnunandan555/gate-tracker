@@ -66,7 +66,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
       child: widget.projection == null
           ? Row(
               children: [
-                Icon(Icons.auto_graph_rounded, color: Colors.white24, size: context.s(22)),
+                Icon(Icons.auto_graph_rounded, color: context.appColors.textMuted, size: context.s(22)),
                 SizedBox(width: context.s(10)),
                 Expanded(
                   child: Column(
@@ -75,7 +75,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
                       Text(
                         'Projected Completion',
                         style: GoogleFonts.outfit(
-                          color: Colors.white54,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(12),
                           fontWeight: FontWeight.bold,
                         ),
@@ -84,7 +84,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
                       Text(
                         'Study for a few more days to unlock your completion forecast',
                         style: GoogleFonts.outfit(
-                          color: Colors.white30,
+                          color: context.appColors.textMuted,
                           fontSize: context.s(10),
                         ),
                       ),
@@ -112,7 +112,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
                         Text(
                           '100% done — incredible work!',
                           style: GoogleFonts.outfit(
-                            color: Colors.white54,
+                            color: context.appColors.textSecondary,
                             fontSize: context.s(11),
                           ),
                         ),
@@ -165,7 +165,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
                 Text(
                   'Projected Completion',
                   style: GoogleFonts.outfit(
-                    color: Colors.white54,
+                    color: context.appColors.textSecondary,
                     fontSize: context.s(11),
                     fontWeight: FontWeight.bold,
                   ),
@@ -198,7 +198,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
                   child: Text(
                     dateStr,
                     style: GoogleFonts.orbitron(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontSize: context.s(16),
                       fontWeight: FontWeight.bold,
                     ),
@@ -211,9 +211,9 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
               children: [
                 _projStat(context, '$animatedDays', 'days left', accentColor),
                 SizedBox(width: context.s(20)),
-                _projStat(context, '${animatedProgress.toStringAsFixed(1)}%', 'done now', Colors.white70),
+                _projStat(context, '${animatedProgress.toStringAsFixed(1)}%', 'done now', context.appColors.textSecondary),
                 SizedBox(width: context.s(20)),
-                _projStat(context, '+${animatedAvgDailyGain.toStringAsFixed(1)}', 'tasks/day avg', Colors.white70),
+                _projStat(context, '+${animatedAvgDailyGain.toStringAsFixed(1)}', 'tasks/day avg', context.appColors.textSecondary),
               ],
             ),
           ],
@@ -237,7 +237,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
         Text(
           label,
           style: GoogleFonts.outfit(
-            color: Colors.white30,
+            color: context.appColors.textMuted,
             fontSize: context.s(9),
           ),
         ),

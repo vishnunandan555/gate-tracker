@@ -85,10 +85,12 @@ class ThemeGallerySheet extends ConsumerWidget {
     required VoidCallback onTap,
     Widget? trailingActions,
   }) {
-    final cardBg = model.cardBackgroundColor;
+    final cardBg = context.appColors.cardBackground;
     final scaffoldBg = model.scaffoldBackgroundColor;
-    final primaryAccent = model.primaryAccentColor;
-    final textPrimary = model.textPrimaryColor;
+    final primaryAccent = context.appColors.primaryAccent;
+    final swatchAccent = model.primaryAccentColor;
+    final textPrimary = context.appColors.textPrimary;
+    final textSecondary = context.appColors.textSecondary;
 
     return InkWell(
       onTap: onTap,
@@ -113,14 +115,14 @@ class ThemeGallerySheet extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: scaffoldBg,
                 shape: BoxShape.circle,
-                border: Border.all(color: primaryAccent, width: 2),
+                border: Border.all(color: swatchAccent, width: 2),
               ),
               child: Center(
                 child: Container(
                   width: 14,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: primaryAccent,
+                    color: swatchAccent,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -151,7 +153,7 @@ class ThemeGallerySheet extends ConsumerWidget {
                   Text(
                     model.description,
                     style: GoogleFonts.outfit(
-                      color: model.textSecondaryColor,
+                      color: textSecondary,
                       fontSize: 11,
                     ),
                     maxLines: 2,
@@ -173,16 +175,9 @@ class ThemeGallerySheet extends ConsumerWidget {
     final themeNotifier = ref.read(themeEngineProvider.notifier);
 
     final standardModes = [
-      {'id': 'dark', 'name': 'Zinc Dark (Standard)', 'mode': 'dark', 'model': HandcraftedPresets.zincDark},
-      {'id': 'light', 'name': 'Paper Light (Standard White)', 'mode': 'light', 'model': HandcraftedPresets.paperLight},
+      {'id': 'dark', 'name': 'Dark Mode', 'mode': 'dark', 'model': HandcraftedPresets.zincDark.copyWith(name: 'Dark Mode', description: 'Classic deep zinc dark surface')},
+      {'id': 'light', 'name': 'Light Mode', 'mode': 'light', 'model': HandcraftedPresets.paperLight.copyWith(name: 'Light Mode', description: 'Soft, anti-flashbang warm paper surface')},
       {'id': 'system', 'name': 'System Dynamic', 'mode': 'system', 'model': HandcraftedPresets.zincDark.copyWith(name: 'System Dynamic', description: 'Auto matches device light/dark setting')},
-    ];
-
-    final handcraftedPresets = [
-      HandcraftedPresets.cyberpunkNeon,
-      HandcraftedPresets.oledBlack,
-      HandcraftedPresets.nordicSlate,
-      HandcraftedPresets.sunsetAmber,
     ];
 
     return SingleChildScrollView(
@@ -190,9 +185,9 @@ class ThemeGallerySheet extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── 1. Standard Modes ──────────────────────────────────────────
+          // ── 1. Base Modes ───────────────────────────────────────────────
           Text(
-            'STANDARD BASE MODES',
+            'THEME MODES',
             style: GoogleFonts.outfit(
               color: context.appColors.textSecondary,
               fontSize: 10,
@@ -215,34 +210,12 @@ class ThemeGallerySheet extends ConsumerWidget {
           }),
 
           const SizedBox(height: 16),
-          // ── 2. Handcrafted Presets ─────────────────────────────────────
-          Text(
-            'HANDCRAFTED PRESET THEMES',
-            style: GoogleFonts.outfit(
-              color: context.appColors.textSecondary,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ...handcraftedPresets.map((preset) {
-            final isSelected = themeState.themeMode == 'preset' && themeState.activeThemeId == preset.id;
-            return _buildThemeCard(
-              context,
-              model: preset,
-              isSelected: isSelected,
-              onTap: () => themeNotifier.selectPresetTheme(preset.id),
-            );
-          }),
-
-          const SizedBox(height: 16),
-          // ── 3. Custom Themes ───────────────────────────────────────────
+          // ── 2. Custom Theme Option ─────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'YOUR CUSTOM THEMES (${themeState.customThemes.length}/3)',
+                'CUSTOM THEME',
                 style: GoogleFonts.outfit(
                   color: context.appColors.textSecondary,
                   fontSize: 10,
@@ -258,9 +231,12 @@ class ThemeGallerySheet extends ConsumerWidget {
                     onPressed: () => _importTheme(context, ref),
                   ),
                   IconButton(
-                    icon: Icon(Icons.add_rounded, color: context.appColors.primaryAccent, size: 20),
-                    tooltip: 'Create Custom Theme',
-                    onPressed: () => _showEditor(context),
+                    icon: Icon(Icons.palette_outlined, color: context.appColors.primaryAccent, size: 20),
+                    tooltip: 'Create / Edit Custom Theme',
+                    onPressed: () {
+                      final existing = themeState.customThemes.isNotEmpty ? themeState.customThemes.first : null;
+                      _showEditor(context, themeToEdit: existing);
+                    },
                   ),
                 ],
               ),
@@ -281,9 +257,9 @@ class ThemeGallerySheet extends ConsumerWidget {
                 children: [
                   Icon(Icons.palette_outlined, color: context.appColors.textSecondary, size: 28),
                   const SizedBox(height: 8),
-                  Text('No Custom Themes Created Yet', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
+                  Text('No Custom Theme Created Yet', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Text('Tap "Create Custom Theme" to clone current theme and make your own palette!', style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11), textAlign: TextAlign.center),
+                  Text('Tap "Create Custom Theme" to customize colors, curvature, and styling!', style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11), textAlign: TextAlign.center),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     onPressed: () => _showEditor(context),

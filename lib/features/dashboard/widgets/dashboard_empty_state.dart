@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/theme_context_ext.dart';
 
 class DashboardEmptyState extends StatelessWidget {
   final VoidCallback? onSetupTap;
@@ -35,7 +36,7 @@ class DashboardEmptyState extends StatelessWidget {
             Text(
               "No Syllabus Topics Found",
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -44,7 +45,7 @@ class DashboardEmptyState extends StatelessWidget {
             Text(
               "Complete initial setup or select a GATE branch to initialize syllabus progress tracking.",
               style: GoogleFonts.outfit(
-                color: Colors.white54,
+                color: context.appColors.textMuted,
                 fontSize: 13,
                 height: 1.4,
               ),

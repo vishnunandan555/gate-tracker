@@ -23,13 +23,13 @@ class AboutScreen extends ConsumerWidget {
         backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 18),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.appColors.textPrimary, size: 18),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'About ${BrandConfig.appName}',
           style: GoogleFonts.outfit(
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -81,7 +81,7 @@ class AboutScreen extends ConsumerWidget {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
                       height: 1.0,
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -90,7 +90,7 @@ class AboutScreen extends ConsumerWidget {
                   Text(
                     BrandConfig.appTagline,
                     style: GoogleFonts.outfit(
-                      color: Colors.white38,
+                      color: context.appColors.textMuted,
                       fontSize: context.s(12),
                     ),
                     textAlign: TextAlign.center,
@@ -150,20 +150,20 @@ class AboutScreen extends ConsumerWidget {
             _AnimatedCard(
               padding: EdgeInsets.all(context.s(18)),
               borderRadius: BorderRadius.circular(16),
-              child: const Column(
+              child: Column(
                 children: [
                   _InfoRow(
                     icon: Icons.person_rounded,
                     label: 'Developer',
                     value: BrandConfig.companyName,
                   ),
-                  Divider(color: Colors.white10, height: 24),
+                  Divider(color: context.appColors.dividerColor, height: 24),
                   _InfoRow(
                     icon: Icons.business_center_rounded,
                     label: 'Package',
                     value: BrandConfig.androidPackageId,
                   ),
-                  Divider(color: Colors.white10, height: 24),
+                  Divider(color: context.appColors.dividerColor, height: 24),
                   _InfoRow(
                     icon: Icons.code_rounded,
                     label: 'Framework',
@@ -182,7 +182,7 @@ class AboutScreen extends ConsumerWidget {
               child: Text(
                 BrandConfig.legalDisclaimer,
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: context.appColors.textMuted,
                   fontSize: context.s(11),
                   height: 1.5,
                 ),
@@ -339,14 +339,14 @@ class _BadgeState extends State<_Badge> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.04),
+            color: context.appColors.surfaceColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+            border: Border.all(color: context.appColors.borderColor, width: 1),
           ),
           child: Text(
             widget.label,
             style: GoogleFonts.outfit(
-              color: Colors.white54,
+              color: context.appColors.textMuted,
               fontWeight: FontWeight.w600,
               fontSize: 11,
               letterSpacing: 0.4,
@@ -404,20 +404,20 @@ class _LinkButtonState extends State<_LinkButton> {
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+              border: Border.all(color: context.appColors.borderColor, width: 1),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (widget.assetIcon != null)
-                  Image.asset(widget.assetIcon!, width: 20, height: 20, color: Colors.white70)
+                  Image.asset(widget.assetIcon!, width: 20, height: 20, color: context.appColors.textSecondary)
                 else
-                  Icon(widget.icon, size: 20, color: Colors.white70),
+                  Icon(widget.icon, size: 20, color: context.appColors.textSecondary),
                 const SizedBox(height: 6),
                 Text(
                   widget.label,
                   style: GoogleFonts.outfit(
-                    color: Colors.white70,
+                    color: context.appColors.textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -450,10 +450,10 @@ class _InfoRow extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: context.appColors.surfaceColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 18, color: Colors.white60),
+          child: Icon(icon, size: 18, color: context.appColors.textSecondary),
         ),
         const SizedBox(width: 14),
         Column(
@@ -461,12 +461,12 @@ class _InfoRow extends StatelessWidget {
           children: [
             Text(
               label,
-              style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+              style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11),
             ),
             Text(
               value,
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
