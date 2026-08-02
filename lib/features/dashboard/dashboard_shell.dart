@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/config/brand_config.dart';
+import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'dashboard_screen.dart';
 import 'home_screen.dart';
@@ -169,10 +170,10 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       bottomNavigationBar: Container(
           height: 64 + MediaQuery.of(context).padding.bottom,
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             border: Border(
               top: BorderSide(
-                color: Colors.white.withAlpha(12),
+                color: context.appColors.borderColor,
                 width: 1.0,
               ),
             ),
@@ -456,7 +457,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316).withValues(alpha: 0.97),
+        color: context.appColors.cardBackground.withValues(alpha: 0.97),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: accentColor.withValues(alpha: 0.5), width: 1.5),
         boxShadow: [
@@ -1264,7 +1265,7 @@ class DemoGuideBanner extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF131316).withValues(alpha: 0.92),
+              color: context.appColors.cardBackground.withValues(alpha: 0.92),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5),
               boxShadow: [
@@ -1372,7 +1373,7 @@ class NavBarComingSoonScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),

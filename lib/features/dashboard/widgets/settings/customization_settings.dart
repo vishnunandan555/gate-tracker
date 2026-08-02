@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_context_ext.dart';
+import '../../../more/widgets/theme_gallery_sheet.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class CustomizationSettingsSection extends ConsumerWidget {
@@ -539,9 +541,41 @@ class CustomizationSettingsSection extends ConsumerWidget {
       ],
     );
 
+    final themePresetTile = ListTile(
+      leading: Icon(Icons.palette_rounded, color: currentColor),
+      title: Text('Theme Mode & Presets', style: titleStyle),
+      subtitle: Text(
+        'Light, Dark, Custom Presets & Theme Creator',
+        style: subtitleStyle,
+      ),
+      trailing: Icon(Icons.chevron_right_rounded, color: context.appColors.textSecondary),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: context.appColors.cardBackground,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          builder: (_) => DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.8,
+            maxChildSize: 0.95,
+            minChildSize: 0.5,
+            builder: (context, scrollController) => Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: const ThemeGallerySheet(),
+            ),
+          ),
+        );
+      },
+    );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        themePresetTile,
+        const Divider(color: Colors.white10, height: 1),
         SwitchListTile(
           activeThumbColor: currentColor,
           secondary: Icon(Icons.format_quote_rounded, color: currentColor),

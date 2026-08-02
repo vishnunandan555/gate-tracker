@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
@@ -62,9 +63,9 @@ class ContributeScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF09090B),
+        backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
@@ -92,7 +93,7 @@ class ContributeScreen extends ConsumerWidget {
                 gradient: LinearGradient(
                   colors: [
                     accentColor.withValues(alpha: 0.15),
-                    const Color(0xFF131316),
+                    context.appColors.cardBackground,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -153,7 +154,7 @@ class ContributeScreen extends ConsumerWidget {
       margin: EdgeInsets.only(bottom: context.s(12)),
       padding: EdgeInsets.all(context.s(16)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),

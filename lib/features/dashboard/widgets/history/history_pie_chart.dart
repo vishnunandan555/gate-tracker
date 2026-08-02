@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -84,7 +85,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
       return Container(
         padding: EdgeInsets.all(context.s(12)),
         decoration: BoxDecoration(
-          color: const Color(0xFF131316),
+          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(context.s(16)),
           border: Border.all(color: Colors.white.withAlpha(8)),
         ),
@@ -120,7 +121,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
     return Container(
       padding: EdgeInsets.all(context.s(12)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
         border: Border.all(color: Colors.white.withAlpha(8)),
       ),

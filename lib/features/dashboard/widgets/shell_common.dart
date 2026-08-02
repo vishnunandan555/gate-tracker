@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'changelog_dialog.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 // ... (keep alive wrapper omitted in between)
@@ -33,11 +34,11 @@ void showSyncConflictDialog(BuildContext context, WidgetRef ref, Color accentCol
     context: context,
     barrierDismissible: false,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.dialogBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         "Sync Conflict Detected",
-        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.textPrimary, fontSize: 18),
       ),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
@@ -204,7 +205,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF18181B),
+            backgroundColor: context.appColors.dialogBackground,
             behavior: SnackBarBehavior.floating,
             width: useWidth ? 400 : null,
             margin: useWidth ? null : const EdgeInsets.all(16),
@@ -475,7 +476,7 @@ void showConflictDetailsDialog(
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.dialogBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         "Data Comparison Details",
@@ -491,7 +492,7 @@ void showConflictDetailsDialog(
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF27272A),
+                  color: context.appColors.cardBackground,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -535,7 +536,7 @@ void showConflictDetailsDialog(
                   ),
                 )
               else
-                ...relevantStats.map((s) => _buildStatComparisonRow(s.label, s.localVal, s.cloudVal, s.isDifferent, accentColor)),
+                ...relevantStats.map((s) => _buildStatComparisonRow(context, s.label, s.localVal, s.cloudVal, s.isDifferent, accentColor)),
 
               buildConflictSection("COMPLETED LOCALLY ONLY (${onlyLocalCompleted.length})", onlyLocalCompleted, accentColor),
               buildConflictSection("SESSIONS RECORDED LOCALLY ONLY (${onlyLocalSessionLabels.length})", onlyLocalSessionLabels, accentColor),
@@ -565,12 +566,12 @@ class _ComparisonStat {
   _ComparisonStat(this.label, this.localVal, this.cloudVal, this.isDifferent, this.isZero);
 }
 
-Widget _buildStatComparisonRow(String label, String localVal, String cloudVal, bool isDifferent, Color accentColor) {
+Widget _buildStatComparisonRow(BuildContext context, String label, String localVal, String cloudVal, bool isDifferent, Color accentColor) {
   return Container(
     margin: const EdgeInsets.only(bottom: 6),
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     decoration: BoxDecoration(
-      color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.08) : const Color(0xFF27272A),
+      color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.08) : context.appColors.cardBackground,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
         color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.35) : Colors.transparent,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
@@ -14,7 +15,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFF18181B),
+    backgroundColor: context.appColors.cardBackground,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),

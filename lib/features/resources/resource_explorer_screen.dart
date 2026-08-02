@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/theme/theme_context_ext.dart';
 import '../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
@@ -47,7 +48,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -109,9 +110,9 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
     final activeBranch = _selectedBranchFilter == 'AUTO' ? userBranch : _selectedBranchFilter;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF09090B),
+        backgroundColor: context.appColors.scaffoldBackground,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -212,7 +213,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF131316),
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: accentColor.withValues(alpha: 0.25)),
                           boxShadow: [
@@ -282,14 +283,13 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF18181B),
+                              color: context.appColors.surfaceColor,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.white10),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: _selectedBranchFilter,
-                                dropdownColor: const Color(0xFF18181B),
+                                dropdownColor: context.appColors.surfaceColor,
                                 icon: Icon(Icons.arrow_drop_down, color: accentColor, size: 20),
                                 style: GoogleFonts.orbitron(color: accentColor, fontSize: 11, fontWeight: FontWeight.bold),
                                 items: [
@@ -335,7 +335,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                                       )
                                     : null,
                                 filled: true,
-                                fillColor: const Color(0xFF131316),
+                                fillColor: context.appColors.cardBackground,
                                 isDense: true,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                 border: OutlineInputBorder(
@@ -374,7 +374,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
                                 margin: const EdgeInsets.only(right: 8),
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? accentColor.withValues(alpha: 0.2) : const Color(0xFF131316),
+                                  color: isSelected ? accentColor.withValues(alpha: 0.2) : context.appColors.cardBackground,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: isSelected ? accentColor : Colors.white10,
@@ -597,7 +597,7 @@ class _ResourceCardTile extends ConsumerWidget {
     } else {
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.dialogBackground,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -661,7 +661,7 @@ class _ResourceCardTile extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),

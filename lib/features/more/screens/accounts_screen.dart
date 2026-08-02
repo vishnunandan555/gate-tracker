@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
@@ -21,9 +22,9 @@ class AccountsScreen extends ConsumerWidget {
     final isSignedIn = user != null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF09090B),
+        backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
@@ -55,7 +56,7 @@ class AccountsScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF131316),
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
               ),
@@ -105,7 +106,7 @@ class _HeroProfileCard extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.all(context.s(20)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
       ),
@@ -319,7 +320,7 @@ class _HeroProfileCard extends ConsumerWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.dialogBackground,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text('Set Display Name',
@@ -377,7 +378,7 @@ class _HeroProfileCard extends ConsumerWidget {
   ) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.dialogBackground,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
@@ -522,7 +523,7 @@ class _DangerZoneCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
@@ -583,7 +584,7 @@ class _ResetDataRow extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(title, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Text(

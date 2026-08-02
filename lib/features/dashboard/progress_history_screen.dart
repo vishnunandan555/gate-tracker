@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../../database/app_database.dart';
@@ -118,7 +119,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     final todayProgressPct = todayGoalSeconds == 0 ? 0.0 : (todayFocusSeconds.toDouble() / todayGoalSeconds);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -319,7 +320,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     return Container(
       height: context.s(36),
       decoration: BoxDecoration(
-        color: const Color(0xFF18181B),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(18)),
       ),
       padding: EdgeInsets.all(context.s(4)),
@@ -507,7 +508,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
     return Container(
       padding: EdgeInsets.all(context.s(16)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
         border: Border.all(color: accentColor.withValues(alpha: 0.2)),
       ),

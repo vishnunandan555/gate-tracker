@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import 'widgets/home_carousel.dart';
@@ -92,7 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       body: Container(
         decoration: BoxDecoration(
           gradient: RadialGradient(
@@ -515,7 +516,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         // Input Field to add tasks
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF18181B),
+            color: context.appColors.cardBackground,
             border: Border.all(color: accentColor.withAlpha(50), width: 1.0),
             borderRadius: BorderRadius.circular(context.s(14)),
             boxShadow: [
@@ -597,7 +598,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               return Container(
                 padding: EdgeInsets.all(context.s(24)),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF131316),
+                  color: context.appColors.cardBackground,
                   borderRadius: BorderRadius.circular(context.s(16)),
                   border: Border.all(color: Colors.white.withAlpha(8)),
                   boxShadow: [

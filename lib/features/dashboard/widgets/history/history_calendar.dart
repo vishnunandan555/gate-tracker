@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -97,7 +98,7 @@ class HistoryCalendar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 0, left: context.s(12), right: context.s(12), bottom: context.s(8)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(12)),
         border: Border.all(color: Colors.white.withAlpha(8)),
       ),

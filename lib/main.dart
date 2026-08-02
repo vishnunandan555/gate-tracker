@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'core/theme/app_theme.dart';
 import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
 import 'database/app_database.dart';
@@ -137,6 +136,9 @@ class GateTrackerApp extends ConsumerWidget {
     final authState = authAsync.value;
     final hasSetup = setupAsync.value ?? false;
 
+    final theme = ref.watch(activeAppThemeProvider);
+    final themeMode = ref.watch(activeThemeModeProvider);
+
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         final systemColor = darkDynamic?.primary ?? lightDynamic?.primary;
@@ -144,12 +146,12 @@ class GateTrackerApp extends ConsumerWidget {
           ref.read(systemAccentColorProvider.notifier).setSystemAccent(systemColor);
         });
 
-        final theme = AppTheme.darkTheme(darkDynamic: darkDynamic);
-
         if (!hasAgreed) {
           return MaterialApp(
             title: BrandConfig.appName,
             theme: theme,
+            darkTheme: theme,
+            themeMode: themeMode,
             home: const AgreementScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -159,6 +161,8 @@ class GateTrackerApp extends ConsumerWidget {
           return MaterialApp(
             title: BrandConfig.appName,
             theme: theme,
+            darkTheme: theme,
+            themeMode: themeMode,
             home: const AuthScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -168,6 +172,8 @@ class GateTrackerApp extends ConsumerWidget {
           return MaterialApp(
             title: BrandConfig.appName,
             theme: theme,
+            darkTheme: theme,
+            themeMode: themeMode,
             home: const SetupScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -176,6 +182,8 @@ class GateTrackerApp extends ConsumerWidget {
         return MaterialApp.router(
           title: BrandConfig.appName,
           theme: theme,
+          darkTheme: theme,
+          themeMode: themeMode,
           routerConfig: appRouter,
           debugShowCheckedModeBanner: false,
         );

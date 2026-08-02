@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/brand_config.dart';
+import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../more/screens/about_screen.dart';
@@ -332,7 +333,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.cardBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -622,8 +623,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                         height: cardHeight,
                         decoration: BoxDecoration(
                           color: isDisabled
-                              ? const Color(0xFF131316)
-                              : const Color(0xFF16161B),
+                              ? context.appColors.cardBackground
+                              : context.appColors.surfaceColor,
                           borderRadius: borderRadius,
                           border: Border.all(
                             color: (_pressed || widget.isDragging)
@@ -756,8 +757,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                 height: cardHeight,
                 decoration: BoxDecoration(
                   color: isDisabled
-                      ? const Color(0xFF131316)
-                      : const Color(0xFF16161B),
+                      ? context.appColors.cardBackground
+                      : context.appColors.surfaceColor,
                   borderRadius: borderRadius,
                   border: Border.all(
                     color: (_pressed || widget.isDragging)

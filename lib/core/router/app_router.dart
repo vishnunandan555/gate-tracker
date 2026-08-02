@@ -16,6 +16,8 @@ import '../../features/dashboard/widgets/auth_screen.dart';
 import '../../features/resources/resource_explorer_screen.dart';
 import 'route_resolver.dart';
 
+import '../theme/theme_context_ext.dart';
+
 final appRouter = GoRouter(
   initialLocation: resolveInitialRoute(),
   redirect: (context, state) {
@@ -49,35 +51,35 @@ final appRouter = GoRouter(
     return null;
   },
   errorBuilder: (context, state) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final primaryColor = context.appColors.primaryAccent;
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline_rounded, color: primaryColor, size: 48),
-          const SizedBox(height: 16),
-          const Text(
-            'Page Not Found',
-            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'No route found for ${state.uri.path}',
-            style: const TextStyle(color: Colors.white54, fontSize: 14),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () => context.go('/'),
-            icon: const Icon(Icons.home_rounded, size: 18),
-            label: const Text('Go to Home'),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              'Page Not Found',
+              style: TextStyle(color: context.appColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No route found for ${state.uri.path}',
+              style: TextStyle(color: context.appColors.textSecondary, fontSize: 14),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () => context.go('/'),
+              icon: const Icon(Icons.home_rounded, size: 18),
+              label: const Text('Go to Home'),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-},
+    );
+  },
   routes: [
     GoRoute(path: '/', builder: (context, state) => const DashboardShell()),
     GoRoute(path: '/desk', builder: (context, state) => const DeskDashboardShell()),

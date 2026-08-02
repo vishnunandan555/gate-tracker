@@ -13,6 +13,7 @@ import '../dashboard/progress_history_screen.dart';
 import '../dashboard/more_screen.dart';
 import '../../core/config/brand_config.dart';
 import '../dashboard/widgets/focus/focus_recovery_dialog.dart';
+import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -202,9 +203,9 @@ class _DeskSidebar extends StatelessWidget {
     return Container(
       width: isCompact ? 76 : 220,
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         border: Border(
-          right: BorderSide(color: Colors.white.withAlpha(12)),
+          right: BorderSide(color: context.appColors.borderColor),
         ),
       ),
       child: Column(
@@ -528,9 +529,9 @@ class _DeskHeaderBar extends ConsumerWidget {
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         border: Border(
-          bottom: BorderSide(color: Colors.white.withAlpha(12)),
+          bottom: BorderSide(color: context.appColors.borderColor),
         ),
       ),
       child: Row(

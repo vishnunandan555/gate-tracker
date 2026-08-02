@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../providers/sync/changelog_provider.dart';
 
@@ -33,7 +34,7 @@ class ChangelogDialog extends ConsumerWidget {
     final cleanVersion = version?.replaceFirst(RegExp(r'^v'), '').split('+').first ?? '1.3.0';
 
     return AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.dialogBackground,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
@@ -264,7 +265,7 @@ class ChangelogDialog extends ConsumerWidget {
                                 fontSize: 11.5,
                               ),
                               codeblockDecoration: BoxDecoration(
-                                color: const Color(0xFF101012),
+                                color: context.appColors.cardBackground,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: Colors.white.withAlpha(16)),
                               ),

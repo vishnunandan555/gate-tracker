@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -138,7 +139,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
         Container(
           height: context.s(54),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(12)),
             border: Border.all(color: accentColor.withAlpha(50), width: 1.2),
           ),
@@ -196,7 +197,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
         Container(
           height: context.s(54),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(12)),
             border: Border.all(color: accentColor.withAlpha(50), width: 1.2),
           ),

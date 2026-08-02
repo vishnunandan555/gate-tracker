@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/changelog_dialog.dart';
@@ -17,9 +18,9 @@ class AboutScreen extends ConsumerWidget {
     final packageInfo = ref.watch(packageInfoProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF09090B),
+        backgroundColor: context.appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 18),
@@ -303,7 +304,7 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
@@ -384,7 +385,7 @@ class _LinkButtonState extends State<_LinkButton> {
       duration: const Duration(milliseconds: 120),
       curve: Curves.easeOutCubic,
       child: Material(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
@@ -555,7 +556,7 @@ class _AnimatedCardState extends State<_AnimatedCard> {
         child: Container(
           padding: widget.padding,
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
             border: Border.all(
               color: _isPressed

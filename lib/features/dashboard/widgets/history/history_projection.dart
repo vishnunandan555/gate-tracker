@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../utils/ui_scaling.dart';
 
 class HistoryProjection extends StatefulWidget {
@@ -58,7 +59,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
     return Container(
       padding: EdgeInsets.all(context.s(14)),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
         border: Border.all(color: widget.accentColor.withAlpha(40)),
       ),
