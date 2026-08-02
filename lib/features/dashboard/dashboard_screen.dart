@@ -52,6 +52,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         if (mounted && searchQuery.isEmpty) {
           setState(() {
             searchBarVisible = false;
+            searchQuery = "";
           });
           _focusNode.unfocus();
         }

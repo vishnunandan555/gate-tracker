@@ -78,7 +78,29 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
     }
   }
 
-  // Helper: get Category Key for a category ID
+  // Build pre-indexed lookup maps for O(1) category resolution
+  Map<int, Map<String, dynamic>> indexCats(List<Map<String, dynamic>> catsList) {
+    final map = <int, Map<String, dynamic>>{};
+    for (final c in catsList) {
+      final id = _parseSyncInt(c['id']);
+      if (id != null) map[id] = c;
+    }
+    return map;
+  }
+
+  final localCatMap = indexCats(localSylCats);
+  final cloudCatMap = indexCats(cloudSylCats);
+
+  // Helper: get Category Key for a category ID via O(1) map lookup
+  String getSylCatKeyMap(dynamic catId, Map<int, Map<String, dynamic>> catMap) {
+    final targetId = _parseSyncInt(catId);
+    if (targetId == null) return 'General_0';
+    final match = catMap[targetId] ?? {};
+    final name = (match['name'] as String? ?? 'General').trim();
+    final color = _parseSyncInt(match['color']) ?? 0;
+    return "${name}_$color";
+  }
+
   String getSylCatKey(dynamic catId, List<Map<String, dynamic>> catsList) {
     final targetId = _parseSyncInt(catId);
     if (targetId == null) return 'General_0';
@@ -96,7 +118,7 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
   for (final t in localSylTops) {
     final catKey = t.containsKey('categoryKey')
         ? t['categoryKey'] as String
-        : getSylCatKey(t['categoryId'], localSylCats);
+        : getSylCatKeyMap(t['categoryId'], localCatMap);
     final key = "${catKey}_${t['name']}";
     mergedSylTops[key] = {
       ...t,
@@ -106,7 +128,7 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
   for (final t in cloudSylTops) {
     final catKey = t.containsKey('categoryKey')
         ? t['categoryKey'] as String
-        : getSylCatKey(t['categoryId'], cloudSylCats);
+        : getSylCatKeyMap(t['categoryId'], cloudCatMap);
     final key = "${catKey}_${t['name']}";
     if (!mergedSylTops.containsKey(key)) {
       mergedSylTops[key] = {

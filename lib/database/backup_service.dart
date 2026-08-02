@@ -381,13 +381,20 @@ class BackupService {
                  defaultTargetPlatform == TargetPlatform.iOS) {
         final tempDir = await getTemporaryDirectory();
         final tempFile = File('${tempDir.path}/gateletics_backup.json');
-        await tempFile.writeAsString(json);
-
-        final params = SaveFileDialogParams(
-          sourceFilePath: tempFile.path,
-          fileName: 'gateletics_backup.json',
-        );
-        path = await FlutterFileDialog.saveFile(params: params);
+        try {
+          await tempFile.writeAsString(json);
+          final params = SaveFileDialogParams(
+            sourceFilePath: tempFile.path,
+            fileName: 'gateletics_backup.json',
+          );
+          path = await FlutterFileDialog.saveFile(params: params);
+        } finally {
+          if (await tempFile.exists()) {
+            try {
+              await tempFile.delete();
+            } catch (_) {}
+          }
+        }
       } else {
         final bytes = Uint8List.fromList(utf8.encode(json));
         path = await FilePicker.saveFile(

@@ -165,35 +165,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
     // 3. Clear all user-session-specific shared preferences keys
     try {
-      const keysToRemove = [
-        'selected_branch',
-        'daily_focus_goal',
-        'check_in_goal_minutes',
-        'weak_category_ids',
-        'weak_topic_ids',
-        'overall_progress_color',
-        'stats_is_heatmap_mode',
-        'accent_color_mode',
-        'frozen_accent_color',
-        'custom_nav_bar_slots_ids',
-        'profile_photo_mode',
-        'custom_display_name',
-        'custom_profile_photo_path',
-        'category_font_size',
-        'topic_font_size',
-        'task_font_size',
-        'overall_ui_scale',
-        'focus_selected_method_index',
-        'focus_custom_timer_minutes',
-        'target_date',
-        'disable_countdown',
-        'disable_graph_glow',
-        'disable_home_screen_widget',
-        // Notification read state — cleared so 30-day window applies on next sign-in
-        'read_community_notification_ids',
-        'cached_community_notifications_json',
-      ];
-      for (final key in keysToRemove) {
+      const preservedKeys = {'has_seen_onboarding'};
+      final keys = _prefs.getKeys().where((k) => !preservedKeys.contains(k)).toList();
+      for (final key in keys) {
         await _prefs.remove(key);
       }
     } catch (e) {

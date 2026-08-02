@@ -51,9 +51,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
 
     final displaySeconds = isCountUp
         ? sessionState.totalSecondsFocused
-        : (isBreak
-            ? max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds)
-            : max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds));
+        : max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds);
 
     final hours = (displaySeconds / 3600).floor();
     final minutes = ((displaySeconds % 3600) / 60).floor();
