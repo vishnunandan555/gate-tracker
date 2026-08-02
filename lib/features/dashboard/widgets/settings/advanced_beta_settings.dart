@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class AdvancedSettingsSection extends ConsumerWidget {
@@ -63,7 +64,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: accentColor,
                 thumbColor: accentColor,
-                inactiveTrackColor: Colors.white12,
+                inactiveTrackColor: context.appColors.dividerColor,
                 overlayColor: accentColor.withValues(alpha: 0.15),
                 trackHeight: 2,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
@@ -80,7 +81,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
             ),
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Focusing Screen Glow Intensity
           Padding(
@@ -112,7 +113,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: accentColor,
                 thumbColor: accentColor,
-                inactiveTrackColor: Colors.white12,
+                inactiveTrackColor: context.appColors.dividerColor,
                 overlayColor: accentColor.withValues(alpha: 0.15),
                 trackHeight: 2,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
@@ -129,7 +130,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
             ),
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Avatar Circle Size
           Padding(
@@ -178,11 +179,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             ),
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Disable Countdown
           SwitchListTile(
-            secondary: Icon(Icons.timer_off_outlined, color: disableCountdown ? Colors.white30 : accentColor, size: 20),
+            secondary: Icon(Icons.timer_off_outlined, color: disableCountdown ? context.appColors.textMuted : accentColor, size: 20),
             title: Text('Disable Countdown Timer', style: titleStyle),
             subtitle: Text('Hide the main days countdown on the home screen', style: subtitleStyle),
             value: disableCountdown,
@@ -192,11 +193,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             },
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Disable Home Screen Widgets
           SwitchListTile(
-            secondary: Icon(Icons.widgets_outlined, color: disableWidgets ? Colors.white30 : accentColor, size: 20),
+            secondary: Icon(Icons.widgets_outlined, color: disableWidgets ? context.appColors.textMuted : accentColor, size: 20),
             title: Text('Disable Home Screen Widgets', style: titleStyle),
             subtitle: Text('Hide the swipeable stats carousel on home screen', style: subtitleStyle),
             value: disableWidgets,
@@ -206,11 +207,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             },
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Disable Chart Glow
           SwitchListTile(
-            secondary: Icon(Icons.show_chart_rounded, color: disableChartGlow ? Colors.white30 : accentColor, size: 20),
+            secondary: Icon(Icons.show_chart_rounded, color: disableChartGlow ? context.appColors.textMuted : accentColor, size: 20),
             title: Text('Disable Chart Glow', style: titleStyle),
             subtitle: Text('Remove neon glow effect from Stats chart lines', style: subtitleStyle),
             value: disableChartGlow,
@@ -220,11 +221,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             },
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Swap Chart Lines
           SwitchListTile(
-            secondary: Icon(Icons.swap_calls_rounded, color: swapChartLines ? accentColor : Colors.white30, size: 20),
+            secondary: Icon(Icons.swap_calls_rounded, color: swapChartLines ? accentColor : context.appColors.textMuted, size: 20),
             title: Text('Prioritize Progress in Chart', style: titleStyle),
             subtitle: Text('Show daily syllabus completion progress as the primary line', style: subtitleStyle),
             value: swapChartLines,
@@ -234,11 +235,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             },
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Projected Completion toggle
           SwitchListTile(
-            secondary: Icon(Icons.trending_up_rounded, color: showProjected ? accentColor : Colors.white30, size: 20),
+            secondary: Icon(Icons.trending_up_rounded, color: showProjected ? accentColor : context.appColors.textMuted, size: 20),
             title: Text('Projected Completion', style: titleStyle),
             subtitle: Text('Show estimated syllabus completion date in Stats', style: subtitleStyle),
             value: showProjected,
@@ -248,11 +249,11 @@ class AdvancedSettingsSection extends ConsumerWidget {
             },
           ),
 
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: context.appColors.dividerColor, height: 1),
 
           // Enable Share Progress Card toggle
           SwitchListTile(
-            secondary: Icon(Icons.share_rounded, color: shareProgress ? accentColor : Colors.white30, size: 20),
+            secondary: Icon(Icons.share_rounded, color: shareProgress ? accentColor : context.appColors.textMuted, size: 20),
             title: Text('Share Progress Card', style: titleStyle),
             subtitle: Text('Enable daily progress sharing widget on home screen', style: subtitleStyle),
             value: shareProgress,

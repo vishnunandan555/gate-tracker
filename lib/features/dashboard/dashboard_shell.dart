@@ -301,21 +301,21 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                 width: 24,
                 height: 24,
                 colorFilter: ColorFilter.mode(
-                  isSelected ? color : Colors.white38,
+                  isSelected ? color : context.appColors.textMuted,
                   BlendMode.srcIn,
                 ),
               )
             else if (icon != null)
               Icon(
                 icon,
-                color: isSelected ? color : Colors.white30,
+                color: isSelected ? color : context.appColors.textMuted,
                 size: 26,
               ),
             const SizedBox(height: 4),
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: isSelected ? color : Colors.white30,
+                color: isSelected ? color : context.appColors.textMuted,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -335,12 +335,12 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     final isSelected = _currentIndex == index;
     final hasActiveSession = sessionState.status != FocusStatus.idle;
 
-    Color itemColor = isSelected ? color : Colors.white30;
+    Color itemColor = isSelected ? color : context.appColors.textMuted;
     if (hasActiveSession) {
       if (sessionState.status == FocusStatus.focusing) {
         itemColor = color;
       } else {
-        itemColor = Colors.white;
+        itemColor = context.appColors.textPrimary;
       }
     }
 
@@ -396,7 +396,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
             Text(
               'Focus',
               style: GoogleFonts.outfit(
-                color: isSelected ? (hasActiveSession ? itemColor : color) : Colors.white30,
+                color: isSelected ? (hasActiveSession ? itemColor : color) : context.appColors.textMuted,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -508,7 +508,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
           Text(
             description,
             style: GoogleFonts.outfit(
-              color: Colors.white.withValues(alpha: 0.92),
+              color: context.appColors.textPrimary,
               fontSize: 13,
               height: 1.45,
             ),
@@ -522,7 +522,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                   controller.skip();
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.white38,
+                  foregroundColor: context.appColors.textSecondary,
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -539,7 +539,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: context.appColors.onAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   elevation: 0,

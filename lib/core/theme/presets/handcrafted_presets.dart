@@ -15,6 +15,9 @@ class HandcraftedPresets {
     textSecondary: 0xFF8E8E93,
     textMuted: 0xFF505055,
     borderColor: 0x1AFFFFFF,
+    onSurface: 0xFFFFFFFF,
+    dividerColor: 0x1AFFFFFF,
+    onAccent: 0xFF000000,
     borderRadius: 16.0,
     enableGlassmorphism: false,
   );
@@ -33,6 +36,9 @@ class HandcraftedPresets {
     textSecondary: 0xFF4B5563,
     textMuted: 0xFF9CA3AF,
     borderColor: 0x1F000000,
+    onSurface: 0xFF111827,
+    dividerColor: 0x1A000000,
+    onAccent: 0xFFFFFFFF,
     borderRadius: 16.0,
     enableGlassmorphism: false,
   );
@@ -51,6 +57,9 @@ class HandcraftedPresets {
     textSecondary: 0xFFA0A0C0,
     textMuted: 0xFF505070,
     borderColor: 0x4000F0FF,
+    onSurface: 0xFFFFFFFF,
+    dividerColor: 0x2600F0FF,
+    onAccent: 0xFF000000,
     borderRadius: 16.0,
     enableGlassmorphism: true,
   );
@@ -69,6 +78,9 @@ class HandcraftedPresets {
     textSecondary: 0xFF999999,
     textMuted: 0xFF555555,
     borderColor: 0x26FFFFFF,
+    onSurface: 0xFFFFFFFF,
+    dividerColor: 0x26FFFFFF,
+    onAccent: 0xFF000000,
     borderRadius: 16.0,
     enableGlassmorphism: false,
   );
@@ -87,6 +99,9 @@ class HandcraftedPresets {
     textSecondary: 0xFF94A3B8,
     textMuted: 0xFF64748B,
     borderColor: 0x1AF8FAFC,
+    onSurface: 0xFFF8FAFC,
+    dividerColor: 0x1AF8FAFC,
+    onAccent: 0xFF0F172A,
     borderRadius: 16.0,
     enableGlassmorphism: true,
   );
@@ -105,6 +120,9 @@ class HandcraftedPresets {
     textSecondary: 0xFFFDA4AF,
     textMuted: 0xFF9F1239,
     borderColor: 0x26F43F5E,
+    onSurface: 0xFFFFF1F2,
+    dividerColor: 0x26F43F5E,
+    onAccent: 0xFFFFFFFF,
     borderRadius: 16.0,
     enableGlassmorphism: false,
   );

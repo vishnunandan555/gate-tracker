@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../database/app_database.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'syllabus_customization_sheets.dart';
 import '../../../utils/string_utils.dart';
@@ -40,7 +41,7 @@ class SyllabusCategoryHeader extends ConsumerWidget {
       fontSize: categoryFontSize,
       fontWeight: FontWeight.w900,
       letterSpacing: context.s(1.2),
-      color: Colors.white54,
+      color: context.appColors.textMuted,
     );
 
     TextStyle getCategoryStyle() {
@@ -198,7 +199,7 @@ class SyllabusCategoryHeader extends ConsumerWidget {
             child: Icon(
               Icons.more_vert_rounded,
               size: iconSize,
-              color: Colors.white54,
+              color: context.appColors.textMuted,
             ),
           ),
         ),

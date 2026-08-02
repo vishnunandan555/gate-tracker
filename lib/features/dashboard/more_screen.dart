@@ -418,7 +418,7 @@ class _MoreHeader extends ConsumerWidget {
                     'GATE',
                     style: GoogleFonts.boldonse(
                       fontSize: isDesktop ? 24 : context.s(22),
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       height: 1.0,
                     ),
                   ),
@@ -428,7 +428,7 @@ class _MoreHeader extends ConsumerWidget {
                       fontSize: isDesktop ? 24 : context.s(22),
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       height: 1.0,
                     ),
                   ),
@@ -477,7 +477,7 @@ class _MoreHeader extends ConsumerWidget {
             child: Text(
               'MORE OPTIONS & FEATURES',
               style: GoogleFonts.outfit(
-                color: Colors.white.withValues(alpha: 0.70),
+                color: context.appColors.textSecondary,
                 fontSize: isDesktop ? 12 : context.s(11),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
@@ -629,7 +629,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                           border: Border.all(
                             color: (_pressed || widget.isDragging)
                                 ? item.color.withValues(alpha: 0.45)
-                                : Colors.white.withValues(alpha: 0.06),
+                                : context.appColors.borderColor,
                             width: 1.0,
                           ),
                           boxShadow: [
@@ -662,8 +662,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                                           item.label,
                                           style: GoogleFonts.outfit(
                                             color: isDisabled
-                                                ? Colors.white.withValues(alpha: 0.4)
-                                                : Colors.white,
+                                                ? context.appColors.textMuted
+                                                : context.appColors.textPrimary,
                                             fontSize: isDesktop ? 15 : context.s(14),
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -682,8 +682,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                                   Text(
                                     item.subtitle,
                                     style: GoogleFonts.outfit(
-                                      color: Colors.white.withValues(
-                                          alpha: isDisabled ? 0.25 : 0.45),
+                                      color: context.appColors.textSecondary.withValues(
+                                          alpha: isDisabled ? 0.5 : 1.0),
                                       fontSize: isDesktop ? 11 : context.s(10.5),
                                       height: 1.2,
                                     ),
@@ -694,7 +694,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                               ),
                             ),
                             SizedBox(width: isDesktop ? 8 : context.s(6)),
-                            // Solid accent-colored circle button with BLACK arrow inside
+                            // Solid accent-colored circle button with ON-ACCENT color arrow inside
                             Container(
                               width: isDesktop ? 32 : context.s(28),
                               height: isDesktop ? 32 : context.s(28),
@@ -763,7 +763,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                   border: Border.all(
                     color: (_pressed || widget.isDragging)
                         ? item.color.withValues(alpha: 0.45)
-                        : Colors.white.withValues(alpha: 0.06),
+                        : context.appColors.borderColor,
                     width: 1.0,
                   ),
                   boxShadow: [
@@ -796,8 +796,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                                   item.label,
                                   style: GoogleFonts.outfit(
                                     color: isDisabled
-                                        ? Colors.white.withValues(alpha: 0.4)
-                                        : Colors.white,
+                                        ? context.appColors.textMuted
+                                        : context.appColors.textPrimary,
                                     fontSize: isDesktop ? 14 : context.s(13.5),
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -816,8 +816,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                           Text(
                             item.subtitle,
                             style: GoogleFonts.outfit(
-                              color: Colors.white.withValues(
-                                  alpha: isDisabled ? 0.25 : 0.45),
+                              color: isDisabled ? context.appColors.textMuted : context.appColors.textSecondary,
                               fontSize: isDesktop ? 11 : context.s(10.5),
                               height: 1.2,
                             ),
@@ -831,8 +830,8 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                     Icon(
                       Icons.chevron_right_rounded,
                       color: isDisabled
-                          ? Colors.white.withValues(alpha: 0.12)
-                          : Colors.white.withValues(alpha: 0.35),
+                          ? context.appColors.textMuted
+                          : context.appColors.textSecondary,
                       size: isDesktop ? 20 : context.s(18),
                     ),
                   ],

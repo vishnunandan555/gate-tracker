@@ -95,7 +95,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
             Text(
               'FOCUS AREA DISTRIBUTION',
               style: GoogleFonts.orbitron(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontSize: context.s(11),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
@@ -107,7 +107,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
                 'Complete syllabus tasks during your focus sessions to build your distribution chart.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: context.appColors.textMuted,
                   fontSize: context.s(12),
                 ),
               ),
@@ -123,7 +123,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
-        border: Border.all(color: Colors.white.withAlpha(8)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -131,7 +131,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
           Text(
             'FOCUS AREA DISTRIBUTION',
             style: GoogleFonts.orbitron(
-              color: Colors.white,
+              color: context.appColors.textPrimary,
               fontSize: context.s(11),
               fontWeight: FontWeight.bold,
               letterSpacing: 1.0,
@@ -178,7 +178,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
                               c.name,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
-                                color: Colors.white70,
+                                color: context.appColors.textSecondary,
                                 fontSize: context.s(11),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -188,7 +188,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
                           Text(
                             '${c.percentage.toStringAsFixed(0)}%',
                             style: GoogleFonts.orbitron(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontSize: context.s(11),
                               fontWeight: FontWeight.bold,
                             ),

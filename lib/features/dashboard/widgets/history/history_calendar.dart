@@ -122,19 +122,19 @@ class HistoryCalendar extends StatelessWidget {
               Text(
                 '${monthNames[selectedMonth.month - 1]} ${selectedMonth.year}',
                 style: GoogleFonts.orbitron(
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: context.s(14.5),
                 ),
               ),
               IconButton(
                 style: IconButton.styleFrom(
-                  backgroundColor: canGoRight ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+                  backgroundColor: canGoRight ? context.appColors.borderColor : context.appColors.surfaceColor,
                   shape: const CircleBorder(),
                   padding: EdgeInsets.all(context.s(4)),
                 ),
                 constraints: BoxConstraints.tightFor(width: context.s(28), height: context.s(28)),
-                icon: Icon(Icons.chevron_right_rounded, color: canGoRight ? accentColor : Colors.white24, size: context.s(18)),
+                icon: Icon(Icons.chevron_right_rounded, color: canGoRight ? accentColor : context.appColors.textMuted, size: context.s(18)),
                 onPressed: canGoRight ? () {
                   onMonthChanged(DateTime(selectedMonth.year, selectedMonth.month + 1));
                 } : null,
@@ -151,7 +151,7 @@ class HistoryCalendar extends StatelessWidget {
                   day,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
-                    color: Colors.white30,
+                    color: context.appColors.textMuted,
                     fontWeight: FontWeight.bold,
                     fontSize: context.s(11),
                   ),
@@ -199,7 +199,7 @@ class HistoryCalendar extends StatelessWidget {
                       triggerMode: TooltipTriggerMode.tap,
                       preferBelow: false,
                       textStyle: GoogleFonts.outfit(
-                        color: Colors.black,
+                        color: context.appColors.onAccent,
                         fontSize: context.s(11),
                         fontWeight: FontWeight.bold,
                       ),
@@ -234,7 +234,7 @@ class HistoryCalendar extends StatelessWidget {
                               child: Text(
                                 '$dayNum',
                                 style: GoogleFonts.outfit(
-                                  color: (isToday && progress < 1.0) ? accentColor : (progress > 0 ? Colors.white : Colors.white38),
+                                  color: (isToday && progress < 1.0) ? accentColor : (progress > 0 ? context.appColors.textPrimary : context.appColors.textMuted),
                                   fontWeight: isToday || progress > 0 ? FontWeight.bold : FontWeight.normal,
                                   fontSize: context.s(12),
                                 ),

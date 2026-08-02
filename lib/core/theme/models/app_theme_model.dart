@@ -16,6 +16,9 @@ class AppThemeDataModel {
   final int textSecondary;
   final int textMuted;
   final int borderColor;
+  final int? onSurface;
+  final int? dividerColor;
+  final int? onAccent;
   final double borderRadius;
   final bool enableGlassmorphism;
 
@@ -34,6 +37,9 @@ class AppThemeDataModel {
     required this.textSecondary,
     required this.textMuted,
     required this.borderColor,
+    this.onSurface,
+    this.dividerColor,
+    this.onAccent,
     this.borderRadius = 16.0,
     this.enableGlassmorphism = false,
   });
@@ -47,6 +53,11 @@ class AppThemeDataModel {
   Color get textSecondaryColor => Color(textSecondary);
   Color get textMutedColor => Color(textMuted);
   Color get borderColorValue => Color(borderColor);
+  Color? get onSurfaceColor => onSurface != null ? Color(onSurface!) : null;
+  Color? get dividerColorValue => dividerColor != null ? Color(dividerColor!) : null;
+  Color? get onAccentColor => onAccent != null ? Color(onAccent!) : null;
+
+  bool get isLight => ThemeData.estimateBrightnessForColor(scaffoldBackgroundColor) == Brightness.light;
 
   AppThemeDataModel copyWith({
     String? id,
@@ -63,6 +74,9 @@ class AppThemeDataModel {
     int? textSecondary,
     int? textMuted,
     int? borderColor,
+    int? onSurface,
+    int? dividerColor,
+    int? onAccent,
     double? borderRadius,
     bool? enableGlassmorphism,
   }) {
@@ -81,6 +95,9 @@ class AppThemeDataModel {
       textSecondary: textSecondary ?? this.textSecondary,
       textMuted: textMuted ?? this.textMuted,
       borderColor: borderColor ?? this.borderColor,
+      onSurface: onSurface ?? this.onSurface,
+      dividerColor: dividerColor ?? this.dividerColor,
+      onAccent: onAccent ?? this.onAccent,
       borderRadius: borderRadius ?? this.borderRadius,
       enableGlassmorphism: enableGlassmorphism ?? this.enableGlassmorphism,
     );
@@ -102,6 +119,9 @@ class AppThemeDataModel {
       'textSecondary': textSecondary,
       'textMuted': textMuted,
       'borderColor': borderColor,
+      'onSurface': onSurface,
+      'dividerColor': dividerColor,
+      'onAccent': onAccent,
       'borderRadius': borderRadius,
       'enableGlassmorphism': enableGlassmorphism,
     };
@@ -123,6 +143,9 @@ class AppThemeDataModel {
       textSecondary: map['textSecondary'] ?? 0xFF8E8E93,
       textMuted: map['textMuted'] ?? 0xFF505055,
       borderColor: map['borderColor'] ?? 0x1AFFFFFF,
+      onSurface: map['onSurface'],
+      dividerColor: map['dividerColor'],
+      onAccent: map['onAccent'],
       borderRadius: (map['borderRadius'] as num?)?.toDouble() ?? 16.0,
       enableGlassmorphism: map['enableGlassmorphism'] ?? false,
     );

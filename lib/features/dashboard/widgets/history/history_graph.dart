@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -21,6 +22,7 @@ class WaveAreaChartPainter extends CustomPainter {
   final List<String> xAxisLabels;
   final String timeframe;
   final DateTime selectedWeekStart;
+  final bool isLight;
 
   WaveAreaChartPainter({
     required this.data,
@@ -36,6 +38,7 @@ class WaveAreaChartPainter extends CustomPainter {
     required this.xAxisLabels,
     required this.timeframe,
     required this.selectedWeekStart,
+    this.isLight = false,
   });
 
   @override
@@ -78,7 +81,7 @@ class WaveAreaChartPainter extends CustomPainter {
       final yGoal = height - (goalValue / (maxY > 0 ? maxY : 1.0)) * usableHeight - 25;
 
       final goalPaint = Paint()
-        ..color = Colors.white.withAlpha(40)
+        ..color = isLight ? Colors.black.withAlpha(40) : Colors.white.withAlpha(40)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.6;
 
@@ -95,7 +98,7 @@ class WaveAreaChartPainter extends CustomPainter {
         text: TextSpan(
           text: 'GOAL',
           style: GoogleFonts.outfit(
-            color: Colors.white.withAlpha(100),
+            color: isLight ? Colors.black.withAlpha(100) : Colors.white.withAlpha(100),
             fontSize: 8.0,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -302,7 +305,7 @@ class WaveAreaChartPainter extends CustomPainter {
     canvas.restore();
 
     // Draw X-axis labels aligned with data points (outside clipped region)
-    final labelPaintColorDefault = Colors.white.withAlpha(80);
+    final labelPaintColorDefault = isLight ? Colors.black.withAlpha(140) : Colors.white.withAlpha(80);
     for (int i = 0; i < data.length; i++) {
       if (i >= xAxisLabels.length) continue;
       final label = xAxisLabels[i];
@@ -673,7 +676,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
         Container(
           padding: EdgeInsets.all(context.s(12)),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(16)),
             border: Border.all(color: Colors.white.withAlpha(8)),
           ),
@@ -829,6 +832,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                                     xAxisLabels: labels,
                                     timeframe: widget.timeframe,
                                     selectedWeekStart: widget.selectedWeekStart,
+                                    isLight: context.appColors.scaffoldBackground.computeLuminance() > 0.5,
                                   ),
                                 )
                               : Center(
@@ -924,7 +928,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
     return Container(
       height: context.s(32),
       decoration: BoxDecoration(
-        color: const Color(0xFF131316),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(8)),
         border: Border.all(color: Colors.white.withAlpha(6)),
       ),
@@ -1214,7 +1218,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
               title: Text(
                 'Jump to Period',
                 style: GoogleFonts.orbitron(
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: context.s(14),
                 ),
@@ -1225,11 +1229,11 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Year:', style: TextStyle(color: Colors.white70, fontSize: context.s(12))),
+                      Text('Year:', style: TextStyle(color: context.appColors.textSecondary, fontSize: context.s(12))),
                       DropdownButton<int>(
                         value: selectedY,
-                        dropdownColor: const Color(0xFF1E1E22),
-                        style: TextStyle(color: Colors.white, fontSize: context.s(12)),
+                        dropdownColor: context.appColors.surfaceColor,
+                        style: TextStyle(color: context.appColors.textPrimary, fontSize: context.s(12)),
                         onChanged: (y) {
                           if (y != null) {
                             setDialogState(() {

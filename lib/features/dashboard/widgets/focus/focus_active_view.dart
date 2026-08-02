@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'timer_painters.dart';
 import '../../../../utils/ui_scaling.dart';
@@ -229,14 +230,14 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: context.s(14), vertical: context.s(6)),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF18181F),
+                        color: context.appColors.surfaceColor,
                         borderRadius: BorderRadius.circular(context.s(16)),
-                        border: Border.all(color: Colors.white.withAlpha(5)),
+                        border: Border.all(color: context.appColors.borderColor),
                       ),
                       child: Text(
                         _formatTotalDuration(sessionState.totalSecondsFocused),
                         style: GoogleFonts.outfit(
-                          color: Colors.white70,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(12),
                           fontWeight: FontWeight.bold,
                         ),
@@ -309,8 +310,8 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                                   }
                                 },
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1E1E24),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: context.appColors.cardBackground,
+                                  foregroundColor: context.appColors.textPrimary,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(context.s(12)), // More squarish corner
                                     side: BorderSide(color: ringColor.withValues(alpha: 0.3)),
@@ -358,7 +359,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
           style: GoogleFonts.orbitron(
             fontSize: context.s(32),
             fontWeight: FontWeight.bold,
-            color: highlightColor ?? Colors.white,
+            color: highlightColor ?? context.appColors.textPrimary,
           ),
         ),
         SizedBox(width: context.s(2)),
@@ -366,7 +367,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
           label,
           style: GoogleFonts.outfit(
             fontSize: context.s(10),
-            color: Colors.white38,
+            color: context.appColors.textMuted,
             fontWeight: FontWeight.bold,
           ),
         ),

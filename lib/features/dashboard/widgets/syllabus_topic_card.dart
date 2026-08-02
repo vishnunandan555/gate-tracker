@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/models/topic_resource_data.dart';
 import '../../../database/app_database.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../widgets/progress_bar.dart';
 import 'syllabus_customization_sheets.dart';
@@ -55,7 +56,7 @@ class SyllabusTopicCard extends ConsumerWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: context.s(16.0), vertical: context.s(2.5) * overallScale),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E22),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(10)),
         border: Border.all(
           color: categoryColor.withAlpha(20),
@@ -120,7 +121,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                                 style: GoogleFonts.outfit(
                                   fontSize: topicFontSize,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white.withAlpha(235),
+                                  color: context.appColors.textPrimary,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -179,7 +180,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                         Text(
                           '$completedCount/$totalCount',
                           style: GoogleFonts.outfit(
-                            color: Colors.white70,
+                            color: context.appColors.textSecondary,
                             fontSize: countFontSize,
                             fontWeight: FontWeight.w500,
                             letterSpacing: context.s(0.5),
@@ -195,7 +196,7 @@ class SyllabusTopicCard extends ConsumerWidget {
 
           // Collapsible Checklist Area
           if (isExpanded && !topic.isCounter) ...[
-            const Divider(color: Colors.white10, height: 1),
+            Divider(color: context.appColors.dividerColor, height: 1),
             if (totalCount == 0)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 16 * overallScale, horizontal: 16 * overallScale),
@@ -203,7 +204,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   child: Text(
                     'No tasks in this topic. Long press topic name to add tasks!',
                     style: GoogleFonts.outfit(
-                      color: Colors.white30,
+                      color: context.appColors.textMuted,
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
                     ),
@@ -274,7 +275,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                           child: Text(
                             task.name,
                             style: GoogleFonts.outfit(
-                              color: task.isCompleted ? Colors.white38 : Colors.white70,
+                              color: task.isCompleted ? context.appColors.textMuted : context.appColors.textSecondary,
                               fontSize: taskFontSize,
                               decoration: task.isCompleted
                                   ? TextDecoration.lineThrough
@@ -290,7 +291,7 @@ class SyllabusTopicCard extends ConsumerWidget {
           ],
 
           if (topic.isCounter && isExpanded) ...[
-            const Divider(color: Colors.white10, height: 1),
+            Divider(color: context.appColors.dividerColor, height: 1),
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: context.s(14) * overallScale,
@@ -379,10 +380,10 @@ class SyllabusTopicCard extends ConsumerWidget {
                           ),
                         ),
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF27272A),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: const Color(0xFF18181B),
-                          disabledForegroundColor: Colors.white24,
+                          backgroundColor: context.appColors.surfaceColor,
+                          foregroundColor: context.appColors.textPrimary,
+                          disabledBackgroundColor: context.appColors.cardBackground,
+                          disabledForegroundColor: context.appColors.textMuted,
                           padding: EdgeInsets.symmetric(
                             horizontal: context.s(12) * overallScale,
                             vertical: context.s(8) * overallScale,
@@ -418,9 +419,9 @@ class SyllabusTopicCard extends ConsumerWidget {
                         ),
                         style: FilledButton.styleFrom(
                           backgroundColor: categoryColor,
-                          foregroundColor: Colors.black,
-                          disabledBackgroundColor: const Color(0xFF18181B),
-                          disabledForegroundColor: Colors.white24,
+                          foregroundColor: context.appColors.onAccent,
+                          disabledBackgroundColor: context.appColors.cardBackground,
+                          disabledForegroundColor: context.appColors.textMuted,
                           padding: EdgeInsets.symmetric(
                             horizontal: context.s(12) * overallScale,
                             vertical: context.s(8) * overallScale,

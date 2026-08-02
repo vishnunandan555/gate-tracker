@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/demo_keys.dart';
 import '../../../../utils/string_utils.dart';
@@ -54,7 +55,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     style: GoogleFonts.outfit(
                       fontSize: context.s(32),
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       letterSpacing: context.s(0.5),
                     ),
                     children: [
@@ -94,7 +95,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                         Text(
                           sessionState.details.name,
                           style: GoogleFonts.outfit(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontSize: context.s(14),
                             fontWeight: FontWeight.bold,
                           ),
@@ -153,9 +154,9 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     child: Container(
                       padding: EdgeInsets.all(context.s(16)),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF131316),
+                        color: context.appColors.cardBackground,
                         borderRadius: BorderRadius.circular(context.s(16)),
-                        border: Border.all(color: Colors.white.withAlpha(10)),
+                        border: Border.all(color: context.appColors.borderColor),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,7 +167,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                               Text(
                                 "Daily Goal:",
                                 style: GoogleFonts.outfit(
-                                  color: Colors.white,
+                                  color: context.appColors.textPrimary,
                                   fontSize: context.s(15),
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -174,7 +175,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                               Text(
                                 progressInfo,
                                 style: GoogleFonts.outfit(
-                                  color: Colors.white,
+                                  color: context.appColors.textPrimary,
                                   fontSize: context.s(15),
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -227,7 +228,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     style: GoogleFonts.outfit(
                       fontSize: context.s(24),
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                     ),
                   ),
                   if (ref.watch(enableShareProgressCardProvider))
@@ -343,7 +344,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
               ),
               child: Icon(
                 Icons.play_arrow_rounded,
-                color: Colors.black,
+                color: context.appColors.onAccent,
                 size: context.s(72),
               ),
             ),
@@ -366,9 +367,9 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: context.s(20), vertical: context.s(24)),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(20)),
-            border: Border.all(color: Colors.white.withAlpha(8), width: context.s(1.5)),
+            border: Border.all(color: context.appColors.borderColor, width: context.s(1.5)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -383,7 +384,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                         Text(
                           "FOCUS",
                           style: GoogleFonts.outfit(
-                            color: Colors.white60,
+                            color: context.appColors.textSecondary,
                             fontSize: context.s(10),
                             fontWeight: FontWeight.bold,
                             letterSpacing: context.s(1.5),
@@ -399,7 +400,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                           child: Text(
                             focusStr,
                             style: GoogleFonts.orbitron(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontSize: context.s(32),
                               fontWeight: FontWeight.bold,
                             ),
@@ -412,7 +413,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                       child: Container(
                         width: context.s(1),
                         height: context.s(40),
-                        color: Colors.white12,
+                        color: context.appColors.dividerColor,
                       ),
                     ),
                     Column(
@@ -420,7 +421,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                         Text(
                           "BREAK",
                           style: GoogleFonts.outfit(
-                            color: Colors.white60,
+                            color: context.appColors.textSecondary,
                             fontSize: context.s(10),
                             fontWeight: FontWeight.bold,
                             letterSpacing: context.s(1.5),
@@ -430,7 +431,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                         Text(
                           breakStr,
                           style: GoogleFonts.orbitron(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontSize: context.s(32),
                             fontWeight: FontWeight.bold,
                           ),
@@ -449,12 +450,12 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                   onPressed: () => ref.read(focusProvider.notifier).startSession(),
                   style: FilledButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: Colors.black,
+                    foregroundColor: context.appColors.onAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.s(14)),
                     ),
                   ),
-                  icon: const Icon(Icons.play_arrow_rounded, color: Colors.black),
+                  icon: Icon(Icons.play_arrow_rounded, color: context.appColors.onAccent),
                   label: Text(
                     "Lets Do This!",
                     style: GoogleFonts.outfit(
@@ -541,7 +542,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
               margin: EdgeInsets.only(bottom: context.s(16)),
               padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(12)),
               decoration: BoxDecoration(
-                color: const Color(0xFF131316),
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(context.s(14)),
                 border: Border.all(color: accentColor.withAlpha(50)),
               ),
@@ -568,7 +569,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                       Text(
                         "+${progressDelta.toStringAsFixed(progressDelta == progressDelta.toInt() ? 0 : 1)}%",
                         style: GoogleFonts.outfit(
-                          color: progressDelta > 0 ? accentColor : Colors.white24,
+                          color: progressDelta > 0 ? accentColor : context.appColors.textMuted,
                           fontWeight: FontWeight.bold,
                           fontSize: context.s(13),
                         ),
@@ -576,7 +577,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                       Text(
                         method,
                         style: GoogleFonts.outfit(
-                          color: Colors.white54,
+                          color: context.appColors.textSecondary,
                           fontSize: context.s(12),
                         ),
                       ),
@@ -584,7 +585,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                   ),
                   if (accomplishments != null && accomplishments.isNotEmpty) ...[
                     SizedBox(height: context.s(6)),
-                    const Divider(color: Colors.white10),
+                    Divider(color: context.appColors.dividerColor),
                     SizedBox(height: context.s(4)),
                     FocusAccomplishmentsWidget(
                       accomplishments: accomplishments,

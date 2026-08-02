@@ -356,7 +356,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
                     child: Text(
                       'Calendar',
                       style: GoogleFonts.outfit(
-                        color: !_isHeatmapMode ? Colors.black : Colors.white60,
+                        color: !_isHeatmapMode ? context.appColors.onAccent : context.appColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: context.s(12),
                       ),
@@ -378,7 +378,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
                     child: Text(
                       'Heatmap',
                       style: GoogleFonts.outfit(
-                        color: _isHeatmapMode ? Colors.black : Colors.white60,
+                        color: _isHeatmapMode ? context.appColors.onAccent : context.appColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: context.s(12),
                       ),
@@ -519,7 +519,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
           Text(
             'Your Study Journey Starts Here',
             style: GoogleFonts.outfit(
-              color: Colors.white,
+              color: context.appColors.textPrimary,
               fontWeight: FontWeight.bold,
               fontSize: context.s(14),
             ),
@@ -529,7 +529,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
             'Complete your first focus session or check off a syllabus topic to unlock daily heatmaps, study streaks, and completion analytics!',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              color: Colors.white60,
+              color: context.appColors.textSecondary,
               fontSize: context.s(11),
               height: 1.4,
             ),
@@ -541,7 +541,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: accentColor,
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.s(10))),
               padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
             ),

@@ -25,13 +25,13 @@ class SettingsScreen extends ConsumerWidget {
     final isDesktop = screenWidth > 900;
 
     final titleStyle = GoogleFonts.outfit(
-      color: Colors.white,
+      color: context.appColors.textPrimary,
       fontSize: isDesktop ? 13.0 : context.s(13),
       fontWeight: isDesktop ? FontWeight.w500 : FontWeight.bold,
     );
 
     final subtitleStyle = GoogleFonts.outfit(
-      color: Colors.white.withValues(alpha: 0.45),
+      color: context.appColors.textSecondary,
       fontSize: isDesktop ? 11.5 : context.s(11),
     );
 
@@ -43,7 +43,7 @@ class SettingsScreen extends ConsumerWidget {
         child: Text(
           title,
           style: GoogleFonts.outfit(
-            color: (color ?? accentColor).withValues(alpha: 0.85),
+            color: color ?? context.appColors.textSecondary,
             fontWeight: isDesktop ? FontWeight.w600 : FontWeight.bold,
             fontSize: isDesktop ? 11.5 : context.s(12),
             letterSpacing: isDesktop ? 0.8 : context.s(0.8),
@@ -161,7 +161,7 @@ class SettingsScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 32),
-                      const Divider(color: Colors.white10),
+                      Divider(color: context.appColors.dividerColor),
                       const SizedBox(height: 12),
                       versionText,
                       const SizedBox(height: 16),

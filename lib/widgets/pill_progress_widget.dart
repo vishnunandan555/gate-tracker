@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../utils/ui_scaling.dart';
 
@@ -158,7 +159,7 @@ class _PillProgressWidgetState extends ConsumerState<PillProgressWidget>
                 painter: _SquircleRingPainter(
                   progress: progress,
                   color: color,
-                  trackColor: Colors.white.withValues(alpha: 0.07),
+                  trackColor: context.appColors.dividerColor,
                   strokeWidth: context.s(10),
                 ),
                 child: Center(
@@ -174,7 +175,7 @@ class _PillProgressWidgetState extends ConsumerState<PillProgressWidget>
                         'Total Syllabus Completion',
                         style: TextStyle(
                           fontSize: context.s(13),
-                          color: Colors.white70,
+                          color: context.appColors.textSecondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

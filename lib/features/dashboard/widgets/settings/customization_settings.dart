@@ -418,7 +418,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<OverallUiScale>(
               value: currentScale,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: OverallUiScale.values.map((scale) {
                 String name = '';
@@ -431,7 +431,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                 }
                 return DropdownMenuItem(
                   value: scale,
-                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                  child: Text(name, style: TextStyle(color: context.appColors.textPrimary, fontSize: 14)),
                 );
               }).toList(),
               onChanged: (val) {
@@ -442,7 +442,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.text_fields_rounded, color: currentColor),
           title: Text('Category Header Font Size', style: titleStyle),
@@ -450,7 +450,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<CategoryFontSize>(
               value: currentCategorySize,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: CategoryFontSize.values.map((size) {
                 String name = '';
@@ -463,7 +463,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                 }
                 return DropdownMenuItem(
                   value: size,
-                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                  child: Text(name, style: TextStyle(color: context.appColors.textPrimary, fontSize: 14)),
                 );
               }).toList(),
               onChanged: (val) {
@@ -474,7 +474,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.topic_rounded, color: currentColor),
           title: Text('Subject Card Font Size', style: titleStyle),
@@ -482,7 +482,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<TopicFontSize>(
               value: currentTopicSize,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: TopicFontSize.values.map((size) {
                 String name = '';
@@ -495,7 +495,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                 }
                 return DropdownMenuItem(
                   value: size,
-                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                  child: Text(name, style: TextStyle(color: context.appColors.textPrimary, fontSize: 14)),
                 );
               }).toList(),
               onChanged: (val) {
@@ -506,7 +506,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.checklist_rounded, color: currentColor),
           title: Text('Checklist Task Font Size', style: titleStyle),
@@ -514,7 +514,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<TaskFontSize>(
               value: currentTaskSize,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: TaskFontSize.values.map((size) {
                 String name = '';
@@ -527,7 +527,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                 }
                 return DropdownMenuItem(
                   value: size,
-                  child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                  child: Text(name, style: TextStyle(color: context.appColors.textPrimary, fontSize: 14)),
                 );
               }).toList(),
               onChanged: (val) {
@@ -575,7 +575,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         themePresetTile,
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         SwitchListTile(
           activeThumbColor: currentColor,
           secondary: Icon(Icons.format_quote_rounded, color: currentColor),
@@ -589,7 +589,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ref.read(focusQuotesEnabledProvider.notifier).setEnabled(val);
           },
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.animation_rounded, color: currentColor),
           title: Text('Focus Loop Animation', style: titleStyle),
@@ -600,7 +600,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<FocusAnimationType>(
               value: animType,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: FocusAnimationType.values.map((type) {
                 String name = '';

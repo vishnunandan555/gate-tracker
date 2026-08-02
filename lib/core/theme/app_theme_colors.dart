@@ -13,6 +13,9 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color borderColor;
   final Color dialogBackground;
   final Color overlayBarrier;
+  final Color onSurface;
+  final Color dividerColor;
+  final Color onAccent;
   final double borderRadius;
   final bool enableGlassmorphism;
 
@@ -28,12 +31,18 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     required this.borderColor,
     required this.dialogBackground,
     required this.overlayBarrier,
+    required this.onSurface,
+    required this.dividerColor,
+    required this.onAccent,
     required this.borderRadius,
     required this.enableGlassmorphism,
   });
 
   factory AppThemeColors.fromModel(AppThemeDataModel model, {Color? primaryAccentOverride}) {
     final activePrimary = primaryAccentOverride ?? model.primaryAccentColor;
+    final estimatedOnAccent = ThemeData.estimateBrightnessForColor(activePrimary) == Brightness.dark
+        ? Colors.white
+        : Colors.black;
 
     return AppThemeColors(
       scaffoldBackground: model.scaffoldBackgroundColor,
@@ -47,6 +56,9 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       borderColor: model.borderColorValue,
       dialogBackground: model.cardBackgroundColor,
       overlayBarrier: Colors.black.withValues(alpha: 0.7),
+      onSurface: model.onSurfaceColor ?? model.textPrimaryColor,
+      dividerColor: model.dividerColorValue ?? (model.isLight ? Colors.black.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.10)),
+      onAccent: model.onAccentColor != null ? model.onAccentColor! : estimatedOnAccent,
       borderRadius: model.borderRadius,
       enableGlassmorphism: model.enableGlassmorphism,
     );
@@ -65,6 +77,9 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     Color? borderColor,
     Color? dialogBackground,
     Color? overlayBarrier,
+    Color? onSurface,
+    Color? dividerColor,
+    Color? onAccent,
     double? borderRadius,
     bool? enableGlassmorphism,
   }) {
@@ -80,6 +95,9 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       borderColor: borderColor ?? this.borderColor,
       dialogBackground: dialogBackground ?? this.dialogBackground,
       overlayBarrier: overlayBarrier ?? this.overlayBarrier,
+      onSurface: onSurface ?? this.onSurface,
+      dividerColor: dividerColor ?? this.dividerColor,
+      onAccent: onAccent ?? this.onAccent,
       borderRadius: borderRadius ?? this.borderRadius,
       enableGlassmorphism: enableGlassmorphism ?? this.enableGlassmorphism,
     );
@@ -101,6 +119,9 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
       dialogBackground: Color.lerp(dialogBackground, other.dialogBackground, t)!,
       overlayBarrier: Color.lerp(overlayBarrier, other.overlayBarrier, t)!,
+      onSurface: Color.lerp(onSurface, other.onSurface, t)!,
+      dividerColor: Color.lerp(dividerColor, other.dividerColor, t)!,
+      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
       borderRadius: (borderRadius + (other.borderRadius - borderRadius) * t),
       enableGlassmorphism: t < 0.5 ? enableGlassmorphism : other.enableGlassmorphism,
     );

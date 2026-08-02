@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'focus/focus_idle_view.dart';
 import 'focus/focus_active_view.dart';
@@ -14,19 +15,11 @@ class FocusScreen extends ConsumerWidget {
     final sessionState = ref.watch(focusProvider);
     final accentColor = progressColor;
 
-    return Theme(
-      data: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: accentColor,
-          brightness: Brightness.dark,
-        ),
-      ),
-      child: Scaffold(
-        body: sessionState.status == FocusStatus.idle
-            ? SafeArea(child: FocusIdleView(accentColor: accentColor))
-            : FocusActiveView(accentColor: accentColor),
-      ),
+    return Scaffold(
+      backgroundColor: context.appColors.scaffoldBackground,
+      body: sessionState.status == FocusStatus.idle
+          ? SafeArea(child: FocusIdleView(accentColor: accentColor))
+          : FocusActiveView(accentColor: accentColor),
     );
   }
 }

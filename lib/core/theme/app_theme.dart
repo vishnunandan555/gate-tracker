@@ -28,16 +28,16 @@ class AppTheme {
             primary: themeColors.primaryAccent,
             secondary: themeColors.secondaryAccent,
             surface: themeColors.surfaceColor,
-            onPrimary: Colors.black,
-            onSecondary: Colors.black,
+            onPrimary: themeColors.onAccent,
+            onSecondary: themeColors.onAccent,
             onSurface: themeColors.textPrimary,
           )
         : ColorScheme.light(
             primary: themeColors.primaryAccent,
             secondary: themeColors.secondaryAccent,
             surface: themeColors.surfaceColor,
-            onPrimary: Colors.white,
-            onSecondary: Colors.white,
+            onPrimary: themeColors.onAccent,
+            onSecondary: themeColors.onAccent,
             onSurface: themeColors.textPrimary,
           );
 
@@ -52,7 +52,8 @@ class AppTheme {
       colorScheme: colorScheme,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      dividerColor: themeColors.borderColor,
+      dividerColor: themeColors.dividerColor,
+      dividerTheme: DividerThemeData(color: themeColors.dividerColor),
       textTheme: GoogleFonts.outfitTextTheme(baseTextTheme).copyWith(
         bodyLarge: baseTextTheme.bodyLarge?.copyWith(color: themeColors.textPrimary),
         bodyMedium: baseTextTheme.bodyMedium?.copyWith(color: themeColors.textPrimary),
