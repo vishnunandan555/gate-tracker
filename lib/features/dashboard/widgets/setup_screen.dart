@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'shell_common.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
@@ -100,11 +101,11 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           "Sync Conflict Detected",
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.textPrimary, fontSize: 18),
         ),
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
@@ -289,11 +290,11 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'Preserve User Stats & History?',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.textPrimary, fontSize: 18),
           ),
           content: Text(
             'All previous user stats, study velocity logs, and completion history will be cleared unless preserved. Do you want to preserve your previous stats and history?',
@@ -388,10 +389,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = ref.watch(overallProgressColorProvider);
+    final progressColor = context.appColors.primaryAccent;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: context.appColors.scaffoldBackground,
       body: SafeArea(
         child: _isLoading
             ? const Center(
@@ -471,7 +472,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -481,7 +482,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Let's personalize your exam preparation dashboard.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -505,7 +506,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   : null,
             ),
             child: profileImage == null
-                ? const Icon(Icons.person_rounded, size: 48, color: Colors.white60)
+                ? Icon(Icons.person_rounded, size: 48, color: context.appColors.textSecondary)
                 : null,
           ),
         ),
@@ -515,7 +516,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.orbitron(
             fontSize: context.s(10),
             fontWeight: FontWeight.bold,
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             letterSpacing: 1.2,
           ),
         ),
@@ -523,20 +524,20 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         TextField(
           controller: _nameController,
           onChanged: (val) => setState(() => _displayName = val),
-          style: GoogleFonts.outfit(color: Colors.white, fontSize: 15),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 15),
           decoration: InputDecoration(
             hintText: "Enter your name",
-            hintStyle: GoogleFonts.outfit(color: Colors.white24),
+            hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
             filled: true,
-            fillColor: const Color(0xFF131316),
+            fillColor: context.appColors.cardBackground,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Colors.white10),
+              borderSide: BorderSide(color: context.appColors.borderColor),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Colors.white10),
+              borderSide: BorderSide(color: context.appColors.borderColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -569,7 +570,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -579,7 +580,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "How many hours do you plan to dedicate to focus studying each day?",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -600,7 +601,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   text: _dailyGoalMins == 60 ? "HOUR" : "HOURS",
                   style: GoogleFonts.outfit(
                     fontSize: 16,
-                    color: Colors.white54,
+                    color: context.appColors.textSecondary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -619,10 +620,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 6),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: isSelected ? accentColor.withValues(alpha: 0.1) : const Color(0xFF131316),
+                    color: isSelected ? accentColor.withValues(alpha: 0.1) : context.appColors.cardBackground,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isSelected ? accentColor : Colors.white10,
+                      color: isSelected ? accentColor : context.appColors.borderColor,
                       width: isSelected ? 1.5 : 1.0,
                     ),
                   ),
@@ -630,7 +631,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     "${mins ~/ 60} Hrs",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -646,18 +647,18 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.orbitron(
             fontSize: context.s(10),
             fontWeight: FontWeight.bold,
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             letterSpacing: 1.2,
           ),
         ),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: accentColor,
-            inactiveTrackColor: Colors.white10,
-            thumbColor: Colors.white,
+            inactiveTrackColor: context.appColors.borderColor,
+            thumbColor: context.appColors.textPrimary,
             overlayColor: accentColor.withValues(alpha: 0.2),
             valueIndicatorColor: accentColor,
-            valueIndicatorTextStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            valueIndicatorTextStyle: TextStyle(color: context.appColors.onAccent, fontWeight: FontWeight.bold),
           ),
           child: Slider(
             value: _dailyGoalMins.toDouble(),
@@ -698,7 +699,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -708,7 +709,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Configure when you will sit for the GATE exam. A live countdown will show on your home screen.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -721,7 +722,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 style: GoogleFonts.orbitron(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -750,9 +751,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ElevatedButton.icon(
           onPressed: _showTargetDatePicker,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF131316),
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: Colors.white10),
+            backgroundColor: context.appColors.cardBackground,
+            foregroundColor: context.appColors.textPrimary,
+            side: BorderSide(color: context.appColors.borderColor),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
@@ -781,10 +782,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: ref.read(overallProgressColorProvider),
-              surface: const Color(0xFF18181B),
-              onSurface: Colors.white,
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: context.appColors.primaryAccent,
+              surface: context.appColors.surfaceColor,
+              onSurface: context.appColors.textPrimary,
             ),
           ),
           child: child!,
@@ -829,7 +830,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -839,7 +840,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Select the engineering branch you are preparing for to configure your syllabus presets.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -872,10 +873,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? accentColor.withValues(alpha: 0.08) : const Color(0xFF131316),
+                  color: isSelected ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isSelected ? accentColor : Colors.white10,
+                    color: isSelected ? accentColor : context.appColors.borderColor,
                     width: isSelected ? 1.5 : 1.0,
                   ),
                 ),
@@ -888,17 +889,17 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
+                            color: isSelected ? accentColor.withValues(alpha: 0.15) : context.appColors.surfaceColor,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(icon, color: isSelected ? accentColor : Colors.white60, size: 24),
+                          child: Icon(icon, color: isSelected ? accentColor : context.appColors.textSecondary, size: 24),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             id,
                             style: GoogleFonts.orbitron(
-                              color: isSelected ? accentColor : Colors.white70,
+                              color: isSelected ? accentColor : context.appColors.textSecondary,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -913,7 +914,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           return Text(
                             name,
                             style: GoogleFonts.outfit(
-                              color: isSelected ? accentColor.withAlpha(200) : Colors.white38,
+                              color: isSelected ? accentColor.withAlpha(200) : context.appColors.textSecondary,
                               fontSize: 9.5,
                               height: 1.15,
                             ),
@@ -942,7 +943,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                             Text(
                               name,
                               style: GoogleFonts.outfit(
-                                color: Colors.white38,
+                                color: context.appColors.textSecondary,
                                 fontSize: 9.0,
                                 height: 1.1,
                               ),
@@ -955,18 +956,18 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? accentColor.withValues(alpha: 0.18)
-                                    : Colors.white.withValues(alpha: 0.05),
+                                    : context.appColors.surfaceColor,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
                                   color: isSelected
                                       ? accentColor.withValues(alpha: 0.35)
-                                      : Colors.white.withValues(alpha: 0.08),
+                                      : context.appColors.borderColor,
                                 ),
                               ),
                               child: Text(
                                 "$catCount Subs · $topicCount Topics · $taskCount Tasks",
                                 style: GoogleFonts.outfit(
-                                  color: isSelected ? accentColor : Colors.white70,
+                                  color: isSelected ? accentColor : context.appColors.textSecondary,
                                   fontSize: 8.5,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1009,7 +1010,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -1019,7 +1020,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Select when your daily study tracking transitions to the next day to match your biological clock.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1070,10 +1071,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? accentColor.withValues(alpha: 0.08) : const Color(0xFF131316),
+          color: isSelected ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? accentColor : Colors.white10,
+            color: isSelected ? accentColor : context.appColors.borderColor,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -1083,10 +1084,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
+                color: isSelected ? accentColor.withValues(alpha: 0.15) : context.appColors.surfaceColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: isSelected ? accentColor : Colors.white60, size: 24),
+              child: Icon(icon, color: isSelected ? accentColor : context.appColors.textSecondary, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -1096,7 +1097,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   Text(
                     title,
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1105,7 +1106,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   Text(
                     description,
                     style: GoogleFonts.outfit(
-                      color: Colors.white38,
+                      color: context.appColors.textSecondary,
                       fontSize: 12,
                       height: 1.4,
                     ),
@@ -1130,7 +1131,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -1140,7 +1141,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Do you want to initialize with a preloaded syllabus preset or start with a clean slate?",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1150,10 +1151,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: _usePreset ? accentColor.withValues(alpha: 0.08) : const Color(0xFF131316),
+              color: _usePreset ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: _usePreset ? accentColor : Colors.white10,
+                color: _usePreset ? accentColor : context.appColors.borderColor,
                 width: _usePreset ? 1.5 : 1.0,
               ),
             ),
@@ -1163,10 +1164,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: _usePreset ? accentColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
+                    color: _usePreset ? accentColor.withValues(alpha: 0.15) : context.appColors.surfaceColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.auto_awesome_rounded, color: _usePreset ? accentColor : Colors.white60, size: 24),
+                  child: Icon(Icons.auto_awesome_rounded, color: _usePreset ? accentColor : context.appColors.textSecondary, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -1176,7 +1177,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       Text(
                         "Load Curated Presets",
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1185,7 +1186,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       Text(
                         "Autofills categories, topics, and tasks derived from the official syllabus for branch $_selectedBranch.",
                         style: GoogleFonts.outfit(
-                          color: Colors.white38,
+                          color: context.appColors.textSecondary,
                           fontSize: 12,
                           height: 1.4,
                         ),
@@ -1203,10 +1204,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: !_usePreset ? Colors.amber.withValues(alpha: 0.08) : const Color(0xFF131316),
+              color: !_usePreset ? Colors.amber.withValues(alpha: 0.08) : context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: !_usePreset ? Colors.amberAccent : Colors.white10,
+                color: !_usePreset ? Colors.amberAccent : context.appColors.borderColor,
                 width: !_usePreset ? 1.5 : 1.0,
               ),
             ),
@@ -1216,10 +1217,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: !_usePreset ? Colors.amber.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
+                    color: !_usePreset ? Colors.amber.withValues(alpha: 0.15) : context.appColors.surfaceColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.dashboard_customize_rounded, color: !_usePreset ? Colors.amberAccent : Colors.white60, size: 24),
+                  child: Icon(Icons.dashboard_customize_rounded, color: !_usePreset ? Colors.amberAccent : context.appColors.textSecondary, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -1229,7 +1230,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       Text(
                         "Start Empty (Custom)",
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1238,7 +1239,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       Text(
                         "Starts with zero categories. You must add categories, subjects, and trackers manually.",
                         style: GoogleFonts.outfit(
-                          color: Colors.white38,
+                          color: context.appColors.textSecondary,
                           fontSize: 12,
                           height: 1.4,
                         ),
@@ -1278,7 +1279,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -1288,7 +1289,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Personalize your app's accent color. Select auto-changing dynamic themes, pick a preset, or define your own color.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1298,7 +1299,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: accentColor.withValues(alpha: 0.35), width: 1.5),
             boxShadow: [
@@ -1348,7 +1349,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 child: LinearProgressIndicator(
                   value: 0.68,
                   minHeight: 8,
-                  backgroundColor: Colors.white10,
+                  backgroundColor: context.appColors.borderColor,
                   valueColor: AlwaysStoppedAnimation<Color>(accentColor),
                 ),
               ),
@@ -1386,7 +1387,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       child: Text(
                         "Sample Action",
                         style: GoogleFonts.outfit(
-                          color: Colors.black,
+                          color: context.appColors.onAccent,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),
@@ -1406,16 +1407,16 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isAuto ? accentColor.withValues(alpha: 0.08) : const Color(0xFF131316),
+              color: isAuto ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isAuto ? accentColor : Colors.white10,
+                color: isAuto ? accentColor : context.appColors.borderColor,
                 width: isAuto ? 1.5 : 1.0,
               ),
             ),
             child: Row(
               children: [
-                Icon(Icons.brightness_auto_rounded, color: isAuto ? accentColor : Colors.white60, size: 24),
+                Icon(Icons.brightness_auto_rounded, color: isAuto ? accentColor : context.appColors.textSecondary, size: 24),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -1426,7 +1427,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           Text(
                             "Auto-Change Color",
                             style: GoogleFonts.outfit(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1435,12 +1436,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.cyanAccent.withValues(alpha: 0.15),
+                              color: accentColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               "RECOMMENDED",
-                              style: GoogleFonts.orbitron(color: Colors.cyanAccent, fontSize: 8, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.orbitron(color: accentColor, fontSize: 8, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -1448,7 +1449,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       const SizedBox(height: 2),
                       Text(
                         "Automatically shifts accent colors every session for a fresh visual look.",
-                        style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
                       ),
                     ],
                   ),
@@ -1465,14 +1466,14 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.orbitron(
             fontSize: context.s(10),
             fontWeight: FontWeight.bold,
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           "Lock your theme to a specific high-contrast neon shade.",
-          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -1489,7 +1490,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   color: presetColor,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: isSelected ? Colors.white : Colors.white24,
+                    color: isSelected ? context.appColors.textPrimary : context.appColors.borderColor,
                     width: isSelected ? 2.5 : 1.2,
                   ),
                   boxShadow: [
@@ -1502,7 +1503,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   ],
                 ),
                 child: isSelected
-                    ? const Icon(Icons.check_rounded, color: Colors.black, size: 18)
+                    ? Icon(Icons.check_rounded, color: context.appColors.onAccent, size: 18)
                     : null,
               ),
             );
@@ -1515,14 +1516,14 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.orbitron(
             fontSize: context.s(10),
             fontWeight: FontWeight.bold,
-            color: Colors.white70,
+            color: context.appColors.textSecondary,
             letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           "Fine-tune exact Red, Green, and Blue sliders to create any custom color.",
-          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
         ),
         const SizedBox(height: 12),
 
@@ -1564,8 +1565,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: activeColor,
-              inactiveTrackColor: Colors.white10,
-              thumbColor: Colors.white,
+              inactiveTrackColor: context.appColors.borderColor,
+              thumbColor: context.appColors.textPrimary,
               trackHeight: 3,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
             ),
@@ -1582,7 +1583,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Text(
             "$value",
             textAlign: TextAlign.end,
-            style: GoogleFonts.orbitron(color: Colors.white70, fontSize: 11),
+            style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 11),
           ),
         ),
       ],
@@ -1605,7 +1606,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           style: GoogleFonts.jersey15(
             fontSize: context.s(26),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -1615,7 +1616,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           "Confirm your settings below before launching the exam tracker.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1623,25 +1624,25 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: const Color(0xFF131316),
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            border: Border.all(color: context.appColors.borderColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildSummaryItem("Profile Name", _displayName, Icons.person_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("GATE Branch", _selectedBranch == "CUSTOM" ? "Custom / None" : _selectedBranch, Icons.school_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("Daily Goal", "${(_dailyGoalMins / 60).toStringAsFixed(_dailyGoalMins % 60 == 0 ? 0 : 1)} Hours", Icons.timer_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("Exam Date", "$formattedDate ($displayDays days left)", Icons.calendar_month_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("Day Rollover", _studyDayRollover == StudyDayRollover.overnight ? "Late Night (04:00 AM)" : "Midnight (12:00 AM)", Icons.alarm_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("Syllabus Setup", _usePreset ? "$_selectedBranch Preset Loaded" : "Empty (Custom)", Icons.auto_awesome_rounded, accentColor),
-              const Divider(color: Colors.white10, height: 24),
+              Divider(color: context.appColors.dividerColor, height: 24),
               _buildSummaryItem("Accent Theme", colorNotifier.mode == 'auto' ? "Dynamic Auto-change" : "Custom Accent (#${accentColor.toARGB32().toRadixString(16).substring(2).toUpperCase()})", Icons.palette_rounded, accentColor),
             ],
           ),
@@ -1651,7 +1652,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           onPressed: _handleFinishSetup,
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: Colors.black,
+            foregroundColor: context.appColors.onAccent,
             shadowColor: accentColor.withValues(alpha: 0.4),
             elevation: 12,
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1672,7 +1673,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Text(
             "GO BACK",
             style: GoogleFonts.outfit(
-              color: Colors.white38,
+              color: context.appColors.textSecondary,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -1692,12 +1693,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           children: [
             Text(
               label.toUpperCase(),
-              style: GoogleFonts.orbitron(color: Colors.white30, fontSize: 8.5, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+              style: GoogleFonts.orbitron(color: context.appColors.textMuted, fontSize: 8.5, fontWeight: FontWeight.bold, letterSpacing: 1.0),
             ),
             const SizedBox(height: 4),
             Text(
               value,
-              style: GoogleFonts.outfit(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.bold),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13.5, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -1725,7 +1726,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               onPressed: onNext,
               style: FilledButton.styleFrom(
                 backgroundColor: accentColor,
-                foregroundColor: Colors.black,
+                foregroundColor: context.appColors.onAccent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -1757,12 +1758,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               icon: Icon(
                 Icons.arrow_back_rounded,
                 size: 14,
-                color: Colors.white.withValues(alpha: 0.45),
+                color: context.appColors.textMuted,
               ),
               label: Text(
                 "CANCEL & RETURN TO DASHBOARD",
                 style: GoogleFonts.outfit(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: context.appColors.textMuted,
                   fontWeight: FontWeight.bold,
                   fontSize: 11,
                   letterSpacing: 0.8,
@@ -1801,7 +1802,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             onPressed: onNext,
             style: FilledButton.styleFrom(
               backgroundColor: accentColor,
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),

@@ -85,7 +85,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final packageInfo = ref.watch(packageInfoProvider);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 900;
@@ -707,7 +707,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                               child: Center(
                                 child: Icon(
                                   Icons.arrow_forward_rounded,
-                                  color: isDisabled ? Colors.black45 : Colors.black,
+                                  color: isDisabled ? Colors.black45 : context.appColors.onAccent,
                                   size: isDesktop ? 18 : context.s(16),
                                 ),
                               ),

@@ -16,7 +16,7 @@ class AccountsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final authAsync = ref.watch(authProvider);
     final user = authAsync.value?.user;
     final isSignedIn = user != null;
@@ -771,7 +771,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
         final choice = await showDialog<String>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF18181B),
+            backgroundColor: context.appColors.surfaceColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Text('Delete Account',
@@ -829,7 +829,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
         final confirmSecond = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF18181B),
+            backgroundColor: context.appColors.surfaceColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Text('Are you sure?',

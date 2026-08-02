@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 // Add Syllabus Task Dialog
@@ -11,7 +12,7 @@ void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color 
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'ADD TASK TO ${topic.name.toUpperCase()}',
@@ -30,7 +31,7 @@ void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color 
           hintText: 'e.g. PYQs (2015-2024)',
           hintStyle: GoogleFonts.outfit(color: Colors.white38),
           filled: true,
-          fillColor: const Color(0xFF27272A),
+          fillColor: context.appColors.cardBackground,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -71,7 +72,7 @@ void showReorderSyllabusTasksDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'REORDER TASKS (${topic.name.toUpperCase()})',
@@ -133,7 +134,7 @@ void showReorderSyllabusTasksDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF27272A),
+                backgroundColor: context.appColors.cardBackground,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -153,7 +154,7 @@ void showRenameSyllabusTaskDialog(BuildContext context, SyllabusTask task, Color
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'RENAME TASK',
@@ -170,7 +171,7 @@ void showRenameSyllabusTaskDialog(BuildContext context, SyllabusTask task, Color
         style: GoogleFonts.outfit(color: Colors.white),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color(0xFF27272A),
+          fillColor: context.appColors.cardBackground,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -207,7 +208,7 @@ void showDeleteSyllabusTaskConfirm(BuildContext context, SyllabusTask task, Colo
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'DELETE TASK?',

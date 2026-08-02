@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 // Add Syllabus Topic Dialog
@@ -13,7 +14,7 @@ void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category,
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'ADD TOPIC TO ${category.name.toUpperCase()}',
@@ -32,7 +33,7 @@ void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category,
           hintText: 'e.g. Linear Algebra',
           hintStyle: GoogleFonts.outfit(color: Colors.white38),
           filled: true,
-          fillColor: const Color(0xFF27272A),
+          fillColor: context.appColors.cardBackground,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -73,7 +74,7 @@ void showReorderSyllabusTopicsDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'REORDER TOPICS (${category.name.toUpperCase()})',
@@ -135,7 +136,7 @@ void showReorderSyllabusTopicsDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF27272A),
+                backgroundColor: context.appColors.cardBackground,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -155,7 +156,7 @@ void showRenameSyllabusTopicDialog(BuildContext context, SyllabusTopic topic, Co
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'RENAME TOPIC',
@@ -172,7 +173,7 @@ void showRenameSyllabusTopicDialog(BuildContext context, SyllabusTopic topic, Co
         style: GoogleFonts.outfit(color: Colors.white),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color(0xFF27272A),
+          fillColor: context.appColors.cardBackground,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -209,7 +210,7 @@ void showDeleteSyllabusTopicConfirm(BuildContext context, SyllabusTopic topic, C
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'DELETE TOPIC?',
@@ -254,7 +255,7 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Row(
         children: [
@@ -288,7 +289,7 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
               hintText: 'e.g., Focus on Eigenvalues & Cayley-Hamilton Theorem. See GateOverflow Q42.',
               hintStyle: GoogleFonts.outfit(color: Colors.white30, fontSize: 12),
               filled: true,
-              fillColor: const Color(0xFF27272A),
+              fillColor: context.appColors.cardBackground,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,

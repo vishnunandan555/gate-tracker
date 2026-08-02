@@ -104,7 +104,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final resourcesAsync = ref.watch(resourcesProvider);
     final userBranch = _getUserBranch();
     final activeBranch = _selectedBranchFilter == 'AUTO' ? userBranch : _selectedBranchFilter;

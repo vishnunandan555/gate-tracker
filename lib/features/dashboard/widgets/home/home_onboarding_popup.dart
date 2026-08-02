@@ -7,7 +7,7 @@ import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 Future<void> showOnboardingPopup(BuildContext context, WidgetRef ref) async {
-  final accentColor = ref.read(overallProgressColorProvider);
+  final accentColor = context.appColors.primaryAccent;
   await showDialog(
     context: context,
     barrierDismissible: false,

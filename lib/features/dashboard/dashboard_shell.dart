@@ -83,7 +83,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = ref.watch(overallProgressColorProvider);
+    final progressColor = context.appColors.primaryAccent;
     final activeSlotIds = ref.watch(navBarSlotsProvider);
 
     final shellTab = ref.watch(shellTabProvider);
@@ -428,7 +428,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
   }
 
   void _runSpotlight(String identifier, List<TargetFocus> targets, VoidCallback onFinish) {
-    final accentColor = ref.read(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     TutorialCoachMark(
       targets: targets,
       colorShadow: accentColor,
@@ -666,7 +666,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       bool isLast = false,
       String title = 'GUIDED WALKTHROUGH',
     }) {
-      final accentColor = ref.read(overallProgressColorProvider);
+      final accentColor = context.appColors.primaryAccent;
       
       ContentAlign finalAlign = align ?? ContentAlign.bottom;
       final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
@@ -1014,7 +1014,7 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
     final headerMode = ref.watch(homeHeaderViewModeProvider);
     final isNoticeBoard = headerMode == HomeHeaderViewMode.noticeBoard;
     final isNotifications = headerMode == HomeHeaderViewMode.notifications;
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final tasks = ref.watch(customTasksProvider).value ?? [];
     final activeTasks = tasks.where((t) => !t.isCompleted).toList();
     final notifState = ref.watch(communityNotificationsProvider);
@@ -1192,7 +1192,7 @@ class DemoGuideBanner extends ConsumerWidget {
     };
     if (spotlightOnlySteps.contains(step)) return const SizedBox.shrink();
 
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final overallScale = ref.watch(overallUiScaleProvider).scaleFactor;
 
     String instruction = "";

@@ -7,7 +7,7 @@ import 'package:gateletics/providers/providers.dart';
 void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
   final notifState = ref.read(communityNotificationsProvider);
   final notifications = notifState.notifications;
-  final accentColor = ref.read(overallProgressColorProvider);
+  final accentColor = context.appColors.primaryAccent;
 
   // Mark all as read when opening the sheet
   ref.read(communityNotificationsProvider.notifier).markAllAsRead();

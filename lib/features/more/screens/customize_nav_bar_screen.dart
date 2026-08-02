@@ -104,7 +104,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
 
     // Available catalog: ONLY items NOT currently assigned to the nav bar
     final availableCatalog = _allOptions

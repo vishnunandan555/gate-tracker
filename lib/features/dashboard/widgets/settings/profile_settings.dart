@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class ProfileSettingsSection extends ConsumerWidget {
@@ -43,7 +44,7 @@ class ProfileSettingsSection extends ConsumerWidget {
               final result = await showDialog<String>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.appColors.surfaceColor,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   title: const Text("Set Custom Name"),
                   content: TextField(

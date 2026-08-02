@@ -229,7 +229,7 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final updateState = ref.watch(desktopUpdateProvider);
 
     Widget statusContent;
@@ -492,7 +492,7 @@ class _TextLinkState extends ConsumerState<_TextLink> {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),

@@ -88,11 +88,14 @@ class GateTrackerApp extends ConsumerWidget {
     final authAsync = ref.watch(authProvider);
     final setupAsync = ref.watch(setupCompletedProvider);
 
+    final activeThemeData = ref.watch(activeAppThemeProvider);
+
     if (agreementAsync.isLoading || authAsync.isLoading || setupAsync.isLoading) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: activeThemeData,
         home: Scaffold(
-          backgroundColor: const Color(0xFF09090B),
+          backgroundColor: activeThemeData.scaffoldBackgroundColor,
           body: Center(
             child: CircularProgressIndicator(color: accentColor),
           ),
@@ -103,8 +106,9 @@ class GateTrackerApp extends ConsumerWidget {
     if (agreementAsync.hasError || authAsync.hasError || setupAsync.hasError) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: activeThemeData,
         home: Scaffold(
-          backgroundColor: const Color(0xFF09090B),
+          backgroundColor: activeThemeData.scaffoldBackgroundColor,
           body: Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),

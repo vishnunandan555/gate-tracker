@@ -103,7 +103,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final history = ref.watch(dailyHistoryProvider).value ?? [];
     final currentStreak = ref.watch(currentStreakProvider);
     final checkInStreak = ref.watch(checkInStreakProvider);

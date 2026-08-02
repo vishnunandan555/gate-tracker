@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../utils/ui_scaling.dart';
 
 class SetupNavigationRow extends StatelessWidget {
@@ -26,7 +27,7 @@ class SetupNavigationRow extends StatelessWidget {
         if (onBack != null) ...[
           IconButton(
             onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white70),
+            icon: Icon(Icons.arrow_back_rounded, color: context.appColors.textSecondary),
             tooltip: "Previous Step",
           ),
           const SizedBox(width: 12),
@@ -35,14 +36,14 @@ class SetupNavigationRow extends StatelessWidget {
           child: FilledButton(
             onPressed: onNext,
             style: FilledButton.styleFrom(
-              backgroundColor: isFinish ? accentColor : accentColor,
-              foregroundColor: Colors.black,
+              backgroundColor: accentColor,
+              foregroundColor: context.appColors.onAccent,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
-              disabledBackgroundColor: Colors.white10,
-              disabledForegroundColor: Colors.white24,
+              disabledBackgroundColor: context.appColors.surfaceColor,
+              disabledForegroundColor: context.appColors.textMuted,
             ),
             child: Text(
               nextLabel,
@@ -78,7 +79,7 @@ class SetupStepHeader extends StatelessWidget {
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -88,7 +89,7 @@ class SetupStepHeader extends StatelessWidget {
           subtitle,
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
-            color: Colors.white38,
+            color: context.appColors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),

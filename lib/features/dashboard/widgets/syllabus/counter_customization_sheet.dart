@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 bool _isResourceMatchingCategory(StudyResource res, String categoryName) {
@@ -36,7 +37,7 @@ void _showResourcePickerModal(
     void Function(StudyResource resource) onSelected) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: const Color(0xFF18181B),
+    backgroundColor: context.appColors.surfaceColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -145,7 +146,7 @@ void showConvertToCounterCardDialog(
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Row(
         children: [
@@ -182,7 +183,7 @@ void showConvertToCounterCardDialog(
                 hintText: 'e.g. 10, 15, 20',
                 hintStyle: GoogleFonts.outfit(color: Colors.white30),
                 filled: true,
-                fillColor: const Color(0xFF27272A),
+                fillColor: context.appColors.cardBackground,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -199,7 +200,7 @@ void showConvertToCounterCardDialog(
                 hintText: 'e.g. https://youtube.com/playlist?... or course link',
                 hintStyle: GoogleFonts.outfit(color: Colors.white30),
                 filled: true,
-                fillColor: const Color(0xFF27272A),
+                fillColor: context.appColors.cardBackground,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.add_circle_rounded, color: accentColor),
                   tooltip: 'Pick from Resource Explorer',
@@ -273,7 +274,7 @@ void showEditCounterCardDialog(
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Row(
         children: [
@@ -306,7 +307,7 @@ void showEditCounterCardDialog(
                       labelText: 'Completed',
                       labelStyle: GoogleFonts.outfit(color: Colors.white60),
                       filled: true,
-                      fillColor: const Color(0xFF27272A),
+                      fillColor: context.appColors.cardBackground,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
@@ -324,7 +325,7 @@ void showEditCounterCardDialog(
                       labelText: 'Target Total',
                       labelStyle: GoogleFonts.outfit(color: Colors.white60),
                       filled: true,
-                      fillColor: const Color(0xFF27272A),
+                      fillColor: context.appColors.cardBackground,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
@@ -344,7 +345,7 @@ void showEditCounterCardDialog(
                 hintText: 'e.g. https://youtube.com/playlist?... or course link',
                 hintStyle: GoogleFonts.outfit(color: Colors.white30),
                 filled: true,
-                fillColor: const Color(0xFF27272A),
+                fillColor: context.appColors.cardBackground,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.add_circle_rounded, color: accentColor),
                   tooltip: 'Pick from Resource Explorer',

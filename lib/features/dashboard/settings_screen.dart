@@ -20,7 +20,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final packageInfo = ref.watch(packageInfoProvider);
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 900;
 

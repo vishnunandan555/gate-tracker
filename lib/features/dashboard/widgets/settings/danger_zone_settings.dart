@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../database/backup_service.dart';
 
@@ -107,7 +108,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
       final importMode = await showDialog<ImportMode>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: const Text('Select Restore Mode'),
           content: Column(
@@ -201,7 +202,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text('Redo Onboarding Setup?'),
         content: const Text(
@@ -231,7 +232,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text('Redo Interactive Guide?'),
         content: const Text(

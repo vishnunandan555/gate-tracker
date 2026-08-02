@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/string_utils.dart';
 import 'topic_customization_sheet.dart';
@@ -27,7 +28,7 @@ void showSyllabusCategoryOptionsSheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFF18181B),
+    backgroundColor: context.appColors.surfaceColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -187,7 +188,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'EDIT SYLLABUS CATEGORY',
@@ -212,7 +213,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
                 labelText: 'Category Name',
                 labelStyle: GoogleFonts.outfit(color: Colors.white60),
                 filled: true,
-                fillColor: const Color(0xFF27272A),
+                fillColor: context.appColors.cardBackground,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -305,7 +306,7 @@ void _showDeleteSyllabusCategoryConfirm(BuildContext context, SyllabusCategory c
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'DELETE SYLLABUS CATEGORY?',
@@ -351,7 +352,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'NEW SYLLABUS CATEGORY',
@@ -376,7 +377,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
                 labelText: 'Category Name',
                 labelStyle: GoogleFonts.outfit(color: Colors.white60),
                 filled: true,
-                fillColor: const Color(0xFF27272A),
+                fillColor: context.appColors.cardBackground,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -473,7 +474,7 @@ void showReorderSyllabusCategoriesDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'REORDER CATEGORIES',
@@ -540,7 +541,7 @@ void showReorderSyllabusCategoriesDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF27272A),
+                backgroundColor: context.appColors.cardBackground,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),

@@ -35,7 +35,7 @@ class AppBarTitle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progressColor = ref.watch(overallProgressColorProvider);
+    final progressColor = context.appColors.primaryAccent;
     final packageInfo = ref.watch(packageInfoProvider);
     // Watch to ensure the provider is initialized and fetching in background.
     ref.watch(quotesProvider);

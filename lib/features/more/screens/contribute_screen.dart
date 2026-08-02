@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
 import '../../../core/theme/theme_context_ext.dart';
-import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 
 class ContributeScreen extends ConsumerWidget {
@@ -13,7 +12,7 @@ class ContributeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
 
     final cards = [
       _ContributeCardData(

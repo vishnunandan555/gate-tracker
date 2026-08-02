@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/config/brand_config.dart';
+import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class AgreementScreen extends StatefulWidget {
@@ -64,18 +65,17 @@ Our App does not collect any information from children or anyone else, making it
 If you have any questions about this Privacy Policy, please contact us at: ${BrandConfig.supportEmail}
 """;
 
-  void _showDocumentDialog(BuildContext context, String title, String content) {
-    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+  void _showDocumentModal(String title, String content) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           title,
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : const Color(0xFF1E293B),
+            color: context.appColors.textPrimary,
             fontSize: 18,
           ),
         ),
@@ -88,7 +88,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
               child: Text(
                 content,
                 style: GoogleFonts.outfit(
-                  color: isDark ? Colors.white70 : const Color(0xFF475569),
+                  color: context.appColors.textSecondary,
                   fontSize: 13.5,
                   height: 1.6,
                 ),
@@ -101,7 +101,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
             onPressed: () => Navigator.pop(context),
             child: Text(
               "CLOSE",
-              style: GoogleFonts.outfit(color: Colors.cyanAccent, fontWeight: FontWeight.bold),
+              style: GoogleFonts.outfit(color: context.appColors.primaryAccent, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -111,16 +111,8 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
 
   @override
   Widget build(BuildContext context) {
-    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
-
-    // Unified light palette — referenced throughout, no repeated literals
-    const Color lightScaffold = Color(0xFFF3F4F6);
-    const Color lightTextPrimary = Color(0xFF1E293B);
-    const Color lightTextSecondary = Color(0xFF475569);
-    const Color lightTextMuted = Color(0xFF94A3B8);
-
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : lightScaffold,
+      backgroundColor: context.appColors.scaffoldBackground,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -143,9 +135,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(22),
                               border: Border.all(
-                                color: isDark
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.black.withAlpha(20),
+                                color: context.appColors.borderColor,
                                 width: 1.5,
                               ),
                             ),
@@ -166,7 +156,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2.0,
-                              color: isDark ? Colors.white : lightTextPrimary,
+                              color: context.appColors.textPrimary,
                             ),
                           ),
                         ),
@@ -176,7 +166,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                             "Please review and accept our policies to continue",
                             style: GoogleFonts.outfit(
                               fontSize: 13,
-                              color: isDark ? Colors.white38 : lightTextMuted,
+                              color: context.appColors.textMuted,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -187,7 +177,7 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                         Text(
                           "Welcome to ${BrandConfig.appName}. Before you begin tracking your syllabus progress, please take a moment to read and accept our legal terms.",
                           style: GoogleFonts.outfit(
-                            color: isDark ? Colors.white70 : lightTextSecondary,
+                            color: context.appColors.textSecondary,
                             fontSize: 13.5,
                             height: 1.6,
                           ),
@@ -198,22 +188,16 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                         // Terms Card Button
                         ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          tileColor: isDark
-                              ? Colors.white.withAlpha(8)
-                              : Colors.black.withAlpha(6),
+                          tileColor: context.appColors.cardBackground,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withAlpha(18)
-                                  : Colors.black.withAlpha(20),
-                            ),
+                            side: BorderSide(color: context.appColors.borderColor),
                           ),
-                          leading: const Icon(Icons.description_rounded, color: Colors.cyanAccent),
+                          leading: Icon(Icons.description_rounded, color: context.appColors.primaryAccent),
                           title: Text(
                             "Terms of Service",
                             style: GoogleFonts.outfit(
-                              color: isDark ? Colors.white : lightTextPrimary,
+                              color: context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -221,37 +205,31 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                           subtitle: Text(
                             "Usage conditions & disclaimer",
                             style: GoogleFonts.outfit(
-                              color: isDark ? Colors.white38 : lightTextMuted,
+                              color: context.appColors.textMuted,
                               fontSize: 11,
                             ),
                           ),
                           trailing: Icon(
                             Icons.chevron_right_rounded,
-                            color: isDark ? Colors.white54 : lightTextSecondary,
+                            color: context.appColors.textSecondary,
                           ),
-                          onTap: () => _showDocumentDialog(context, "Terms of Service", _tosText),
+                          onTap: () => _showDocumentModal("Terms of Service", _tosText),
                         ),
                         const SizedBox(height: 12),
 
                         // Privacy Card Button
                         ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          tileColor: isDark
-                              ? Colors.white.withAlpha(8)
-                              : Colors.black.withAlpha(6),
+                          tileColor: context.appColors.cardBackground,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withAlpha(18)
-                                  : Colors.black.withAlpha(20),
-                            ),
+                            side: BorderSide(color: context.appColors.borderColor),
                           ),
-                          leading: const Icon(Icons.privacy_tip_rounded, color: Colors.cyanAccent),
+                          leading: Icon(Icons.privacy_tip_rounded, color: context.appColors.primaryAccent),
                           title: Text(
                             "Privacy Policy",
                             style: GoogleFonts.outfit(
-                              color: isDark ? Colors.white : lightTextPrimary,
+                              color: context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -259,49 +237,43 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                           subtitle: Text(
                             "Data storage & usage details",
                             style: GoogleFonts.outfit(
-                              color: isDark ? Colors.white38 : lightTextMuted,
+                              color: context.appColors.textMuted,
                               fontSize: 11,
                             ),
                           ),
                           trailing: Icon(
                             Icons.chevron_right_rounded,
-                            color: isDark ? Colors.white54 : lightTextSecondary,
+                            color: context.appColors.textSecondary,
                           ),
-                          onTap: () => _showDocumentDialog(context, "Privacy Policy", _privacyText),
+                          onTap: () => _showDocumentModal("Privacy Policy", _privacyText),
                         ),
 
                         const SizedBox(height: 24),
 
                         // Agreement Toggles
                         Material(
-                          color: isDark
-                              ? Colors.white.withAlpha(5)
-                              : Colors.black.withAlpha(6),
+                          color: context.appColors.cardBackground,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withAlpha(8)
-                                  : Colors.black.withAlpha(18),
-                            ),
+                            side: BorderSide(color: context.appColors.borderColor),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                             child: Theme(
                               data: ThemeData(
-                                unselectedWidgetColor: isDark ? Colors.white30 : Colors.black38,
+                                unselectedWidgetColor: context.appColors.textMuted,
                               ),
                               child: Column(
                                 children: [
                                   CheckboxListTile(
-                                    activeColor: Colors.cyanAccent,
-                                    checkColor: Colors.black,
+                                    activeColor: context.appColors.primaryAccent,
+                                    checkColor: context.appColors.onAccent,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                                     value: _tosAgreed,
                                     title: Text(
                                       "I read and agree to the Terms of Service",
                                       style: GoogleFonts.outfit(
-                                        color: isDark ? Colors.white70 : lightTextSecondary,
+                                        color: context.appColors.textSecondary,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -313,20 +285,18 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                     },
                                   ),
                                   Divider(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(18)
-                                        : Colors.black.withAlpha(18),
+                                    color: context.appColors.borderColor,
                                     height: 1,
                                   ),
                                   CheckboxListTile(
-                                    activeColor: Colors.cyanAccent,
-                                    checkColor: Colors.black,
+                                    activeColor: context.appColors.primaryAccent,
+                                    checkColor: context.appColors.onAccent,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                                     value: _privacyAgreed,
                                     title: Text(
                                       "I read and agree to the Privacy Policy",
                                       style: GoogleFonts.outfit(
-                                        color: isDark ? Colors.white70 : lightTextSecondary,
+                                        color: context.appColors.textSecondary,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -362,10 +332,8 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
-                                  side: BorderSide(
-                                    color: isDark ? Colors.white24 : Colors.black26,
-                                  ),
-                                  foregroundColor: isDark ? Colors.white70 : lightTextSecondary,
+                                  side: BorderSide(color: context.appColors.borderColor),
+                                  foregroundColor: context.appColors.textSecondary,
                                 ),
                                 child: Text(
                                   "EXIT APP",
@@ -391,14 +359,10 @@ If you have any questions about this Privacy Policy, please contact us at: ${Bra
                                           }
                                         : null,
                                     style: FilledButton.styleFrom(
-                                      backgroundColor: Colors.cyanAccent,
-                                      foregroundColor: Colors.black,
-                                      disabledBackgroundColor: isDark
-                                          ? Colors.white12
-                                          : Colors.black.withAlpha(12),
-                                      disabledForegroundColor: isDark
-                                          ? Colors.white24
-                                          : Colors.black38,
+                                      backgroundColor: context.appColors.primaryAccent,
+                                      foregroundColor: context.appColors.onAccent,
+                                      disabledBackgroundColor: context.appColors.surfaceColor,
+                                      disabledForegroundColor: context.appColors.textMuted,
                                       padding: const EdgeInsets.symmetric(vertical: 15),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(14),

@@ -40,9 +40,29 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
 
   bool get isLight => scaffoldBackground.computeLuminance() > 0.5;
 
+  static const Map<int, Color> lightAccentMap = {
+    0xFF00F0FF: Color(0xFF15CBD6), // Cyan
+    0xFF39FF14: Color(0xFF2EBD14), // Green
+    0xFFFF0000: Color(0xFFD82D00), // Scarlet Red
+    0xFFFFAD00: Color(0xFFFFAD00), // Amber
+    0xFFE040FB: Color(0xFFA020B6), // Magenta
+    0xFFFF5E00: Color(0xFFFF5E00), // Orange
+    0xFF00B0FF: Color(0xFF00B0FF), // Electric Blue
+    0xFF00FFCC: Color(0xFF27D1AF), // Mint/Teal
+    0xFF9D5AFF: Color(0xFF7B47C6), // Purple
+    0xFF4C73FF: Color(0xFF2E4EBF), // Electric Blue
+    0xFFC58D39: Color(0xFFA67731), // Bronze
+    0xFFFFFC00: Color(0xFFDFDD46), // Yellow
+    0xFFC1FF72: Color(0xFF99D152), // Lime
+  };
+
   static Color adaptAccentForLightMode(Color accent) {
+    final value = accent.toARGB32();
+    if (lightAccentMap.containsKey(value)) {
+      return lightAccentMap[value]!;
+    }
     final hsl = HSLColor.fromColor(accent);
-    if (hsl.lightness > 0.42) {
+    if (hsl.lightness > 0.40) {
       return hsl.withLightness(0.36).toColor();
     }
     return accent;

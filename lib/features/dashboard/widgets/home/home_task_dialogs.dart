@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 
@@ -10,21 +11,21 @@ void showTaskOptionsDialog(BuildContext context, WidgetRef ref, CustomTask task)
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        backgroundColor: const Color(0xFF131316),
+        backgroundColor: context.appColors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.white.withAlpha(12)),
+          side: BorderSide(color: context.appColors.borderColor),
         ),
         title: Text(
           "Task Options",
-          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.edit_rounded, color: Colors.cyanAccent),
-              title: Text("Edit Task", style: GoogleFonts.outfit(color: Colors.white)),
+              leading: Icon(Icons.edit_rounded, color: context.appColors.primaryAccent),
+              title: Text("Edit Task", style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
               onTap: () {
                 Navigator.pop(dialogContext);
                 showEditTaskDialog(context, ref, task);
@@ -32,7 +33,7 @@ void showTaskOptionsDialog(BuildContext context, WidgetRef ref, CustomTask task)
             ),
             ListTile(
               leading: const Icon(Icons.delete_rounded, color: Colors.redAccent),
-              title: Text("Delete Task", style: GoogleFonts.outfit(color: Colors.white)),
+              title: Text("Delete Task", style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
               onTap: () {
                 ref.read(customTasksNotifierProvider.notifier).deleteTask(task.id);
                 Navigator.pop(dialogContext);
@@ -51,10 +52,10 @@ void showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        backgroundColor: const Color(0xFF131316),
+        backgroundColor: context.appColors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.white.withAlpha(12)),
+          side: BorderSide(color: context.appColors.borderColor),
         ),
         title: Text(
           "Edit Task",
@@ -62,12 +63,12 @@ void showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
         ),
         content: TextField(
           controller: controller,
-          style: GoogleFonts.outfit(color: Colors.white),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary),
           decoration: InputDecoration(
             hintText: "Enter task details...",
-            hintStyle: GoogleFonts.outfit(color: Colors.white30),
-            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: ref.watch(overallProgressColorProvider))),
+            hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.borderColor)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.primaryAccent)),
           ),
         ),
         actions: [

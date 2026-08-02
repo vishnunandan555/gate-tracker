@@ -70,94 +70,17 @@ class _CustomThemeEditorDialogState extends ConsumerState<CustomThemeEditorDialo
     super.dispose();
   }
 
-  void _pickColor(String label, Color currentColor, ValueChanged<Color> onColorChanged) {
-    int r = (currentColor.r * 255).round().clamp(0, 255);
-    int g = (currentColor.g * 255).round().clamp(0, 255);
-    int b = (currentColor.b * 255).round().clamp(0, 255);
-
-    showDialog(
+  void _pickColor(String label, Color currentColor, ValueChanged<Color> onColorChanged) async {
+    final selectedColor = await showDialog<Color>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setPickerState) {
-          final preview = Color.fromARGB(255, r, g, b);
-          return AlertDialog(
-            title: Text('Adjust $label', style: const TextStyle(fontSize: 16)),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: preview,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24, width: 2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      const SizedBox(width: 24, child: Text('R', style: TextStyle(color: Colors.redAccent))),
-                      Expanded(
-                        child: Slider(
-                          value: r.toDouble(),
-                          min: 0,
-                          max: 255,
-                          activeColor: Colors.redAccent,
-                          onChanged: (v) => setPickerState(() => r = v.round()),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const SizedBox(width: 24, child: Text('G', style: TextStyle(color: Colors.greenAccent))),
-                      Expanded(
-                        child: Slider(
-                          value: g.toDouble(),
-                          min: 0,
-                          max: 255,
-                          activeColor: Colors.greenAccent,
-                          onChanged: (v) => setPickerState(() => g = v.round()),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const SizedBox(width: 24, child: Text('B', style: TextStyle(color: Colors.blueAccent))),
-                      Expanded(
-                        child: Slider(
-                          value: b.toDouble(),
-                          min: 0,
-                          max: 255,
-                          activeColor: Colors.blueAccent,
-                          onChanged: (v) => setPickerState(() => b = v.round()),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              FilledButton(
-                onPressed: () {
-                  onColorChanged(Color.fromARGB(255, r, g, b));
-                  Navigator.pop(context);
-                },
-                child: const Text('Apply'),
-              ),
-            ],
-          );
-        },
+      builder: (context) => _ModernColorPickerDialog(
+        label: label,
+        initialColor: currentColor,
       ),
     );
+    if (selectedColor != null) {
+      onColorChanged(selectedColor);
+    }
   }
 
   Widget _buildColorTile(String label, Color color, ValueChanged<Color> onChanged) {
@@ -391,6 +314,324 @@ class _CustomThemeEditorDialogState extends ConsumerState<CustomThemeEditorDialo
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ModernColorPickerDialog extends StatefulWidget {
+  final String label;
+  final Color initialColor;
+
+  const _ModernColorPickerDialog({
+    required this.label,
+    required this.initialColor,
+  });
+
+  @override
+  State<_ModernColorPickerDialog> createState() => _ModernColorPickerDialogState();
+}
+
+class _ModernColorPickerDialogState extends State<_ModernColorPickerDialog> {
+  late HSVColor _hsvColor;
+  late TextEditingController _hexController;
+  bool _updatingText = false;
+
+  static const List<Color> _quickSwatches = [
+    Color(0xFF00F0FF), // Neon Cyan
+    Color(0xFF15CBD6), // Cyan Light
+    Color(0xFF39FF14), // Neon Green
+    Color(0xFF2EBD14), // Green Light
+    Color(0xFFFF0000), // Scarlet Red
+    Color(0xFFFFAD00), // Amber
+    Color(0xFFE040FB), // Magenta
+    Color(0xFF9D5AFF), // Purple
+    Color(0xFF4C73FF), // Electric Blue
+    Color(0xFF00B0FF), // Blue
+    Color(0xFF27D1AF), // Teal Light
+    Color(0xFF99D152), // Lime Light
+    Color(0xFF09090B), // Dark Scaffold
+    Color(0xFF18181B), // Dark Surface
+    Color(0xFFF3F4F6), // Light Scaffold
+    Color(0xFFFFFFFF), // White
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _hsvColor = HSVColor.fromColor(widget.initialColor);
+    _hexController = TextEditingController(text: _formatHex(widget.initialColor));
+  }
+
+  @override
+  void dispose() {
+    _hexController.dispose();
+    super.dispose();
+  }
+
+  String _formatHex(Color color) {
+    final argb = color.toARGB32();
+    final rgb = argb & 0x00FFFFFF;
+    return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
+  void _onHexChanged(String input) {
+    if (_updatingText) return;
+    var clean = input.replaceAll('#', '').trim();
+    if (clean.length == 6) {
+      final val = int.tryParse('FF$clean', radix: 16);
+      if (val != null) {
+        final newColor = Color(val);
+        setState(() {
+          _hsvColor = HSVColor.fromColor(newColor);
+        });
+      }
+    }
+  }
+
+  void _updateColor(HSVColor newHsv) {
+    setState(() {
+      _hsvColor = newHsv;
+      _updatingText = true;
+      _hexController.text = _formatHex(newHsv.toColor());
+      _updatingText = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentColor = _hsvColor.toColor();
+
+    return AlertDialog(
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
+      title: Text(
+        'Adjust ${widget.label}',
+        style: GoogleFonts.outfit(
+          fontWeight: FontWeight.bold,
+          color: context.appColors.textPrimary,
+          fontSize: 18,
+        ),
+      ),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 340),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Preview & Hex Input Row
+              Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: currentColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: context.appColors.borderColor, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: currentColor.withValues(alpha: 0.35),
+                          blurRadius: 12,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: TextField(
+                      controller: _hexController,
+                      onChanged: _onHexChanged,
+                      style: GoogleFonts.firaCode(
+                        color: context.appColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Hex Color Code',
+                        labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        filled: true,
+                        fillColor: context.appColors.surfaceColor,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: context.appColors.borderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: context.appColors.primaryAccent),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Rainbow Hue Slider
+              Text(
+                'Color Hue',
+                style: GoogleFonts.outfit(
+                  color: context.appColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                height: 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFFF0000),
+                      Color(0xFFFFFF00),
+                      Color(0xFF00FF00),
+                      Color(0xFF00FFFF),
+                      Color(0xFF0000FF),
+                      Color(0xFFFF00FF),
+                      Color(0xFFFF0000),
+                    ],
+                  ),
+                ),
+                child: SliderTheme(
+                  data: SliderThemeData(
+                    trackShape: const RectangularSliderTrackShape(),
+                    thumbColor: Colors.white,
+                    overlayColor: Colors.white24,
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+                    trackHeight: 20,
+                  ),
+                  child: Slider(
+                    value: _hsvColor.hue,
+                    min: 0.0,
+                    max: 360.0,
+                    onChanged: (newHue) {
+                      _updateColor(_hsvColor.withHue(newHue));
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Saturation / Brightness Sliders
+              Text(
+                'Saturation & Brightness',
+                style: GoogleFonts.outfit(
+                  color: context.appColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 32,
+                    child: Text('Sat', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11)),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: _hsvColor.saturation,
+                      min: 0.0,
+                      max: 1.0,
+                      activeColor: currentColor,
+                      onChanged: (s) => _updateColor(_hsvColor.withSaturation(s)),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 32,
+                    child: Text('Val', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11)),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: _hsvColor.value,
+                      min: 0.0,
+                      max: 1.0,
+                      activeColor: currentColor,
+                      onChanged: (v) => _updateColor(_hsvColor.withValue(v)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Quick Swatches
+              Text(
+                'Quick Palette Presets',
+                style: GoogleFonts.outfit(
+                  color: context.appColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _quickSwatches.map((color) {
+                  final isSelected = currentColor.toARGB32() == color.toARGB32();
+                  return GestureDetector(
+                    onTap: () => _updateColor(HSVColor.fromColor(color)),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? context.appColors.textPrimary : context.appColors.borderColor,
+                          width: isSelected ? 2.5 : 1.0,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.5),
+                                  blurRadius: 8,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: isSelected
+                          ? Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            )
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textMuted)),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, currentColor),
+          style: FilledButton.styleFrom(
+            backgroundColor: context.appColors.primaryAccent,
+            foregroundColor: context.appColors.onAccent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text('Apply', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        ),
+      ],
     );
   }
 }

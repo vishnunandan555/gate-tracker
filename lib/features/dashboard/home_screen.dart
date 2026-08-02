@@ -67,7 +67,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
-    final accentColor = ref.watch(overallProgressColorProvider);
+    final accentColor = context.appColors.primaryAccent;
     final displayName = ref.watch(displayNameProvider);
     final profileImage = ref.watch(displayProfileImageProvider);
     final profileState = ref.watch(profileProvider);
@@ -95,22 +95,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: context.appColors.scaffoldBackground,
       body: Container(
-        decoration: context.appColors.isLight
-            ? null
-            : BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0.0, -1.5),
-                  radius: 2.0,
-                  colors: [
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(0.0, -1.5),
+            radius: 2.0,
+            colors: context.appColors.isLight
+                ? [
+                    context.appColors.primaryAccent.withValues(alpha: 0.18 * glowStrength),
+                    context.appColors.primaryAccent.withValues(alpha: 0.09 * glowStrength),
+                    context.appColors.primaryAccent.withValues(alpha: 0.03 * glowStrength),
+                    Colors.transparent,
+                  ]
+                : [
                     accentColor.withAlpha((45 * glowStrength).round().clamp(0, 255)),
                     accentColor.withAlpha((25 * glowStrength).round().clamp(0, 255)),
                     accentColor.withAlpha((12 * glowStrength).round().clamp(0, 255)),
                     accentColor.withAlpha((4 * glowStrength).round().clamp(0, 255)),
                     Colors.transparent,
                   ],
-                  stops: const [0.0, 0.3, 0.6, 0.8, 1.0],
-                ),
-              ),
+            stops: context.appColors.isLight
+                ? const [0.0, 0.4, 0.7, 1.0]
+                : const [0.0, 0.3, 0.6, 0.8, 1.0],
+          ),
+        ),
         child: SafeArea(
           bottom: false,
           child: Center(
@@ -394,7 +401,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     child: Text(
                                                       "“$launchQuote”",
                                                       style: GoogleFonts.outfit(
-                                                        color: Colors.white60,
+                                                        color: context.appColors.textSecondary,
                                                         fontSize: context.s(13),
                                                         fontStyle: FontStyle.italic,
                                                       ),
@@ -1166,7 +1173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               decoration: BoxDecoration(
                 color: context.appColors.cardBackground, // Unfilled background
                 borderRadius: BorderRadius.circular(context.s(30)),
-                border: Border.all(color: context.appColors.dividerColor),
+                border: Border.all(color: context.appColors.borderColor),
               ),
               child: Stack(
                 children: [

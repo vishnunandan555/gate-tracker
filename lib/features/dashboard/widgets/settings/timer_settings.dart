@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../database/app_database.dart';
 
@@ -22,7 +23,7 @@ class TimerSettingsSection extends ConsumerWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'Daily Study Goal',
@@ -60,7 +61,7 @@ class TimerSettingsSection extends ConsumerWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF18181B),
+          backgroundColor: context.appColors.surfaceColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'Daily Check-in Goal',
@@ -160,7 +161,7 @@ class TimerSettingsSection extends ConsumerWidget {
               context: context,
               builder: (ctx) => SimpleDialog(
                 title: const Text('Set Rollover Hour'),
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.appColors.surfaceColor,
                 children: [
                   SimpleDialogOption(
                     onPressed: () => Navigator.pop(ctx, StudyDayRollover.midnight),
@@ -213,7 +214,7 @@ class TimerSettingsSection extends ConsumerWidget {
                     trailing: DropdownButtonHideUnderline(
                       child: DropdownButton<HapticIntensity>(
                         value: hapticState.intensity,
-                        dropdownColor: const Color(0xFF18181B),
+                        dropdownColor: context.appColors.surfaceColor,
                         alignment: Alignment.centerRight,
                         icon: Icon(Icons.arrow_drop_down, color: accentColor),
                         style: TextStyle(color: accentColor),

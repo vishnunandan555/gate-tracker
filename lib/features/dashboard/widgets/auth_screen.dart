@@ -192,7 +192,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           description:
                               "Backup your progress securely in the cloud and sync automatically across all your devices.",
                           icon: Icons.backup_rounded,
-                          accentColor: Colors.cyanAccent,
+                          accentColor: isDark ? Colors.cyanAccent : const Color(0xFF15CBD6),
                           isLoading: _isGoogleLoading,
                           isDisabled: _isOfflineLoading,
                           buttonText: "SIGN IN WITH GOOGLE",

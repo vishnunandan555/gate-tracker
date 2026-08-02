@@ -3,8 +3,8 @@ import '../models/app_theme_model.dart';
 class HandcraftedPresets {
   static const AppThemeDataModel zincDark = AppThemeDataModel(
     id: 'zinc_dark',
-    name: 'Zinc Dark (Default)',
-    description: 'Classic deep zinc dark theme for GATEletics.',
+    name: 'Dark',
+    description: 'Default Dark Mode.',
     isPreset: true,
     scaffoldBackground: 0xFF09090B,
     cardBackground: 0xFF131316,
@@ -24,8 +24,8 @@ class HandcraftedPresets {
 
   static const AppThemeDataModel paperLight = AppThemeDataModel(
     id: 'paper_light',
-    name: 'Paper Light',
-    description: 'Clean, soft warm paper surface with comfortable dark typography.',
+    name: 'Light',
+    description: 'Default Light Mode.',
     isPreset: true,
     scaffoldBackground: 0xFFF3F4F6,
     cardBackground: 0xFFFFFFFF,

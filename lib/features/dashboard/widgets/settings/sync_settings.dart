@@ -137,7 +137,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181B),
+        backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Row(
           children: [
@@ -701,7 +701,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                 final confirmed = await showDialog<bool>(
                                   context: context,
                                   builder: (ctx) => AlertDialog(
-                                    backgroundColor: const Color(0xFF18181B),
+                                    backgroundColor: context.appColors.surfaceColor,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                                     title: const Text("Restore Data from Cloud?"),
                                     content: const Text(
@@ -860,7 +860,7 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
   final choice = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: const Color(0xFF18181B),
+      backgroundColor: context.appColors.surfaceColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'Sign Out',

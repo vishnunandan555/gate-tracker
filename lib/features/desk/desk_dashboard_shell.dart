@@ -46,7 +46,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = ref.watch(overallProgressColorProvider);
+    final progressColor = context.appColors.primaryAccent;
 
     ref.listen<SyncState>(syncProvider, (previous, next) {
       if (next.status == SyncStatus.requiresAction && next.pendingCloudData != null) {

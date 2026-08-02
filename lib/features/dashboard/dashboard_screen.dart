@@ -458,7 +458,7 @@ class WelcomeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progressColor = ref.watch(overallProgressColorProvider);
+    final progressColor = context.appColors.primaryAccent;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

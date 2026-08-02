@@ -122,7 +122,6 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
   @override
   Widget build(BuildContext context) {
     final targetDate = ref.watch(targetDateProvider);
-    final accentColor = ref.watch(overallProgressColorProvider);
     final selectedFont = ref.watch(progressFontProvider);
 
     final diff = targetDate.difference(_currentTime);
@@ -166,7 +165,7 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: context.appColors.textMuted,
+                color: context.appColors.textSecondary,
                 fontSize: _s(context, 8.5),
                 letterSpacing: _s(context, 0.8),
                 fontWeight: FontWeight.w600,
@@ -185,7 +184,7 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
           child: Text(
             ':',
             style: GoogleFonts.orbitron(
-              color: accentColor,
+              color: context.appColors.primaryAccent,
               fontSize: _s(context, 18),
               fontWeight: FontWeight.bold,
             ),
@@ -210,14 +209,14 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
               builder: (context, child) {
                 return Theme(
                   data: Theme.of(context).copyWith(
-                    colorScheme: ColorScheme.dark(
-                      primary: accentColor,
-                      onPrimary: Colors.black,
-                      surface: const Color(0xFF18181B),
-                      onSurface: Colors.white,
+                    colorScheme: Theme.of(context).colorScheme.copyWith(
+                      primary: context.appColors.primaryAccent,
+                      onPrimary: context.appColors.onAccent,
+                      surface: context.appColors.surfaceColor,
+                      onSurface: context.appColors.textPrimary,
                     ),
-                    dialogTheme: const DialogThemeData(
-                      backgroundColor: Color(0xFF18181B),
+                    dialogTheme: DialogThemeData(
+                      backgroundColor: context.appColors.surfaceColor,
                     ),
                   ),
                   child: child!,
@@ -232,7 +231,7 @@ class _TickingCountdownTimerState extends ConsumerState<TickingCountdownTimer> {
             padding: EdgeInsets.symmetric(vertical: _s(context, 12), horizontal: _s(context, 4)),
             decoration: BoxDecoration(
               color: Colors.transparent,
-              border: Border.all(color: accentColor.withAlpha(102), width: _s(context, 1.2)),
+              border: Border.all(color: context.appColors.primaryAccent.withValues(alpha: 0.4), width: _s(context, 1.2)),
               borderRadius: BorderRadius.circular(_s(context, 10)),
             ),
             child: Row(

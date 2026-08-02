@@ -648,7 +648,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<ResumeFillStyle>(
               value: fillStyle,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               items: ResumeFillStyle.values.map((type) {
                 String name = '';
@@ -690,7 +690,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<ProgressFont>(
               value: currentFont,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               icon: Icon(Icons.arrow_drop_down, color: currentColor),
               style: TextStyle(color: currentColor),
@@ -746,7 +746,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
           trailing: DropdownButtonHideUnderline(
             child: DropdownButton<IconBoxStyle>(
               value: currentIconBoxStyle,
-              dropdownColor: const Color(0xFF18181B),
+              dropdownColor: context.appColors.surfaceColor,
               alignment: Alignment.centerRight,
               icon: Icon(Icons.arrow_drop_down, color: currentColor),
               style: TextStyle(color: currentColor),

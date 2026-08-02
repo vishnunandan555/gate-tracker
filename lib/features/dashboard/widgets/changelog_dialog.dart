@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
 import '../../../core/theme/theme_context_ext.dart';
-import 'package:gateletics/providers/providers.dart';
 import '../../../providers/sync/changelog_provider.dart';
 
 void showChangelogDialog(BuildContext context, {String? version, Color? accentColor}) {
@@ -28,7 +27,7 @@ class ChangelogDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Color themeAccent = accentColor ?? ref.watch(overallProgressColorProvider);
+    final Color themeAccent = accentColor ?? context.appColors.primaryAccent;
     final changelogAsync = ref.watch(changelogFamilyProvider(version));
 
     final cleanVersion = version?.replaceFirst(RegExp(r'^v'), '').split('+').first ?? '1.3.0';
