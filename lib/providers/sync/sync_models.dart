@@ -19,6 +19,7 @@ enum SyncStatus {
   success,
   error,
   requiresAction, // When both local and cloud data exist on first sign-in
+  paused, // When retries cap after no network connection
 }
 
 class SyncState {

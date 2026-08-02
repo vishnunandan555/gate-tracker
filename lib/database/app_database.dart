@@ -127,6 +127,9 @@ class AppDatabase extends _$AppDatabase {
       for (final c in allCats) {
         await resetSyllabusCategoryStats(c.id);
       }
+      await delete(focusSessions).go();
+      await delete(dailyHistory).go();
+      await delete(syllabusProgressLogs).go();
     });
   }
 

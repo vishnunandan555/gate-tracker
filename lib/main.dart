@@ -84,17 +84,18 @@ class GateTrackerApp extends ConsumerWidget {
     // Start listening and saving daily stats snapshots
     ref.watch(dailyHistoryManagerProvider);
 
+    final accentColor = ref.watch(overallProgressColorProvider);
     final agreementAsync = ref.watch(agreementProvider);
     final authAsync = ref.watch(authProvider);
     final setupAsync = ref.watch(setupCompletedProvider);
 
     if (agreementAsync.isLoading || authAsync.isLoading || setupAsync.isLoading) {
-      return const MaterialApp(
+      return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Color(0xFF09090B),
+          backgroundColor: const Color(0xFF09090B),
           body: Center(
-            child: CircularProgressIndicator(color: Colors.cyanAccent),
+            child: CircularProgressIndicator(color: accentColor),
           ),
         ),
       );

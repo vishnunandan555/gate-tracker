@@ -238,12 +238,20 @@ Future<Map<String, dynamic>> mergeData(Map<String, dynamic> local, Map<String, d
   final cloudFocusSess = List<Map<String, dynamic>>.from(cloud['focusSessions'] ?? []);
   final mergedFocusSess = <String, Map<String, dynamic>>{};
 
+  String normalizeSessionTimestamp(dynamic raw) {
+    if (raw == null) return '';
+    final str = raw.toString();
+    final dt = DateTime.tryParse(str);
+    if (dt == null) return str;
+    return DateTime.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second).toIso8601String();
+  }
+
   for (final fs in localFocusSess) {
-    final startTimeStr = fs['startTime'] as String;
+    final startTimeStr = normalizeSessionTimestamp(fs['startTime']);
     mergedFocusSess[startTimeStr] = fs;
   }
   for (final fs in cloudFocusSess) {
-    final startTimeStr = fs['startTime'] as String;
+    final startTimeStr = normalizeSessionTimestamp(fs['startTime']);
     if (!mergedFocusSess.containsKey(startTimeStr)) {
       mergedFocusSess[startTimeStr] = fs;
     } else {

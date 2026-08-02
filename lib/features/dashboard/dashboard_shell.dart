@@ -47,7 +47,6 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
   void _animateToTab(int targetIndex) {
     if (_currentIndex == targetIndex) return;
-    final previousIndex = _currentIndex;
 
     setState(() {
       _currentIndex = targetIndex;
@@ -65,11 +64,6 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     ref.read(syncProvider.notifier).syncIfPending();
 
     if (_pageController.hasClients) {
-      final diff = targetIndex - previousIndex;
-      if (diff.abs() > 1) {
-        final intermediatePage = diff > 0 ? targetIndex - 1 : targetIndex + 1;
-        _pageController.jumpToPage(intermediatePage);
-      }
       _pageController.animateToPage(
         targetIndex,
         duration: const Duration(milliseconds: 280),

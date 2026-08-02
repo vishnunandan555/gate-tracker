@@ -40,7 +40,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
 
   String _getUserBranch() {
     final prefs = ref.read(sharedPreferencesProvider);
-    return prefs.getString('user_selected_branch') ?? 'CS';
+    return prefs.getString('selected_branch') ?? 'CS';
   }
 
   void _showContributeInfoDialog(BuildContext context, Color accentColor) {

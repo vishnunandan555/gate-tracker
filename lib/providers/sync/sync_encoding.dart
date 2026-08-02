@@ -100,7 +100,7 @@ final syncPayloadSizeProvider = FutureProvider<double>((ref) async {
 
   if (encoded['compressed'] == true) {
     final base64Str = encoded['data'] as String;
-    final sizeBytes = utf8.encode(base64Str).length;
+    final sizeBytes = base64Str.length;
     return sizeBytes / (1024 * 1024);
   } else {
     final payloadMap = encoded['data'] as Map<String, dynamic>;

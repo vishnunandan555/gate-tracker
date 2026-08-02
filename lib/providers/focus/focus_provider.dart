@@ -349,7 +349,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
               );
             }
 
-            int activeSecs = savedActiveSecs ?? 0;
+            int activeSecs = (savedActiveSecs ?? 0).clamp(0, totalElapsed);
             if (activeSecs <= 0 && lastTick != null) {
               activeSecs = lastTick.difference(start).inSeconds.clamp(0, totalElapsed);
             }
@@ -357,8 +357,7 @@ class FocusStateNotifier extends Notifier<FocusSessionState> {
               activeSecs = 0; // If killed before first tick, active time was <1s
             }
 
-            int closedSecs = totalElapsed - activeSecs;
-            if (closedSecs < 0) closedSecs = 0;
+            int closedSecs = (totalElapsed - activeSecs).clamp(0, totalElapsed);
 
             final recoveryData = FocusRecoveryData(
               method: recoveredMethod,

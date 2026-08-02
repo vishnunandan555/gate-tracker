@@ -160,7 +160,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   /// flooding new users with a wall of old unread notifications.
   Future<void> _fetchRemote({required bool isFirstInstall}) async {
     try {
-      final response = await http.get(Uri.parse(_remoteUrl)).timeout(const Duration(seconds: 8));
+      final response = await http.get(Uri.parse(_remoteUrl)).timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body) as List<dynamic>;
         List<CommunityNotification> fetchedList = decoded

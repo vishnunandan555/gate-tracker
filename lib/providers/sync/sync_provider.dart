@@ -483,6 +483,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       ...payload,
       'lastSyncedAt': FieldValue.serverTimestamp(),
     });
+    _throttleTimer?.cancel();
+    _throttleTimer = null;
   }
 
   Future<void> autoSync() async {
@@ -587,6 +589,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   void _scheduleRetry() {
     _retryTimer?.cancel();
+    if (_retryCount >= 3) {
+      _retryTimer = null;
+      _updateSyncState(
+        status: SyncStatus.paused,
+        errorMessage: 'Sync paused (No network connection). Your local data is saved on this device.',
+      );
+      return;
+    }
     final delaySeconds = _retryCount == 0
         ? 15
         : _retryCount == 1
