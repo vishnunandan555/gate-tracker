@@ -163,7 +163,7 @@ class _HeroProfileCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: accentColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFF09090B), width: 2),
+                      border: Border.all(color: context.appColors.scaffoldBackground, width: 2),
                     ),
                     child: const Icon(Icons.photo_camera_rounded,
                         color: Colors.black, size: 14),

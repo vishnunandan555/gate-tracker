@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/models/accent_pool_model.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import '../../../more/widgets/theme_gallery_sheet.dart';
 import 'package:gateletics/providers/providers.dart';
@@ -24,14 +24,18 @@ class CustomizationSettingsSection extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     final colorNotifier = ref.read(overallProgressColorProvider.notifier);
     final currentColor = ref.read(overallProgressColorProvider);
+    final isThemeDark = !context.appColors.isLight;
 
     int r = (currentColor.r * 255).round().clamp(0, 255);
     int g = (currentColor.g * 255).round().clamp(0, 255);
     int b = (currentColor.b * 255).round().clamp(0, 255);
 
+    final hexController = TextEditingController(text: AppAccentPools.toHexString(currentColor));
+    bool isViewingDarkPool = isThemeDark;
+
     showDialog(
       context: context,
-      barrierColor: Colors.black.withAlpha(200),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
       builder: (context) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Dialog(
@@ -46,7 +50,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF131316),
                 borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: Colors.white.withAlpha(12), width: 1.5),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1.5),
               ),
               padding: const EdgeInsets.all(24.0),
               child: StatefulBuilder(
@@ -54,6 +58,11 @@ class CustomizationSettingsSection extends ConsumerWidget {
                   final isAuto = colorNotifier.mode == 'auto';
                   final isDevice = colorNotifier.mode == 'device';
                   final previewColor = Color.fromARGB(255, r, g, b);
+                  final activePool = isViewingDarkPool ? colorNotifier.darkPool : colorNotifier.lightPool;
+
+                  void syncFromRgb() {
+                    hexController.text = AppAccentPools.toHexString(previewColor);
+                  }
 
                   return SingleChildScrollView(
                     child: Column(
@@ -69,7 +78,9 @@ class CustomizationSettingsSection extends ConsumerWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        
+                        // ── Auto & Device Accent Buttons ─────────────────
                         InkWell(
                           onTap: () {
                             colorNotifier.setAutoMode();
@@ -80,7 +91,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             decoration: BoxDecoration(
                               color: isAuto
-                                  ? currentColor.withAlpha(38)
+                                  ? currentColor.withValues(alpha: 0.2)
                                   : Colors.white10,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
@@ -98,10 +109,10 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Text(
-                                    'Auto-change color',
+                                    'Auto-rotate accent on launch',
                                     style: GoogleFonts.outfit(
                                       color: isAuto ? Colors.white : Colors.white70,
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: isAuto ? FontWeight.bold : FontWeight.normal,
                                     ),
                                   ),
@@ -119,14 +130,12 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         Builder(
                           builder: (context) {
                             final systemAccent = ref.watch(systemAccentColorProvider);
-                            if (systemAccent == null) {
-                              return const SizedBox.shrink();
-                            }
+                            if (systemAccent == null) return const SizedBox.shrink();
 
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 8),
                                 InkWell(
                                   onTap: () {
                                     colorNotifier.setDeviceMode(systemAccent);
@@ -137,7 +146,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                     decoration: BoxDecoration(
                                       color: isDevice
-                                          ? currentColor.withAlpha(38)
+                                          ? currentColor.withValues(alpha: 0.2)
                                           : Colors.white10,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
@@ -155,10 +164,10 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                         const SizedBox(width: 16),
                                         Expanded(
                                           child: Text(
-                                            'Use Device Accent Color',
+                                            'Use Material You Device Accent',
                                             style: GoogleFonts.outfit(
                                               color: isDevice ? Colors.white : Colors.white70,
-                                              fontSize: 15,
+                                              fontSize: 14,
                                               fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
@@ -178,22 +187,47 @@ class CustomizationSettingsSection extends ConsumerWidget {
                           },
                         ),
                         const SizedBox(height: 20),
-                        Text(
-                          'Preset Colors:',
-                          style: GoogleFonts.outfit(
-                            color: Colors.white38,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
+
+                        // ── Mode Accent Pool Switcher ───────────────────
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              isViewingDarkPool ? 'DARK ACCENTS:' : 'LIGHT ACCENTS:',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white54,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            SegmentedButton<bool>(
+                              segments: const [
+                                ButtonSegment(value: true, label: Text('Dark', style: TextStyle(fontSize: 11))),
+                                ButtonSegment(value: false, label: Text('Light', style: TextStyle(fontSize: 11))),
+                              ],
+                              selected: {isViewingDarkPool},
+                              onSelectionChanged: (val) {
+                                setDialogState(() {
+                                  isViewingDarkPool = val.first;
+                                });
+                              },
+                              style: ButtonStyle(
+                                visualDensity: VisualDensity.compact,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
+
+                        // ── Accent Color Grid ────────────────────────────
                         Center(
                           child: Wrap(
                             spacing: 12,
                             runSpacing: 12,
                             alignment: WrapAlignment.center,
-                            children: AppColors.neonCycle.map((color) {
+                            children: activePool.map((color) {
                               final isSelected = !isAuto && !isDevice &&
                                   colorNotifier.frozenColor?.toARGB32() == color.toARGB32();
 
@@ -216,7 +250,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                     boxShadow: [
                                       if (isSelected)
                                         BoxShadow(
-                                          color: color.withAlpha(150),
+                                          color: color.withValues(alpha: 0.6),
                                           blurRadius: 10,
                                           spreadRadius: 1,
                                         ),
@@ -236,13 +270,15 @@ class CustomizationSettingsSection extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
+
+                        // ── Custom Hex & RGB Picker ─────────────────────
                         Text(
-                          'Custom Color Picker:',
+                          'CUSTOM ACCENT PICKER:',
                           style: GoogleFonts.outfit(
-                            color: Colors.white38,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
+                            color: Colors.white54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -257,21 +293,39 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 border: Border.all(color: Colors.white30, width: 1.5),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: previewColor.withAlpha(100),
+                                    color: previewColor.withValues(alpha: 0.4),
                                     blurRadius: 12,
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 14),
                             Expanded(
-                              child: Text(
-                                'RGB: ($r, $g, $b)\nHex: #${r.toRadixString(16).padLeft(2, '0')}${g.toRadixString(16).padLeft(2, '0')}${b.toRadixString(16).padLeft(2, '0')}',
+                              child: TextField(
+                                controller: hexController,
                                 style: GoogleFonts.orbitron(
-                                  color: Colors.white70,
-                                  fontSize: 10,
+                                  color: Colors.white,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                decoration: InputDecoration(
+                                  labelText: 'Hex Code',
+                                  labelStyle: const TextStyle(color: Colors.white54, fontSize: 12),
+                                  prefixText: '# ',
+                                  prefixStyle: GoogleFonts.orbitron(color: Colors.white70, fontSize: 13),
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                ),
+                                onChanged: (val) {
+                                  final parsed = AppAccentPools.parseHexColor(val);
+                                  if (parsed != null) {
+                                    setDialogState(() {
+                                      r = (parsed.r * 255).round();
+                                      g = (parsed.g * 255).round();
+                                      b = (parsed.b * 255).round();
+                                    });
+                                  }
+                                },
                               ),
                             ),
                           ],
@@ -279,7 +333,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            const SizedBox(width: 24, child: Text('R', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))),
+                            const SizedBox(width: 20, child: Text('R', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 13))),
                             Expanded(
                               child: Slider(
                                 value: r.toDouble(),
@@ -290,6 +344,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 onChanged: (val) {
                                   setDialogState(() {
                                     r = val.round();
+                                    syncFromRgb();
                                   });
                                 },
                               ),
@@ -298,7 +353,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         ),
                         Row(
                           children: [
-                            const SizedBox(width: 24, child: Text('G', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))),
+                            const SizedBox(width: 20, child: Text('G', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 13))),
                             Expanded(
                               child: Slider(
                                 value: g.toDouble(),
@@ -309,6 +364,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 onChanged: (val) {
                                   setDialogState(() {
                                     g = val.round();
+                                    syncFromRgb();
                                   });
                                 },
                               ),
@@ -317,7 +373,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         ),
                         Row(
                           children: [
-                            const SizedBox(width: 24, child: Text('B', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold))),
+                            const SizedBox(width: 20, child: Text('B', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 13))),
                             Expanded(
                               child: Slider(
                                 value: b.toDouble(),
@@ -328,6 +384,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 onChanged: (val) {
                                   setDialogState(() {
                                     b = val.round();
+                                    syncFromRgb();
                                   });
                                 },
                               ),
@@ -337,15 +394,17 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         const SizedBox(height: 16),
                         FilledButton(
                           onPressed: () {
-                            colorNotifier.setFrozenColor(Color.fromARGB(255, r, g, b));
+                            final chosenColor = Color.fromARGB(255, r, g, b);
+                            colorNotifier.addCustomAccent(chosenColor, isDark: isViewingDarkPool);
                             Navigator.pop(context);
                           },
                           style: FilledButton.styleFrom(
                             backgroundColor: previewColor,
                             foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text('Apply Custom Color', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text('Save & Apply Custom Accent', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -553,19 +612,39 @@ class CustomizationSettingsSection extends ConsumerWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          backgroundColor: context.appColors.cardBackground,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          builder: (_) => DraggableScrollableSheet(
-            expand: false,
-            initialChildSize: 0.8,
-            maxChildSize: 0.95,
-            minChildSize: 0.5,
-            builder: (context, scrollController) => Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: const ThemeGallerySheet(),
-            ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          builder: (_) => Consumer(
+            builder: (context, ref, child) {
+              final activeThemeData = ref.watch(activeAppThemeProvider);
+
+              return Theme(
+                data: activeThemeData,
+                child: Builder(
+                  builder: (context) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: context.appColors.surfaceColor,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                        border: Border.all(color: context.appColors.borderColor),
+                      ),
+                      child: DraggableScrollableSheet(
+                        expand: false,
+                        initialChildSize: 0.8,
+                        maxChildSize: 0.95,
+                        minChildSize: 0.5,
+                        builder: (context, scrollController) => Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: const ThemeGallerySheet(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         );
       },

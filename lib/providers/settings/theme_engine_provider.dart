@@ -2,30 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../core/theme/models/app_theme_model.dart';
+import '../../core/theme/models/theme_set_model.dart';
 import '../../core/theme/presets/handcrafted_presets.dart';
 import '../providers.dart';
 
 class ThemeEngineState {
   final String activeThemeId;
-  final String themeMode; // 'dark', 'light', 'system', 'preset', 'custom'
-  final List<AppThemeDataModel> customThemes;
+  final String themeMode; // 'system', 'light', 'dark', 'preset'
 
   const ThemeEngineState({
     required this.activeThemeId,
     required this.themeMode,
-    required this.customThemes,
   });
 
   ThemeEngineState copyWith({
     String? activeThemeId,
     String? themeMode,
-    List<AppThemeDataModel>? customThemes,
   }) {
     return ThemeEngineState(
       activeThemeId: activeThemeId ?? this.activeThemeId,
       themeMode: themeMode ?? this.themeMode,
-      customThemes: customThemes ?? this.customThemes,
     );
   }
 }
@@ -33,26 +29,16 @@ class ThemeEngineState {
 class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
   static const _activeThemeIdKey = 'theme_engine_active_theme_id';
   static const _themeModeKey = 'theme_engine_theme_mode';
-  static const _customThemesKey = 'theme_engine_custom_themes';
 
   @override
   ThemeEngineState build() {
     final prefs = ref.read(sharedPreferencesProvider);
     final activeThemeId = prefs.getString(_activeThemeIdKey) ?? 'zinc_dark';
-    final themeMode = prefs.getString(_themeModeKey) ?? 'dark';
-
-    List<AppThemeDataModel> customThemes = [];
-    try {
-      final rawList = prefs.getStringList(_customThemesKey);
-      if (rawList != null && rawList.isNotEmpty) {
-        customThemes = rawList.map((str) => AppThemeDataModel.fromJson(str)).toList();
-      }
-    } catch (_) {}
+    final themeMode = prefs.getString(_themeModeKey) ?? 'system';
 
     return ThemeEngineState(
       activeThemeId: activeThemeId,
       themeMode: themeMode,
-      customThemes: customThemes,
     );
   }
 
@@ -60,8 +46,6 @@ class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString(_activeThemeIdKey, state.activeThemeId);
     await prefs.setString(_themeModeKey, state.themeMode);
-    final rawList = state.customThemes.map((t) => t.toJson()).toList();
-    await prefs.setStringList(_customThemesKey, rawList);
   }
 
   void setStandardMode(String mode) {
@@ -79,121 +63,17 @@ class ThemeEngineNotifier extends Notifier<ThemeEngineState> {
     _saveState();
   }
 
-  void selectCustomTheme(String customId) {
-    state = state.copyWith(themeMode: 'custom', activeThemeId: customId);
-    _saveState();
-  }
-
-  bool createCustomTheme(AppThemeDataModel theme) {
-    final newTheme = theme.copyWith(
-      id: 'custom_slot',
-      isCustom: true,
-      isPreset: false,
-    );
-
-    final updatedList = [newTheme];
-    state = state.copyWith(
-      customThemes: updatedList,
-      themeMode: 'custom',
-      activeThemeId: newTheme.id,
-    );
-    _saveState();
-    return true;
-  }
-
-  bool updateCustomTheme(AppThemeDataModel theme) {
-    final index = state.customThemes.indexWhere((t) => t.id == theme.id);
-    if (index == -1) return createCustomTheme(theme);
-
-    final updatedList = List<AppThemeDataModel>.from(state.customThemes);
-    updatedList[index] = theme;
-
-    state = state.copyWith(customThemes: updatedList);
-    _saveState();
-    return true;
-  }
-
-  bool deleteCustomTheme(String customId) {
-    final updatedList = state.customThemes.where((t) => t.id != customId).toList();
-    String newActiveId = state.activeThemeId;
-    String newMode = state.themeMode;
-
-    if (state.activeThemeId == customId) {
-      newActiveId = 'zinc_dark';
-      newMode = 'dark';
-    }
-
-    state = state.copyWith(
-      customThemes: updatedList,
-      activeThemeId: newActiveId,
-      themeMode: newMode,
-    );
-    _saveState();
-    return true;
-  }
-
-  String? exportCustomThemeJson(String customId) {
-    try {
-      final theme = state.customThemes.firstWhere((t) => t.id == customId);
-      return theme.toJson();
-    } catch (_) {
-      return null;
-    }
-  }
-
-  bool importCustomThemeJson(String jsonStr) {
-    try {
-      final imported = AppThemeDataModel.fromJson(jsonStr);
-      final newTheme = imported.copyWith(
-        id: 'custom_slot',
-        isCustom: true,
-        isPreset: false,
-      );
-
-      final updatedList = [newTheme];
-      state = state.copyWith(
-        customThemes: updatedList,
-        themeMode: 'custom',
-        activeThemeId: newTheme.id,
-      );
-      _saveState();
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  AppThemeDataModel getActiveThemeModel(Color? currentAccentColor) {
-    if (state.themeMode == 'light') {
-      return HandcraftedPresets.paperLight.copyWith(
-        primaryAccent: currentAccentColor?.toARGB32(),
-      );
-    }
-    if (state.themeMode == 'dark') {
-      return HandcraftedPresets.zincDark.copyWith(
-        primaryAccent: currentAccentColor?.toARGB32(),
-      );
-    }
-    if (state.themeMode == 'system') {
-      return HandcraftedPresets.zincDark.copyWith(
-        primaryAccent: currentAccentColor?.toARGB32(),
-      );
-    }
-
-    if (state.themeMode == 'preset') {
+  ThemeSetModel getActiveThemeModel(ThemeEngineState themeState, {required bool isDark}) {
+    if (themeState.themeMode == 'preset') {
       final preset = HandcraftedPresets.allPresets.firstWhere(
-        (t) => t.id == state.activeThemeId,
-        orElse: () => HandcraftedPresets.zincDark,
+        (t) => t.id == themeState.activeThemeId,
+        orElse: () => isDark ? HandcraftedPresets.zincDark : HandcraftedPresets.paperLight,
       );
       return preset;
     }
 
-    if (state.themeMode == 'custom') {
-      final custom = state.customThemes.firstWhere(
-        (t) => t.id == state.activeThemeId,
-        orElse: () => HandcraftedPresets.zincDark,
-      );
-      return custom;
+    if (themeState.themeMode == 'light' || (!isDark && themeState.themeMode == 'system')) {
+      return HandcraftedPresets.paperLight;
     }
 
     return HandcraftedPresets.zincDark;
@@ -205,33 +85,47 @@ final themeEngineProvider =
   return ThemeEngineNotifier();
 });
 
-final activeAppThemeProvider = Provider<ThemeData>((ref) {
-  final themeState = ref.watch(themeEngineProvider);
+final lightAppThemeProvider = Provider<ThemeData>((ref) {
   final accentColor = ref.watch(overallProgressColorProvider);
-
-  final activeModel = ref.watch(themeEngineProvider.notifier).getActiveThemeModel(accentColor);
-
-  Brightness? brightness;
-  if (themeState.themeMode == 'light') {
-    brightness = Brightness.light;
-  } else if (themeState.themeMode == 'dark') {
-    brightness = Brightness.dark;
-  }
+  final themeState = ref.watch(themeEngineProvider);
+  final activeModel = ref.read(themeEngineProvider.notifier).getActiveThemeModel(themeState, isDark: false);
 
   return AppTheme.buildTheme(
     activeModel,
-    primaryAccentOverride: (themeState.themeMode == 'light' ||
-            themeState.themeMode == 'dark' ||
-            themeState.themeMode == 'system')
-        ? accentColor
-        : null,
-    brightnessOverride: brightness,
+    primaryAccentOverride: accentColor,
+    brightnessOverride: Brightness.light,
   );
+});
+
+final darkAppThemeProvider = Provider<ThemeData>((ref) {
+  final accentColor = ref.watch(overallProgressColorProvider);
+  final themeState = ref.watch(themeEngineProvider);
+  final activeModel = ref.read(themeEngineProvider.notifier).getActiveThemeModel(themeState, isDark: true);
+
+  return AppTheme.buildTheme(
+    activeModel,
+    primaryAccentOverride: accentColor,
+    brightnessOverride: Brightness.dark,
+  );
+});
+
+final activeAppThemeProvider = Provider<ThemeData>((ref) {
+  final themeState = ref.watch(themeEngineProvider);
+  if (themeState.themeMode == 'light') {
+    return ref.watch(lightAppThemeProvider);
+  }
+  return ref.watch(darkAppThemeProvider);
 });
 
 final activeThemeModeProvider = Provider<ThemeMode>((ref) {
   final themeState = ref.watch(themeEngineProvider);
   if (themeState.themeMode == 'system') return ThemeMode.system;
   if (themeState.themeMode == 'light') return ThemeMode.light;
-  return ThemeMode.dark;
+  if (themeState.themeMode == 'dark') return ThemeMode.dark;
+
+  final preset = HandcraftedPresets.allPresets.firstWhere(
+    (t) => t.id == themeState.activeThemeId,
+    orElse: () => HandcraftedPresets.zincDark,
+  );
+  return preset.isDark ? ThemeMode.dark : ThemeMode.light;
 });

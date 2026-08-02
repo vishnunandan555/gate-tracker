@@ -475,7 +475,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
 
     final result = await showModalBottomSheet<bool>(
       context: context,
-      backgroundColor: const Color(0xFF131316),
+      backgroundColor: context.appColors.cardBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -589,7 +589,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          backgroundColor: const Color(0xFF131316),
+          backgroundColor: context.appColors.dialogBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
             side: BorderSide(color: accentColor.withAlpha(60), width: 1.5),

@@ -38,9 +38,9 @@ void main() async {
         await GoogleSignIn.instance.initialize();
       }
       if (!kIsWeb &&
-          (defaultTargetPlatform == TargetPlatform.android ||
-              defaultTargetPlatform == TargetPlatform.iOS ||
-              defaultTargetPlatform == TargetPlatform.macOS)) {
+          (defaultTargetPlatform == TargetPlatform.android
+              || defaultTargetPlatform == TargetPlatform.iOS
+              || defaultTargetPlatform == TargetPlatform.macOS)) {
         FlutterError.onError = (errorDetails) {
           FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
         };
@@ -140,7 +140,8 @@ class GateTrackerApp extends ConsumerWidget {
     final authState = authAsync.value;
     final hasSetup = setupAsync.value ?? false;
 
-    final theme = ref.watch(activeAppThemeProvider);
+    final lightTheme = ref.watch(lightAppThemeProvider);
+    final darkTheme = ref.watch(darkAppThemeProvider);
     final themeMode = ref.watch(activeThemeModeProvider);
 
     return DynamicColorBuilder(
@@ -153,9 +154,11 @@ class GateTrackerApp extends ConsumerWidget {
         if (!hasAgreed) {
           return MaterialApp(
             title: BrandConfig.appName,
-            theme: theme,
-            darkTheme: theme,
+            theme: lightTheme,
+            darkTheme: darkTheme,
             themeMode: themeMode,
+            themeAnimationDuration: const Duration(milliseconds: 250),
+            themeAnimationCurve: Curves.easeInOut,
             home: const AgreementScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -164,9 +167,11 @@ class GateTrackerApp extends ConsumerWidget {
         if (authState != null && !authState.isOfflineMode && authState.user == null) {
           return MaterialApp(
             title: BrandConfig.appName,
-            theme: theme,
-            darkTheme: theme,
+            theme: lightTheme,
+            darkTheme: darkTheme,
             themeMode: themeMode,
+            themeAnimationDuration: const Duration(milliseconds: 250),
+            themeAnimationCurve: Curves.easeInOut,
             home: const AuthScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -175,9 +180,11 @@ class GateTrackerApp extends ConsumerWidget {
         if (!hasSetup) {
           return MaterialApp(
             title: BrandConfig.appName,
-            theme: theme,
-            darkTheme: theme,
+            theme: lightTheme,
+            darkTheme: darkTheme,
             themeMode: themeMode,
+            themeAnimationDuration: const Duration(milliseconds: 250),
+            themeAnimationCurve: Curves.easeInOut,
             home: const SetupScreen(),
             debugShowCheckedModeBanner: false,
           );
@@ -185,9 +192,11 @@ class GateTrackerApp extends ConsumerWidget {
 
         return MaterialApp.router(
           title: BrandConfig.appName,
-          theme: theme,
-          darkTheme: theme,
+          theme: lightTheme,
+          darkTheme: darkTheme,
           themeMode: themeMode,
+          themeAnimationDuration: const Duration(milliseconds: 250),
+          themeAnimationCurve: Curves.easeInOut,
           routerConfig: appRouter,
           debugShowCheckedModeBanner: false,
         );

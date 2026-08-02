@@ -92,9 +92,9 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
       SnackBar(
         content: Text(
           'Nav Bar layout saved!',
-          style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13),
         ),
-        backgroundColor: const Color(0xFF1E1E24),
+        backgroundColor: context.appColors.cardBackground,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -104,7 +104,8 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = context.appColors.primaryAccent;
+    final appColors = context.appColors;
+    final accentColor = appColors.primaryAccent;
 
     // Available catalog: ONLY items NOT currently assigned to the nav bar
     final availableCatalog = _allOptions
@@ -112,18 +113,18 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
         .toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: appColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF09090B),
+        backgroundColor: appColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 18),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: appColors.textSecondary, size: 18),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Customize Nav Bar',
           style: GoogleFonts.outfit(
-            color: context.appColors.textPrimary,
+            color: appColors.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -142,7 +143,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 child: Text(
                   'NAV BAR PREVIEW',
                   style: GoogleFonts.outfit(
-                    color: context.appColors.textMuted,
+                    color: appColors.textMuted,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
@@ -154,9 +155,9 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
               Container(
                 height: 64,
                 decoration: BoxDecoration(
-                  color: context.appColors.cardBackground,
+                  color: appColors.cardBackground,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: context.appColors.borderColor),
+                  border: Border.all(color: appColors.borderColor),
                 ),
                 child: Row(
                   children: [
@@ -201,7 +202,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                                     Text(
                                       slotOption.label,
                                       style: GoogleFonts.outfit(
-                                        color: Colors.white,
+                                        color: appColors.textPrimary,
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -221,13 +222,13 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                     Container(
                       width: 1.0,
                       height: 32.0,
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: appColors.dividerColor,
                     ),
 
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: appColors.surfaceColor,
                           borderRadius: const BorderRadius.horizontal(right: Radius.circular(14)),
                         ),
                         child: Column(
@@ -237,8 +238,8 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                               'assets/icons/more_app.svg',
                               width: 22,
                               height: 22,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white24,
+                              colorFilter: ColorFilter.mode(
+                                appColors.textMuted,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -246,7 +247,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                             Text(
                               'More',
                               style: GoogleFonts.outfit(
-                                color: Colors.white24,
+                                color: appColors.textMuted,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -265,7 +266,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 child: Text(
                   'AVAILABLE',
                   style: GoogleFonts.outfit(
-                    color: Colors.white38,
+                    color: appColors.textSecondary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
@@ -274,14 +275,14 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Transparent, square available features matching exact nav bar slot sizes (no background box)
+              // Available catalog
               availableCatalog.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
                       child: Center(
                         child: Text(
                           'All features added to Nav Bar',
-                          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+                          style: GoogleFonts.outfit(color: appColors.textMuted, fontSize: 13),
                         ),
                       ),
                     )
@@ -289,8 +290,8 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5, // 5 columns (exact match to nav bar previews!)
-                        childAspectRatio: 1.0, // Perfect square aspect ratio
+                        crossAxisCount: 5,
+                        childAspectRatio: 1.0,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
@@ -299,20 +300,20 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                         final option = availableCatalog[index];
 
                         Widget tileContent = Container(
-                          color: Colors.transparent, // No grey box container background
+                          color: Colors.transparent,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 option.icon,
-                                color: Colors.white70,
+                                color: appColors.textSecondary,
                                 size: 22,
                               ),
                               const SizedBox(height: 3),
                               Text(
                                 option.label,
                                 style: GoogleFonts.outfit(
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                  color: appColors.textPrimary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -330,9 +331,9 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                             width: 64,
                             height: 64,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1C1C24),
+                              color: appColors.cardBackground,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.0),
+                              border: Border.all(color: appColors.borderColor, width: 1.0),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -342,7 +343,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                                 Text(
                                   option.label,
                                   style: GoogleFonts.outfit(
-                                    color: Colors.white,
+                                    color: appColors.textPrimary,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -376,7 +377,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 child: Text(
                   'Drag to Replace',
                   style: GoogleFonts.outfit(
-                    color: Colors.white38,
+                    color: appColors.textMuted,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -384,14 +385,14 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Inline Actions: Reset and Save (placed immediately below catalog) ──
+              // Inline Actions: Reset and Save
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OutlinedButton(
                     onPressed: _resetToDefault,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white24),
+                      side: BorderSide(color: appColors.borderColor),
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -400,7 +401,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                     child: Text(
                       'Reset',
                       style: GoogleFonts.outfit(
-                        color: Colors.white70,
+                        color: appColors.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -411,7 +412,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                     onPressed: _saveChanges,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accentColor,
-                      foregroundColor: Colors.black,
+                      foregroundColor: appColors.onAccent,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -437,9 +438,11 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
   }
 
   void _showSlotSelector(int slotIndex, Color accentColor, List<_NavItemOption> availableCatalog) {
+    final appColors = context.appColors;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF131318),
+      backgroundColor: appColors.dialogBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -452,7 +455,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
             Text(
               'Replace Slot ${slotIndex + 1} (${_slots[slotIndex].label})',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: appColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -463,7 +466,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   'No available features to replace with.',
-                  style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+                  style: GoogleFonts.outfit(color: appColors.textMuted, fontSize: 13),
                 ),
               )
             else
@@ -476,10 +479,10 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
 
                     return ListTile(
                       dense: true,
-                      leading: Icon(option.icon, color: Colors.white70, size: 20),
+                      leading: Icon(option.icon, color: appColors.textSecondary, size: 20),
                       title: Text(
                         option.label,
-                        style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+                        style: GoogleFonts.outfit(color: appColors.textPrimary, fontSize: 13),
                       ),
                       onTap: () {
                         _swapOrReplaceSlot(slotIndex, option);
@@ -496,9 +499,11 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
   }
 
   void _showPlaceInSlotSheet(_NavItemOption feature, Color accentColor) {
+    final appColors = context.appColors;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF131318),
+      backgroundColor: appColors.dialogBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -511,7 +516,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
             Text(
               'Place "${feature.label}" in Nav Bar:',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: appColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -535,7 +540,7 @@ class _CustomizeNavBarScreenState extends ConsumerState<CustomizeNavBarScreen> {
                 ),
                 title: Text(
                   'Slot ${index + 1} (${currentSlot.label})',
-                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+                  style: GoogleFonts.outfit(color: appColors.textPrimary, fontSize: 13),
                 ),
                 onTap: () {
                   _swapOrReplaceSlot(index, feature);

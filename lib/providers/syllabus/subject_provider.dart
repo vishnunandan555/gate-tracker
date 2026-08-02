@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/colors.dart';
+import '../../core/theme/models/accent_pool_model.dart';
 import '../providers.dart';
 
 import '../../services/system_color_service.dart';
@@ -43,9 +43,16 @@ class OverallProgressColorNotifier extends Notifier<Color> {
   String _mode = 'auto'; // 'auto', 'frozen', or 'device'
   Color? _frozenColor;
   Color? _autoColor;
+  List<Color> _userDarkAccents = [];
+  List<Color> _userLightAccents = [];
 
   String get mode => _mode;
   Color? get frozenColor => _frozenColor;
+  List<Color> get userDarkAccents => _userDarkAccents;
+  List<Color> get userLightAccents => _userLightAccents;
+
+  List<Color> get darkPool => [...AppAccentPools.defaultDarkAccents, ..._userDarkAccents];
+  List<Color> get lightPool => [...AppAccentPools.defaultLightAccents, ..._userLightAccents];
 
   @override
   Color build() {
@@ -58,13 +65,44 @@ class OverallProgressColorNotifier extends Notifier<Color> {
         _frozenColor = Color(value);
       }
     }
+
+    _loadCustomAccents();
+
     if ((_mode == 'frozen' || _mode == 'device') && _frozenColor != null) {
       return _frozenColor!;
     }
-    // Note: Randomizing _autoColor on cold launch in 'auto' mode is by design —
-    // accent color refreshes each session unless frozen by the user in settings.
-    _autoColor ??= AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+
+    _autoColor ??= darkPool[math.Random().nextInt(darkPool.length)];
     return _autoColor!;
+  }
+
+  void _loadCustomAccents() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final darkRaw = prefs.getStringList('custom_dark_accents_list') ?? [];
+    final lightRaw = prefs.getStringList('custom_light_accents_list') ?? [];
+
+    _userDarkAccents = darkRaw.map((h) => AppAccentPools.parseHexColor(h)).whereType<Color>().toList();
+    _userLightAccents = lightRaw.map((h) => AppAccentPools.parseHexColor(h)).whereType<Color>().toList();
+  }
+
+  Future<void> addCustomAccent(Color color, {required bool isDark}) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+
+    if (isDark) {
+      if (!_userDarkAccents.any((c) => c.toARGB32() == color.toARGB32())) {
+        _userDarkAccents.add(color);
+        final raw = _userDarkAccents.map((c) => AppAccentPools.toHexString(c)).toList();
+        await prefs.setStringList('custom_dark_accents_list', raw);
+      }
+    } else {
+      if (!_userLightAccents.any((c) => c.toARGB32() == color.toARGB32())) {
+        _userLightAccents.add(color);
+        final raw = _userLightAccents.map((c) => AppAccentPools.toHexString(c)).toList();
+        await prefs.setStringList('custom_light_accents_list', raw);
+      }
+    }
+
+    await setFrozenColor(color);
   }
 
   Future<void> setAutoMode() async {
@@ -94,17 +132,19 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     state = systemColor;
   }
 
-  void randomize() {
+  void randomize({bool isDark = true}) {
     if (_mode == 'frozen' || _mode == 'device') return;
-    _autoColor = AppColors.neonCycle[math.Random().nextInt(AppColors.neonCycle.length)];
+    final pool = isDark ? darkPool : lightPool;
+    _autoColor = pool[math.Random().nextInt(pool.length)];
     state = _autoColor!;
   }
 
-  void next() {
+  void next({bool isDark = true}) {
     if (_mode == 'frozen' || _mode == 'device') return;
-    final currentIdx = AppColors.neonCycle.indexOf(state);
-    final nextIdx = (currentIdx + 1) % AppColors.neonCycle.length;
-    _autoColor = AppColors.neonCycle[nextIdx];
+    final pool = isDark ? darkPool : lightPool;
+    final currentIdx = pool.indexOf(state);
+    final nextIdx = (currentIdx + 1) % pool.length;
+    _autoColor = pool[nextIdx];
     state = _autoColor!;
   }
 }

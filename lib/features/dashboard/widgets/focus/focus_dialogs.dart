@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import 'timer_painters.dart';
 
 // Dialog to configure daily target focus goal
@@ -16,7 +17,7 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
           final hrStr = (localMins / 60).toStringAsFixed(1).replaceAll('.0', '');
 
           return AlertDialog(
-            backgroundColor: const Color(0xFF131316),
+            backgroundColor: context.appColors.dialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(color: Colors.white.withAlpha(8)),
@@ -93,7 +94,7 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
       return StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
-            backgroundColor: const Color(0xFF131316),
+            backgroundColor: context.appColors.dialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(color: Colors.white.withAlpha(8)),
@@ -218,7 +219,7 @@ void showMethodSelectionMenu(BuildContext context, FocusSessionState sessionStat
                           height: 110,
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                           decoration: BoxDecoration(
-                            color: isSelected ? accentColor.withAlpha(20) : const Color(0xFF131316),
+                            color: isSelected ? accentColor.withAlpha(20) : context.appColors.cardBackground,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isSelected ? accentColor : Colors.white.withAlpha(5),
@@ -356,7 +357,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                       margin: const EdgeInsets.only(bottom: 16),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF131316),
+                        color: context.appColors.cardBackground,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
                           color: isSelected ? accentColor : Colors.white.withAlpha(8),

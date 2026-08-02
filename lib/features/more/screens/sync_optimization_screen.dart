@@ -93,17 +93,17 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
   Widget build(BuildContext context) {
     if (!_initialized || _rawData == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: context.appColors.scaffoldBackground,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0A0D14),
+          backgroundColor: context.appColors.scaffoldBackground,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+            icon: Icon(Icons.arrow_back_rounded, color: context.appColors.textPrimary),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
             'Cloud Sync Optimization',
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
           ),
         ),
         body: const Center(child: CircularProgressIndicator()),

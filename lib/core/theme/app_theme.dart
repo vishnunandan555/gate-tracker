@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_theme_colors.dart';
-import 'models/app_theme_model.dart';
+import 'models/theme_set_model.dart';
 import 'presets/handcrafted_presets.dart';
 
 class AppTheme {
   static ThemeData buildTheme(
-    AppThemeDataModel model, {
+    ThemeSetModel model, {
     Color? primaryAccentOverride,
     Brightness? brightnessOverride,
   }) {
@@ -16,12 +17,20 @@ class AppTheme {
       primaryAccentOverride: primaryAccentOverride,
     );
 
-    final brightness = brightnessOverride ??
-        (model.scaffoldBackgroundColor.computeLuminance() > 0.5
-            ? Brightness.light
-            : Brightness.dark);
-
+    final brightness = brightnessOverride ?? (model.isDark ? Brightness.dark : Brightness.light);
     final isDark = brightness == Brightness.dark;
+
+    // Auto-sync Native OS Status Bar & Navigation Bar Overlay
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: themeColors.scaffoldBackground,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ),
+    );
 
     final colorScheme = isDark
         ? ColorScheme.dark(
@@ -87,6 +96,84 @@ class AppTheme {
           borderRadius: BorderRadius.circular(themeColors.borderRadius),
           side: BorderSide(color: themeColors.borderColor, width: 1),
         ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: themeColors.cardBackground,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: themeColors.surfaceColor,
+        selectedColor: themeColors.primaryAccent.withValues(alpha: 0.2),
+        secondarySelectedColor: themeColors.primaryAccent,
+        labelStyle: TextStyle(color: themeColors.textPrimary),
+        secondaryLabelStyle: TextStyle(color: themeColors.onAccent),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: themeColors.borderColor),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: themeColors.surfaceColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: themeColors.borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: themeColors.borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: themeColors.primaryAccent, width: 1.5),
+        ),
+        labelStyle: TextStyle(color: themeColors.textSecondary),
+        hintStyle: TextStyle(color: themeColors.textMuted),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: themeColors.primaryAccent,
+          foregroundColor: themeColors.onAccent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 0,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: themeColors.primaryAccent,
+          foregroundColor: themeColors.onAccent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 0,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: themeColors.textPrimary,
+          side: BorderSide(color: themeColors.borderColor),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: themeColors.primaryAccent,
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return themeColors.primaryAccent;
+          }
+          return themeColors.textMuted;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return themeColors.primaryAccent.withValues(alpha: 0.3);
+          }
+          return themeColors.surfaceColor;
+        }),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {

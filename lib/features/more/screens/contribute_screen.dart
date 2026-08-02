@@ -155,7 +155,7 @@ class ContributeScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

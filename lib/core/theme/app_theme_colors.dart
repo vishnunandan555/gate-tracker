@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'models/app_theme_model.dart';
+import 'models/theme_set_model.dart';
+import 'models/accent_pool_model.dart';
 
+/// ThemeExtension delivering clean, unified visual tokens across all app UI widgets.
 class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color scaffoldBackground;
   final Color cardBackground;
@@ -38,41 +40,17 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     required this.enableGlassmorphism,
   });
 
-  bool get isLight => scaffoldBackground.computeLuminance() > 0.5;
+  bool get isLight => ThemeData.estimateBrightnessForColor(scaffoldBackground) == Brightness.light;
 
-  static const Map<int, Color> lightAccentMap = {
-    0xFF00F0FF: Color(0xFF15CBD6), // Cyan
-    0xFF39FF14: Color(0xFF2EBD14), // Green
-    0xFFFF0000: Color(0xFFD82D00), // Scarlet Red
-    0xFFFFAD00: Color(0xFFFFAD00), // Amber
-    0xFFE040FB: Color(0xFFA020B6), // Magenta
-    0xFFFF5E00: Color(0xFFFF5E00), // Orange
-    0xFF00B0FF: Color(0xFF00B0FF), // Electric Blue
-    0xFF00FFCC: Color(0xFF27D1AF), // Mint/Teal
-    0xFF9D5AFF: Color(0xFF7B47C6), // Purple
-    0xFF4C73FF: Color(0xFF2E4EBF), // Electric Blue
-    0xFFC58D39: Color(0xFFA67731), // Bronze
-    0xFFFFFC00: Color(0xFFDFDD46), // Yellow
-    0xFFC1FF72: Color(0xFF99D152), // Lime
-  };
+  factory AppThemeColors.fromModel(ThemeSetModel model, {Color? primaryAccentOverride}) {
+    final isThemeLight = !model.isDark;
+    final rawPrimary = model.fixedAccentColor ?? primaryAccentOverride ??
+        (isThemeLight ? AppAccentPools.defaultLightAccents.first : AppAccentPools.defaultDarkAccents.first);
 
-  static Color adaptAccentForLightMode(Color accent) {
-    final value = accent.toARGB32();
-    if (lightAccentMap.containsKey(value)) {
-      return lightAccentMap[value]!;
-    }
-    final hsl = HSLColor.fromColor(accent);
-    if (hsl.lightness > 0.40) {
-      return hsl.withLightness(0.36).toColor();
-    }
-    return accent;
-  }
+    // Apply contrast safeguard
+    final activePrimary = AppAccentPools.ensureContrast(rawPrimary, !isThemeLight);
 
-  factory AppThemeColors.fromModel(AppThemeDataModel model, {Color? primaryAccentOverride}) {
-    final rawPrimary = primaryAccentOverride ?? model.primaryAccentColor;
-    final activePrimary = model.isLight
-        ? adaptAccentForLightMode(rawPrimary)
-        : rawPrimary;
+    // WCAG contrast calculation for onAccent
     final estimatedOnAccent = ThemeData.estimateBrightnessForColor(activePrimary) == Brightness.dark
         ? Colors.white
         : Colors.black;
@@ -82,16 +60,16 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       cardBackground: model.cardBackgroundColor,
       surfaceColor: model.surfaceColorValue,
       primaryAccent: activePrimary,
-      secondaryAccent: model.secondaryAccentColor,
+      secondaryAccent: activePrimary.withValues(alpha: 0.8),
       textPrimary: model.textPrimaryColor,
       textSecondary: model.textSecondaryColor,
       textMuted: model.textMutedColor,
       borderColor: model.borderColorValue,
-      dialogBackground: model.cardBackgroundColor,
+      dialogBackground: model.dialogBackgroundColor,
       overlayBarrier: Colors.black.withValues(alpha: 0.7),
       onSurface: model.onSurfaceColor ?? model.textPrimaryColor,
-      dividerColor: model.dividerColorValue ?? (model.isLight ? Colors.black.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.10)),
-      onAccent: model.onAccentColor != null ? model.onAccentColor! : estimatedOnAccent,
+      dividerColor: model.dividerColorValue,
+      onAccent: estimatedOnAccent,
       borderRadius: model.borderRadius,
       enableGlassmorphism: model.enableGlassmorphism,
     );

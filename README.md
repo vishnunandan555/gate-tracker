@@ -77,14 +77,15 @@ GATEletics maintains two distinct release tracks on Google Play Store and GitHub
 * **Hierarchical Structure:** Categories $\rightarrow$ Subjects $\rightarrow$ Topics $\rightarrow$ Subtasks with automatic progress percentage rollups.
 * **Atomic Transactions:** Atomic Drift database updates to eliminate UI flickering during progress writes.
 
-### ☁️ 7. Offline-First Sync & Cloud Optimization Suite
-* **Local-First Architecture:** All actions occur instantly on your device; sync executes silently in the background.
-* **Pure-Dart Base64 GZip Compression:** Automatically compresses cloud payloads using `package:archive` (~80% compression ratio), extending single document Firestore storage capacity to 5.0 MB+ (5–10 years of study history).
-* **Dedicated Cloud Sync Optimization Hub (`SyncOptimizationScreen`):** Live payload meter, itemized breakdown (Categories, Topics, Tasks, Notes/Links, Focus Sessions, History, Logs), real-time byte calculations, `Sync Passive Data` switch, `Enable Payload GZip Compression` switch, and historical data pruning (Keep Past 1 Year / Keep Past 6 Months) with dynamic cutoff date warnings.
-* **Google Auth & Multi-Device Merge:** Log in with Google to sync databases across devices with automatic merge conflict resolution.
-* **Complete Privacy & Backup Control:** Safety JSON database backup exporter prior to optimization, selective backup imports (`activeOnly`, `passiveOnly`, `full`), local data resets, and compliant account deletion.
+### 🎨 8. Dynamic Theme Engine & Dual Accent Pools
+* **System Dynamic Default:** Automatically switches between Light and Dark mode based on OS device settings.
+* **Deterministic Surface Tiers:** Layered surface tier hierarchy across Canvas, L1 Cards, L2 Input Fields, and L3 Floating Overlays (`standard_dark_theme.dart` & `standard_light_theme.dart`).
+* **Dual Mode-Aware Accent Pools:** Separate accent color pools for Light Mode (`#0284C7`) and Dark Mode (`#00F0FF`) with direct Hex `#` entry, Material You Monet dynamic extraction, and WCAG contrast safeguards.
+* **Modular Developer Theme Files:** Expandable theme architecture with self-contained template files (`custom_theme_template.dart`) in `lib/core/theme/theme_sets/` and `THEME_ENGINE.md` documentation.
 
 ---
+
+
 
 ## 📦 Platform Availability & Downloads
 

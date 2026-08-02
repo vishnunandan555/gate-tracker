@@ -7,7 +7,6 @@ import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
 import '../../../database/app_database.dart';
-import '../../../core/theme/colors.dart';
 
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
@@ -1479,7 +1478,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: AppColors.neonCycle.map((presetColor) {
+          children: colorNotifier.darkPool.map((presetColor) {
             final isSelected = !isAuto && colorNotifier.frozenColor?.toARGB32() == presetColor.toARGB32();
             return GestureDetector(
               onTap: () => colorNotifier.setFrozenColor(presetColor),
