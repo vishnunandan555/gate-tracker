@@ -26,7 +26,8 @@ val hasKeyProperties = keystorePropertiesFile.exists() &&
 android {
     namespace = "com.vishnunandan.gateletics"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    buildToolsVersion = "35.0.0"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
