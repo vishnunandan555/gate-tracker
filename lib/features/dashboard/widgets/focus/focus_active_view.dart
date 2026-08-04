@@ -451,7 +451,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
               opacity: (1.0 - (_swipeDelta / context.s(80.0))).clamp(0.2, 1.0),
               child: Icon(
                 Icons.keyboard_double_arrow_up_rounded,
-                color: context.appColors.textSecondary,
+                color: widget.accentColor,
                 size: context.s(18),
               ),
             ),
@@ -459,7 +459,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
             Text(
               "Slide up to Stop",
               style: GoogleFonts.outfit(
-                color: context.appColors.textSecondary,
+                color: context.appColors.textPrimary,
                 fontSize: context.s(10),
                 fontWeight: FontWeight.bold,
               ),
@@ -475,7 +475,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
 
     final result = await showModalBottomSheet<bool>(
       context: context,
-      backgroundColor: context.appColors.cardBackground,
+      backgroundColor: const Color(0xFF16161A),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -491,7 +491,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                   width: 48,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: context.appColors.borderColor,
+                    color: Colors.white24,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -502,7 +502,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: context.appColors.textPrimary,
+                  color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -511,7 +511,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 "All your accrued focus progress and accomplishments will be saved.",
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: context.appColors.textSecondary,
+                  color: Colors.white70,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -526,11 +526,11 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        side: BorderSide(color: context.appColors.borderColor),
+                        side: const BorderSide(color: Colors.white24),
                       ),
                       child: Text(
                         "No, Continue",
-                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

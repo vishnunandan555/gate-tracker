@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/models/accent_pool_model.dart';
 import '../../../../core/theme/theme_context_ext.dart';
-import '../../../more/widgets/theme_gallery_sheet.dart';
+import '../../../../utils/ui_scaling.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class CustomizationSettingsSection extends ConsumerWidget {
@@ -616,61 +616,9 @@ class CustomizationSettingsSection extends ConsumerWidget {
       ],
     );
 
-    final themePresetTile = ListTile(
-      leading: Icon(Icons.palette_rounded, color: currentColor),
-      title: Text('Theme Mode & Presets', style: titleStyle),
-      subtitle: Text(
-        'Light, Dark, Custom Presets & Theme Creator',
-        style: subtitleStyle,
-      ),
-      trailing: Icon(Icons.chevron_right_rounded, color: context.appColors.textSecondary),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          builder: (_) => Consumer(
-            builder: (context, ref, child) {
-              final activeThemeData = ref.watch(activeAppThemeProvider);
-
-              return Theme(
-                data: activeThemeData,
-                child: Builder(
-                  builder: (context) {
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      decoration: BoxDecoration(
-                        color: context.appColors.surfaceColor,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                        border: Border.all(color: context.appColors.borderColor),
-                      ),
-                      child: DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.8,
-                        maxChildSize: 0.95,
-                        minChildSize: 0.5,
-                        builder: (context, scrollController) => Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: const ThemeGallerySheet(),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        themePresetTile,
-        Divider(color: context.appColors.dividerColor, height: 1),
         SwitchListTile(
           activeThumbColor: currentColor,
           secondary: Icon(Icons.format_quote_rounded, color: currentColor),
@@ -882,6 +830,190 @@ class CustomizationSettingsSection extends ConsumerWidget {
         const Divider(color: Colors.white10, height: 1),
         fontSizeDirectContent,
       ],
+    );
+  }
+}
+
+class ThemeModeSelectorWidget extends ConsumerWidget {
+  const ThemeModeSelectorWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeState = ref.watch(themeEngineProvider);
+    final currentMode = themeState.themeMode;
+    final accentColor = context.appColors.primaryAccent;
+
+    String activeValue = 'dark';
+    if (currentMode == 'light') {
+      activeValue = 'light';
+    } else if (currentMode == 'system') {
+      activeValue = 'system';
+    } else if (currentMode == 'dark') {
+      activeValue = 'dark';
+    } else {
+      final activeThemeMode = ref.watch(activeThemeModeProvider);
+      activeValue = activeThemeMode == ThemeMode.light ? 'light' : 'dark';
+    }
+
+    return Container(
+      padding: EdgeInsets.all(context.s(12)),
+      child: Row(
+        children: [
+          // 1. DARK BUTTON
+          Expanded(
+            child: _buildThemeModeButton(
+              context: context,
+              ref: ref,
+              label: 'Dark',
+              modeValue: 'dark',
+              isSelected: activeValue == 'dark',
+              icon: Icons.dark_mode_rounded,
+              accentColor: accentColor,
+            ),
+          ),
+          SizedBox(width: context.s(8)),
+
+          // 2. AUTO BUTTON (Middle)
+          Expanded(
+            child: _buildThemeModeButton(
+              context: context,
+              ref: ref,
+              label: 'Auto',
+              subtitle: 'System',
+              modeValue: 'system',
+              isSelected: activeValue == 'system',
+              icon: Icons.brightness_auto_rounded,
+              accentColor: accentColor,
+            ),
+          ),
+          SizedBox(width: context.s(8)),
+
+          // 3. LIGHT BUTTON (With Beta badge)
+          Expanded(
+            child: _buildThemeModeButton(
+              context: context,
+              ref: ref,
+              label: 'Light',
+              badge: 'Beta',
+              modeValue: 'light',
+              isSelected: activeValue == 'light',
+              icon: Icons.light_mode_rounded,
+              accentColor: accentColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeModeButton({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String label,
+    required String modeValue,
+    required bool isSelected,
+    required IconData icon,
+    required Color accentColor,
+    String? subtitle,
+    String? badge,
+  }) {
+    return InkWell(
+      onTap: () {
+        ref.read(themeEngineProvider.notifier).setStandardMode(modeValue);
+        if (modeValue == 'light') {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: context.appColors.dialogBackground,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: context.appColors.borderColor),
+              ),
+              content: Row(
+                children: [
+                  Icon(Icons.info_outline_rounded, color: accentColor, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'White mode is in Beta so issues may come. Please report via GitHub if any issues found!',
+                      style: GoogleFonts.outfit(
+                        color: context.appColors.textPrimary,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(vertical: context.s(10), horizontal: context.s(4)),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? accentColor.withValues(alpha: 0.15)
+              : context.appColors.surfaceColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? accentColor : context.appColors.borderColor,
+            width: isSelected ? 1.8 : 1.0,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: context.s(20),
+              color: isSelected ? accentColor : context.appColors.textMuted,
+            ),
+            SizedBox(height: context.s(4)),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
+                fontSize: context.s(13),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+              ),
+            ),
+            if (badge != null) ...[
+              SizedBox(height: context.s(3)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: context.s(6), vertical: context.s(1.5)),
+                decoration: BoxDecoration(
+                  color: isSelected ? accentColor : Colors.amber.shade700,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  badge,
+                  style: GoogleFonts.orbitron(
+                    color: isSelected ? context.appColors.onAccent : Colors.white,
+                    fontSize: context.s(8.5),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ] else if (subtitle != null) ...[
+              SizedBox(height: context.s(2)),
+              Text(
+                subtitle,
+                style: GoogleFonts.outfit(
+                  color: context.appColors.textMuted,
+                  fontSize: context.s(9.5),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

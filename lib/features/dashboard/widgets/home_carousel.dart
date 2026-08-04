@@ -253,7 +253,6 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                                 'assets/fire.svg',
                                 width: context.s(32),
                                 height: context.s(32),
-                                colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
                               ),
                             ),
                           ),

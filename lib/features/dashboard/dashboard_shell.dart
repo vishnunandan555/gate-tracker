@@ -929,11 +929,14 @@ class _SharedShellHeader extends ConsumerWidget {
           headerOpacity = (1.0 - minDistance).clamp(0.0, 1.0);
         }
 
-        // Background transition from transparent to solid black when scrolled down in Completion screen
+        // Background transition from transparent to solid header color when scrolled down in Completion screen
         Color headerBgColor = Colors.transparent;
         if (isScrolled && completionIdx != -1) {
           final distToCompletion = (page - completionIdx).abs();
-          headerBgColor = Colors.black.withValues(alpha: (1.0 - distToCompletion).clamp(0.0, 1.0));
+          final targetColor = context.appColors.isLight
+              ? const Color(0xFFF4F4F6)
+              : const Color(0xFF0B0B0E);
+          headerBgColor = targetColor.withValues(alpha: (1.0 - distToCompletion).clamp(0.0, 1.0));
         }
 
         // Countdown widget opacity: 1.0 at Completion screen
@@ -957,7 +960,8 @@ class _SharedShellHeader extends ConsumerWidget {
           child: Opacity(
             opacity: headerOpacity,
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
               height: 72 + topPadding,
               padding: EdgeInsets.fromLTRB(20, topPadding, 20, 0),
               color: headerBgColor,
@@ -1098,9 +1102,9 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
         ],
       );
     } else {
-      notifIconWidget = const Icon(
+      notifIconWidget = Icon(
         Icons.notifications_outlined,
-        color: Colors.white38,
+        color: context.appColors.textSecondary,
         size: 26,
       );
     }

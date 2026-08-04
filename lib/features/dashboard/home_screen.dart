@@ -507,7 +507,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Text(
               "Notice Board",
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontSize: context.s(18),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -542,13 +542,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: TextField(
                   controller: _noticeTaskController,
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: context.s(14),
                   ),
                   decoration: InputDecoration(
                     hintText: "Add a quick task...",
                     hintStyle: GoogleFonts.outfit(
-                      color: Colors.white30,
+                      color: context.appColors.textMuted,
                       fontSize: context.s(14),
                     ),
                     contentPadding: EdgeInsets.symmetric(
@@ -609,10 +609,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 decoration: BoxDecoration(
                   color: context.appColors.cardBackground,
                   borderRadius: BorderRadius.circular(context.s(16)),
-                  border: Border.all(color: Colors.white.withAlpha(8)),
+                  border: Border.all(color: context.appColors.borderColor),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black26,
+                      color: Colors.black.withAlpha(15),
                       blurRadius: context.s(10),
                       offset: const Offset(0, 4),
                     ),
@@ -629,7 +629,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       "Your Notice Board is Empty",
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: context.appColors.textPrimary,
                         fontSize: context.s(14),
                         fontWeight: FontWeight.bold,
                       ),
@@ -638,7 +638,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       "Use this space for quick reminders, test series deadlines, or equations to revise.",
                       style: GoogleFonts.outfit(
-                        color: Colors.white38,
+                        color: context.appColors.textSecondary,
                         fontSize: context.s(11),
                       ),
                       textAlign: TextAlign.center,
@@ -677,19 +677,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: task.isCompleted
-              ? const Color(0xFF111114).withAlpha(150)
-              : const Color(0xFF131316),
+              ? context.appColors.surfaceColor
+              : context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(context.s(12)),
           border: Border.all(
             color: task.isCompleted
-                ? Colors.white.withAlpha(6)
-                : accentColor.withAlpha(30),
+                ? context.appColors.borderColor
+                : accentColor.withAlpha(50),
             width: 1.0,
           ),
           boxShadow: [
             if (!task.isCompleted)
               BoxShadow(
-                color: Colors.black.withAlpha(20),
+                color: Colors.black.withAlpha(15),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -713,7 +713,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: task.isCompleted ? accentColor : Colors.white30,
+                        color: task.isCompleted ? accentColor : context.appColors.borderColor,
                         width: 1.5,
                       ),
                       color: task.isCompleted ? accentColor.withAlpha(40) : Colors.transparent,
@@ -742,7 +742,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Text(
                       task.content,
                       style: GoogleFonts.outfit(
-                        color: task.isCompleted ? Colors.white38 : Colors.white,
+                        color: task.isCompleted ? context.appColors.textMuted : context.appColors.textPrimary,
                         fontSize: context.s(13),
                         decoration: task.isCompleted ? TextDecoration.lineThrough : null,
                       ),
@@ -753,7 +753,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // Delete Button (One tap delete!)
               IconButton(
                 icon: const Icon(Icons.close_rounded, size: 16),
-                color: Colors.white24,
+                color: context.appColors.textMuted,
                 hoverColor: Colors.redAccent.withAlpha(20),
                 highlightColor: Colors.redAccent.withAlpha(30),
                 onPressed: () {

@@ -140,12 +140,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Scaffold(
         body: NotificationListener<ScrollNotification>(
           onNotification: (notification) {
-            // Track overall scrolled state for app bar transparency
-            final isScrolled = notification.metrics.pixels > 10.0;
-            if (ref.read(completionIsScrolledProvider) != isScrolled) {
-              Future.microtask(() {
-                ref.read(completionIsScrolledProvider.notifier).setScrolled(isScrolled);
-              });
+            // Track overall scrolled state for app bar transparency with hysteresis
+            final double pixels = notification.metrics.pixels;
+            final bool currentlyScrolled = ref.read(completionIsScrolledProvider);
+
+            if (!currentlyScrolled && pixels > 25.0) {
+              ref.read(completionIsScrolledProvider.notifier).setScrolled(true);
+            } else if (currentlyScrolled && pixels < 5.0) {
+              ref.read(completionIsScrolledProvider.notifier).setScrolled(false);
             }
   
             // Track overscroll to show/hide Search Bar

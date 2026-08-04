@@ -120,6 +120,12 @@ class CustomizeUiScreen extends ConsumerWidget {
               ),
             ),
 
+            // ── Theme Mode Section ───────────────────────────────────────────
+            buildHeader('THEME MODE'),
+            buildSettingsGroup(
+              const ThemeModeSelectorWidget(),
+            ),
+
             // ── App Styling Section ────────────────────────────────────────
             buildHeader('THEME ENGINE & STYLING'),
             buildSettingsGroup(
