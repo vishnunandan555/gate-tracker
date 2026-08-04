@@ -58,7 +58,7 @@ class AccountsScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                border: Border.all(color: context.appColors.borderColor),
               ),
               child: SyncSettingsSection(accentColor: accentColor),
             ),
@@ -108,7 +108,7 @@ class _HeroProfileCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         children: [
@@ -133,7 +133,7 @@ class _HeroProfileCard extends ConsumerWidget {
                   child: CircleAvatar(
                     radius: context.s(38),
                     backgroundImage: displayImage,
-                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    backgroundColor: context.appColors.surfaceColor,
                     child: displayImage == null
                         ? Text(
                             isSignedIn
@@ -142,7 +142,7 @@ class _HeroProfileCard extends ConsumerWidget {
                                     : 'G')
                                 : 'G',
                             style: GoogleFonts.outfit(
-                              color: Colors.white70,
+                              color: context.appColors.textPrimary,
                               fontSize: context.s(28),
                               fontWeight: FontWeight.bold,
                             ),
@@ -218,46 +218,46 @@ class _HeroProfileCard extends ConsumerWidget {
           const SizedBox(height: 10),
 
           // ── Status pill ─────────────────────────────────────────
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: (isSignedIn ? Colors.greenAccent : Colors.amberAccent)
-                  .withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(
-                color: (isSignedIn
-                        ? Colors.greenAccent
-                        : Colors.amberAccent)
-                    .withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSignedIn
-                        ? Colors.greenAccent
-                        : Colors.amberAccent,
+          Consumer(
+            builder: (context, ref, _) {
+              final isLight = context.appColors.isLight;
+              final badgeColor = isSignedIn
+                  ? (isLight ? Colors.green.shade800 : Colors.greenAccent)
+                  : (isLight ? Colors.amber.shade900 : Colors.amberAccent);
+
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: isLight ? 0.15 : 0.1),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    color: badgeColor.withValues(alpha: 0.3),
                   ),
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  isSignedIn ? 'Signed In via Google' : 'Offline Mode',
-                  style: GoogleFonts.outfit(
-                    color: isSignedIn
-                        ? Colors.greenAccent
-                        : Colors.amberAccent,
-                    fontSize: context.s(11),
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: badgeColor,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      isSignedIn ? 'Signed In via Google' : 'Offline Mode',
+                      style: GoogleFonts.outfit(
+                        color: badgeColor,
+                        fontSize: context.s(11),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
 
           // ── Sign-in CTA (only when offline) ────────────────────
@@ -283,19 +283,19 @@ class _HeroProfileCard extends ConsumerWidget {
                         }
                       },
                 icon: authAsync.isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: context.appColors.onAccent),
                       )
-                    : const Icon(Icons.login_rounded, color: Colors.black, size: 18),
+                    : Icon(Icons.login_rounded, color: context.appColors.onAccent, size: 18),
                 label: Text(
                   authAsync.isLoading ? 'Signing In…' : 'Sign In with Google',
                   style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: context.appColors.onAccent,
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -325,13 +325,13 @@ class _HeroProfileCard extends ConsumerWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text('Set Display Name',
             style: GoogleFonts.outfit(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+                color: context.appColors.textPrimary, fontWeight: FontWeight.bold)),
         content: TextField(
           controller: controller,
-          style: const TextStyle(color: Colors.white),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary),
           decoration: InputDecoration(
             hintText: 'Enter name',
-            hintStyle: const TextStyle(color: Colors.white30),
+            hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
             focusedBorder:
                 UnderlineInputBorder(borderSide: BorderSide(color: accentColor)),
           ),
@@ -342,23 +342,21 @@ class _HeroProfileCard extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child:
-                const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textMuted)),
           ),
           TextButton(
             onPressed: () {
-              ref
-                  .read(profileProvider.notifier)
-                  .setCustomDisplayName(null);
+              ref.read(profileProvider.notifier).setCustomDisplayName(null);
               Navigator.pop(ctx);
             },
             child: const Text('Reset',
                 style: TextStyle(color: Colors.redAccent)),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text),
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             style: FilledButton.styleFrom(
               backgroundColor: accentColor,
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
             ),
             child: const Text('Save'),
           ),
@@ -392,7 +390,7 @@ class _HeroProfileCard extends ConsumerWidget {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: context.appColors.borderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -400,7 +398,7 @@ class _HeroProfileCard extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Profile Photo',
                 style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
@@ -496,7 +494,7 @@ class _PhotoOption extends StatelessWidget {
             const SizedBox(width: 14),
             Text(label,
                 style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 14)),
           ],
@@ -525,13 +523,13 @@ class _DangerZoneCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         children: [
           const _ResetDataRow(),
           if (isSignedIn) ...[
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+            Divider(height: 1, color: context.appColors.borderColor),
             // Sign Out row
             InkWell(
               onTap: () => showSignOutConfirmationDialog(context, ref),
@@ -542,27 +540,27 @@ class _DangerZoneCard extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: context.appColors.surfaceColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.logout_rounded,
-                          color: Colors.white60, size: 18),
+                      child: Icon(Icons.logout_rounded,
+                          color: context.appColors.textSecondary, size: 18),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text('Sign Out',
                           style: GoogleFonts.outfit(
-                              color: Colors.white,
+                              color: context.appColors.textPrimary,
                               fontWeight: FontWeight.w600,
                               fontSize: 14)),
                     ),
-                    const Icon(Icons.chevron_right_rounded,
-                        color: Colors.white24, size: 20),
+                    Icon(Icons.chevron_right_rounded,
+                        color: context.appColors.textMuted, size: 20),
                   ],
                 ),
               ),
             ),
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+            Divider(height: 1, color: context.appColors.borderColor),
             // Delete Account row
             _DeleteAccountRow(accentColor: accentColor),
           ],
@@ -586,15 +584,15 @@ class _ResetDataRow extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(title, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(title, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold)),
         content: Text(
           content,
-          style: GoogleFonts.outfit(color: Colors.white70),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
+            child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textMuted)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -670,12 +668,12 @@ class _ResetDataRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleStyle = GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13);
-    final subtitleStyle = GoogleFonts.outfit(color: Colors.white.withValues(alpha: 0.45), fontSize: 11);
+    final titleStyle = GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13);
+    final subtitleStyle = GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11);
 
     return ExpansionTile(
       iconColor: Colors.redAccent,
-      collapsedIconColor: Colors.redAccent.withValues(alpha: 0.5),
+      collapsedIconColor: Colors.redAccent,
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -695,7 +693,7 @@ class _ResetDataRow extends ConsumerWidget {
           subtitle: Text('Set all progress counts to zero', style: subtitleStyle),
           onTap: () => _performReset(context, ref, everything: false),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.borderColor, height: 1),
         ListTile(
           leading: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 20),
           title: Text('Reset Everything', style: titleStyle),
@@ -732,9 +730,9 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white10),
+          border: Border.all(color: context.appColors.borderColor),
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white.withAlpha(5),
+          color: context.appColors.surfaceColor,
         ),
         child: Row(
           children: [
@@ -746,13 +744,13 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                 children: [
                   Text(title,
                       style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 13)),
                   const SizedBox(height: 2),
                   Text(subtitle,
                       style:
-                          GoogleFonts.outfit(color: Colors.white30, fontSize: 10)),
+                          GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 10)),
                 ],
               ),
             ),
@@ -771,12 +769,12 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
         final choice = await showDialog<String>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: context.appColors.surfaceColor,
+            backgroundColor: context.appColors.dialogBackground,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Text('Delete Account',
                 style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 18)),
             content: ConstrainedBox(
@@ -788,7 +786,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                   Text(
                     'Deleting your account will permanently remove your cloud backups from our servers. How would you like to handle your local study progress on this device?',
                     style: GoogleFonts.outfit(
-                        color: Colors.white70, fontSize: 13, height: 1.5),
+                        color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
                   ),
                   const SizedBox(height: 16),
                   _buildDialogOption(
@@ -817,7 +815,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text('Cancel',
-                    style: GoogleFonts.outfit(color: Colors.grey)),
+                    style: GoogleFonts.outfit(color: context.appColors.textMuted)),
               ),
             ],
           ),
@@ -829,12 +827,12 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
         final confirmSecond = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: context.appColors.surfaceColor,
+            backgroundColor: context.appColors.dialogBackground,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Text('Are you sure?',
                 style: GoogleFonts.outfit(
-                    color: isWipeAll ? Colors.redAccent : Colors.white,
+                    color: isWipeAll ? Colors.redAccent : context.appColors.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 18)),
             content: Text(
@@ -842,13 +840,13 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                   ? 'This will permanently delete all your cloud backups AND permanently erase all local study progress on this device. This action CANNOT be undone.'
                   : 'This will permanently delete your cloud backups from the server. Your study progress will remain saved locally on this device in Offline Mode.',
               style: GoogleFonts.outfit(
-                  color: Colors.white70, fontSize: 13, height: 1.5),
+                  color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: Text('Cancel',
-                    style: GoogleFonts.outfit(color: Colors.grey)),
+                    style: GoogleFonts.outfit(color: context.appColors.textMuted)),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
@@ -856,7 +854,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                   backgroundColor:
                       isWipeAll ? Colors.redAccent : widget.accentColor,
                   foregroundColor:
-                      isWipeAll ? Colors.white : Colors.black,
+                      isWipeAll ? Colors.white : context.appColors.onAccent,
                 ),
                 child: Text(
                   isWipeAll
@@ -944,8 +942,8 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                       fontWeight: FontWeight.w600,
                       fontSize: 14)),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: Colors.white24, size: 20),
+            Icon(Icons.chevron_right_rounded,
+                color: context.appColors.textMuted, size: 20),
           ],
         ),
       ),

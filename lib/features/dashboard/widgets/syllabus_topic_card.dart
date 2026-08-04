@@ -162,17 +162,17 @@ class SyllabusTopicCard extends ConsumerWidget {
                       children: [
                         Text(
                           '${percentage.toStringAsFixed(0)}%',
-                          style: TextStyle(
+                          style: GoogleFonts.orbitron(
                             fontSize: percentFontSize,
                             fontWeight: FontWeight.w900,
                             color: categoryColor,
-                            letterSpacing: context.s(-1.0),
+                            letterSpacing: context.s(-0.5),
                             height: 1,
                             shadows: context.appColors.isLight
                                 ? null
                                 : [
                                     Shadow(
-                                      color: categoryColor.withAlpha(140),
+                                      color: categoryColor.withValues(alpha: 0.5),
                                       blurRadius: context.s(14),
                                     ),
                                   ],

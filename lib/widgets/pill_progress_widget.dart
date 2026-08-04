@@ -75,7 +75,7 @@ class _PillProgressWidgetState extends ConsumerState<PillProgressWidget>
           final w = (screenWidth * 0.75).clamp(240.0, 400.0);
           final h = context.s(140.0);
           final fontSize = context.s(44.0);
-          final color = ref.watch(overallProgressColorProvider);
+          final color = context.appColors.primaryAccent;
           final progress = _anim.value;
           final selectedFont = ref.watch(progressFontProvider);
 
@@ -85,20 +85,22 @@ class _PillProgressWidgetState extends ConsumerState<PillProgressWidget>
               color: color,
               height: 1.0,
               letterSpacing: context.s(2),
-              shadows: [
-                Shadow(
-                  color: color.withValues(alpha: 0.5),
-                  blurRadius: context.s(16),
-                ),
-                Shadow(
-                  color: color.withValues(alpha: 0.28),
-                  blurRadius: context.s(55),
-                ),
-                Shadow(
-                  color: color.withValues(alpha: 0.15),
-                  blurRadius: context.s(95),
-                ),
-              ],
+              shadows: context.appColors.isLight
+                  ? null
+                  : [
+                      Shadow(
+                        color: color.withValues(alpha: 0.5),
+                        blurRadius: context.s(16),
+                      ),
+                      Shadow(
+                        color: color.withValues(alpha: 0.28),
+                        blurRadius: context.s(55),
+                      ),
+                      Shadow(
+                        color: color.withValues(alpha: 0.15),
+                        blurRadius: context.s(95),
+                      ),
+                    ],
             );
 
             switch (selectedFont) {

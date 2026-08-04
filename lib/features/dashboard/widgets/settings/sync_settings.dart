@@ -302,10 +302,11 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: context.appColors.surfaceColor,
                         borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: context.appColors.borderColor),
                       ),
-                      child: const Icon(Icons.cloud_off_rounded, color: Colors.white54, size: 18),
+                      child: Icon(Icons.cloud_off_rounded, color: context.appColors.textSecondary, size: 18),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -391,10 +392,10 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                 // Bar 1: Local Device Storage
                                 Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.dns_rounded,
                                       size: 13,
-                                      color: Colors.white38,
+                                      color: context.appColors.textMuted,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
@@ -427,7 +428,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                   child: LinearProgressIndicator(
                                     value: fraction,
                                     backgroundColor:
-                                        Colors.white.withValues(alpha: 0.06),
+                                        context.appColors.dividerColor,
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(Colors.cyanAccent),
                                     minHeight: 4,

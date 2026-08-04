@@ -70,13 +70,15 @@ class CountdownWidget extends ConsumerWidget {
               Text(
                 '$daysLeft',
                 style: getDaysStyle(32, progressColor).copyWith(
-                  shadows: [Shadow(color: progressColor.withAlpha(204), blurRadius: 10)],
+                  shadows: context.appColors.isLight
+                      ? null
+                      : [Shadow(color: progressColor.withValues(alpha: 0.8), blurRadius: 10)],
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 'DAYS LEFT',
-                style: getDaysStyle(10, Colors.white70).copyWith(
+                style: getDaysStyle(10, context.appColors.textSecondary).copyWith(
                   letterSpacing: 0.5,
                 ),
               ),

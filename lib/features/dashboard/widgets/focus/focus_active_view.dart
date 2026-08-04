@@ -106,7 +106,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 Text(
                   timeStr,
                   style: GoogleFonts.outfit(
-                    color: Colors.white30,
+                    color: context.appColors.textMuted,
                     fontSize: context.s(10),
                     fontWeight: FontWeight.bold,
                     letterSpacing: context.s(0.5),
@@ -143,7 +143,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                       painter: SquircleTimerPainter(
                         progress: progress,
                         color: ringColor,
-                        trackColor: Colors.white.withAlpha(18),
+                        trackColor: context.appColors.borderColor,
                         strokeWidth: context.s(10),
                       ),
                       child: Center(
@@ -157,7 +157,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                                 fontWeight: FontWeight.w900,
                                 color: ringColor,
                                 shadows: [
-                                  Shadow(color: ringColor.withAlpha(120), blurRadius: context.s(18)),
+                                  Shadow(color: ringColor.withValues(alpha: 0.5), blurRadius: context.s(18)),
                                 ],
                                 letterSpacing: context.s(2),
                               ),
@@ -166,7 +166,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                             Text(
                               isBreak ? "Break Time" : (isPaused ? "Paused" : "Focusing"),
                               style: GoogleFonts.outfit(
-                                color: Colors.white54,
+                                color: context.appColors.textSecondary,
                                 fontSize: context.s(11),
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: context.s(0.5),
@@ -200,7 +200,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                         style: GoogleFonts.caveat(
                           fontSize: context.s(18),
                           fontWeight: FontWeight.bold,
-                          color: Colors.white.withAlpha(204),
+                          color: context.appColors.textPrimary,
                           height: 1.3,
                         ),
                         textAlign: TextAlign.center,
@@ -262,7 +262,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.bold,
                                 fontSize: context.s(13),
-                                color: Colors.white54,
+                                color: context.appColors.textMuted,
                               ),
                             ),
                           ),
@@ -404,13 +404,13 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                     )
                   else
                     PulsingIndicatorNode(
-                      accentColor: isBreakActive ? Colors.white : accentColor,
+                      accentColor: isBreakActive ? context.appColors.textPrimary : accentColor,
                       isPulsing: sessionState.status != FocusStatus.paused,
                     ),
 
                   if (isBreakActive && index == completed - 1)
                     DottedLineConnection(
-                      accentColor: Colors.white,
+                      accentColor: context.appColors.textPrimary,
                       isFlashing: sessionState.status != FocusStatus.paused,
                     ),
                 ],
@@ -451,7 +451,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
               opacity: (1.0 - (_swipeDelta / context.s(80.0))).clamp(0.2, 1.0),
               child: Icon(
                 Icons.keyboard_double_arrow_up_rounded,
-                color: Colors.white38,
+                color: context.appColors.textSecondary,
                 size: context.s(18),
               ),
             ),
@@ -459,7 +459,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
             Text(
               "Slide up to Stop",
               style: GoogleFonts.outfit(
-                color: Colors.white38,
+                color: context.appColors.textSecondary,
                 fontSize: context.s(10),
                 fontWeight: FontWeight.bold,
               ),
@@ -491,7 +491,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                   width: 48,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white12,
+                    color: context.appColors.borderColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -502,7 +502,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -511,7 +511,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 "All your accrued focus progress and accomplishments will be saved.",
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: Colors.white54,
+                  color: context.appColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -526,11 +526,11 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        side: const BorderSide(color: Colors.white24),
+                        side: BorderSide(color: context.appColors.borderColor),
                       ),
                       child: Text(
                         "No, Continue",
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -544,7 +544,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         backgroundColor: widget.accentColor,
-                        foregroundColor: Colors.black,
+                        foregroundColor: context.appColors.onAccent,
                       ),
                       child: Text(
                         "Yes, Stop",
