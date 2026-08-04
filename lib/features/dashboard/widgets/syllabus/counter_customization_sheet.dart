@@ -37,7 +37,7 @@ void _showResourcePickerModal(
     void Function(StudyResource resource) onSelected) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: context.appColors.surfaceColor,
+    backgroundColor: context.appColors.dialogBackground,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -69,11 +69,11 @@ void _showResourcePickerModal(
                     const SizedBox(width: 8),
                     Text(
                       'SELECT STUDY RESOURCE',
-                      style: GoogleFonts.jersey15(color: Colors.white, fontSize: 18, letterSpacing: 1.0),
+                      style: GoogleFonts.jersey15(color: context.appColors.textPrimary, fontSize: 18, letterSpacing: 1.0),
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white54),
+                      icon: Icon(Icons.close_rounded, color: context.appColors.textMuted),
                       onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
@@ -96,7 +96,7 @@ void _showResourcePickerModal(
                       final displayList = filtered.isNotEmpty ? filtered : resourceList;
 
                       if (displayList.isEmpty) {
-                        return const Text('No resources available for this category.', style: TextStyle(color: Colors.white38));
+                        return Text('No resources available for this category.', style: GoogleFonts.outfit(color: context.appColors.textMuted));
                       }
                       return ListView.builder(
                         shrinkWrap: true,
@@ -109,10 +109,10 @@ void _showResourcePickerModal(
                               backgroundColor: accentColor.withAlpha(40),
                               child: Icon(Icons.video_library_rounded, color: accentColor, size: 18),
                             ),
-                            title: Text(res.title, style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                            title: Text(res.title, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
                             subtitle: Text(
                               'by ${res.source} • ${res.platform}${res.lectureCount > 0 ? ' • ${res.lectureCount} lectures' : ''}',
-                              style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
+                              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
                             ),
                             trailing: Icon(Icons.add_circle_outline_rounded, color: accentColor),
                             onTap: () {
@@ -146,8 +146,11 @@ void showConvertToCounterCardDialog(
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Row(
         children: [
           Icon(Icons.calculate_rounded, color: accentColor, size: 22),
@@ -170,37 +173,41 @@ void showConvertToCounterCardDialog(
           children: [
             Text(
               'Convert "${topic.name}" into a numeric progress counter (e.g. 0/10 Question Sets or 0/15 Lectures).',
-              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.4),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: countController,
               keyboardType: TextInputType.number,
-              style: GoogleFonts.outfit(color: Colors.white),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Target Total Count',
-                labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 hintText: 'e.g. 10, 15, 20',
-                hintStyle: GoogleFonts.outfit(color: Colors.white30),
+                hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 filled: true,
-                fillColor: context.appColors.cardBackground,
+                fillColor: context.appColors.surfaceColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.appColors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: context.appColors.borderColor),
                 ),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: urlController,
-              style: GoogleFonts.outfit(color: Colors.white),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Resource Link (Optional)',
-                labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 hintText: 'e.g. https://youtube.com/playlist?... or course link',
-                hintStyle: GoogleFonts.outfit(color: Colors.white30),
+                hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 filled: true,
-                fillColor: context.appColors.cardBackground,
+                fillColor: context.appColors.surfaceColor,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.add_circle_rounded, color: accentColor),
                   tooltip: 'Pick from Resource Explorer',
@@ -215,7 +222,11 @@ void showConvertToCounterCardDialog(
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.appColors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: context.appColors.borderColor),
                 ),
               ),
             ),
@@ -225,7 +236,7 @@ void showConvertToCounterCardDialog(
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+                  child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
@@ -245,7 +256,7 @@ void showConvertToCounterCardDialog(
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: Colors.black,
+                    foregroundColor: context.appColors.onAccent,
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
@@ -274,8 +285,11 @@ void showEditCounterCardDialog(
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Row(
         children: [
           Icon(Icons.edit_note_rounded, color: accentColor, size: 22),
@@ -302,15 +316,19 @@ void showEditCounterCardDialog(
                   child: TextField(
                     controller: currentCountController,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.outfit(color: Colors.white),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary),
                     decoration: InputDecoration(
                       labelText: 'Completed',
-                      labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                      labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                       filled: true,
-                      fillColor: context.appColors.cardBackground,
+                      fillColor: context.appColors.surfaceColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(color: context.appColors.borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: context.appColors.borderColor),
                       ),
                     ),
                   ),
@@ -320,15 +338,19 @@ void showEditCounterCardDialog(
                   child: TextField(
                     controller: maxCountController,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.outfit(color: Colors.white),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary),
                     decoration: InputDecoration(
                       labelText: 'Target Total',
-                      labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                      labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                       filled: true,
-                      fillColor: context.appColors.cardBackground,
+                      fillColor: context.appColors.surfaceColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(color: context.appColors.borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: context.appColors.borderColor),
                       ),
                     ),
                   ),
@@ -338,14 +360,14 @@ void showEditCounterCardDialog(
             const SizedBox(height: 12),
             TextField(
               controller: urlController,
-              style: GoogleFonts.outfit(color: Colors.white),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Resource Link (Optional)',
-                labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 hintText: 'e.g. https://youtube.com/playlist?... or course link',
-                hintStyle: GoogleFonts.outfit(color: Colors.white30),
+                hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 filled: true,
-                fillColor: context.appColors.cardBackground,
+                fillColor: context.appColors.surfaceColor,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.add_circle_rounded, color: accentColor),
                   tooltip: 'Pick from Resource Explorer',
@@ -360,7 +382,11 @@ void showEditCounterCardDialog(
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.appColors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: context.appColors.borderColor),
                 ),
               ),
             ),
@@ -372,7 +398,7 @@ void showEditCounterCardDialog(
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+                  child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
@@ -394,7 +420,7 @@ void showEditCounterCardDialog(
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: Colors.black,
+                    foregroundColor: context.appColors.onAccent,
                     padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),

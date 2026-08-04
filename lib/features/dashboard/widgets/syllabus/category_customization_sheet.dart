@@ -28,7 +28,7 @@ void showSyllabusCategoryOptionsSheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: context.appColors.surfaceColor,
+    backgroundColor: context.appColors.dialogBackground,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -59,17 +59,17 @@ void showSyllabusCategoryOptionsSheet(
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           letterSpacing: 0.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Divider(color: Colors.white10),
+                Divider(color: context.appColors.dividerColor),
                 ListTile(
                   leading: Icon(Icons.add_circle_outline_rounded, color: color),
-                  title: Text('Add Topic', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text('Add Topic', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -79,7 +79,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(Icons.edit_rounded, color: color),
-                  title: Text('Edit Category Details', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text('Edit Category Details', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -89,7 +89,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(Icons.create_new_folder_outlined, color: color),
-                  title: Text('Create New Category', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text('Create New Category', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -99,7 +99,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(Icons.check_circle_outline_rounded, color: color),
-                  title: Text('Mark as Complete', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text('Mark as Complete', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -109,7 +109,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(Icons.replay_rounded, color: color),
-                  title: Text('Reset Stats', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text('Reset Stats', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -119,7 +119,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(isPinned ? Icons.pin_end_rounded : Icons.push_pin_rounded, color: color),
-                  title: Text(isPinned ? 'Unpin Category' : 'Pin Category to Top', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text(isPinned ? 'Unpin Category' : 'Pin Category to Top', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -129,7 +129,7 @@ void showSyllabusCategoryOptionsSheet(
                 ),
                 ListTile(
                   leading: Icon(isWeak ? Icons.warning_rounded : Icons.warning_amber_rounded, color: isWeak ? Colors.amberAccent : color),
-                  title: Text(isWeak ? 'Unmark Category as Weak' : 'Mark Category as Weak Area', style: GoogleFonts.outfit(color: Colors.white)),
+                  title: Text(isWeak ? 'Unmark Category as Weak' : 'Mark Category as Weak Area', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -138,8 +138,8 @@ void showSyllabusCategoryOptionsSheet(
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.swap_vert_rounded, color: Colors.white70),
-                  title: Text('Reorder Topics', style: GoogleFonts.outfit(color: Colors.white)),
+                  leading: Icon(Icons.swap_vert_rounded, color: context.appColors.textSecondary),
+                  title: Text('Reorder Topics', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -148,8 +148,8 @@ void showSyllabusCategoryOptionsSheet(
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.swap_vert_rounded, color: Colors.white70),
-                  title: Text('Reorder Categories', style: GoogleFonts.outfit(color: Colors.white)),
+                  leading: Icon(Icons.swap_vert_rounded, color: context.appColors.textSecondary),
+                  title: Text('Reorder Categories', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -2),
                   onTap: () {
@@ -188,8 +188,11 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        backgroundColor: context.appColors.surfaceColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: context.appColors.dialogBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.appColors.borderColor),
+        ),
         title: Text(
           'EDIT SYLLABUS CATEGORY',
           style: GoogleFonts.jersey15(
@@ -208,15 +211,19 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
               onChanged: (val) {
                 setState(() {});
               },
-              style: GoogleFonts.outfit(color: Colors.white),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Category Name',
-                labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 filled: true,
-                fillColor: context.appColors.cardBackground,
+                fillColor: context.appColors.surfaceColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.appColors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: context.appColors.borderColor),
                 ),
               ),
             ),
@@ -226,7 +233,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
               child: Text(
                 'Short Name: ${getCategoryShortName(nameController.text)}',
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: context.appColors.textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -235,7 +242,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
             const SizedBox(height: 20),
             Text(
               'Accent Color',
-              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -256,7 +263,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
                       color: Color(colorVal),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? Colors.white : Colors.transparent,
+                        color: isSelected ? context.appColors.textPrimary : Colors.transparent,
                         width: 2.5,
                       ),
                       boxShadow: isSelected
@@ -278,7 +285,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+            child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -290,7 +297,7 @@ void showEditSyllabusCategoryDialog(BuildContext context, SyllabusCategory categ
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(selectedColor),
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -306,8 +313,11 @@ void _showDeleteSyllabusCategoryConfirm(BuildContext context, SyllabusCategory c
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'DELETE SYLLABUS CATEGORY?',
         style: GoogleFonts.jersey15(
@@ -319,12 +329,12 @@ void _showDeleteSyllabusCategoryConfirm(BuildContext context, SyllabusCategory c
       ),
       content: Text(
         'Are you sure you want to delete "${category.name}"? This will permanently delete ALL topics and tasks inside it. This cannot be undone.',
-        style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14, height: 1.5),
+        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 14, height: 1.5),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -352,14 +362,17 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        backgroundColor: context.appColors.surfaceColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: context.appColors.dialogBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.appColors.borderColor),
+        ),
         title: Text(
           'NEW SYLLABUS CATEGORY',
           style: GoogleFonts.jersey15(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.appColors.textPrimary,
             letterSpacing: 0.8,
           ),
         ),
@@ -372,15 +385,19 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
               onChanged: (val) {
                 setState(() {});
               },
-              style: GoogleFonts.outfit(color: Colors.white),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Category Name',
-                labelStyle: GoogleFonts.outfit(color: Colors.white60),
+                labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                 filled: true,
-                fillColor: context.appColors.cardBackground,
+                fillColor: context.appColors.surfaceColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.appColors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: context.appColors.borderColor),
                 ),
               ),
             ),
@@ -390,7 +407,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
               child: Text(
                 'Short Name: ${getCategoryShortName(nameController.text)}',
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: context.appColors.textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -399,7 +416,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
             const SizedBox(height: 20),
             Text(
               'Accent Color',
-              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -420,7 +437,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
                       color: Color(colorVal),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? Colors.white : Colors.transparent,
+                        color: isSelected ? context.appColors.textPrimary : Colors.transparent,
                         width: 2.5,
                       ),
                       boxShadow: isSelected
@@ -442,7 +459,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+            child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -454,7 +471,7 @@ void showCreateSyllabusCategoryDialog(BuildContext context, WidgetRef ref) {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(selectedColor),
-              foregroundColor: Colors.black,
+              foregroundColor: context.appColors.onAccent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             child: Text('CREATE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -474,14 +491,17 @@ void showReorderSyllabusCategoriesDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: context.appColors.surfaceColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: context.appColors.dialogBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: context.appColors.borderColor),
+          ),
           title: Text(
             'REORDER CATEGORIES',
             style: GoogleFonts.jersey15(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: context.appColors.textPrimary,
               letterSpacing: 0.8,
             ),
           ),
@@ -501,11 +521,11 @@ void showReorderSyllabusCategoriesDialog(
                     key: ValueKey(cat.id),
                     leading: ReorderableDragStartListener(
                       index: index,
-                      child: const Icon(Icons.drag_handle_rounded, color: Colors.white54),
+                      child: Icon(Icons.drag_handle_rounded, color: context.appColors.textMuted),
                     ),
                     title: Text(
                       cat.name,
-                      style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.w500),
                     ),
                     trailing: Container(
                       width: 16,
@@ -530,7 +550,7 @@ void showReorderSyllabusCategoriesDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+              child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -541,8 +561,8 @@ void showReorderSyllabusCategoriesDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.appColors.cardBackground,
-                foregroundColor: Colors.white,
+                backgroundColor: context.appColors.surfaceColor,
+                foregroundColor: context.appColors.textPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),

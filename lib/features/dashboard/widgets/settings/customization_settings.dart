@@ -35,7 +35,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
 
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Dialog(
@@ -48,9 +48,9 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF131316),
+                color: context.appColors.dialogBackground,
                 borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1.5),
+                border: Border.all(color: context.appColors.borderColor, width: 1.5),
               ),
               padding: const EdgeInsets.all(24.0),
               child: StatefulBuilder(
@@ -72,7 +72,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         Text(
                           'Accent Color',
                           style: GoogleFonts.outfit(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -91,11 +91,11 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             decoration: BoxDecoration(
                               color: isAuto
-                                  ? currentColor.withValues(alpha: 0.2)
-                                  : Colors.white10,
+                                  ? currentColor.withValues(alpha: 0.15)
+                                  : context.appColors.surfaceColor,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: isAuto ? currentColor : Colors.transparent,
+                                color: isAuto ? currentColor : context.appColors.borderColor,
                                 width: 1.5,
                               ),
                             ),
@@ -103,7 +103,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                               children: [
                                 Icon(
                                   Icons.brightness_auto_rounded,
-                                  color: isAuto ? currentColor : Colors.white70,
+                                  color: isAuto ? currentColor : context.appColors.textMuted,
                                   size: 24,
                                 ),
                                 const SizedBox(width: 16),
@@ -111,7 +111,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                   child: Text(
                                     'Auto-rotate accent on launch',
                                     style: GoogleFonts.outfit(
-                                      color: isAuto ? Colors.white : Colors.white70,
+                                      color: isAuto ? context.appColors.textPrimary : context.appColors.textMuted,
                                       fontSize: 14,
                                       fontWeight: isAuto ? FontWeight.bold : FontWeight.normal,
                                     ),
@@ -146,11 +146,11 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                     decoration: BoxDecoration(
                                       color: isDevice
-                                          ? currentColor.withValues(alpha: 0.2)
-                                          : Colors.white10,
+                                          ? currentColor.withValues(alpha: 0.15)
+                                          : context.appColors.surfaceColor,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: isDevice ? currentColor : Colors.transparent,
+                                        color: isDevice ? currentColor : context.appColors.borderColor,
                                         width: 1.5,
                                       ),
                                     ),
@@ -158,7 +158,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                       children: [
                                         Icon(
                                           Icons.phonelink_setup_rounded,
-                                          color: isDevice ? currentColor : Colors.white70,
+                                          color: isDevice ? currentColor : context.appColors.textMuted,
                                           size: 24,
                                         ),
                                         const SizedBox(width: 16),
@@ -166,7 +166,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                           child: Text(
                                             'Use Material You Device Accent',
                                             style: GoogleFonts.outfit(
-                                              color: isDevice ? Colors.white : Colors.white70,
+                                              color: isDevice ? context.appColors.textPrimary : context.appColors.textMuted,
                                               fontSize: 14,
                                               fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
                                             ),
@@ -195,16 +195,16 @@ class CustomizationSettingsSection extends ConsumerWidget {
                             Text(
                               isViewingDarkPool ? 'DARK ACCENTS:' : 'LIGHT ACCENTS:',
                               style: GoogleFonts.outfit(
-                                color: Colors.white54,
+                                color: context.appColors.textMuted,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
                               ),
                             ),
                             SegmentedButton<bool>(
-                              segments: const [
-                                ButtonSegment(value: true, label: Text('Dark', style: TextStyle(fontSize: 11))),
-                                ButtonSegment(value: false, label: Text('Light', style: TextStyle(fontSize: 11))),
+                              segments: [
+                                ButtonSegment(value: true, label: Text('Dark', style: GoogleFonts.outfit(fontSize: 11, color: context.appColors.textPrimary))),
+                                ButtonSegment(value: false, label: Text('Light', style: GoogleFonts.outfit(fontSize: 11, color: context.appColors.textPrimary))),
                               ],
                               selected: {isViewingDarkPool},
                               onSelectionChanged: (val) {
@@ -215,6 +215,12 @@ class CustomizationSettingsSection extends ConsumerWidget {
                               style: ButtonStyle(
                                 visualDensity: VisualDensity.compact,
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                                  if (states.contains(WidgetState.selected)) {
+                                    return context.appColors.surfaceColor;
+                                  }
+                                  return Colors.transparent;
+                                }),
                               ),
                             ),
                           ],
@@ -244,7 +250,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                     color: color,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: isSelected ? Colors.white : Colors.white24,
+                                      color: isSelected ? context.appColors.textPrimary : context.appColors.borderColor,
                                       width: isSelected ? 2.5 : 1.2,
                                     ),
                                     boxShadow: [
@@ -257,9 +263,9 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                     ],
                                   ),
                                   child: isSelected
-                                      ? const Icon(
+                                      ? Icon(
                                           Icons.check_rounded,
-                                          color: Colors.black,
+                                          color: context.appColors.onAccent,
                                           size: 18,
                                           fontWeight: FontWeight.bold,
                                         )
@@ -275,7 +281,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                         Text(
                           'CUSTOM ACCENT PICKER:',
                           style: GoogleFonts.outfit(
-                            color: Colors.white54,
+                            color: context.appColors.textMuted,
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.8,
@@ -290,7 +296,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                               decoration: BoxDecoration(
                                 color: previewColor,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white30, width: 1.5),
+                                border: Border.all(color: context.appColors.borderColor, width: 1.5),
                                 boxShadow: [
                                   BoxShadow(
                                     color: previewColor.withValues(alpha: 0.4),
@@ -304,15 +310,25 @@ class CustomizationSettingsSection extends ConsumerWidget {
                               child: TextField(
                                 controller: hexController,
                                 style: GoogleFonts.orbitron(
-                                  color: Colors.white,
+                                  color: context.appColors.textPrimary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: context.appColors.surfaceColor,
                                   labelText: 'Hex Code',
-                                  labelStyle: const TextStyle(color: Colors.white54, fontSize: 12),
+                                  labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                                   prefixText: '# ',
-                                  prefixStyle: GoogleFonts.orbitron(color: Colors.white70, fontSize: 13),
+                                  prefixStyle: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 13),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: context.appColors.borderColor),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: previewColor),
+                                  ),
                                   isDense: true,
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                 ),
@@ -340,7 +356,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 min: 0,
                                 max: 255,
                                 activeColor: Colors.redAccent,
-                                inactiveColor: Colors.white10,
+                                inactiveColor: context.appColors.borderColor,
                                 onChanged: (val) {
                                   setDialogState(() {
                                     r = val.round();
@@ -360,7 +376,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 min: 0,
                                 max: 255,
                                 activeColor: Colors.greenAccent,
-                                inactiveColor: Colors.white10,
+                                inactiveColor: context.appColors.borderColor,
                                 onChanged: (val) {
                                   setDialogState(() {
                                     g = val.round();
@@ -380,7 +396,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                                 min: 0,
                                 max: 255,
                                 activeColor: Colors.blueAccent,
-                                inactiveColor: Colors.white10,
+                                inactiveColor: context.appColors.borderColor,
                                 onChanged: (val) {
                                   setDialogState(() {
                                     b = val.round();
@@ -400,7 +416,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                           },
                           style: FilledButton.styleFrom(
                             backgroundColor: previewColor,
-                            foregroundColor: Colors.black,
+                            foregroundColor: context.appColors.onAccent,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
@@ -704,7 +720,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                   value: type,
                   child: Text(
                     name,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.appColors.textPrimary, fontSize: 14),
                   ),
                 );
               }).toList(),
@@ -716,7 +732,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.smart_button_rounded, color: currentColor),
           title: Text('Resume Button Style', style: titleStyle),
@@ -746,7 +762,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                   value: type,
                   child: Text(
                     name,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.appColors.textPrimary, fontSize: 14),
                   ),
                 );
               }).toList(),
@@ -758,7 +774,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.font_download_rounded, color: currentColor),
           title: Text('Checklist Typography', style: titleStyle),
@@ -802,7 +818,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                   value: font,
                   child: Text(
                     label,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.appColors.textPrimary, fontSize: 14),
                   ),
                 );
               }).toList(),
@@ -814,7 +830,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.grid_view_rounded, color: currentColor),
           title: Text('More Menu Card Style', style: titleStyle),
@@ -849,7 +865,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
                   value: style,
                   child: Text(
                     label,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.appColors.textPrimary, fontSize: 14),
                   ),
                 );
               }).toList(),
@@ -861,7 +877,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         accentColorContent,
         const Divider(color: Colors.white10, height: 1),
         fontSizeDirectContent,

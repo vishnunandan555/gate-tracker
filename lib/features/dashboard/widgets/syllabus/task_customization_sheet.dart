@@ -12,8 +12,11 @@ void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color 
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'ADD TASK TO ${topic.name.toUpperCase()}',
         style: GoogleFonts.jersey15(
@@ -26,22 +29,26 @@ void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color 
       content: TextField(
         controller: controller,
         autofocus: true,
-        style: GoogleFonts.outfit(color: Colors.white),
+        style: GoogleFonts.outfit(color: context.appColors.textPrimary),
         decoration: InputDecoration(
           hintText: 'e.g. PYQs (2015-2024)',
-          hintStyle: GoogleFonts.outfit(color: Colors.white38),
+          hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
           filled: true,
-          fillColor: context.appColors.cardBackground,
+          fillColor: context.appColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: context.appColors.borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: context.appColors.borderColor),
           ),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -53,7 +60,7 @@ void showAddSyllabusTaskDialog(BuildContext context, SyllabusTopic topic, Color 
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: Colors.black,
+            foregroundColor: context.appColors.onAccent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           child: Text('ADD', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -72,8 +79,11 @@ void showReorderSyllabusTasksDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: context.appColors.surfaceColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: context.appColors.dialogBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: context.appColors.borderColor),
+          ),
           title: Text(
             'REORDER TASKS (${topic.name.toUpperCase()})',
             style: GoogleFonts.jersey15(
@@ -99,11 +109,11 @@ void showReorderSyllabusTasksDialog(
                     key: ValueKey(task.id),
                     leading: ReorderableDragStartListener(
                       index: index,
-                      child: const Icon(Icons.drag_handle_rounded, color: Colors.white54),
+                      child: Icon(Icons.drag_handle_rounded, color: context.appColors.textMuted),
                     ),
                     title: Text(
                       task.name,
-                      style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.w500),
                     ),
                   );
                 },
@@ -123,7 +133,7 @@ void showReorderSyllabusTasksDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+              child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -134,8 +144,8 @@ void showReorderSyllabusTasksDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.appColors.cardBackground,
-                foregroundColor: Colors.white,
+                backgroundColor: context.appColors.surfaceColor,
+                foregroundColor: context.appColors.textPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -153,52 +163,61 @@ void showRenameSyllabusTaskDialog(BuildContext context, SyllabusTask task, Color
 
   showDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: Text(
-        'RENAME TASK',
-        style: GoogleFonts.jersey15(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: accentColor,
-          letterSpacing: 0.8,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) => AlertDialog(
+        backgroundColor: context.appColors.dialogBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.appColors.borderColor),
         ),
-      ),
-      content: TextField(
-        controller: controller,
-        autofocus: true,
-        style: GoogleFonts.outfit(color: Colors.white),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: context.appColors.cardBackground,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+        title: Text(
+          'RENAME TASK',
+          style: GoogleFonts.jersey15(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: accentColor,
+            letterSpacing: 0.8,
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final name = controller.text.trim();
-            if (name.isNotEmpty) {
-              ref.read(syllabusControllerProvider.notifier).renameTask(task.id, name, task.isCompleted);
-              Navigator.pop(context);
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: accentColor,
-            foregroundColor: Colors.black,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: context.appColors.surfaceColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: context.appColors.borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: context.appColors.borderColor),
+            ),
           ),
-          child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         ),
-      ],
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                ref.read(syllabusControllerProvider.notifier).renameTask(task.id, name, task.isCompleted);
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accentColor,
+              foregroundColor: context.appColors.onAccent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -208,8 +227,11 @@ void showDeleteSyllabusTaskConfirm(BuildContext context, SyllabusTask task, Colo
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'DELETE TASK?',
         style: GoogleFonts.jersey15(
@@ -221,12 +243,12 @@ void showDeleteSyllabusTaskConfirm(BuildContext context, SyllabusTask task, Colo
       ),
       content: Text(
         'Are you sure you want to delete "${task.name}"?',
-        style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14, height: 1.5),
+        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 14, height: 1.5),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {

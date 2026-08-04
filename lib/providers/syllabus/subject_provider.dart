@@ -72,7 +72,14 @@ class OverallProgressColorNotifier extends Notifier<Color> {
       return _frozenColor!;
     }
 
-    _autoColor ??= darkPool[math.Random().nextInt(darkPool.length)];
+    final activeThemeMode = ref.watch(activeThemeModeProvider);
+    final isDark = activeThemeMode == ThemeMode.dark;
+    final currentPool = isDark ? darkPool : lightPool;
+
+    if (_autoColor == null || !currentPool.any((c) => c.toARGB32() == _autoColor!.toARGB32())) {
+      _autoColor = currentPool[math.Random().nextInt(currentPool.length)];
+    }
+
     return _autoColor!;
   }
 

@@ -242,7 +242,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                     }
                   },
                   onLongPress: () {
-                    _showTaskContextMenu(context, taskTapDetails, task, ref);
+                    _showTaskContextMenu(context, taskTapDetails, task, ref, categoryColor);
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: context.s(14) * overallScale, vertical: context.s(8) * overallScale),
@@ -458,8 +458,11 @@ class SyllabusTopicCard extends ConsumerWidget {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
-      color: const Color(0xFF1E1E22),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       items: topic.isCounter
           ? [
               PopupMenuItem(
@@ -469,7 +472,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.edit_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Edit Card', style: TextStyle(color: Colors.white70)),
+                    Text('Edit Card', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -480,7 +483,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(noteIcon, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    Text(noteLabel, style: const TextStyle(color: Colors.white70)),
+                    Text(noteLabel, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -491,7 +494,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(isWeak ? Icons.warning_rounded : Icons.warning_amber_rounded, color: isWeak ? Colors.amberAccent : categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    Text(isWeak ? 'Unmark as Weak' : 'Mark as Weak Area', style: const TextStyle(color: Colors.white70)),
+                    Text(isWeak ? 'Unmark as Weak' : 'Mark as Weak Area', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -502,7 +505,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.check_circle_outline_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Mark as Complete', style: TextStyle(color: Colors.white70)),
+                    Text('Mark as Complete', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -513,7 +516,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.replay_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Reset Stats', style: TextStyle(color: Colors.white70)),
+                    Text('Reset Stats', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -524,7 +527,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
                     const SizedBox(width: 10),
-                    Text('Delete Card', style: TextStyle(color: Colors.redAccent)),
+                    Text('Delete Card', style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 13)),
                   ],
                 ),
               ),
@@ -537,7 +540,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.edit_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Rename Topic', style: TextStyle(color: Colors.white70)),
+                    Text('Rename Topic', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -548,7 +551,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(noteIcon, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    Text(noteLabel, style: const TextStyle(color: Colors.white70)),
+                    Text(noteLabel, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -559,7 +562,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.add_circle_outline_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Add Task', style: TextStyle(color: Colors.white70)),
+                    Text('Add Task', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -570,7 +573,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.check_circle_outline_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Mark as Complete', style: TextStyle(color: Colors.white70)),
+                    Text('Mark as Complete', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -581,7 +584,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.replay_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Reset Stats', style: TextStyle(color: Colors.white70)),
+                    Text('Reset Stats', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -592,7 +595,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.swap_vert_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Reorder Tasks', style: TextStyle(color: Colors.white70)),
+                    Text('Reorder Tasks', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -603,7 +606,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.slow_motion_video_rounded, color: categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    const Text('Convert to Counter Card', style: TextStyle(color: Colors.white70)),
+                    Text('Convert to Counter Card', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -614,7 +617,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     Icon(isWeak ? Icons.warning_rounded : Icons.warning_amber_rounded, color: isWeak ? Colors.amberAccent : categoryColor, size: 18),
                     const SizedBox(width: 10),
-                    Text(isWeak ? 'Unmark as Weak' : 'Mark as Weak Area', style: const TextStyle(color: Colors.white70)),
+                    Text(isWeak ? 'Unmark as Weak' : 'Mark as Weak Area', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
                   ],
                 ),
               ),
@@ -625,7 +628,7 @@ class SyllabusTopicCard extends ConsumerWidget {
                   children: [
                     const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
                     const SizedBox(width: 10),
-                    Text('Delete Topic', style: TextStyle(color: Colors.redAccent)),
+                    Text('Delete Topic', style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 13)),
                   ],
                 ),
               ),
@@ -656,13 +659,16 @@ class SyllabusTopicCard extends ConsumerWidget {
     });
   }
 
-  void _showTaskContextMenu(BuildContext context, TapDownDetails details, SyllabusTask task, WidgetRef ref) {
+  void _showTaskContextMenu(BuildContext context, TapDownDetails details, SyllabusTask task, WidgetRef ref, Color categoryColor) {
     final position = details.globalPosition;
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
-      color: const Color(0xFF1E1E22),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       items: [
         PopupMenuItem(
           value: 'rename',
@@ -671,7 +677,7 @@ class SyllabusTopicCard extends ConsumerWidget {
             children: [
               Icon(Icons.edit_rounded, color: categoryColor, size: 18),
               const SizedBox(width: 10),
-              const Text('Rename Task', style: TextStyle(color: Colors.white70)),
+              Text('Rename Task', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13)),
             ],
           ),
         ),
@@ -682,7 +688,7 @@ class SyllabusTopicCard extends ConsumerWidget {
             children: [
               const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
               const SizedBox(width: 10),
-              Text('Delete Task', style: TextStyle(color: Colors.redAccent)),
+              Text('Delete Task', style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 13)),
             ],
           ),
         ),

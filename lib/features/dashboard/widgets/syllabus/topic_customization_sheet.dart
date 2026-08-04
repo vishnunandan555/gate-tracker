@@ -14,8 +14,11 @@ void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category,
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'ADD TOPIC TO ${category.name.toUpperCase()}',
         style: GoogleFonts.jersey15(
@@ -28,22 +31,26 @@ void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category,
       content: TextField(
         controller: controller,
         autofocus: true,
-        style: GoogleFonts.outfit(color: Colors.white),
+        style: GoogleFonts.outfit(color: context.appColors.textPrimary),
         decoration: InputDecoration(
           hintText: 'e.g. Linear Algebra',
-          hintStyle: GoogleFonts.outfit(color: Colors.white38),
+          hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
           filled: true,
-          fillColor: context.appColors.cardBackground,
+          fillColor: context.appColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: context.appColors.borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: context.appColors.borderColor),
           ),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -55,7 +62,7 @@ void showAddSyllabusTopicDialog(BuildContext context, SyllabusCategory category,
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: Colors.black,
+            foregroundColor: context.appColors.onAccent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           child: Text('ADD', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -74,8 +81,11 @@ void showReorderSyllabusTopicsDialog(
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
-          backgroundColor: context.appColors.surfaceColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: context.appColors.dialogBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: context.appColors.borderColor),
+          ),
           title: Text(
             'REORDER TOPICS (${category.name.toUpperCase()})',
             style: GoogleFonts.jersey15(
@@ -101,11 +111,11 @@ void showReorderSyllabusTopicsDialog(
                     key: ValueKey(topic.id),
                     leading: ReorderableDragStartListener(
                       index: index,
-                      child: const Icon(Icons.drag_handle_rounded, color: Colors.white54),
+                      child: Icon(Icons.drag_handle_rounded, color: context.appColors.textMuted),
                     ),
                     title: Text(
                       topic.name,
-                      style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.w500),
                     ),
                   );
                 },
@@ -125,7 +135,7 @@ void showReorderSyllabusTopicsDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+              child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -136,8 +146,8 @@ void showReorderSyllabusTopicsDialog(
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.appColors.cardBackground,
-                foregroundColor: Colors.white,
+                backgroundColor: context.appColors.surfaceColor,
+                foregroundColor: context.appColors.textPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -156,8 +166,11 @@ void showRenameSyllabusTopicDialog(BuildContext context, SyllabusTopic topic, Co
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'RENAME TOPIC',
         style: GoogleFonts.jersey15(
@@ -170,20 +183,24 @@ void showRenameSyllabusTopicDialog(BuildContext context, SyllabusTopic topic, Co
       content: TextField(
         controller: controller,
         autofocus: true,
-        style: GoogleFonts.outfit(color: Colors.white),
+        style: GoogleFonts.outfit(color: context.appColors.textPrimary),
         decoration: InputDecoration(
           filled: true,
-          fillColor: context.appColors.cardBackground,
+          fillColor: context.appColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: context.appColors.borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: context.appColors.borderColor),
           ),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -195,7 +212,7 @@ void showRenameSyllabusTopicDialog(BuildContext context, SyllabusTopic topic, Co
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: Colors.black,
+            foregroundColor: context.appColors.onAccent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           child: Text('SAVE', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -210,8 +227,11 @@ void showDeleteSyllabusTopicConfirm(BuildContext context, SyllabusTopic topic, C
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Text(
         'DELETE TOPIC?',
         style: GoogleFonts.jersey15(
@@ -223,12 +243,12 @@ void showDeleteSyllabusTopicConfirm(BuildContext context, SyllabusTopic topic, C
       ),
       content: Text(
         'Are you sure you want to delete "${topic.name}"? All subtasks inside this topic will also be permanently deleted.',
-        style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14, height: 1.5),
+        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 14, height: 1.5),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+          child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -255,8 +275,11 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: context.appColors.dialogBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: context.appColors.borderColor),
+      ),
       title: Row(
         children: [
           Icon(Icons.edit_note_rounded, color: accentColor, size: 22),
@@ -278,21 +301,25 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
         children: [
           Text(
             'Attach custom study notes, formulas, or key reminders for "${topic.name}".',
-            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+            style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.4),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: noteController,
             maxLines: 4,
-            style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'e.g., Focus on Eigenvalues & Cayley-Hamilton Theorem. See GateOverflow Q42.',
-              hintStyle: GoogleFonts.outfit(color: Colors.white30, fontSize: 12),
+              hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
               filled: true,
-              fillColor: context.appColors.cardBackground,
+              fillColor: context.appColors.surfaceColor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
+                borderSide: BorderSide(color: context.appColors.borderColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: context.appColors.borderColor),
               ),
             ),
           ),
@@ -321,7 +348,7 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('CANCEL', style: GoogleFonts.outfit(color: Colors.white60, fontWeight: FontWeight.bold)),
+                  child: Text('CANCEL', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
@@ -333,7 +360,7 @@ void showEditTopicNoteDialog(BuildContext context, SyllabusTopic topic, Color ac
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: Colors.black,
+                    foregroundColor: context.appColors.onAccent,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
                   ),
