@@ -37,7 +37,7 @@ GATEletics maintains two distinct release tracks on Google Play Store and GitHub
 | Track | Target Audience | Version Format | Status Badge | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | 🟢 **Stable Release** | General Users | Proper Releases (e.g. `v1.3.0`) | [![Stable Release](https://img.shields.io/github/v/release/vishnunandan555/gateletics?label=Stable%20Release&logo=googleplay&color=00C853)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Fully tested, stable releases available on Google Play Store production channel & GitHub. |
-| 🟠 **Beta Version** | Early Testers | Beta Builds (e.g. `v1.3.0-beta.5`) | [![Beta Version](https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta%20Version&logo=googleplay&color=FF9100)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Early access builds in Google Play Open Testing with latest preview features & early patches. |
+| 🟠 **Beta Version** | Early Testers | Beta Builds (e.g. `v1.3.0-beta.6`) | [![Beta Version](https://img.shields.io/github/v/release/vishnunandan555/gateletics?include_prereleases&label=Beta%20Version&logo=googleplay&color=FF9100)](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) | Early access builds in Google Play Open Testing with latest preview features & early patches. |
 
 > **Note:** The status badges above dynamically reflect the latest version published to each track. Whichever version is newest (e.g., a new `v1.3.1-beta.2` build vs stable `v1.3.1`) will automatically update in real-time.
 
@@ -95,7 +95,7 @@ GATEletics is available natively across Desktop, Mobile, and Web platforms:
 | :--- | :--- | :--- | :--- |
 | **🌐 Web App** | [gateletics.vercel.app](https://gateletics.vercel.app/) | Live PWA | Full PWA web application, runs offline in any browser |
 | **📱 Android (Stable Release)** | [Google Play Store](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Stable APK](https://github.com/vishnunandan555/gateletics/releases) | Stable Release (`v1.3.0`) | Official Google Play Store production release |
-| **🧪 Android (Beta Version)** | [Play Store Open Testing](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Beta APK](https://github.com/vishnunandan555/gateletics/releases) | Beta Version (`v1.3.0-beta.5`) | Google Play Open Testing channel for pre-release testing |
+| **🧪 Android (Beta Version)** | [Play Store Open Testing](https://play.google.com/store/apps/details?id=com.vishnunandan.gateletics) • [Beta APK](https://github.com/vishnunandan555/gateletics/releases) | Beta Version (`v1.3.0-beta.6`) | Google Play Open Testing channel for pre-release testing |
 | **🪟 Windows** | [Download Setup / ZIP](https://github.com/vishnunandan555/gateletics/releases) | Desktop Installer | Windows Setup Installer (`-setup.exe`) & Portable ZIP (`.zip`) |
 | **🐧 Linux** | [Download AppImage / DEB](https://github.com/vishnunandan555/gateletics/releases) | Linux Packages | Standalone AppImage (`.AppImage`), Debian package (`.deb`), & Tarball (`.tar.gz`) |
 
