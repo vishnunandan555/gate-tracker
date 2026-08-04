@@ -433,7 +433,7 @@ class _HeroProfileCard extends ConsumerWidget {
               _PhotoOption(
                 icon: Icons.account_circle_rounded,
                 label: 'Use Google Photo',
-                color: Colors.cyanAccent,
+                color: accentColor,
                 onTap: () async {
                   Navigator.pop(ctx);
                   await ref

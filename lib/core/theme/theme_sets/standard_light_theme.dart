@@ -1,6 +1,6 @@
 import '../models/theme_set_model.dart';
 
-/// Base Fail-Safe Standard Light Theme Specification (Paper White)
+/// Base Fail-Safe Standard Light Theme Specification
 const ThemeSetModel standardLightTheme = ThemeSetModel(
   id: 'paper_light',
   name: 'Standard Light',

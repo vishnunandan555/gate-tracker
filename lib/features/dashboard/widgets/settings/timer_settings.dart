@@ -27,7 +27,7 @@ class TimerSettingsSection extends ConsumerWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'Daily Study Goal',
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -39,7 +39,7 @@ class TimerSettingsSection extends ConsumerWidget {
                 title: Text(
                   '$label${mins == 120 ? ' (default)' : ''}',
                   style: GoogleFonts.outfit(
-                    color: isSelected ? accentColor : Colors.white70,
+                    color: isSelected ? accentColor : context.appColors.textSecondary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -65,7 +65,7 @@ class TimerSettingsSection extends ConsumerWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'Daily Check-in Goal',
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -75,7 +75,7 @@ class TimerSettingsSection extends ConsumerWidget {
                 title: Text(
                   '$mins minutes${mins == 15 ? ' (default)' : ''}',
                   style: GoogleFonts.outfit(
-                    color: isSelected ? accentColor : Colors.white70,
+                    color: isSelected ? accentColor : context.appColors.textSecondary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -130,7 +130,7 @@ class TimerSettingsSection extends ConsumerWidget {
           ),
           onTap: () => _showFocusGoalDialog(context, ref, focusGoalMins, accentColor),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.task_alt_rounded, color: accentColor),
           title: Text('Daily Check-in Goal', style: titleStyle),
@@ -144,7 +144,7 @@ class TimerSettingsSection extends ConsumerWidget {
           ),
           onTap: () => _showCheckInGoalDialog(context, ref, checkInMins, accentColor),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Icon(Icons.alarm_rounded, color: accentColor),
           title: Text('Overnight Rollover Hour', style: titleStyle),
@@ -165,11 +165,11 @@ class TimerSettingsSection extends ConsumerWidget {
                 children: [
                   SimpleDialogOption(
                     onPressed: () => Navigator.pop(ctx, StudyDayRollover.midnight),
-                    child: Text('00:00 (12:00 AM)', style: TextStyle(color: rollover == StudyDayRollover.midnight ? accentColor : Colors.white)),
+                    child: Text('00:00 (12:00 AM)', style: TextStyle(color: rollover == StudyDayRollover.midnight ? accentColor : context.appColors.textPrimary)),
                   ),
                   SimpleDialogOption(
                     onPressed: () => Navigator.pop(ctx, StudyDayRollover.overnight),
-                    child: Text('04:00 AM (default)', style: TextStyle(color: rollover == StudyDayRollover.overnight ? accentColor : Colors.white)),
+                    child: Text('04:00 AM (default)', style: TextStyle(color: rollover == StudyDayRollover.overnight ? accentColor : context.appColors.textPrimary)),
                   ),
                 ],
               ),
@@ -179,7 +179,7 @@ class TimerSettingsSection extends ConsumerWidget {
             }
           },
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         Builder(
           builder: (context) {
             final hapticState = ref.watch(hapticSettingsProvider);

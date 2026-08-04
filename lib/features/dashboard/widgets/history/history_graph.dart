@@ -262,7 +262,7 @@ class WaveAreaChartPainter extends CustomPainter {
           text: TextSpan(
             text: tooltipText,
             style: GoogleFonts.outfit(
-              color: Colors.black,
+              color: accentColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 10.0,
             ),
@@ -678,7 +678,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
           decoration: BoxDecoration(
             color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(16)),
-            border: Border.all(color: Colors.white.withAlpha(8)),
+            border: Border.all(color: context.appColors.borderColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -728,13 +728,13 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: context.s(8), vertical: context.s(4)),
                               decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(12),
+                                color: context.appColors.surfaceColor,
                                 borderRadius: BorderRadius.circular(context.s(6)),
                               ),
                               child: Text(
                                 "0%",
                                 style: GoogleFonts.outfit(
-                                  color: Colors.white70,
+                                  color: context.appColors.textSecondary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: context.s(11),
                                 ),
@@ -930,7 +930,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(8)),
-        border: Border.all(color: Colors.white.withAlpha(6)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       padding: EdgeInsets.all(context.s(2)),
       child: Stack(
@@ -1015,17 +1015,17 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
             width: context.s(32),
             height: context.s(32),
             decoration: BoxDecoration(
-              color: canGoPrev ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+              color: canGoPrev ? context.appColors.surfaceColor : context.appColors.cardBackground,
               shape: BoxShape.circle,
               border: Border.all(
-                color: canGoPrev ? Colors.white.withAlpha(8) : Colors.transparent,
+                color: canGoPrev ? context.appColors.borderColor : Colors.transparent,
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.chevron_left_rounded,
               size: context.s(20),
-              color: canGoPrev ? accentColor : Colors.white24,
+              color: canGoPrev ? accentColor : context.appColors.textMuted,
             ),
           ),
         ),
@@ -1035,9 +1035,9 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(6)),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(8),
+              color: context.appColors.surfaceColor,
               borderRadius: BorderRadius.circular(context.s(8)),
-              border: Border.all(color: Colors.white.withAlpha(8)),
+              border: Border.all(color: context.appColors.borderColor),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1072,17 +1072,17 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
             width: context.s(32),
             height: context.s(32),
             decoration: BoxDecoration(
-              color: canGoNext ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+              color: canGoNext ? context.appColors.surfaceColor : context.appColors.cardBackground,
               shape: BoxShape.circle,
               border: Border.all(
-                color: canGoNext ? Colors.white.withAlpha(8) : Colors.transparent,
+                color: canGoNext ? context.appColors.borderColor : Colors.transparent,
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.chevron_right_rounded,
               size: context.s(20),
-              color: canGoNext ? accentColor : Colors.white24,
+              color: canGoNext ? accentColor : context.appColors.textMuted,
             ),
           ),
         ),
@@ -1210,10 +1210,10 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: const Color(0xFF131316),
+              backgroundColor: context.appColors.dialogBackground,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(context.s(16)),
-                side: BorderSide(color: Colors.white.withAlpha(8)),
+                side: BorderSide(color: context.appColors.borderColor),
               ),
               title: Text(
                 'Jump to Period',
@@ -1255,11 +1255,11 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Month:', style: TextStyle(color: Colors.white70, fontSize: context.s(12))),
+                        Text('Month:', style: TextStyle(color: context.appColors.textSecondary, fontSize: context.s(12))),
                         DropdownButton<int>(
                           value: selectedM,
-                          dropdownColor: const Color(0xFF1E1E22),
-                          style: TextStyle(color: Colors.white, fontSize: context.s(12)),
+                          dropdownColor: context.appColors.surfaceColor,
+                          style: TextStyle(color: context.appColors.textPrimary, fontSize: context.s(12)),
                           onChanged: (m) {
                             if (m != null) {
                               setDialogState(() {
@@ -1286,11 +1286,11 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Week:', style: TextStyle(color: Colors.white70, fontSize: context.s(12))),
+                        Text('Week:', style: TextStyle(color: context.appColors.textSecondary, fontSize: context.s(12))),
                         DropdownButton<int>(
                           value: selectedW,
-                          dropdownColor: const Color(0xFF1E1E22),
-                          style: TextStyle(color: Colors.white, fontSize: context.s(12)),
+                          dropdownColor: context.appColors.surfaceColor,
+                          style: TextStyle(color: context.appColors.textPrimary, fontSize: context.s(12)),
                           onChanged: (w) {
                             if (w != null) {
                               setDialogState(() {
@@ -1312,7 +1312,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
               ),
               actions: [
                 TextButton(
-                  child: Text('Cancel', style: TextStyle(color: Colors.white30, fontSize: context.s(12))),
+                  child: Text('Cancel', style: TextStyle(color: context.appColors.textMuted, fontSize: context.s(12))),
                   onPressed: () => Navigator.pop(dialogContext),
                 ),
                 TextButton(

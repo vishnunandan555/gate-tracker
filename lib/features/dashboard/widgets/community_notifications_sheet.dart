@@ -36,7 +36,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: context.appColors.borderColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -76,7 +76,7 @@ void showCommunityNotificationsSheet(BuildContext context, WidgetRef ref) {
                     ),
                 ],
               ),
-              const Divider(color: Colors.white10),
+              Divider(color: context.appColors.dividerColor),
               const SizedBox(height: 8),
               Expanded(
                 child: notifications.isEmpty

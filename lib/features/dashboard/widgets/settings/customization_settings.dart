@@ -471,7 +471,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
         decoration: BoxDecoration(
           color: currentColor,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white30, width: 1.5),
+          border: Border.all(color: context.appColors.borderColor, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: currentColor.withValues(alpha: 0.4),

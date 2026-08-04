@@ -53,7 +53,7 @@ class AboutScreen extends ConsumerWidget {
                     height: 72,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      border: Border.all(color: context.appColors.borderColor),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(19),
@@ -61,10 +61,10 @@ class AboutScreen extends ConsumerWidget {
                         'assets/icon.png',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
-                          color: Colors.cyanAccent.withValues(alpha: 0.1),
-                          child: const Icon(
+                          color: context.appColors.primaryAccent.withValues(alpha: 0.1),
+                          child: Icon(
                             Icons.school_rounded,
-                            color: Colors.cyanAccent,
+                            color: context.appColors.primaryAccent,
                             size: 36,
                           ),
                         ),

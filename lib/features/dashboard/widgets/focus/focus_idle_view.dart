@@ -191,7 +191,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                               children: [
                                 Container(
                                   height: context.s(32),
-                                  color: Colors.white.withAlpha(8),
+                                  color: context.appColors.surfaceColor,
                                 ),
                                 FractionallySizedBox(
                                   widthFactor: progressPercent,

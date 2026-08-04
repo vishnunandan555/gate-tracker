@@ -60,7 +60,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
         ? 0.0
         : min(1.0, sessionState.elapsedSeconds / sessionState.currentTargetSeconds);
 
-    final ringColor = isBreak ? Colors.white : accentColor;
+    final ringColor = isBreak ? context.appColors.textPrimary : accentColor;
 
     final now = DateTime.now();
     final hour = now.hour;
@@ -475,7 +475,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
 
     final result = await showModalBottomSheet<bool>(
       context: context,
-      backgroundColor: const Color(0xFF16161A),
+      backgroundColor: context.appColors.dialogBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -491,7 +491,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                   width: 48,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: context.appColors.borderColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -502,7 +502,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -511,7 +511,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                 "All your accrued focus progress and accomplishments will be saved.",
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: Colors.white70,
+                  color: context.appColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -526,11 +526,11 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        side: const BorderSide(color: Colors.white24),
+                        side: BorderSide(color: context.appColors.borderColor),
                       ),
                       child: Text(
                         "No, Continue",
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

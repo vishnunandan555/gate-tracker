@@ -30,7 +30,7 @@ The Gateletics Theme Engine is a robust, modular, and fully deterministic design
    └───────────┬───────────┘                       └───────────┬───────────┘
                │                                               │
                ▼                                               ▼
-ThemeData (Paper Light Set)                     ThemeData (Zinc Dark Set)
+ThemeData (Standard Light Set)                  ThemeData (Standard Dark Set)
 + Light Accent Pool                             + Dark Accent Pool
                │                                               │
                └───────────────────────┬───────────────────────┘
@@ -76,8 +76,8 @@ lib/core/theme/
 │   └── accent_pool_model.dart         # Dual accent pools, Hex parser, & contrast safeguard
 ├── theme_sets/
 │   ├── custom_theme_template.dart      # Developer custom theme file template
-│   ├── standard_dark_theme.dart        # Base fail-safe Dark theme (Zinc)
-│   └── standard_light_theme.dart       # Base fail-safe Light theme (Paper)
+│   ├── standard_dark_theme.dart        # Base fail-safe Dark theme
+│   └── standard_light_theme.dart       # Base fail-safe Light theme
 ├── presets/
 │   └── handcrafted_presets.dart        # Central ThemeRegistry (Standard Dark & Light)
 ├── app_theme.dart                     # ThemeData builder & System UI status bar auto-sync
@@ -114,7 +114,7 @@ UI components derive their background and contrast colors based on an explicit 4
  └────────────────────────────────────────────────────────────────────────┘
 ```
 
-| Tier / Element | Property Name | Description & Purpose | Standard Dark (`zinc_dark`) | Standard Light (`paper_light`) |
+| Tier / Element | Property Name | Description & Purpose | Standard Dark | Standard Light |
 | :--- | :--- | :--- | :--- | :--- |
 | **Canvas** | `scaffoldBackground` | Main app background, drawer, root view canvas | `0xFF09090B` | `0xFFF8FAFC` |
 | **L1 Surface** | `cardBackground` | Main content cards, stats cards, syllabus tiles | `0xFF131316` | `0xFFFFFFFF` |
@@ -212,3 +212,14 @@ In any Flutter widget, access active design system colors through `context.appCo
 - `appColors.primaryAccent` — Active Accent Color
 - `appColors.onAccent` — Text / Icon Color on top of Accent
 - `appColors.isLight` — Boolean indicating if active theme is Light Mode
+
+---
+
+## 8. Full Codebase Theme Engine Migration Completed
+
+A comprehensive, 100% project-wide theme engine migration was executed across all UI screens, widgets, custom canvas painters, dialogs, and navigation shells.
+
+### Key Refactoring Highlights:
+1. **0 Hardcoded Color Leaks:** All occurrences of hardcoded `Colors.white`, `Colors.white70`, dark container fills (`#141824`, `#16161A`), and fixed cyan accents (`Colors.cyanAccent`) were refactored to `context.appColors` tokens.
+2. **Dynamic Light & Dark Surface Tiering:** Canvas, card surfaces, interactive text fields, and floating dialogs dynamically adapt their elevation and background fills between Light Mode and Dark Mode.
+3. **Luminance-Based Contrast Safeguards:** Custom canvas painters and accent pill chips dynamically check `accentColor.computeLuminance() > 0.5` or use `context.appColors.onAccent` to guarantee legible text on any user-selected accent color.

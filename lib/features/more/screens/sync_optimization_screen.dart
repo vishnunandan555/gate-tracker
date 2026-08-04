@@ -846,7 +846,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
     final exportBackup = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF141824),
+        backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -897,7 +897,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         builder: (dialogCtx, setDialogState) {
           updateDialog = setDialogState;
           return AlertDialog(
-            backgroundColor: const Color(0xFF141824),
+            backgroundColor: context.appColors.dialogBackground,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Row(
               children: [

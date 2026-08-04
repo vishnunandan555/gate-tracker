@@ -142,7 +142,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 title: "Merge Progress (Recommended)",
                 subtitle: "Combine local and cloud progress (no data lost)",
                 icon: Icons.merge_type_rounded,
-                color: Colors.cyanAccent,
+                color: context.appColors.primaryAccent,
                 onTap: () async {
                   Navigator.pop(ctx);
                   setState(() => _isLoading = true);
@@ -173,7 +173,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 title: "Use Cloud Backup",
                 subtitle: "Overwrite local data with your cloud backup",
                 icon: Icons.cloud_download_rounded,
-                color: Colors.greenAccent,
+                color: context.appColors.primaryAccent,
                 onTap: () async {
                   Navigator.pop(ctx);
                   setState(() => _isLoading = true);
@@ -204,7 +204,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 title: "Keep Local Progress",
                 subtitle: "Overwrite cloud data with your local progress",
                 icon: Icons.cloud_upload_rounded,
-                color: Colors.orangeAccent,
+                color: context.appColors.primaryAccent,
                 onTap: () async {
                   Navigator.pop(ctx);
                   setState(() => _isLoading = true);
@@ -304,7 +304,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
                 'No (Clear History)',
-                style: GoogleFonts.outfit(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontWeight: FontWeight.bold),
               ),
             ),
             FilledButton(
@@ -1203,10 +1203,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: !_usePreset ? Colors.amber.withValues(alpha: 0.08) : context.appColors.cardBackground,
+              color: !_usePreset ? context.appColors.primaryAccent.withValues(alpha: 0.08) : context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: !_usePreset ? Colors.amberAccent : context.appColors.borderColor,
+                color: !_usePreset ? context.appColors.primaryAccent : context.appColors.borderColor,
                 width: !_usePreset ? 1.5 : 1.0,
               ),
             ),
@@ -1216,10 +1216,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: !_usePreset ? Colors.amber.withValues(alpha: 0.15) : context.appColors.surfaceColor,
+                    color: !_usePreset ? context.appColors.primaryAccent.withValues(alpha: 0.15) : context.appColors.surfaceColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.dashboard_customize_rounded, color: !_usePreset ? Colors.amberAccent : context.appColors.textSecondary, size: 24),
+                  child: Icon(Icons.dashboard_customize_rounded, color: !_usePreset ? context.appColors.primaryAccent : context.appColors.textSecondary, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

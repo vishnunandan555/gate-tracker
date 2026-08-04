@@ -1,6 +1,6 @@
 import '../models/theme_set_model.dart';
 
-/// Base Fail-Safe Standard Dark Theme Specification (Zinc Charcoal)
+/// Base Fail-Safe Standard Dark Theme Specification
 /// Preserves exact perfected surface layer values:
 /// Scaffold Canvas: 0xFF09090B
 /// L1 Card Surface: 0xFF131316

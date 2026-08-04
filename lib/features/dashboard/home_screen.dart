@@ -152,9 +152,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                                   Widget iconWidget;
                                   if (isNoticeBoard) {
-                                    iconWidget = const Icon(
+                                    iconWidget = Icon(
                                       Icons.close_rounded,
-                                      color: Colors.white60,
+                                      color: context.appColors.textSecondary,
                                       size: 24,
                                     );
                                   } else if (activeTasks.isNotEmpty) {
@@ -172,7 +172,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           child: Text(
                                             "${activeTasks.length}",
                                             style: GoogleFonts.orbitron(
-                                              color: Colors.black,
+                                              color: context.appColors.onAccent,
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -203,7 +203,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           child: Text(
                                             unreadCount > 9 ? '9+' : '$unreadCount',
                                             style: GoogleFonts.orbitron(
-                                              color: Colors.black,
+                                              color: context.appColors.onAccent,
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -212,9 +212,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ],
                                     );
                                   } else {
-                                    notifIconWidget = const Icon(
+                                    notifIconWidget = Icon(
                                       Icons.notifications_outlined,
-                                      color: Colors.white38,
+                                      color: context.appColors.textMuted,
                                       size: 26,
                                     );
                                   }

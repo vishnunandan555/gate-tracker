@@ -243,7 +243,7 @@ class HistoryHeatmap extends StatelessWidget {
                                         triggerMode: TooltipTriggerMode.tap,
                                         preferBelow: false,
                                         textStyle: GoogleFonts.outfit(
-                                          color: Colors.black,
+                                          color: context.appColors.onAccent,
                                           fontSize: context.s(11),
                                           fontWeight: FontWeight.bold,
                                         ),

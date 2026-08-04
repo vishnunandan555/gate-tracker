@@ -933,7 +933,7 @@ class _SharedShellHeader extends ConsumerWidget {
         Color headerBgColor = Colors.transparent;
         if (isScrolled && completionIdx != -1) {
           headerBgColor = context.appColors.isLight
-              ? const Color(0xFFF4F4F6)
+              ? context.appColors.surfaceColor
               : context.appColors.cardBackground;
         }
 
@@ -1026,9 +1026,9 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
       return Material(
         color: Colors.transparent,
         child: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.close_rounded,
-            color: Colors.white60,
+            color: context.appColors.textSecondary,
             size: 24,
           ),
           onPressed: () {
@@ -1059,7 +1059,7 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
             child: Text(
               "${activeTasks.length}",
               style: GoogleFonts.orbitron(
-                color: Colors.black,
+                color: context.appColors.onAccent,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -1091,7 +1091,7 @@ class _NoticeBoardHeaderButton extends ConsumerWidget {
             child: Text(
               unreadCount > 9 ? '9+' : '$unreadCount',
               style: GoogleFonts.orbitron(
-                color: Colors.black,
+                color: context.appColors.onAccent,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -1298,7 +1298,7 @@ class DemoGuideBanner extends ConsumerWidget {
                       Text(
                         instruction,
                         style: GoogleFonts.outfit(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: context.appColors.textPrimary,
                           fontSize: 12 * overallScale,
                           height: 1.4,
                         ),
@@ -1321,7 +1321,7 @@ class DemoGuideBanner extends ConsumerWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: accentColor,
-                          foregroundColor: Colors.black,
+                          foregroundColor: context.appColors.onAccent,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           elevation: 2,
@@ -1338,7 +1338,7 @@ class DemoGuideBanner extends ConsumerWidget {
                           ref.read(demoGuideProvider.notifier).skipDemo();
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.white54,
+                          foregroundColor: context.appColors.textMuted,
                           padding: EdgeInsets.zero,
                           minimumSize: const Size(40, 24),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1385,16 +1385,16 @@ class NavBarComingSoonScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.04),
+                  color: context.appColors.surfaceColor,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: Colors.white70, size: 48),
+                child: Icon(icon, color: context.appColors.textSecondary, size: 48),
               ),
               const SizedBox(height: 24),
               Text(
                 title,
                 style: GoogleFonts.outfit(
-                  color: Colors.white,
+                  color: context.appColors.textPrimary,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1404,7 +1404,7 @@ class NavBarComingSoonScreen extends StatelessWidget {
                 description,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  color: Colors.white54,
+                  color: context.appColors.textMuted,
                   fontSize: 14,
                   height: 1.5,
                 ),

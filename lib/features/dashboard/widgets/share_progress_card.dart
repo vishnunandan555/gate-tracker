@@ -11,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 import '../../../../core/config/brand_config.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
@@ -38,7 +39,8 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
   bool _showProfilePhoto = true;
   bool _showName = true;
 
-  Widget _buildDaySegmentChip({
+  Widget _buildDaySegmentChip(
+    BuildContext context, {
     required String label,
     required IconData icon,
     required bool isSelected,
@@ -60,13 +62,13 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
             Icon(
               icon,
               size: 14,
-              color: isSelected ? Colors.black : Colors.white54,
+              color: isSelected ? context.appColors.onAccent : context.appColors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: isSelected ? Colors.black : Colors.white54,
+                color: isSelected ? context.appColors.onAccent : context.appColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -354,20 +356,22 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
           Container(
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(12),
+              color: context.appColors.surfaceColor,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: context.appColors.borderColor),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildDaySegmentChip(
+                  context,
                   label: "Today",
                   icon: Icons.today_rounded,
                   isSelected: !_isYesterday,
                   onTap: () => setState(() => _isYesterday = false),
                 ),
                 _buildDaySegmentChip(
+                  context,
                   label: "Yesterday",
                   icon: Icons.history_rounded,
                   isSelected: _isYesterday,
@@ -413,7 +417,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
               width: 360,
               height: _showAccomplishments ? 640.0 : null,
               decoration: BoxDecoration(
-                color: const Color(0xFF0D0D10),
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: widget.accentColor.withAlpha(80), width: 2),
                 boxShadow: [

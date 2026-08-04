@@ -87,7 +87,7 @@ class _HistoryPieChartState extends State<HistoryPieChart> with SingleTickerProv
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(context.s(16)),
-          border: Border.all(color: Colors.white.withAlpha(8)),
+          border: Border.all(color: context.appColors.borderColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

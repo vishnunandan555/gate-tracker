@@ -31,7 +31,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             backgroundColor: context.appColors.dialogBackground,
             content: Text(
               'Sign in failed: $e',
-              style: GoogleFonts.outfit(color: Colors.redAccent),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
             ),
           ),
         );
@@ -93,7 +93,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             backgroundColor: context.appColors.dialogBackground,
             content: Text(
               'Failed to import backup: $e',
-              style: GoogleFonts.outfit(color: Colors.redAccent),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary),
             ),
           ),
         );
@@ -226,7 +226,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           description:
                               "Already have a backup file? Import your JSON data to restore all your study progress instantly.",
                           icon: Icons.unarchive_rounded,
-                          accentColor: Colors.amber.shade700,
+                          accentColor: primaryAccent,
                           isLoading: _isImportLoading,
                           isDisabled: _isGoogleLoading || _isOfflineLoading,
                           buttonText: "IMPORT BACKUP FILE",
