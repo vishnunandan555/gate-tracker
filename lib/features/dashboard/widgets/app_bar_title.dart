@@ -83,7 +83,7 @@ class AppBarTitle extends ConsumerWidget {
               children: [
                 Text(
                   'v${packageInfo.version} ',
-                  style: const TextStyle(color: Colors.grey, fontSize: 10),
+                  style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 10),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),

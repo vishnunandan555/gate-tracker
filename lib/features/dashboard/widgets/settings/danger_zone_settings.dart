@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
@@ -114,29 +115,29 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Choose which portion of the backup file to restore into your device database:',
-                style: TextStyle(color: Colors.white70, fontSize: 13),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.inventory_2_rounded, color: Colors.cyanAccent),
-                title: const Text('Restore Everything', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                subtitle: const Text('Overwrites active syllabus, tasks, and focus history', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                leading: Icon(Icons.inventory_2_rounded, color: context.appColors.primaryAccent),
+                title: Text('Restore Everything', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: Text('Overwrites active syllabus, tasks, and focus history', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11)),
                 onTap: () => Navigator.pop(ctx, ImportMode.full),
               ),
-              const Divider(color: Colors.white10),
+              Divider(color: context.appColors.dividerColor),
               ListTile(
                 leading: const Icon(Icons.topic_rounded, color: Colors.greenAccent),
-                title: const Text('Active Data Only', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                subtitle: const Text('Restores syllabus categories, topics, & checklists only', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                title: Text('Active Data Only', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: Text('Restores syllabus categories, topics, & checklists only', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11)),
                 onTap: () => Navigator.pop(ctx, ImportMode.activeOnly),
               ),
-              const Divider(color: Colors.white10),
+              Divider(color: context.appColors.dividerColor),
               ListTile(
                 leading: const Icon(Icons.analytics_rounded, color: Colors.orangeAccent),
-                title: const Text('Passive Data Only', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                subtitle: const Text('Restores focus timer logs & study statistics history only', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                title: Text('Passive Data Only', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: Text('Restores focus timer logs & study statistics history only', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11)),
                 onTap: () => Navigator.pop(ctx, ImportMode.passiveOnly),
               ),
             ],
@@ -205,18 +206,18 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text('Redo Onboarding Setup?'),
-        content: const Text(
+        content: Text(
           'This will take you back to the initial configuration wizard to re-set your profile, daily goals, branch, and syllabus tracker.\n\nNote: Initializing a new syllabus branch will overwrite your current categories and tracking progress.',
-          style: TextStyle(color: Colors.white70),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: Colors.black),
+            style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: context.appColors.onAccent),
             child: const Text('Redo'),
           ),
         ],
@@ -235,18 +236,18 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         backgroundColor: context.appColors.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text('Redo Interactive Guide?'),
-        content: const Text(
+        content: Text(
           'This will start the interactive demo. Note: During the guide, a sandbox session will run. Your active study logs, statistics, and checked tasks will be temporarily backed up and safely restored once the guide completes or is skipped.',
-          style: TextStyle(color: Colors.white70),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: Colors.black),
+            style: FilledButton.styleFrom(backgroundColor: accentColor, foregroundColor: context.appColors.onAccent),
             child: const Text('Start'),
           ),
         ],
@@ -269,7 +270,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          leading: const Icon(Icons.upload_file, color: Color(0xFF00E5FF)),
+          leading: Icon(Icons.upload_file, color: context.appColors.primaryAccent),
           title: Text('Export Data', style: titleStyle),
           subtitle: Text(
             'Save progress to JSON',
@@ -278,7 +279,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           onTap: () => _exportData(context, ref),
         ),
         ListTile(
-          leading: const Icon(Icons.download, color: Color(0xFF69F0AE)),
+          leading: const Icon(Icons.download, color: Colors.greenAccent),
           title: Text('Import Data', style: titleStyle),
           subtitle: Text(
             'Restore from JSON file',
@@ -287,7 +288,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           onTap: () => _importData(context, ref),
         ),
         ListTile(
-          leading: const Icon(Icons.restart_alt_rounded, color: Color(0xFFFFD54F)),
+          leading: const Icon(Icons.restart_alt_rounded, color: Colors.amberAccent),
           title: Text('Redo Onboarding Setup', style: titleStyle),
           subtitle: Text(
             'Reconfigure profile, daily goals, and branch presets',
@@ -297,7 +298,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
         ),
         if (!isDesktop)
           ListTile(
-            leading: const Icon(Icons.help_outline_rounded, color: Color(0xFFE040FB)),
+            leading: Icon(Icons.help_outline_rounded, color: context.appColors.primaryAccent),
             title: Text('Redo Demo Guide', style: titleStyle),
             subtitle: Text(
               'Re-run interactive walkthrough tutorial',

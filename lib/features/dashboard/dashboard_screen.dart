@@ -358,7 +358,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: context.s(16)),
-                        child: const Divider(color: Colors.white10, height: 16),
+                        child: Divider(color: context.appColors.dividerColor, height: 16),
                       ),
                     ),
                   ],

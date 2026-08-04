@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 
 class SyncDownloadBanner extends ConsumerWidget {
   final Color accentColor;
@@ -36,8 +38,8 @@ class SyncDownloadBanner extends ConsumerWidget {
                 children: [
                   Text(
                     'Desktop & Mobile Apps Available',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
+                    style: GoogleFonts.outfit(
+                      color: context.appColors.textPrimary,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
@@ -45,8 +47,8 @@ class SyncDownloadBanner extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     'Get native performance, local backups & offline mode.',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                    style: GoogleFonts.outfit(
+                      color: context.appColors.textSecondary,
                       fontSize: 11,
                     ),
                   ),
@@ -67,10 +69,10 @@ class SyncDownloadBanner extends ConsumerWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Get App', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text('Get App', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold)),
             ),
             IconButton(
-              icon: Icon(Icons.close_rounded, color: Colors.white.withValues(alpha: 0.4), size: 16),
+              icon: Icon(Icons.close_rounded, color: context.appColors.textMuted, size: 16),
               onPressed: () {
                 ref.read(hideDownloadBannerProvider.notifier).setHidden(true);
               },

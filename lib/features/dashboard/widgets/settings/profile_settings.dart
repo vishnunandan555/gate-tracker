@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/theme/theme_context_ext.dart';
@@ -31,14 +32,14 @@ class ProfileSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          leading: const Icon(Icons.badge_rounded, color: Colors.white60),
+          leading: Icon(Icons.badge_rounded, color: context.appColors.textSecondary),
           title: Text('Change Display Name', style: titleStyle),
           subtitle: Text(
             'Current: ${profile.customDisplayName != null ? profile.customDisplayName! : (displayName ?? 'Not set')}',
             style: subtitleStyle,
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.edit_rounded, color: Colors.white60),
+            icon: Icon(Icons.edit_rounded, color: context.appColors.textSecondary),
             onPressed: () async {
               final controller = TextEditingController(text: profile.customDisplayName ?? displayName ?? '');
               final result = await showDialog<String>(
@@ -49,10 +50,10 @@ class ProfileSettingsSection extends ConsumerWidget {
                   title: const Text("Set Custom Name"),
                   content: TextField(
                     controller: controller,
-                    style: const TextStyle(color: Colors.white),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary),
                     decoration: InputDecoration(
                       hintText: "Enter name",
-                      hintStyle: const TextStyle(color: Colors.white30),
+                      hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: accentColor),
                       ),
@@ -63,20 +64,20 @@ class ProfileSettingsSection extends ConsumerWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                      child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
                     ),
                     TextButton(
                       onPressed: () {
                         ref.read(profileProvider.notifier).setCustomDisplayName(null);
                         Navigator.pop(ctx);
                       },
-                      child: const Text('Reset', style: TextStyle(color: Colors.redAccent)),
+                      child: Text('Reset', style: GoogleFonts.outfit(color: Colors.redAccent)),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.pop(ctx, controller.text),
                       style: FilledButton.styleFrom(
                         backgroundColor: accentColor,
-                        foregroundColor: Colors.black,
+                        foregroundColor: context.appColors.onAccent,
                       ),
                       child: const Text('Save'),
                     ),
@@ -89,20 +90,20 @@ class ProfileSettingsSection extends ConsumerWidget {
             },
           ),
         ),
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
           leading: Container(
             width: 32,
             height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+              border: Border.all(color: context.appColors.borderColor, width: 1),
             ),
             child: CircleAvatar(
               radius: 16,
               backgroundImage: displayImage,
-              backgroundColor: Colors.white12,
-              child: displayImage == null ? const Icon(Icons.person, size: 18, color: Colors.white54) : null,
+              backgroundColor: context.appColors.surfaceColor,
+              child: displayImage == null ? Icon(Icons.person, size: 18, color: context.appColors.textSecondary) : null,
             ),
           ),
           title: Text('Set Profile Photo', style: titleStyle),
@@ -115,8 +116,8 @@ class ProfileSettingsSection extends ConsumerWidget {
             style: subtitleStyle,
           ),
           trailing: PopupMenuButton<String>(
-            icon: const Icon(Icons.photo_camera_rounded, color: Colors.white60),
-            color: const Color(0xFF1F1F23),
+            icon: Icon(Icons.photo_camera_rounded, color: context.appColors.textSecondary),
+            color: context.appColors.dialogBackground,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             onSelected: (val) async {
               if (val == 'none') {
@@ -143,34 +144,34 @@ class ProfileSettingsSection extends ConsumerWidget {
               }
             },
             itemBuilder: (ctx) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'pick',
                 child: Row(
                   children: [
-                    Icon(Icons.photo_library_rounded, size: 18, color: Colors.white70),
-                    SizedBox(width: 8),
-                    Text('Choose Custom Photo', style: TextStyle(color: Colors.white)),
+                    Icon(Icons.photo_library_rounded, size: 18, color: context.appColors.textSecondary),
+                    const SizedBox(width: 8),
+                    Text('Choose Custom Photo', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   ],
                 ),
               ),
               if (isGoogleUser)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'google',
                   child: Row(
                     children: [
-                      Icon(Icons.account_circle_rounded, size: 18, color: Colors.white70),
-                      SizedBox(width: 8),
-                      Text('Use Google Photo', style: TextStyle(color: Colors.white)),
+                      Icon(Icons.account_circle_rounded, size: 18, color: context.appColors.textSecondary),
+                      const SizedBox(width: 8),
+                      Text('Use Google Photo', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                     ],
                   ),
                 ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'none',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_rounded, size: 18, color: Colors.redAccent),
-                    SizedBox(width: 8),
-                    Text('Remove Photo', style: TextStyle(color: Colors.white)),
+                    const Icon(Icons.delete_rounded, size: 18, color: Colors.redAccent),
+                    const SizedBox(width: 8),
+                    Text('Remove Photo', style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
                   ],
                 ),
               ),

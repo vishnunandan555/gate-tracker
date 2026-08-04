@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../core/theme/theme_context_ext.dart';
 
 class ProgressBar extends StatelessWidget {
   final double percentage;
   final double height;
-  final Color color;
+  final Color? color;
   final List<Color>? gradientColors;
   final List<double>? gradientStops;
   final bool showTicks;
@@ -13,7 +14,7 @@ class ProgressBar extends StatelessWidget {
     super.key,
     required this.percentage,
     this.height = 12.0,
-    this.color = Colors.cyanAccent,
+    this.color,
     this.gradientColors,
     this.gradientStops,
     this.showTicks = false,
@@ -22,8 +23,9 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeColor = color ?? context.appColors.primaryAccent;
     final clampedPercentage = percentage.clamp(0.0, 100.0);
-    final effectiveColor = gradientColors?.first ?? color;
+    final effectiveColor = gradientColors?.first ?? activeColor;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -76,7 +78,7 @@ class ProgressBar extends StatelessWidget {
                   gradient: LinearGradient(
                     colors:
                         gradientColors ??
-                        [color.withValues(alpha: 0.75), color],
+                        [effectiveColor.withValues(alpha: 0.75), effectiveColor],
                     stops: gradientStops,
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,

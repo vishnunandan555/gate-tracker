@@ -792,7 +792,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                     subtitle:
                         'Delete cloud backup, keep study data on phone in Offline Mode',
                     icon: Icons.smartphone_rounded,
-                    color: Colors.cyanAccent,
+                    color: widget.accentColor,
                     onTap: () => Navigator.pop(context, 'keepLocal'),
                   ),
                   const SizedBox(height: 12),

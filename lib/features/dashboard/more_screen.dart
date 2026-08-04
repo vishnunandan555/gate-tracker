@@ -707,7 +707,7 @@ class _MoreMenuItemState extends ConsumerState<_MoreMenuItem>
                               child: Center(
                                 child: Icon(
                                   Icons.arrow_forward_rounded,
-                                  color: isDisabled ? Colors.black45 : context.appColors.onAccent,
+                                  color: isDisabled ? context.appColors.textMuted : context.appColors.onAccent,
                                   size: isDesktop ? 18 : context.s(16),
                                 ),
                               ),

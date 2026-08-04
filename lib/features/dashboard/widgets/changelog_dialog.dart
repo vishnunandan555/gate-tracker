@@ -337,7 +337,7 @@ class ChangelogDialog extends ConsumerWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: themeAccent,
-                      foregroundColor: Colors.black,
+                      foregroundColor: context.appColors.onAccent,
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),

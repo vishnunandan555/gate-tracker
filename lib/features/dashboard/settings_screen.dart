@@ -59,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
             : EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(6)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: context.appColors.borderColor),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),

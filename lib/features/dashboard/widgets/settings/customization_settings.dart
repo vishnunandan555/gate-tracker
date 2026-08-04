@@ -827,7 +827,7 @@ class CustomizationSettingsSection extends ConsumerWidget {
         ),
         Divider(color: context.appColors.dividerColor, height: 1),
         accentColorContent,
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: context.appColors.dividerColor, height: 1),
         fontSizeDirectContent,
       ],
     );

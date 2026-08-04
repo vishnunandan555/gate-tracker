@@ -506,14 +506,14 @@ class _ResourceCardTile extends ConsumerWidget {
     required this.accentColor,
   });
 
-  Color _getPlatformColor(String platform) {
+  Color _getPlatformColor(BuildContext context, String platform) {
     switch (platform.toLowerCase()) {
       case 'youtube':
         return const Color(0xFFFF0000);
       case 'website':
-        return Colors.cyanAccent;
+        return context.appColors.primaryAccent;
       case 'drive':
-        return Colors.blueAccent;
+        return context.appColors.primaryAccent;
       case 'pdf':
         return Colors.amberAccent;
       default:
@@ -654,7 +654,7 @@ class _ResourceCardTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final platformColor = _getPlatformColor(resource.platform);
+    final platformColor = _getPlatformColor(context, resource.platform);
     final platformIcon = _getPlatformIcon(resource.platform);
 
     return Container(
@@ -663,7 +663,7 @@ class _ResourceCardTile extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 
 class LayoutSettingsSection extends ConsumerWidget {
   final TextStyle titleStyle;
@@ -21,7 +22,7 @@ class LayoutSettingsSection extends ConsumerWidget {
         GoRouterState.of(context).uri.path.startsWith('/desk')
             ? Icons.phone_android_rounded
             : Icons.desktop_windows_rounded,
-        color: Colors.cyanAccent,
+        color: context.appColors.primaryAccent,
       ),
       title: Row(
         mainAxisSize: MainAxisSize.min,
@@ -37,14 +38,14 @@ class LayoutSettingsSection extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.cyanAccent.withValues(alpha: 0.15),
+                color: context.appColors.primaryAccent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.4), width: 1),
+                border: Border.all(color: context.appColors.primaryAccent.withValues(alpha: 0.4), width: 1),
               ),
               child: Text(
                 'BETA',
                 style: GoogleFonts.outfit(
-                  color: Colors.cyanAccent,
+                  color: context.appColors.primaryAccent,
                   fontSize: 8,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,

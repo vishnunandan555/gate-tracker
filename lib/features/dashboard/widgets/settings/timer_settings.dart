@@ -203,7 +203,7 @@ class TimerSettingsSection extends ConsumerWidget {
                   },
                 ),
                 if (hapticState.isEnabled) ...[
-                  const Divider(color: Colors.white10, height: 1),
+                  Divider(color: context.appColors.dividerColor, height: 1),
                   ListTile(
                     leading: Icon(Icons.tune_rounded, color: accentColor),
                     title: Text('Vibration Intensity', style: titleStyle),
@@ -235,7 +235,7 @@ class TimerSettingsSection extends ConsumerWidget {
                             value: intensity,
                             child: Text(
                               label,
-                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 14),
                             ),
                           );
                         }).toList(),

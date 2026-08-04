@@ -305,7 +305,7 @@ class WaveAreaChartPainter extends CustomPainter {
     canvas.restore();
 
     // Draw X-axis labels aligned with data points (outside clipped region)
-    final labelPaintColorDefault = isLight ? Colors.black.withAlpha(140) : Colors.white.withAlpha(80);
+    final labelPaintColorDefault = isLight ? Colors.black.withValues(alpha: 0.55) : Colors.white.withValues(alpha: 0.35);
     for (int i = 0; i < data.length; i++) {
       if (i >= xAxisLabels.length) continue;
       final label = xAxisLabels[i];

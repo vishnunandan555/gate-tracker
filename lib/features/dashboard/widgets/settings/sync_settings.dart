@@ -168,7 +168,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 label: 'Checklist Tasks (${tasksList.length} items)',
                 sizeKb: toKb(tasksBytes),
                 pct: toPct(tasksBytes),
-                color: Colors.cyanAccent,
+                color: widget.accentColor,
                 icon: Icons.checklist_rounded,
               ),
               const SizedBox(height: 8),
@@ -176,7 +176,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 label: 'Syllabus Topics (${topicsList.length} topics)',
                 sizeKb: toKb(topicsBytes),
                 pct: toPct(topicsBytes),
-                color: Colors.blueAccent,
+                color: widget.accentColor.withValues(alpha: 0.8),
                 icon: Icons.topic_rounded,
               ),
               const SizedBox(height: 8),
@@ -184,7 +184,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 label: 'Subject Categories (${catsList.length} subjects)',
                 sizeKb: toKb(catsBytes),
                 pct: toPct(catsBytes),
-                color: Colors.purpleAccent,
+                color: widget.accentColor.withValues(alpha: 0.6),
                 icon: Icons.folder_copy_rounded,
               ),
               const SizedBox(height: 8),
@@ -234,9 +234,9 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(5),
+        color: context.appColors.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Row(
         children: [
@@ -245,7 +245,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+              style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w500),
             ),
           ),
           Text(
@@ -704,19 +704,19 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                   builder: (ctx) => AlertDialog(
                                     backgroundColor: context.appColors.surfaceColor,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                                    title: const Text("Restore Data from Cloud?"),
-                                    content: const Text(
+                                    title: Text("Restore Data from Cloud?", style: GoogleFonts.outfit(color: context.appColors.textPrimary)),
+                                    content: Text(
                                       "This will overwrite your local device progress with the cloud backup. This cannot be undone.",
-                                      style: TextStyle(color: Colors.white70),
+                                      style: GoogleFonts.outfit(color: context.appColors.textSecondary),
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(ctx, false),
-                                        child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                                        child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
                                       ),
                                       FilledButton(
                                         onPressed: () => Navigator.pop(ctx, true),
-                                        style: FilledButton.styleFrom(backgroundColor: widget.accentColor, foregroundColor: Colors.black),
+                                        style: FilledButton.styleFrom(backgroundColor: widget.accentColor, foregroundColor: context.appColors.onAccent),
                                         child: const Text('Restore'),
                                       ),
                                     ],
@@ -886,13 +886,13 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: context.appColors.borderColor),
                   borderRadius: BorderRadius.circular(16),
-                  color: Colors.white.withAlpha(5),
+                  color: context.appColors.surfaceColor,
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.smartphone_rounded, color: Colors.cyanAccent, size: 24),
+                    Icon(Icons.smartphone_rounded, color: context.appColors.primaryAccent, size: 24),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(

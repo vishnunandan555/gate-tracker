@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/theme_context_ext.dart';
 import 'database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'features/dashboard/widgets/agreement_screen.dart';
@@ -121,15 +123,15 @@ class GateTrackerApp extends ConsumerWidget {
                 children: [
                   const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'Something went wrong on startup',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Please restart the app. If the issue persists, try reinstalling.',
-                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                    style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
                     textAlign: TextAlign.center,
                   ),
                 ],

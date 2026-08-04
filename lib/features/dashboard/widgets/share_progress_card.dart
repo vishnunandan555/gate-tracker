@@ -104,13 +104,13 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
             Icon(
               icon,
               size: 14,
-              color: value ? accent : Colors.white54,
+              color: value ? accent : context.appColors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: value ? Colors.white : Colors.white54,
+                color: value ? context.appColors.textPrimary : context.appColors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -846,7 +846,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                         ],
 
                         // Card Footer
-                        const Divider(color: Colors.white10, height: 24),
+                        Divider(color: context.appColors.dividerColor, height: 24),
                         Center(
                           child: Text(
                             "STUDIED WITH GATELETICS",

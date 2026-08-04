@@ -76,7 +76,7 @@ void showSyncConflictDialog(BuildContext context, WidgetRef ref, Color accentCol
               title: "Merge Progress (Recommended)",
               subtitle: "Combine local and cloud progress (no data lost)",
               icon: Icons.merge_type_rounded,
-              color: Colors.cyanAccent,
+              color: context.appColors.primaryAccent,
               onTap: () async {
                 Navigator.pop(context);
                 await ref.read(syncProvider.notifier).mergeCloudAndLocal();
@@ -216,9 +216,9 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
             ),
             content: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_awesome_rounded,
-                  color: Colors.cyanAccent,
+                  color: context.appColors.primaryAccent,
                   size: 20,
                 ),
                 const SizedBox(width: 10),
@@ -540,8 +540,8 @@ void showConflictDetailsDialog(
 
               buildConflictSection("COMPLETED LOCALLY ONLY (${onlyLocalCompleted.length})", onlyLocalCompleted, accentColor),
               buildConflictSection("SESSIONS RECORDED LOCALLY ONLY (${onlyLocalSessionLabels.length})", onlyLocalSessionLabels, accentColor),
-              buildConflictSection("COMPLETED IN CLOUD ONLY (${onlyCloudCompleted.length})", onlyCloudCompleted, Colors.cyanAccent),
-              buildConflictSection("SESSIONS RECORDED IN CLOUD ONLY (${onlyCloudSessionLabels.length})", onlyCloudSessionLabels, Colors.cyanAccent),
+              buildConflictSection("COMPLETED IN CLOUD ONLY (${onlyCloudCompleted.length})", onlyCloudCompleted, context.appColors.primaryAccent),
+              buildConflictSection("SESSIONS RECORDED IN CLOUD ONLY (${onlyCloudSessionLabels.length})", onlyCloudSessionLabels, context.appColors.primaryAccent),
             ],
           ),
         ),
@@ -571,10 +571,10 @@ Widget _buildStatComparisonRow(BuildContext context, String label, String localV
     margin: const EdgeInsets.only(bottom: 6),
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     decoration: BoxDecoration(
-      color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.08) : context.appColors.cardBackground,
+      color: isDifferent ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: isDifferent ? Colors.cyanAccent.withValues(alpha: 0.35) : Colors.transparent,
+        color: isDifferent ? accentColor.withValues(alpha: 0.35) : Colors.transparent,
       ),
     ),
     child: Row(

@@ -164,10 +164,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 decoration: BoxDecoration(
                   color: isCurrentWarning
                       ? Colors.amber.withValues(alpha: 0.1)
-                      : Colors.white.withValues(alpha: 0.04),
+                      : context.appColors.surfaceColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isCurrentWarning ? Colors.amber.withValues(alpha: 0.5) : Colors.white10,
+                    color: isCurrentWarning ? Colors.amber.withValues(alpha: 0.5) : context.appColors.borderColor,
                   ),
                 ),
                 child: Column(
@@ -185,7 +185,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           child: Text(
                             isCurrentWarning ? 'Optimization Required' : 'Cloud Storage Optimal',
                             style: GoogleFonts.outfit(
-                              color: isCurrentWarning ? Colors.amberAccent : Colors.white,
+                              color: isCurrentWarning ? Colors.amberAccent : context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
@@ -211,7 +211,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         const SizedBox(width: 6),
                         Icon(
                           _isCurrentExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                          color: Colors.white54,
+                          color: context.appColors.textSecondary,
                           size: 20,
                         ),
                       ],
@@ -221,7 +221,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       borderRadius: BorderRadius.circular(6),
                       child: LinearProgressIndicator(
                         value: (currentKb / 1024.0).clamp(0.0, 1.0),
-                        backgroundColor: Colors.white12,
+                        backgroundColor: context.appColors.surfaceColor,
                         color: isCurrentWarning ? Colors.amberAccent : widget.accentColor,
                         minHeight: 8,
                       ),
@@ -232,7 +232,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Text(
                           '${currentKb.toStringAsFixed(1)} KB / 1024 KB limit',
-                          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 12),
+                          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 12),
                         ),
                         Text(
                           '${currentPct.toStringAsFixed(1)}% Used',
@@ -247,10 +247,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
 
                     // Expanded Section Breakdown
                     if (_isCurrentExpanded) ...[
-                      const Divider(color: Colors.white10, height: 24),
+                      Divider(color: context.appColors.dividerColor, height: 24),
                       Text(
                         'Payload Data Breakdown',
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                       const SizedBox(height: 8),
                       ..._buildGranularBreakdownList(raw, isProjected: false),
@@ -275,9 +275,9 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             Container(
               padding: const EdgeInsets.fromLTRB(14, 4, 14, 12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: context.appColors.borderColor),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,14 +300,14 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                     },
                     title: Text(
                       'Sync Passive Data',
-                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Syncs study sessions, daily logs & timeline history',
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
+                      style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
                     ),
                   ),
-                  const Divider(color: Colors.white10, height: 16),
+                  Divider(color: context.appColors.dividerColor, height: 16),
 
                   // Option 2: Enable Compression
                   SwitchListTile(
@@ -321,19 +321,19 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                     },
                     title: Text(
                       'Enable Payload GZip Compression',
-                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Reduces cloud payload size by ~80% using GZip Base64',
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
+                      style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
                     ),
                   ),
-                  const Divider(color: Colors.white10, height: 16),
+                  Divider(color: context.appColors.dividerColor, height: 16),
 
                   // Option 3: Prune History Buttons
                   Text(
                     'Historical Data Pruning',
-                    style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -341,7 +341,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         ? 'Select a cutoff to prune older focus sessions & history logs:'
                         : 'Pruning options disabled because Passive Statistics Syncing is turned OFF.',
                     style: GoogleFonts.outfit(
-                      color: _syncStatsEnabled ? Colors.white54 : Colors.white30,
+                      color: _syncStatsEnabled ? context.appColors.textSecondary : context.appColors.textMuted,
                       fontSize: 11,
                     ),
                   ),
@@ -432,7 +432,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           child: Text(
                             'Optimized Payload Preview',
                             style: GoogleFonts.outfit(
-                              color: isProjectedWarning ? Colors.amberAccent : Colors.white,
+                              color: isProjectedWarning ? Colors.amberAccent : context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
@@ -456,7 +456,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         const SizedBox(width: 6),
                         Icon(
                           _isAfterExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                          color: Colors.white54,
+                          color: context.appColors.textSecondary,
                           size: 20,
                         ),
                       ],
@@ -466,7 +466,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       borderRadius: BorderRadius.circular(6),
                       child: LinearProgressIndicator(
                         value: (projectedKb / 1024.0).clamp(0.0, 1.0),
-                        backgroundColor: Colors.white12,
+                        backgroundColor: context.appColors.surfaceColor,
                         color: widget.accentColor,
                         minHeight: 8,
                       ),
@@ -477,7 +477,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Text(
                           '${projectedKb.toStringAsFixed(1)} KB / 1024 KB limit',
-                          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 12),
+                          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 12),
                         ),
                         Text(
                           '${projectedPct.toStringAsFixed(1)}% Used',
@@ -492,10 +492,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
 
                     // Expanded Section Breakdown
                     if (_isAfterExpanded) ...[
-                      const Divider(color: Colors.white10, height: 24),
+                      Divider(color: context.appColors.dividerColor, height: 24),
                       Text(
                         'Optimized Payload Breakdown',
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                       const SizedBox(height: 8),
                       ..._buildGranularBreakdownList(raw, isProjected: true),
@@ -526,7 +526,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 onPressed: (_isApplying || _isSuccess) ? null : _executeOptimizationFlow,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _isSuccess ? Colors.green : widget.accentColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: context.appColors.onAccent,
                   disabledBackgroundColor: _isSuccess ? Colors.green : Colors.grey.shade800,
                   disabledForegroundColor: _isSuccess ? Colors.white : Colors.white38,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -591,11 +591,11 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                  style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 11),
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10),
+                  style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 10),
                 ),
               ],
             ),
@@ -731,7 +731,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             : '${focusSessions.length} Study Sessions',
         sizeText: '${focusSessionsKb.toStringAsFixed(1)} KB',
         icon: Icons.timer_rounded,
-        color: (isProjected && !_syncStatsEnabled) ? Colors.white38 : Colors.purpleAccent,
+        color: (isProjected && !_syncStatsEnabled) ? context.appColors.textMuted : widget.accentColor,
       ),
       _buildBreakdownItem(
         title: 'Daily Focus History',
@@ -758,10 +758,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: context.appColors.surfaceColor,
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Text(text, style: GoogleFonts.outfit(color: Colors.white60, fontSize: 10)),
+      child: Text(text, style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 10)),
     );
   }
 
@@ -812,14 +812,14 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 Icon(
                   isSelected ? Icons.check_circle_rounded : Icons.history_rounded,
                   size: 14,
-                  color: enabled ? (isSelected ? Colors.amberAccent : Colors.white54) : Colors.white24,
+                  color: enabled ? (isSelected ? Colors.amberAccent : context.appColors.textSecondary) : context.appColors.textMuted,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     title,
                     style: GoogleFonts.outfit(
-                      color: enabled ? (isSelected ? Colors.amberAccent : Colors.white) : Colors.white38,
+                      color: enabled ? (isSelected ? Colors.amberAccent : context.appColors.textPrimary) : context.appColors.textMuted,
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -831,7 +831,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             Text(
               subtitle,
               style: GoogleFonts.outfit(
-                color: enabled ? Colors.white38 : Colors.white24,
+                color: enabled ? context.appColors.textMuted : context.appColors.textMuted.withValues(alpha: 0.5),
                 fontSize: 9,
               ),
             ),
@@ -852,17 +852,17 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
           children: [
             const Icon(Icons.shield_outlined, color: Colors.tealAccent, size: 22),
             const SizedBox(width: 10),
-            Text('Safety Backup Prompt', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            Text('Safety Backup Prompt', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
           ],
         ),
         content: Text(
           'Would you like to export a safety backup JSON file to your device before applying optimization changes?',
-          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text('Skip Backup', style: GoogleFonts.outfit(color: Colors.white54)),
+            child: Text('Skip Backup', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
           ),
           FilledButton.icon(
             style: FilledButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
@@ -907,7 +907,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                   child: CircularProgressIndicator(strokeWidth: 2, color: widget.accentColor),
                 ),
                 const SizedBox(width: 12),
-                Text('Applying Optimization...', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                Text('Applying Optimization...', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
               ],
             ),
             content: Column(
@@ -931,7 +931,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                             ? Colors.greenAccent
                             : isCurrent
                                 ? widget.accentColor
-                                : Colors.white24,
+                                : context.appColors.textMuted,
                         size: 18,
                       ),
                       const SizedBox(width: 10),
@@ -942,8 +942,8 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                             color: isDone
                                 ? Colors.greenAccent
                                 : isCurrent
-                                    ? Colors.white
-                                    : Colors.white38,
+                                    ? context.appColors.textPrimary
+                                    : context.appColors.textMuted,
                             fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                             fontSize: 12,
                           ),

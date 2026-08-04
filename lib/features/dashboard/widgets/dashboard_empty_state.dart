@@ -22,13 +22,13 @@ class DashboardEmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.cyanAccent.withAlpha(20),
+                color: context.appColors.primaryAccent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.cyanAccent.withAlpha(80)),
+                border: Border.all(color: context.appColors.primaryAccent.withValues(alpha: 0.4)),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.checklist_rounded,
-                color: Colors.cyanAccent,
+                color: context.appColors.primaryAccent,
                 size: 48,
               ),
             ),
@@ -63,8 +63,8 @@ class DashboardEmptyState extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.cyanAccent,
-                foregroundColor: Colors.black,
+                backgroundColor: context.appColors.primaryAccent,
+                foregroundColor: context.appColors.onAccent,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

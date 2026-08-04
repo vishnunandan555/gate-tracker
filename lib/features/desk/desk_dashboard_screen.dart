@@ -10,6 +10,7 @@ import '../../widgets/pill_progress_widget.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../dashboard/widgets/syllabus_category_header.dart';
 import '../dashboard/widgets/syllabus_topic_card.dart';
+import '../../core/theme/theme_context_ext.dart';
 
 class DeskDashboardScreen extends ConsumerStatefulWidget {
   const DeskDashboardScreen({super.key});
@@ -200,7 +201,7 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
               IconButton(
                 icon: Icon(
                   searchBarVisible ? Icons.search_off_rounded : Icons.search_rounded,
-                  color: Colors.white70,
+                  color: context.appColors.textSecondary,
                 ),
                 onPressed: () {
                   setState(() {
@@ -234,13 +235,13 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
                     child: TextField(
                       controller: _searchController,
                       focusNode: _focusNode,
-                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 14),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 14),
                       decoration: InputDecoration(
                         hintText: 'Search syllabus topics, notes, or tasks...',
-                        hintStyle: GoogleFonts.outfit(color: Colors.white30, fontSize: 13),
-                        prefixIcon: const Icon(Icons.search_rounded, color: Colors.white60, size: 20),
+                        hintStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 13),
+                        prefixIcon: Icon(Icons.search_rounded, color: context.appColors.textSecondary, size: 20),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear_rounded, color: Colors.white60, size: 18),
+                          icon: Icon(Icons.clear_rounded, color: context.appColors.textSecondary, size: 18),
                           onPressed: () {
                             _searchController.clear();
                             setState(() {
@@ -317,10 +318,10 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
                   forceExpanded: true,
                 ),
               ),
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(color: Colors.white10, height: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Divider(color: context.appColors.dividerColor, height: 16),
                 ),
               ),
             ],

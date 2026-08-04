@@ -202,7 +202,7 @@ class AboutScreen extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('·', style: GoogleFonts.outfit(color: Colors.white24, fontSize: 14)),
+                  child: Text('·', style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 14)),
                 ),
                 const _TextLink(
                   label: 'Privacy Policy',
@@ -287,8 +287,8 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
           ref.read(desktopUpdateProvider.notifier).checkManually();
         },
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.white24),
-          foregroundColor: Colors.white70,
+          side: BorderSide(color: context.appColors.borderColor),
+          foregroundColor: context.appColors.textSecondary,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
@@ -306,7 +306,7 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: statusContent,
     );

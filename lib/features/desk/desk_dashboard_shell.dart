@@ -96,7 +96,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
                       child: Text(
                         'A new ${BrandConfig.appName} update (v${updateState.releaseInfo!.latestVersion}) is available!',
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: context.appColors.textPrimary,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600,
                         ),
@@ -125,7 +125,7 @@ class _DeskDashboardShellState extends ConsumerState<DeskDashboardShell> {
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white60, size: 16),
+                      icon: Icon(Icons.close_rounded, color: context.appColors.textSecondary, size: 16),
                       onPressed: () {
                         setState(() => _updateBannerDismissed = true);
                       },
@@ -226,7 +226,7 @@ class _DeskSidebar extends StatelessWidget {
                     Text(
                       BrandConfig.appName,
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: context.appColors.textPrimary,
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -236,14 +236,14 @@ class _DeskSidebar extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.cyanAccent.withValues(alpha: 0.15),
+                        color: progressColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.4), width: 1),
+                        border: Border.all(color: progressColor.withValues(alpha: 0.4), width: 1),
                       ),
                       child: Text(
                         'BETA',
                         style: GoogleFonts.outfit(
-                          color: Colors.cyanAccent,
+                          color: progressColor,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
@@ -329,27 +329,27 @@ class _DeskSidebar extends StatelessWidget {
                       ? const EdgeInsets.symmetric(vertical: 12)
                       : const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(5),
+                    color: context.appColors.surfaceColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withAlpha(8)),
+                    border: Border.all(color: context.appColors.borderColor),
                   ),
                   child: Row(
                     mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.phone_android_rounded, color: Colors.white38, size: 18),
+                      Icon(Icons.phone_android_rounded, color: context.appColors.textMuted, size: 18),
                       if (!isCompact) ...[
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             'Mobile UI',
                             style: GoogleFonts.outfit(
-                              color: Colors.white54,
+                              color: context.appColors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward_rounded, color: Colors.white24, size: 16),
+                        Icon(Icons.arrow_forward_rounded, color: context.appColors.textMuted, size: 16),
                       ],
                     ],
                   ),
@@ -552,7 +552,7 @@ class _DeskHeaderBar extends ConsumerWidget {
                 Text(
                   '${completionPct.toStringAsFixed(1)}% Prepared',
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.bold,
                   ),
@@ -593,9 +593,9 @@ class _DeskHeaderBar extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(8),
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withAlpha(15)),
+                border: Border.all(color: context.appColors.borderColor),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -617,14 +617,14 @@ class _DeskHeaderBar extends ConsumerWidget {
                   ] else ...[
                     Icon(
                       syncState.status == SyncStatus.error ? Icons.sync_problem_rounded : Icons.cloud_done_rounded,
-                      color: syncState.status == SyncStatus.error ? Colors.redAccent : Colors.cyanAccent,
+                      color: syncState.status == SyncStatus.error ? Colors.redAccent : progressColor,
                       size: 16,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       syncState.status == SyncStatus.error ? 'Sync Error' : 'Cloud Synced',
                       style: GoogleFonts.outfit(
-                        color: syncState.status == SyncStatus.error ? Colors.redAccent : Colors.white70,
+                        color: syncState.status == SyncStatus.error ? Colors.redAccent : context.appColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -641,7 +641,7 @@ class _DeskHeaderBar extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(8),
+                color: context.appColors.surfaceColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -658,7 +658,7 @@ class _DeskHeaderBar extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     displayName,
-                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 12.5, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -697,9 +697,9 @@ class _DeskProfileFooter extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       padding: EdgeInsets.symmetric(horizontal: isCompact ? 8 : 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(6),
+        color: context.appColors.surfaceColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withAlpha(10)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: GestureDetector(
         onTap: onTapProfile,
@@ -724,17 +724,17 @@ class _DeskProfileFooter extends ConsumerWidget {
                   children: [
                     Text(
                       displayName,
-                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       'GATE Aspirant',
-                      style: GoogleFonts.outfit(color: Colors.white38, fontSize: 11),
+                      style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded, color: Colors.white30, size: 18),
+              Icon(Icons.chevron_right_rounded, color: context.appColors.textMuted, size: 18),
             ],
           ],
         ),
