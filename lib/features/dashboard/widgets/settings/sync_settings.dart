@@ -430,7 +430,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                     backgroundColor:
                                         context.appColors.dividerColor,
                                     valueColor:
-                                        const AlwaysStoppedAnimation<Color>(Colors.cyanAccent),
+                                        AlwaysStoppedAnimation<Color>(widget.accentColor),
                                     minHeight: 4,
                                   ),
                                 ),
@@ -511,7 +511,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                       orElse: () => 0.0,
                     );
 
-                    final statusConfig = _getCloudStatusConfig(sizeKb);
+                    final statusConfig = _getCloudStatusConfig(sizeKb, widget.accentColor);
                     final recommendationText = _getRecommendationText(sizeKb, syncStatsEnabled, syncCompressed);
 
                     final isHealthy = sizeKb < 500;
@@ -802,14 +802,12 @@ class _SyncStatusBadge extends StatelessWidget {
     final isOfflinePause = isError && (syncState.errorMessage?.contains('internet') == true || syncState.errorMessage?.contains('paused') == true);
 
     final Color badgeColor = isOfflinePause
-        ? Colors.amberAccent
+        ? Colors.amber.shade700
         : isError
             ? Colors.redAccent
-            : isSyncing
-                ? Colors.cyanAccent
-                : isSynced
-                    ? Colors.greenAccent
-                    : Colors.white38;
+            : (isSyncing || isSynced)
+                ? accentColor
+                : context.appColors.textMuted;
 
     final String label = isOfflinePause
         ? (syncState.errorMessage ?? 'No Internet — Sync Paused')
@@ -993,7 +991,7 @@ class _CloudStatusConfig {
   });
 }
 
-_CloudStatusConfig _getCloudStatusConfig(double sizeKb) {
+_CloudStatusConfig _getCloudStatusConfig(double sizeKb, Color accentColor) {
   if (sizeKb >= 1024) {
     return _CloudStatusConfig(
       label: 'Sync Blocked',
@@ -1021,25 +1019,25 @@ _CloudStatusConfig _getCloudStatusConfig(double sizeKb) {
   } else if (sizeKb >= 700) {
     return _CloudStatusConfig(
       label: 'Attention',
-      color: Colors.amberAccent,
+      color: Colors.amber.shade700,
       icon: Icons.info_outline_rounded,
     );
   } else if (sizeKb >= 600) {
     return _CloudStatusConfig(
       label: 'Moderate',
-      color: Colors.yellowAccent,
+      color: Colors.amber.shade600,
       icon: Icons.info_outline_rounded,
     );
   } else if (sizeKb >= 500) {
     return _CloudStatusConfig(
       label: 'Fair',
-      color: Colors.lightGreenAccent,
+      color: accentColor,
       icon: Icons.check_circle_outline_rounded,
     );
   } else {
     return _CloudStatusConfig(
       label: 'All Good',
-      color: const Color(0xFF00E5FF),
+      color: accentColor,
       icon: Icons.check_circle_rounded,
     );
   }

@@ -859,12 +859,15 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
       padding: EdgeInsets.all(context.s(12)),
       child: Row(
         children: [
-          // 1. DARK BUTTON
+          // 1. DARK BUTTON (With pitch black AMOLED badge)
           Expanded(
             child: _buildThemeModeButton(
               context: context,
               ref: ref,
               label: 'Dark',
+              badge: 'AMOLED',
+              badgeBgColor: Colors.black,
+              badgeTextColor: Colors.white,
               modeValue: 'dark',
               isSelected: activeValue == 'dark',
               icon: Icons.dark_mode_rounded,
@@ -873,13 +876,15 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
           ),
           SizedBox(width: context.s(8)),
 
-          // 2. AUTO BUTTON (Middle)
+          // 2. AUTO BUTTON (With System badge)
           Expanded(
             child: _buildThemeModeButton(
               context: context,
               ref: ref,
               label: 'Auto',
-              subtitle: 'System',
+              badge: 'System',
+              badgeBgColor: const Color(0xFF0284C7),
+              badgeTextColor: Colors.white,
               modeValue: 'system',
               isSelected: activeValue == 'system',
               icon: Icons.brightness_auto_rounded,
@@ -895,6 +900,8 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
               ref: ref,
               label: 'Light',
               badge: 'Beta',
+              badgeBgColor: Colors.amber.shade800,
+              badgeTextColor: Colors.white,
               modeValue: 'light',
               isSelected: activeValue == 'light',
               icon: Icons.light_mode_rounded,
@@ -914,9 +921,13 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
     required bool isSelected,
     required IconData icon,
     required Color accentColor,
-    String? subtitle,
-    String? badge,
+    required String badge,
+    required Color badgeBgColor,
+    required Color badgeTextColor,
   }) {
+    final effectiveBadgeBg = isSelected ? accentColor : badgeBgColor;
+    final effectiveBadgeText = isSelected ? context.appColors.onAccent : badgeTextColor;
+
     return InkWell(
       onTap: () {
         ref.read(themeEngineProvider.notifier).setStandardMode(modeValue);
@@ -983,34 +994,26 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               ),
             ),
-            if (badge != null) ...[
-              SizedBox(height: context.s(3)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: context.s(6), vertical: context.s(1.5)),
-                decoration: BoxDecoration(
-                  color: isSelected ? accentColor : Colors.amber.shade700,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  badge,
-                  style: GoogleFonts.orbitron(
-                    color: isSelected ? context.appColors.onAccent : Colors.white,
-                    fontSize: context.s(8.5),
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
+            SizedBox(height: context.s(4)),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: context.s(7), vertical: context.s(2)),
+              decoration: BoxDecoration(
+                color: effectiveBadgeBg,
+                borderRadius: BorderRadius.circular(6),
+                border: modeValue == 'dark' && !isSelected
+                    ? Border.all(color: Colors.white30, width: 0.8)
+                    : null,
+              ),
+              child: Text(
+                badge,
+                style: GoogleFonts.orbitron(
+                  color: effectiveBadgeText,
+                  fontSize: context.s(8.5),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-            ] else if (subtitle != null) ...[
-              SizedBox(height: context.s(2)),
-              Text(
-                subtitle,
-                style: GoogleFonts.outfit(
-                  color: context.appColors.textMuted,
-                  fontSize: context.s(9.5),
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),

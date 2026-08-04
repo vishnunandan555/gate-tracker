@@ -932,11 +932,9 @@ class _SharedShellHeader extends ConsumerWidget {
         // Background transition from transparent to solid header color when scrolled down in Completion screen
         Color headerBgColor = Colors.transparent;
         if (isScrolled && completionIdx != -1) {
-          final distToCompletion = (page - completionIdx).abs();
-          final targetColor = context.appColors.isLight
+          headerBgColor = context.appColors.isLight
               ? const Color(0xFFF4F4F6)
-              : const Color(0xFF0B0B0E);
-          headerBgColor = targetColor.withValues(alpha: (1.0 - distToCompletion).clamp(0.0, 1.0));
+              : context.appColors.cardBackground;
         }
 
         // Countdown widget opacity: 1.0 at Completion screen

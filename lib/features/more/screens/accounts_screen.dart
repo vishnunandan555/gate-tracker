@@ -220,15 +220,12 @@ class _HeroProfileCard extends ConsumerWidget {
           // ── Status pill ─────────────────────────────────────────
           Consumer(
             builder: (context, ref, _) {
-              final isLight = context.appColors.isLight;
-              final badgeColor = isSignedIn
-                  ? (isLight ? Colors.green.shade800 : Colors.greenAccent)
-                  : (isLight ? Colors.amber.shade900 : Colors.amberAccent);
+              final badgeColor = accentColor;
 
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                 decoration: BoxDecoration(
-                  color: badgeColor.withValues(alpha: isLight ? 0.15 : 0.1),
+                  color: badgeColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
                     color: badgeColor.withValues(alpha: 0.3),

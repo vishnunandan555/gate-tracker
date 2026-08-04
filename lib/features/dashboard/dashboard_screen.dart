@@ -144,9 +144,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             final double pixels = notification.metrics.pixels;
             final bool currentlyScrolled = ref.read(completionIsScrolledProvider);
 
-            if (!currentlyScrolled && pixels > 25.0) {
+            if (!currentlyScrolled && pixels > 15.0) {
               ref.read(completionIsScrolledProvider.notifier).setScrolled(true);
-            } else if (currentlyScrolled && pixels < 5.0) {
+            } else if (currentlyScrolled && pixels < 2.0) {
               ref.read(completionIsScrolledProvider.notifier).setScrolled(false);
             }
   
