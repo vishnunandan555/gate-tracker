@@ -59,7 +59,7 @@ void showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
         ),
         title: Text(
           "Edit Task",
-          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold),
         ),
         content: TextField(
           controller: controller,
@@ -74,7 +74,7 @@ void showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Cancel", style: GoogleFonts.outfit(color: Colors.white30)),
+            child: Text("Cancel", style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
           ),
           TextButton(
             onPressed: () {
@@ -83,7 +83,7 @@ void showEditTaskDialog(BuildContext context, WidgetRef ref, CustomTask task) {
               }
               Navigator.pop(context);
             },
-            child: Text("Save", style: GoogleFonts.outfit(color: Colors.cyanAccent)),
+            child: Text("Save", style: GoogleFonts.outfit(color: context.appColors.primaryAccent, fontWeight: FontWeight.bold)),
           ),
         ],
       );

@@ -245,7 +245,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                           child: CustomPaint(
                             painter: NeonProgressPainter(
                               progress: dailyProgress,
-                              color: Colors.orangeAccent,
+                              color: accentColor,
                               strokeWidth: context.s(6),
                             ),
                             child: Center(
@@ -253,6 +253,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                                 'assets/fire.svg',
                                 width: context.s(32),
                                 height: context.s(32),
+                                colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
                               ),
                             ),
                           ),
@@ -273,13 +274,13 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                           child: CustomPaint(
                             painter: NeonProgressPainter(
                               progress: monthlyProgress,
-                              color: Colors.cyanAccent,
+                              color: accentColor,
                               strokeWidth: context.s(5.5),
                             ),
                             child: Center(
                               child: Icon(
                                 Icons.calendar_month_rounded,
-                                color: Colors.cyanAccent,
+                                color: accentColor,
                                 size: context.s(22),
                               ),
                             ),
@@ -292,7 +293,7 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                           children: [
                             Text(
                               '${(monthlyProgress * 100).toStringAsFixed(0)}%',
-                              style: getProgressStyle(28, Colors.cyanAccent),
+                              style: getProgressStyle(28, accentColor),
                             ),
                             SizedBox(height: context.s(2)),
                             Text(
@@ -316,8 +317,8 @@ class _HomeCarouselState extends ConsumerState<HomeCarousel> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildTripleRing(context, 'DAILY', dailyProgress, accentColor),
-                        _buildTripleRing(context, 'WEEKLY', weeklyProgress, Colors.orangeAccent),
-                        _buildTripleRing(context, 'MONTHLY', monthlyProgress, Colors.cyanAccent),
+                        _buildTripleRing(context, 'WEEKLY', weeklyProgress, accentColor),
+                        _buildTripleRing(context, 'MONTHLY', monthlyProgress, accentColor),
                       ],
                     ),
                   ),
@@ -432,9 +433,9 @@ class NeonProgressPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = min(size.width, size.height) / 2 - strokeWidth / 2;
 
-    // Background circle
+    // Background circle track using subtle theme color
     final bgPaint = Paint()
-      ..color = Colors.white.withAlpha(15)
+      ..color = color.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
     canvas.drawCircle(center, radius, bgPaint);
