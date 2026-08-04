@@ -297,7 +297,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           ),
           content: Text(
             'All previous user stats, study velocity logs, and completion history will be cleared unless preserved. Do you want to preserve your previous stats and history?',
-            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+            style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
           ),
           actions: [
             TextButton(
@@ -311,7 +311,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
                 backgroundColor: ref.read(overallProgressColorProvider),
-                foregroundColor: Colors.black,
+                foregroundColor: context.appColors.onAccent,
               ),
               child: Text(
                 'Yes (Preserve)',

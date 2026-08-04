@@ -28,7 +28,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF1F080A),
+            backgroundColor: context.appColors.dialogBackground,
             content: Text(
               'Sign in failed: $e',
               style: GoogleFonts.outfit(color: Colors.redAccent),
@@ -76,10 +76,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFF0D3320),
+              backgroundColor: context.appColors.dialogBackground,
               content: Text(
                 'Backup restored successfully! Welcome back.',
-                style: GoogleFonts.outfit(color: const Color(0xFF34D399)),
+                style: GoogleFonts.outfit(color: context.appColors.primaryAccent),
               ),
             ),
           );
@@ -90,7 +90,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF1F080A),
+            backgroundColor: context.appColors.dialogBackground,
             content: Text(
               'Failed to import backup: $e',
               style: GoogleFonts.outfit(color: Colors.redAccent),
