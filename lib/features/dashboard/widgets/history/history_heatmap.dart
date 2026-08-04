@@ -51,12 +51,14 @@ class HistoryHeatmap extends StatelessWidget {
     final canGoLeft = activeYear > minYear;
     final canGoRight = activeYear < currentYear;
 
+    final isLight = context.appColors.isLight;
+
     return Container(
       padding: EdgeInsets.only(top: 0, left: context.s(12), right: context.s(12), bottom: context.s(12)),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
-        border: Border.all(color: Colors.white.withAlpha(8)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,17 +69,17 @@ class HistoryHeatmap extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: context.s(12), vertical: context.s(6)),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(12),
+                  color: context.appColors.surfaceColor,
                   borderRadius: BorderRadius.circular(context.s(8)),
                   border: Border.all(
-                    color: Colors.white.withAlpha(8),
+                    color: context.appColors.borderColor,
                     width: 1,
                   ),
                 ),
                 child: Text(
                   '$activeYear',
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: context.appColors.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: context.s(14),
                   ),
@@ -87,14 +89,14 @@ class HistoryHeatmap extends StatelessWidget {
                 children: [
                   IconButton(
                     style: IconButton.styleFrom(
-                      backgroundColor: canGoLeft ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+                      backgroundColor: canGoLeft ? context.appColors.surfaceColor : context.appColors.surfaceColor.withValues(alpha: 0.4),
                       shape: const CircleBorder(),
                       padding: EdgeInsets.all(context.s(4)),
                     ),
                     constraints: BoxConstraints.tightFor(width: context.s(28), height: context.s(28)),
                     icon: Icon(
                       Icons.chevron_left_rounded,
-                      color: canGoLeft ? accentColor : Colors.white24,
+                      color: canGoLeft ? accentColor : context.appColors.textMuted,
                       size: context.s(18),
                     ),
                     onPressed: canGoLeft ? () {
@@ -104,14 +106,14 @@ class HistoryHeatmap extends StatelessWidget {
                   SizedBox(width: context.s(6)),
                   IconButton(
                     style: IconButton.styleFrom(
-                      backgroundColor: canGoRight ? Colors.white.withAlpha(12) : Colors.white.withAlpha(4),
+                      backgroundColor: canGoRight ? context.appColors.surfaceColor : context.appColors.surfaceColor.withValues(alpha: 0.4),
                       shape: const CircleBorder(),
                       padding: EdgeInsets.all(context.s(4)),
                     ),
                     constraints: BoxConstraints.tightFor(width: context.s(28), height: context.s(28)),
                     icon: Icon(
                       Icons.chevron_right_rounded,
-                      color: canGoRight ? accentColor : Colors.white24,
+                      color: canGoRight ? accentColor : context.appColors.textMuted,
                       size: context.s(18),
                     ),
                     onPressed: canGoRight ? () {
@@ -137,7 +139,7 @@ class HistoryHeatmap extends StatelessWidget {
                         child: Text(
                           name,
                           style: GoogleFonts.outfit(
-                            color: Colors.white38,
+                            color: context.appColors.textMuted,
                             fontSize: context.s(9),
                             fontWeight: FontWeight.bold,
                           ),
@@ -183,7 +185,7 @@ class HistoryHeatmap extends StatelessWidget {
                             Text(
                               monthNamesShort[mDateTime.month - 1],
                               style: GoogleFonts.outfit(
-                                color: Colors.white70,
+                                color: context.appColors.textSecondary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: context.s(10),
                               ),
@@ -221,16 +223,16 @@ class HistoryHeatmap extends StatelessWidget {
                                       final ratio = focusSeconds / maxVal;
 
                                       Color blockColor = isFuture
-                                          ? Colors.white.withAlpha(3)
-                                          : Colors.white.withAlpha(8);
+                                          ? (isLight ? Colors.black.withValues(alpha: 0.03) : Colors.white.withValues(alpha: 0.03))
+                                          : (isLight ? Colors.black.withValues(alpha: 0.07) : Colors.white.withValues(alpha: 0.08));
 
                                       if (focusSeconds > 0.0 && !isToday) {
                                         if (ratio <= 0.25) {
-                                          blockColor = accentColor.withAlpha(60);
+                                          blockColor = accentColor.withValues(alpha: isLight ? 0.35 : 0.25);
                                         } else if (ratio <= 0.5) {
-                                          blockColor = accentColor.withAlpha(120);
+                                          blockColor = accentColor.withValues(alpha: isLight ? 0.55 : 0.47);
                                         } else if (ratio <= 0.75) {
-                                          blockColor = accentColor.withAlpha(180);
+                                          blockColor = accentColor.withValues(alpha: isLight ? 0.80 : 0.70);
                                         } else {
                                           blockColor = accentColor;
                                         }

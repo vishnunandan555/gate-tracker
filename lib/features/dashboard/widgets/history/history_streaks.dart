@@ -141,7 +141,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
           decoration: BoxDecoration(
             color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(12)),
-            border: Border.all(color: accentColor.withAlpha(50), width: 1.2),
+            border: Border.all(color: context.appColors.isLight ? context.appColors.borderColor : accentColor.withAlpha(50), width: 1.2),
           ),
           padding: EdgeInsets.symmetric(horizontal: context.s(6)),
           child: Row(
@@ -199,7 +199,7 @@ class _HistoryStreaksState extends State<HistoryStreaks> with SingleTickerProvid
           decoration: BoxDecoration(
             color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(context.s(12)),
-            border: Border.all(color: accentColor.withAlpha(50), width: 1.2),
+            border: Border.all(color: context.appColors.isLight ? context.appColors.borderColor : accentColor.withAlpha(50), width: 1.2),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(context.s(11)),

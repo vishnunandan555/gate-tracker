@@ -61,7 +61,7 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(16)),
-        border: Border.all(color: widget.accentColor.withAlpha(40)),
+        border: Border.all(color: context.appColors.isLight ? context.appColors.borderColor : widget.accentColor.withAlpha(40)),
       ),
       child: widget.projection == null
           ? Row(
@@ -136,11 +136,12 @@ class _HistoryProjectionState extends State<HistoryProjection> with SingleTicker
     final avgDailyGain = projection['avgDailyGain'] as double;
     final confidence = projection['confidence'] as String;
 
+    final isLight = context.appColors.isLight;
     final confidenceColor = confidence == 'high'
-        ? Colors.greenAccent
+        ? (isLight ? Colors.green.shade800 : Colors.greenAccent)
         : confidence == 'medium'
-            ? Colors.amberAccent
-            : Colors.orangeAccent;
+            ? (isLight ? Colors.amber.shade900 : Colors.amberAccent)
+            : (isLight ? Colors.amber.shade900 : Colors.orangeAccent);
     final confidenceLabel = confidence == 'high'
         ? 'High confidence'
         : confidence == 'medium'

@@ -9,11 +9,13 @@ class CalendarCellRingPainter extends CustomPainter {
   final double progress;
   final Color color;
   final double strokeWidth;
+  final bool isLight;
 
   CalendarCellRingPainter({
     required this.progress,
     required this.color,
     required this.strokeWidth,
+    this.isLight = false,
   });
 
   @override
@@ -22,7 +24,7 @@ class CalendarCellRingPainter extends CustomPainter {
     final radius = (size.width - strokeWidth) / 2;
 
     final bgPaint = Paint()
-      ..color = Colors.white.withAlpha(8)
+      ..color = isLight ? Colors.black.withValues(alpha: 0.08) : Colors.white.withAlpha(8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 
@@ -100,7 +102,7 @@ class HistoryCalendar extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(context.s(12)),
-        border: Border.all(color: Colors.white.withAlpha(8)),
+        border: Border.all(color: context.appColors.borderColor),
       ),
       child: Column(
         children: [
@@ -218,6 +220,7 @@ class HistoryCalendar extends StatelessWidget {
                                 progress: progress * animation.value,
                                 color: accentColor,
                                 strokeWidth: context.s(2.5),
+                                isLight: context.appColors.isLight,
                               ),
                               child: child,
                             );
