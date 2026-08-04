@@ -856,7 +856,7 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
     }
 
     return Container(
-      padding: EdgeInsets.all(context.s(12)),
+      padding: EdgeInsets.all(context.s(12.0)),
       child: Row(
         children: [
           // 1. DARK BUTTON (With pitch black AMOLED badge)
@@ -874,7 +874,7 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
               accentColor: accentColor,
             ),
           ),
-          SizedBox(width: context.s(8)),
+          SizedBox(width: context.s(8.0)),
 
           // 2. AUTO BUTTON (With System badge)
           Expanded(
@@ -891,7 +891,7 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
               accentColor: accentColor,
             ),
           ),
-          SizedBox(width: context.s(8)),
+          SizedBox(width: context.s(8.0)),
 
           // 3. LIGHT BUTTON (With Beta badge)
           Expanded(
@@ -965,7 +965,7 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
       borderRadius: BorderRadius.circular(14),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(vertical: context.s(10), horizontal: context.s(4)),
+        padding: EdgeInsets.symmetric(vertical: context.s(10.0), horizontal: context.s(4.0)),
         decoration: BoxDecoration(
           color: isSelected
               ? accentColor.withValues(alpha: 0.15)
@@ -982,21 +982,21 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
           children: [
             Icon(
               icon,
-              size: context.s(20),
+              size: context.s(20.0),
               color: isSelected ? accentColor : context.appColors.textMuted,
             ),
-            SizedBox(height: context.s(4)),
+            SizedBox(height: context.s(4.0)),
             Text(
               label,
               style: GoogleFonts.outfit(
                 color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
-                fontSize: context.s(13),
+                fontSize: context.s(13.0),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               ),
             ),
-            SizedBox(height: context.s(4)),
+            SizedBox(height: context.s(4.0)),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.s(7), vertical: context.s(2)),
+              padding: EdgeInsets.symmetric(horizontal: context.s(7.0), vertical: context.s(2.0)),
               decoration: BoxDecoration(
                 color: effectiveBadgeBg,
                 borderRadius: BorderRadius.circular(6),

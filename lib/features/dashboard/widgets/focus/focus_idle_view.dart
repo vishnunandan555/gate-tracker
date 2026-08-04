@@ -27,12 +27,14 @@ class FocusIdleView extends ConsumerStatefulWidget {
 
 class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
   int _displayMode = 0;
+  bool _isYesterdayExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final accentColor = widget.accentColor;
     final sessionState = ref.watch(focusProvider);
     final todaySessionsAsync = ref.watch(todayFocusSessionsProvider);
+    final yesterdaySessionsAsync = ref.watch(yesterdayFocusSessionsProvider);
     final todayDurationAsync = ref.watch(todayFocusDurationProvider);
     final dailyGoalMinutes = ref.watch(dailyFocusGoalProvider);
 
@@ -309,6 +311,91 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Text("History error: $e"),
+              ),
+              // Yesterday's History (Only shown if yesterday has completed sessions)
+              yesterdaySessionsAsync.when(
+                data: (yesterdaySessions) {
+                  if (yesterdaySessions.isEmpty) return const SizedBox();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: context.s(28)),
+
+                      // Yesterday's History Header Row (Expandable)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isYesterdayExpanded = !_isYesterdayExpanded;
+                          });
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Yesterday’s History:",
+                              style: GoogleFonts.outfit(
+                                fontSize: context.s(20),
+                                fontWeight: FontWeight.bold,
+                                color: context.appColors.textSecondary,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                _isYesterdayExpanded
+                                    ? Icons.keyboard_arrow_up_rounded
+                                    : Icons.keyboard_arrow_down_rounded,
+                                color: context.appColors.textSecondary,
+                                size: context.s(24),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isYesterdayExpanded = !_isYesterdayExpanded;
+                                });
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      if (_isYesterdayExpanded) ...[
+                        SizedBox(height: context.s(16)),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: yesterdaySessions.length,
+                          itemBuilder: (context, index) {
+                            final s = yesterdaySessions[index];
+                            final durationMin = (s.durationSeconds / 60).floor();
+                            final durationStr = durationMin >= 60
+                                ? "${(durationMin / 60).toStringAsFixed(1).replaceAll('.0', '')} hr"
+                                : "$durationMin min";
+
+                            final formattedTime = formatTimeOfDay(s.startTime);
+
+                            return _buildHistoryTimelineEntry(
+                              context,
+                              time: formattedTime,
+                              method: s.method,
+                              duration: durationStr,
+                              accomplishments: s.accomplishments,
+                              progressDelta: s.progressDelta,
+                              isFirst: index == 0,
+                              isLast: index == yesterdaySessions.length - 1,
+                              accentColor: accentColor.withValues(alpha: 0.7),
+                            );
+                          },
+                        ),
+                      ],
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(),
+                error: (e, _) => const SizedBox(),
               ),
             ],
           ),

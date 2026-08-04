@@ -859,14 +859,30 @@ final dailyFocusGoalProvider = NotifierProvider<DailyFocusGoalNotifier, int>(() 
   return DailyFocusGoalNotifier();
 });
 
+// StreamProvider that tracks active study day and updates on day rollover (or periodic tick)
+final currentStudyDayProvider = StreamProvider<DateTime>((ref) async* {
+  final rollover = ref.watch(studyDayRolloverProvider);
+
+  DateTime getCurrent() => studyDayFor(DateTime.now(), rollover);
+
+  yield getCurrent();
+
+  // Periodic ticker checking every minute if the study day boundary crossed
+  await for (final _ in Stream.periodic(const Duration(minutes: 1))) {
+    yield getCurrent();
+  }
+});
+
 // Streams and fetching for today's sessions
 final todayFocusSessionsProvider = StreamProvider<List<FocusSession>>((ref) {
+  ref.watch(currentStudyDayProvider);
   final db = ref.watch(appDatabaseProvider);
   final rollover = ref.watch(studyDayRolloverProvider);
   return db.watchTodayFocusSessions(rollover: rollover);
 });
 
 final todayFocusDurationProvider = StreamProvider<int>((ref) {
+  ref.watch(currentStudyDayProvider);
   final db = ref.watch(appDatabaseProvider);
   final rollover = ref.watch(studyDayRolloverProvider);
   return db.watchTodayFocusDurationSeconds(rollover: rollover);
@@ -874,12 +890,14 @@ final todayFocusDurationProvider = StreamProvider<int>((ref) {
 
 // Streams and fetching for yesterday's sessions
 final yesterdayFocusSessionsProvider = StreamProvider<List<FocusSession>>((ref) {
+  ref.watch(currentStudyDayProvider);
   final db = ref.watch(appDatabaseProvider);
   final rollover = ref.watch(studyDayRolloverProvider);
   return db.watchYesterdayFocusSessions(rollover: rollover);
 });
 
 final yesterdayFocusDurationProvider = StreamProvider<int>((ref) {
+  ref.watch(currentStudyDayProvider);
   final db = ref.watch(appDatabaseProvider);
   final rollover = ref.watch(studyDayRolloverProvider);
   return db.watchYesterdayFocusDurationSeconds(rollover: rollover);
