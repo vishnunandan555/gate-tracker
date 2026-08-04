@@ -72,7 +72,7 @@ void showFocusRecoveryDialog(
                       style: GoogleFonts.outfit(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: context.appColors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -81,7 +81,7 @@ void showFocusRecoveryDialog(
                       "You started a ${details.name} session. Review the time breakdown below to choose how to log it.",
                       style: GoogleFonts.outfit(
                         fontSize: 12,
-                        color: Colors.white54,
+                        color: context.appColors.textSecondary,
                         height: 1.4,
                       ),
                       textAlign: TextAlign.center,
@@ -116,11 +116,11 @@ void showFocusRecoveryDialog(
                     _buildMetricCard(
                       context,
                       icon: Icons.timer_outlined,
-                      iconColor: Colors.white,
+                      iconColor: context.appColors.textPrimary,
                       title: "Total Session Duration",
                       subtitle: "Active + Closed duration",
                       value: formatSecs(recoveryData.totalSeconds),
-                      valueColor: Colors.white,
+                      valueColor: context.appColors.textPrimary,
                       isHighlighted: true,
                     ),
                     const SizedBox(height: 24),
@@ -133,7 +133,7 @@ void showFocusRecoveryDialog(
                       },
                       style: FilledButton.styleFrom(
                         backgroundColor: accentColor,
-                        foregroundColor: Colors.black,
+                        foregroundColor: context.appColors.onAccent,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -154,11 +154,11 @@ void showFocusRecoveryDialog(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        side: const BorderSide(color: Colors.white24),
+                        side: BorderSide(color: context.appColors.borderColor),
                       ),
                       child: Text(
                         "Keep Full Duration (${formatSecs(recoveryData.totalSeconds)})",
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                        style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -203,13 +203,14 @@ Widget _buildMetricCard(
   required Color valueColor,
   bool isHighlighted = false,
 }) {
+  final appColors = context.appColors;
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     decoration: BoxDecoration(
-      color: isHighlighted ? Colors.white.withAlpha(12) : const Color(0xFF1B1B22),
+      color: isHighlighted ? appColors.surfaceColor : appColors.cardBackground,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color: isHighlighted ? Colors.white.withAlpha(20) : Colors.white.withAlpha(5),
+        color: isHighlighted ? appColors.primaryAccent.withValues(alpha: 0.4) : appColors.borderColor,
       ),
     ),
     child: Row(
@@ -217,7 +218,7 @@ Widget _buildMetricCard(
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: iconColor.withAlpha(20),
+            color: iconColor.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: iconColor, size: 18),
@@ -230,7 +231,7 @@ Widget _buildMetricCard(
               Text(
                 title,
                 style: GoogleFonts.outfit(
-                  color: Colors.white,
+                  color: appColors.textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -238,7 +239,7 @@ Widget _buildMetricCard(
               Text(
                 subtitle,
                 style: GoogleFonts.outfit(
-                  color: Colors.white38,
+                  color: appColors.textMuted,
                   fontSize: 10,
                 ),
               ),

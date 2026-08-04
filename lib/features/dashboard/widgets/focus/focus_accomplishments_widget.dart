@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../providers/focus/focus_provider.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -44,6 +45,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
       return const SizedBox.shrink();
     }
 
+    final appColors = context.appColors;
     final accomplishmentsText = widget.accomplishments!.trim();
 
     // Check if it is a JSON array
@@ -58,12 +60,12 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
           constraints: BoxConstraints(maxHeight: context.s(widget.maxWidgetHeight)),
           padding: EdgeInsets.symmetric(horizontal: context.s(10), vertical: context.s(8)),
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(5),
+            color: appColors.surfaceColor,
             borderRadius: BorderRadius.circular(context.s(12)),
           ),
           child: RawScrollbar(
             controller: _scrollController1,
-            thumbColor: widget.accentColor.withAlpha(120),
+            thumbColor: widget.accentColor.withValues(alpha: 0.5),
             radius: Radius.circular(context.s(4)),
             thickness: context.s(3.5),
             fadeDuration: const Duration(milliseconds: 300),
@@ -92,7 +94,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                   style: GoogleFonts.outfit(
                                     fontWeight: FontWeight.bold,
                                     fontSize: context.s(14),
-                                    color: Colors.white,
+                                    color: appColors.textPrimary,
                                   ),
                                 ),
                               ),
@@ -130,7 +132,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                             style: GoogleFonts.outfit(
                                               fontWeight: FontWeight.w600,
                                               fontSize: context.s(13),
-                                              color: Colors.white70,
+                                              color: appColors.textSecondary,
                                             ),
                                           ),
                                         ),
@@ -152,7 +154,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                       style: GoogleFonts.outfit(
                                         fontWeight: FontWeight.w600,
                                         fontSize: context.s(13),
-                                        color: Colors.white70,
+                                        color: appColors.textSecondary,
                                       ),
                                     ),
                                     ...topic.tasks.map((taskName) {
@@ -165,7 +167,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                               padding: EdgeInsets.only(top: context.s(2)),
                                               child: Icon(
                                                 Icons.check_circle_outline_rounded,
-                                                color: widget.accentColor.withAlpha(180),
+                                                color: widget.accentColor.withValues(alpha: 0.7),
                                                 size: context.s(12),
                                               ),
                                             ),
@@ -174,7 +176,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
                                               child: Text(
                                                 taskName,
                                                 style: GoogleFonts.outfit(
-                                                  color: Colors.white54,
+                                                  color: appColors.textMuted,
                                                   fontSize: context.s(12),
                                                   height: 1.3,
                                                 ),
@@ -199,7 +201,6 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
           ),
         );
       } catch (e) {
-
         // Fallback below if JSON decode fails
         debugPrint("Error parsing achievements JSON: $e");
       }
@@ -210,12 +211,12 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
       constraints: BoxConstraints(maxHeight: context.s(widget.maxWidgetHeight)),
       padding: EdgeInsets.all(context.s(12)),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(5),
+        color: appColors.surfaceColor,
         borderRadius: BorderRadius.circular(context.s(12)),
       ),
       child: RawScrollbar(
         controller: _scrollController2,
-        thumbColor: widget.accentColor.withAlpha(120),
+        thumbColor: widget.accentColor.withValues(alpha: 0.5),
         radius: Radius.circular(context.s(4)),
         thickness: context.s(3.5),
         fadeDuration: const Duration(milliseconds: 300),
@@ -229,7 +230,7 @@ class _FocusAccomplishmentsWidgetState extends State<FocusAccomplishmentsWidget>
             child: Text(
               accomplishmentsText,
               style: GoogleFonts.outfit(
-                color: Colors.white70,
+                color: appColors.textSecondary,
                 fontSize: context.s(12),
                 height: 1.4,
               ),

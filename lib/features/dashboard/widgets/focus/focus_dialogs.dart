@@ -8,6 +8,7 @@ import 'timer_painters.dart';
 // Dialog to configure daily target focus goal
 void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progressColor, WidgetRef ref) {
   int localMins = currentGoalMins;
+  final appColors = context.appColors;
 
   showDialog(
     context: context,
@@ -17,14 +18,18 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
           final hrStr = (localMins / 60).toStringAsFixed(1).replaceAll('.0', '');
 
           return AlertDialog(
-            backgroundColor: context.appColors.dialogBackground,
+            backgroundColor: appColors.dialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: Colors.white.withAlpha(8)),
+              side: BorderSide(color: appColors.borderColor),
             ),
             title: Text(
               "Set Daily Goal",
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: appColors.textPrimary,
+              ),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -44,7 +49,7 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
                   max: 16.0,
                   divisions: 15,
                   activeColor: progressColor,
-                  inactiveColor: Colors.white12,
+                  inactiveColor: appColors.borderColor,
                   label: '${(localMins / 60).round()}h',
                   onChanged: (val) {
                     setDialogState(() {
@@ -59,7 +64,7 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.outfit(color: Colors.white54),
+                  style: GoogleFonts.outfit(color: appColors.textSecondary),
                 ),
               ),
               FilledButton(
@@ -69,7 +74,7 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: progressColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: appColors.onAccent,
                 ),
                 child: Text(
                   "Save",
@@ -87,6 +92,7 @@ void showDailyGoalDialog(BuildContext context, int currentGoalMins, Color progre
 // Dialog to configure custom timer duration
 void showCustomDurationPicker(BuildContext context, int currentMins, Color progressColor, WidgetRef ref) {
   int localMins = currentMins;
+  final appColors = context.appColors;
 
   showDialog(
     context: context,
@@ -94,14 +100,18 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
       return StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
-            backgroundColor: context.appColors.dialogBackground,
+            backgroundColor: appColors.dialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: Colors.white.withAlpha(8)),
+              side: BorderSide(color: appColors.borderColor),
             ),
             title: Text(
               "Focus Duration",
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: appColors.textPrimary,
+              ),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -121,7 +131,7 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
                   max: 180.0,
                   divisions: 179,
                   activeColor: progressColor,
-                  inactiveColor: Colors.white12,
+                  inactiveColor: appColors.borderColor,
                   onChanged: (val) {
                     setDialogState(() {
                       localMins = val.round();
@@ -135,7 +145,7 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.outfit(color: Colors.white54),
+                  style: GoogleFonts.outfit(color: appColors.textSecondary),
                 ),
               ),
               FilledButton(
@@ -145,7 +155,7 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: progressColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: appColors.onAccent,
                 ),
                 child: Text(
                   "Apply",
@@ -162,119 +172,121 @@ void showCustomDurationPicker(BuildContext context, int currentMins, Color progr
 
 // Method selection modal overlay
 void showMethodSelectionMenu(BuildContext context, FocusSessionState sessionState, Color accentColor, WidgetRef ref) {
+  final appColors = context.appColors;
+
   showDialog(
     context: context,
     builder: (context) {
       return Dialog(
-        backgroundColor: Colors.black,
+        backgroundColor: appColors.dialogBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: accentColor.withAlpha(100), width: 1.5),
+          side: BorderSide(color: accentColor.withValues(alpha: 0.4), width: 1.5),
         ),
         child: SizedBox(
           width: 272,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Choose Focus Method",
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "Choose Focus Method",
+                  style: GoogleFonts.outfit(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: appColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    alignment: WrapAlignment.center,
-                    children: FocusMethod.values.map((method) {
-                      final details = focusMethodsData[method]!;
-                      final isSelected = sessionState.selectedMethod == method;
-                      return InkWell(
-                        onTap: () {
-                          ref.read(focusProvider.notifier).selectMethod(method);
-                          Navigator.pop(context);
-                          // Advance demo guide when user selects a method during guided flow
-                          if (ref.read(demoGuideProvider) == DemoStep.focusMethodInteract) {
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              ref.read(demoGuideProvider.notifier).setStep(DemoStep.focusStartInfo);
-                            });
-                          }
-                          if (method == FocusMethod.timer) {
-                            showCustomDurationPicker(context, 30, accentColor, ref);
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          width: 110,
-                          height: 110,
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                          decoration: BoxDecoration(
-                            color: isSelected ? accentColor.withAlpha(20) : context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isSelected ? accentColor : Colors.white.withAlpha(5),
-                              width: 1.5,
+                const SizedBox(height: 16),
+                
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.center,
+                      children: FocusMethod.values.map((method) {
+                        final details = focusMethodsData[method]!;
+                        final isSelected = sessionState.selectedMethod == method;
+                        return InkWell(
+                          onTap: () {
+                            ref.read(focusProvider.notifier).selectMethod(method);
+                            Navigator.pop(context);
+                            // Advance demo guide when user selects a method during guided flow
+                            if (ref.read(demoGuideProvider) == DemoStep.focusMethodInteract) {
+                              Future.delayed(const Duration(milliseconds: 300), () {
+                                ref.read(demoGuideProvider.notifier).setStep(DemoStep.focusStartInfo);
+                              });
+                            }
+                            if (method == FocusMethod.timer) {
+                              showCustomDurationPicker(context, 30, accentColor, ref);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            width: 110,
+                            height: 110,
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                            decoration: BoxDecoration(
+                              color: isSelected ? accentColor.withValues(alpha: 0.15) : appColors.surfaceColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected ? accentColor : appColors.borderColor,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildMethodIcon(details, isSelected ? accentColor : appColors.textSecondary, size: 28),
+                                const SizedBox(height: 6),
+                                Text(
+                                  details.name,
+                                  style: GoogleFonts.outfit(
+                                    color: isSelected ? accentColor : appColors.textPrimary,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              buildMethodIcon(details, isSelected ? accentColor : Colors.white70, size: 28),
-                              const SizedBox(height: 6),
-                              Text(
-                                details.name,
-                                style: GoogleFonts.outfit(
-                                  color: isSelected ? accentColor : Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              Center(
-                child: SizedBox(
-                  width: 232,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      showTechniqueGuideModal(context, sessionState, accentColor, ref);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      side: BorderSide(color: accentColor.withAlpha(100)),
-                    ),
-                    child: Text(
-                      "Learn More ?",
-                      style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                
+                Center(
+                  child: SizedBox(
+                    width: 232,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showTechniqueGuideModal(context, sessionState, accentColor, ref);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        side: BorderSide(color: accentColor.withValues(alpha: 0.4)),
+                      ),
+                      child: Text(
+                        "Learn More ?",
+                        style: GoogleFonts.outfit(color: accentColor, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       );
     },
@@ -283,10 +295,12 @@ void showMethodSelectionMenu(BuildContext context, FocusSessionState sessionStat
 
 // Technique details guide sheet
 void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionState, Color accentColor, WidgetRef ref) {
+  final appColors = context.appColors;
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.black,
+    backgroundColor: appColors.dialogBackground,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -304,7 +318,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                 width: 48,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white12,
+                  color: appColors.borderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -319,14 +333,14 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                       style: GoogleFonts.outfit(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: appColors.textPrimary,
                       ),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.white.withAlpha(8),
-                        foregroundColor: Colors.white,
+                        backgroundColor: appColors.surfaceColor,
+                        foregroundColor: appColors.textPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -357,10 +371,10 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                       margin: const EdgeInsets.only(bottom: 16),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: context.appColors.cardBackground,
+                        color: appColors.cardBackground,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                          color: isSelected ? accentColor : Colors.white.withAlpha(8),
+                          color: isSelected ? accentColor : appColors.borderColor,
                           width: 1.5,
                         ),
                       ),
@@ -375,10 +389,10 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: isSelected ? accentColor.withAlpha(20) : Colors.white.withAlpha(5),
+                                      color: isSelected ? accentColor.withValues(alpha: 0.15) : appColors.surfaceColor,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: buildMethodIcon(details, isSelected ? accentColor : Colors.white70, size: 30),
+                                    child: buildMethodIcon(details, isSelected ? accentColor : appColors.textSecondary, size: 30),
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
@@ -386,7 +400,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                      color: Colors.white,
+                                      color: appColors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -395,7 +409,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                                   ? Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: accentColor.withAlpha(40),
+                                        color: accentColor.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
@@ -418,11 +432,11 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                                       style: OutlinedButton.styleFrom(
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                                        side: const BorderSide(color: Colors.white24),
+                                        side: BorderSide(color: appColors.borderColor),
                                       ),
                                       child: Text(
                                         "Select",
-                                        style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11),
+                                        style: GoogleFonts.outfit(color: appColors.textSecondary, fontSize: 11),
                                       ),
                                     ),
                             ],
@@ -431,7 +445,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                           Text(
                             targetStr,
                             style: GoogleFonts.outfit(
-                              color: isSelected ? accentColor : Colors.white54,
+                              color: isSelected ? accentColor : appColors.textMuted,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -440,7 +454,7 @@ void showTechniqueGuideModal(BuildContext context, FocusSessionState sessionStat
                           Text(
                             details.description,
                             style: GoogleFonts.outfit(
-                              color: Colors.white70,
+                              color: appColors.textSecondary,
                               fontSize: 13,
                               height: 1.4,
                             ),

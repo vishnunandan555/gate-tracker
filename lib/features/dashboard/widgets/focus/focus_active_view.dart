@@ -609,7 +609,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                       style: GoogleFonts.outfit(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: context.appColors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -618,27 +618,27 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Duration:", style: GoogleFonts.outfit(color: Colors.white54)),
-                        Text(durationStr, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                        Text("Duration:", style: GoogleFonts.outfit(color: context.appColors.textMuted)),
+                        Text(durationStr, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Method:", style: GoogleFonts.outfit(color: Colors.white54)),
-                        Text(session.method, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                        Text("Method:", style: GoogleFonts.outfit(color: context.appColors.textMuted)),
+                        Text(session.method, style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Progress:", style: GoogleFonts.outfit(color: Colors.white54)),
+                        Text("Progress:", style: GoogleFonts.outfit(color: context.appColors.textMuted)),
                         Text(
                           "+${session.progressDelta.toStringAsFixed(session.progressDelta == session.progressDelta.toInt() ? 0 : 1)}%",
                           style: GoogleFonts.outfit(
-                            color: session.progressDelta > 0 ? accentColor : Colors.white,
+                            color: session.progressDelta > 0 ? accentColor : context.appColors.textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -649,7 +649,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                       const SizedBox(height: 16),
                       Text(
                         "Accomplishments:",
-                        style: GoogleFonts.outfit(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 13, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 6),
                       FocusAccomplishmentsWidget(
@@ -665,14 +665,14 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                         padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: accentColor.withAlpha(20),
+                          color: accentColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: accentColor.withAlpha(80)),
+                          border: Border.all(color: accentColor.withValues(alpha: 0.4)),
                         ),
                         child: Text(
                           "Tap Awesome to save this session and continue the walkthrough.",
                           style: GoogleFonts.outfit(
-                            color: Colors.white,
+                            color: context.appColors.textPrimary,
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             height: 1.4,
@@ -693,7 +693,7 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                       },
                       style: FilledButton.styleFrom(
                         backgroundColor: accentColor,
-                        foregroundColor: Colors.black,
+                        foregroundColor: context.appColors.onAccent,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
