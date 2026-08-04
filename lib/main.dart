@@ -87,13 +87,17 @@ class GateTrackerApp extends ConsumerWidget {
     final agreementAsync = ref.watch(agreementProvider);
     final authAsync = ref.watch(authProvider);
     final setupAsync = ref.watch(setupCompletedProvider);
-
     final activeThemeData = ref.watch(activeAppThemeProvider);
+    final lightTheme = ref.watch(lightAppThemeProvider);
+    final darkTheme = ref.watch(darkAppThemeProvider);
+    final themeMode = ref.watch(activeThemeModeProvider);
 
     if (agreementAsync.isLoading || authAsync.isLoading || setupAsync.isLoading) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: activeThemeData,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: themeMode,
         home: Scaffold(
           backgroundColor: activeThemeData.scaffoldBackgroundColor,
           body: Center(
@@ -139,10 +143,6 @@ class GateTrackerApp extends ConsumerWidget {
     final hasAgreed = agreementAsync.value ?? false;
     final authState = authAsync.value;
     final hasSetup = setupAsync.value ?? false;
-
-    final lightTheme = ref.watch(lightAppThemeProvider);
-    final darkTheme = ref.watch(darkAppThemeProvider);
-    final themeMode = ref.watch(activeThemeModeProvider);
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {

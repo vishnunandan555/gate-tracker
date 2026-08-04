@@ -874,7 +874,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
             context: context,
             barrierDismissible: false,
             builder: (context) =>
-                const Center(child: CircularProgressIndicator()),
+                Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent)),
           );
         }
 

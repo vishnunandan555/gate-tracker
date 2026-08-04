@@ -190,7 +190,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             return Center(child: Text('Error: ${syllabusAsync.error}'));
           }
           if (!syllabusAsync.hasValue) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent));
           }
           final syllabusData = syllabusAsync.value!;
           final isSyllabusEmpty = syllabusData.isEmpty;

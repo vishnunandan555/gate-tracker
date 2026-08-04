@@ -150,7 +150,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => const Center(child: CircularProgressIndicator()),
+        builder: (ctx) => Center(child: CircularProgressIndicator(color: accentColor)),
       );
 
       try {

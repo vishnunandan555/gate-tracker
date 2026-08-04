@@ -100,7 +100,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: context.appColors.surfaceColor,
+        backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           "Sync Conflict Detected",
@@ -114,7 +114,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             children: [
               Text(
                 "Both your local device and cloud backup contain study tracking progress. How would you like to resolve this conflict?",
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -250,9 +250,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white10),
+          border: Border.all(color: context.appColors.borderColor),
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white.withValues(alpha: 0.05),
+          color: context.appColors.surfaceColor,
         ),
         child: Row(
           children: [
@@ -264,12 +264,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.outfit(color: Colors.white30, fontSize: 11),
+                    style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11),
                   ),
                 ],
               ),
@@ -394,8 +394,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       backgroundColor: context.appColors.scaffoldBackground,
       body: SafeArea(
         child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Colors.cyanAccent),
+            ? Center(
+                child: CircularProgressIndicator(color: progressColor),
               )
             : LayoutBuilder(
                 builder: (context, constraints) {

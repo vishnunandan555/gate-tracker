@@ -106,7 +106,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
           ),
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent)),
       );
     }
 
