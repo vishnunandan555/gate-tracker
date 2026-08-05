@@ -86,7 +86,8 @@ final themeEngineProvider =
 });
 
 final lightAppThemeProvider = Provider<ThemeData>((ref) {
-  final accentColor = ref.watch(overallProgressColorProvider);
+  ref.watch(overallProgressColorProvider);
+  final accentColor = ref.read(overallProgressColorProvider.notifier).getAccentForBrightness(isDark: false);
   final themeState = ref.watch(themeEngineProvider);
   final activeModel = ref.read(themeEngineProvider.notifier).getActiveThemeModel(themeState, isDark: false);
 
@@ -98,7 +99,8 @@ final lightAppThemeProvider = Provider<ThemeData>((ref) {
 });
 
 final darkAppThemeProvider = Provider<ThemeData>((ref) {
-  final accentColor = ref.watch(overallProgressColorProvider);
+  ref.watch(overallProgressColorProvider);
+  final accentColor = ref.read(overallProgressColorProvider.notifier).getAccentForBrightness(isDark: true);
   final themeState = ref.watch(themeEngineProvider);
   final activeModel = ref.read(themeEngineProvider.notifier).getActiveThemeModel(themeState, isDark: true);
 

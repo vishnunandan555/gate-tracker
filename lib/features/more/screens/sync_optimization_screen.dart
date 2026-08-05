@@ -9,11 +9,11 @@ import '../../../database/backup_service.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class SyncOptimizationScreen extends ConsumerStatefulWidget {
-  final Color accentColor;
+  final Color? accentColor;
 
   const SyncOptimizationScreen({
     super.key,
-    this.accentColor = const Color(0xFF00E5FF),
+    this.accentColor,
   });
 
   @override
@@ -21,6 +21,7 @@ class SyncOptimizationScreen extends ConsumerStatefulWidget {
 }
 
 class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen> {
+  Color get activeAccent => widget.accentColor ?? context.appColors.primaryAccent;
   bool _initialized = false;
   late bool _syncStatsEnabled;
   late bool _syncCompressed;
@@ -181,7 +182,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Icon(
                           isCurrentWarning ? Icons.warning_amber_rounded : Icons.cloud_done_rounded,
-                          color: isCurrentWarning ? warningColor : widget.accentColor,
+                          color: isCurrentWarning ? warningColor : activeAccent,
                           size: 22,
                         ),
                         const SizedBox(width: 10),
@@ -200,13 +201,13 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           decoration: BoxDecoration(
                             color: isCurrentWarning
                                 ? warningColor.withValues(alpha: 0.2)
-                                : widget.accentColor.withValues(alpha: 0.15),
+                                : activeAccent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             isCurrentWarning ? 'STATUS: HIGH' : 'STATUS: OK',
                             style: GoogleFonts.outfit(
-                              color: isCurrentWarning ? warningColor : widget.accentColor,
+                              color: isCurrentWarning ? warningColor : activeAccent,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -226,7 +227,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       child: LinearProgressIndicator(
                         value: (currentKb / 1024.0).clamp(0.0, 1.0),
                         backgroundColor: context.appColors.surfaceColor,
-                        color: isCurrentWarning ? warningColor : widget.accentColor,
+                        color: isCurrentWarning ? warningColor : activeAccent,
                         minHeight: 8,
                       ),
                     ),
@@ -241,7 +242,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         Text(
                           '${currentPct.toStringAsFixed(1)}% Used',
                           style: GoogleFonts.outfit(
-                            color: isCurrentWarning ? warningColor : widget.accentColor,
+                            color: isCurrentWarning ? warningColor : activeAccent,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -292,7 +293,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     value: _syncStatsEnabled,
-                    activeThumbColor: widget.accentColor,
+                    activeThumbColor: activeAccent,
                     onChanged: (val) {
                       setState(() {
                         _syncStatsEnabled = val;
@@ -319,7 +320,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     value: _syncCompressed,
-                    activeThumbColor: widget.accentColor,
+                    activeThumbColor: activeAccent,
                     onChanged: (val) {
                       setState(() => _syncCompressed = val);
                     },
@@ -415,10 +416,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 decoration: BoxDecoration(
                   color: isProjectedWarning
                       ? warningColor.withValues(alpha: 0.1)
-                      : widget.accentColor.withValues(alpha: 0.06),
+                      : activeAccent.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isProjectedWarning ? warningColor : widget.accentColor.withValues(alpha: 0.4),
+                    color: isProjectedWarning ? warningColor : activeAccent.withValues(alpha: 0.4),
                   ),
                 ),
                 child: Column(
@@ -428,7 +429,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Icon(
                           isProjectedWarning ? Icons.warning_amber_rounded : Icons.auto_awesome_rounded,
-                          color: isProjectedWarning ? warningColor : widget.accentColor,
+                          color: isProjectedWarning ? warningColor : activeAccent,
                           size: 22,
                         ),
                         const SizedBox(width: 10),
@@ -471,7 +472,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       child: LinearProgressIndicator(
                         value: (projectedKb / 1024.0).clamp(0.0, 1.0),
                         backgroundColor: context.appColors.surfaceColor,
-                        color: isProjectedWarning ? warningColor : widget.accentColor,
+                        color: isProjectedWarning ? warningColor : activeAccent,
                         minHeight: 8,
                       ),
                     ),
@@ -486,7 +487,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         Text(
                           '${projectedPct.toStringAsFixed(1)}% Used',
                           style: GoogleFonts.outfit(
-                            color: isProjectedWarning ? warningColor : widget.accentColor,
+                            color: isProjectedWarning ? warningColor : activeAccent,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -529,7 +530,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
               child: ElevatedButton.icon(
                 onPressed: (_isApplying || _isSuccess) ? null : _executeOptimizationFlow,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _isSuccess ? Colors.green : widget.accentColor,
+                  backgroundColor: _isSuccess ? Colors.green : activeAccent,
                   foregroundColor: context.appColors.onAccent,
                   disabledBackgroundColor: _isSuccess ? Colors.green : context.appColors.surfaceColor,
                   disabledForegroundColor: _isSuccess ? context.appColors.onAccent : context.appColors.textMuted,
@@ -717,7 +718,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         subtitle: '${categories.length} Categories • ${topics.length} Topics',
         sizeText: '${catsTopicsKb.toStringAsFixed(1)} KB',
         icon: Icons.category_rounded,
-        color: widget.accentColor,
+        color: activeAccent,
       ),
       _buildBreakdownItem(
         title: 'Syllabus & Custom Tasks',
@@ -741,7 +742,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             : '${focusSessions.length} Study Sessions',
         sizeText: '${focusSessionsKb.toStringAsFixed(1)} KB',
         icon: Icons.timer_rounded,
-        color: (isProjected && !_syncStatsEnabled) ? context.appColors.textMuted : widget.accentColor,
+        color: (isProjected && !_syncStatsEnabled) ? context.appColors.textMuted : activeAccent,
       ),
       _buildBreakdownItem(
         title: 'Daily Focus History',

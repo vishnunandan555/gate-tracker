@@ -165,8 +165,8 @@ class _HeroProfileCard extends ConsumerWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: context.appColors.scaffoldBackground, width: 2),
                     ),
-                    child: const Icon(Icons.photo_camera_rounded,
-                        color: Colors.black, size: 14),
+                    child: Icon(Icons.photo_camera_rounded,
+                        color: context.appColors.onAccent, size: 14),
                   ),
                 ),
               ),
@@ -403,7 +403,7 @@ class _HeroProfileCard extends ConsumerWidget {
             _PhotoOption(
               icon: Icons.photo_library_rounded,
               label: 'Choose Custom Photo',
-              color: accentColor,
+              color: context.appColors.primaryAccent,
               onTap: () async {
                 Navigator.pop(ctx);
                 final result = await FilePicker.pickFiles(
@@ -433,7 +433,7 @@ class _HeroProfileCard extends ConsumerWidget {
               _PhotoOption(
                 icon: Icons.account_circle_rounded,
                 label: 'Use Google Photo',
-                color: accentColor,
+                color: context.appColors.primaryAccent,
                 onTap: () async {
                   Navigator.pop(ctx);
                   await ref
@@ -792,7 +792,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
                     subtitle:
                         'Delete cloud backup, keep study data on phone in Offline Mode',
                     icon: Icons.smartphone_rounded,
-                    color: widget.accentColor,
+                    color: context.appColors.primaryAccent,
                     onTap: () => Navigator.pop(context, 'keepLocal'),
                   ),
                   const SizedBox(height: 12),

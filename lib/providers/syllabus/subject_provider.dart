@@ -42,7 +42,8 @@ class SystemAccentColorNotifier extends Notifier<Color?> {
 class OverallProgressColorNotifier extends Notifier<Color> {
   String _mode = 'auto'; // 'auto', 'frozen', or 'device'
   Color? _frozenColor;
-  Color? _autoColor;
+  Color? _autoDarkColor;
+  Color? _autoLightColor;
   List<Color> _userDarkAccents = [];
   List<Color> _userLightAccents = [];
 
@@ -74,13 +75,26 @@ class OverallProgressColorNotifier extends Notifier<Color> {
 
     final activeThemeMode = ref.watch(activeThemeModeProvider);
     final isDark = activeThemeMode == ThemeMode.dark;
-    final currentPool = isDark ? darkPool : lightPool;
+    return getAccentForBrightness(isDark: isDark);
+  }
 
-    if (_autoColor == null || !currentPool.any((c) => c.toARGB32() == _autoColor!.toARGB32())) {
-      _autoColor = currentPool[math.Random().nextInt(currentPool.length)];
+  Color getAccentForBrightness({required bool isDark}) {
+    if ((_mode == 'frozen' || _mode == 'device') && _frozenColor != null) {
+      return _frozenColor!;
     }
 
-    return _autoColor!;
+    final currentPool = isDark ? darkPool : lightPool;
+    if (isDark) {
+      if (_autoDarkColor == null || !currentPool.any((c) => c.toARGB32() == _autoDarkColor!.toARGB32())) {
+        _autoDarkColor = currentPool[math.Random().nextInt(currentPool.length)];
+      }
+      return _autoDarkColor!;
+    } else {
+      if (_autoLightColor == null || !currentPool.any((c) => c.toARGB32() == _autoLightColor!.toARGB32())) {
+        _autoLightColor = currentPool[math.Random().nextInt(currentPool.length)];
+      }
+      return _autoLightColor!;
+    }
   }
 
   void _loadCustomAccents() {
@@ -142,8 +156,13 @@ class OverallProgressColorNotifier extends Notifier<Color> {
   void randomize({bool isDark = true}) {
     if (_mode == 'frozen' || _mode == 'device') return;
     final pool = isDark ? darkPool : lightPool;
-    _autoColor = pool[math.Random().nextInt(pool.length)];
-    state = _autoColor!;
+    final nextColor = pool[math.Random().nextInt(pool.length)];
+    if (isDark) {
+      _autoDarkColor = nextColor;
+    } else {
+      _autoLightColor = nextColor;
+    }
+    state = nextColor;
   }
 
   void next({bool isDark = true}) {
@@ -151,7 +170,12 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     final pool = isDark ? darkPool : lightPool;
     final currentIdx = pool.indexOf(state);
     final nextIdx = (currentIdx + 1) % pool.length;
-    _autoColor = pool[nextIdx];
-    state = _autoColor!;
+    final nextColor = pool[nextIdx];
+    if (isDark) {
+      _autoDarkColor = nextColor;
+    } else {
+      _autoLightColor = nextColor;
+    }
+    state = nextColor;
   }
 }
