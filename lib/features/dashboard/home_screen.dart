@@ -772,7 +772,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildNotificationsView(BuildContext context, WidgetRef ref, Color accentColor) {
     final state = ref.watch(communityNotificationsProvider);
     final notifications = state.notifications;
-    final readIds = state.readIds;
     final unreadCount = state.unreadCount;
 
     return Column(
@@ -935,7 +934,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Builder(
                   builder: (context) {
                     final item = notifications[index];
-                    final isUnread = !readIds.contains(item.id);
+                    final isUnread = !state.isNotificationRead(item);
 
                     return InkWell(
                       onTap: () {

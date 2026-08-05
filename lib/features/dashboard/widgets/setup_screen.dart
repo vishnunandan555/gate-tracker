@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'shell_common.dart';
 import '../../../core/theme/theme_context_ext.dart';
+import '../../../core/theme/models/accent_pool_model.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../../database/syllabus_preset.dart';
 import '../../../database/app_database.dart';
+import 'settings/customization_settings.dart';
 
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
@@ -28,11 +30,16 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   StudyDayRollover _studyDayRollover = StudyDayRollover.overnight;
 
   late TextEditingController _nameController;
+  late TextEditingController _setupHexController;
+  late FocusNode _setupHexFocusNode;
+  bool? _isViewingDarkPool;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
+    _setupHexController = TextEditingController();
+    _setupHexFocusNode = FocusNode();
 
     // Default target date to next February 1st dynamically
     final now = DateTime.now();
@@ -53,6 +60,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _setupHexController.dispose();
+    _setupHexFocusNode.dispose();
     super.dispose();
   }
 
@@ -1264,10 +1273,19 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   Widget _buildStepAccentColor(Color accentColor) {
     final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
     final isAuto = colorNotifier.mode == 'auto';
+    final isDevice = colorNotifier.mode == 'device';
+
+    _isViewingDarkPool ??= !context.appColors.isLight;
+    final activePool = _isViewingDarkPool! ? colorNotifier.darkPool : colorNotifier.lightPool;
 
     int r = (accentColor.r * 255).round().clamp(0, 255);
     int g = (accentColor.g * 255).round().clamp(0, 255);
     int b = (accentColor.b * 255).round().clamp(0, 255);
+
+    final currentHex = AppAccentPools.toHexString(accentColor);
+    if (_setupHexController.text != currentHex && !_setupHexFocusNode.hasFocus) {
+      _setupHexController.text = currentHex;
+    }
 
     return Column(
       key: const ValueKey(7),
@@ -1285,7 +1303,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          "Personalize your app's accent color. Select auto-changing dynamic themes, pick a preset, or define your own color.",
+          "Personalize your app's accent color. Select auto-changing dynamic themes, pick a preset, or enter custom Hex code.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
             color: context.appColors.textSecondary,
@@ -1331,7 +1349,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      isAuto ? "AUTO DYNAMIC" : "#${accentColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}",
+                      isAuto ? "AUTO DYNAMIC" : "#${currentHex.toUpperCase()}",
                       style: GoogleFonts.outfit(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -1460,26 +1478,54 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 20),
 
-        Text(
-          "PRESET NEON COLORS",
-          style: GoogleFonts.orbitron(
-            fontSize: context.s(10),
-            fontWeight: FontWeight.bold,
-            color: context.appColors.textSecondary,
-            letterSpacing: 1.2,
-          ),
+        // ── Accent Presets Section with Light / Dark Pool Switcher ──────
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "PRESET ACCENT POOL",
+              style: GoogleFonts.orbitron(
+                fontSize: context.s(10),
+                fontWeight: FontWeight.bold,
+                color: context.appColors.textSecondary,
+                letterSpacing: 1.2,
+              ),
+            ),
+            SegmentedButton<bool>(
+              segments: [
+                ButtonSegment(value: true, label: Text('Dark', style: GoogleFonts.outfit(fontSize: 10, color: context.appColors.textPrimary))),
+                ButtonSegment(value: false, label: Text('Light', style: GoogleFonts.outfit(fontSize: 10, color: context.appColors.textPrimary))),
+              ],
+              selected: {_isViewingDarkPool!},
+              onSelectionChanged: (val) {
+                setState(() {
+                  _isViewingDarkPool = val.first;
+                });
+              },
+              style: ButtonStyle(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return context.appColors.surfaceColor;
+                  }
+                  return Colors.transparent;
+                }),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         Text(
-          "Lock your theme to a specific high-contrast neon shade.",
+          "Pick a curated accent color from the theme pool.",
           style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
         ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: colorNotifier.darkPool.map((presetColor) {
-            final isSelected = !isAuto && colorNotifier.frozenColor?.toARGB32() == presetColor.toARGB32();
+          children: activePool.map((presetColor) {
+            final isSelected = !isAuto && !isDevice && colorNotifier.frozenColor?.toARGB32() == presetColor.toARGB32();
             return GestureDetector(
               onTap: () => colorNotifier.setFrozenColor(presetColor),
               child: Container(
@@ -1510,8 +1556,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 20),
 
+        // ── Custom Hex & RGB Color Picker ──────────────────────────────
         Text(
-          "PICK CUSTOM COLOR (RGB)",
+          "CUSTOM ACCENT PICKER",
           style: GoogleFonts.orbitron(
             fontSize: context.s(10),
             fontWeight: FontWeight.bold,
@@ -1521,8 +1568,66 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          "Fine-tune exact Red, Green, and Blue sliders to create any custom color.",
+          "Fine-tune exact Hex (#) code or Red, Green, Blue sliders.",
           style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
+        ),
+        const SizedBox(height: 12),
+
+        // Hex Code TextField Row with Live Color Preview Circle
+        Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: accentColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: context.appColors.borderColor, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.4),
+                    blurRadius: 12,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: TextField(
+                controller: _setupHexController,
+                focusNode: _setupHexFocusNode,
+                style: GoogleFonts.orbitron(
+                  color: context.appColors.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: context.appColors.cardBackground,
+                  labelText: 'Hex Code',
+                  labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
+                  prefixText: '# ',
+                  prefixStyle: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 13),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: context.appColors.borderColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: accentColor, width: 1.5),
+                  ),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                ),
+                onChanged: (val) {
+                  final parsed = AppAccentPools.parseHexColor(val);
+                  if (parsed != null) {
+                    colorNotifier.setFrozenColor(parsed);
+                  }
+                },
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
 
@@ -1539,6 +1644,23 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           final newColor = Color.fromARGB(255, r, g, val.round());
           colorNotifier.setFrozenColor(newColor);
         }),
+        const SizedBox(height: 12),
+
+        // Button to open Full Color Picker Dialog popup
+        OutlinedButton.icon(
+          onPressed: () => showAccentColorDialog(context, ref),
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: context.appColors.borderColor),
+            foregroundColor: context.appColors.textPrimary,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          icon: Icon(Icons.color_lens_rounded, size: 18, color: accentColor),
+          label: Text(
+            "OPEN COLOR PICKER DIALOG",
+            style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+          ),
+        ),
 
         const SizedBox(height: 32),
         _buildNavigationRow(

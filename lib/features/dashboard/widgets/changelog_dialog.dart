@@ -317,11 +317,11 @@ class ChangelogDialog extends ConsumerWidget {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       }
                     },
-                    icon: const Icon(Icons.open_in_new_rounded, size: 14, color: Colors.white54),
+                    icon: Icon(Icons.open_in_new_rounded, size: 14, color: context.appColors.textSecondary),
                     label: Text(
                       "GitHub",
                       style: GoogleFonts.outfit(
-                        color: Colors.white54,
+                        color: context.appColors.textSecondary,
                         fontSize: 12,
                         decoration: TextDecoration.underline,
                       ),

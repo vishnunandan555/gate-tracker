@@ -50,27 +50,42 @@ class CommunityNotification {
 class CommunityNotificationsState {
   final List<CommunityNotification> notifications;
   final Set<String> readIds;
+  final DateTime? lastMarkAllReadCutoff;
   final bool isLoading;
   final bool hasError; // True when last remote fetch failed (e.g. offline)
 
   const CommunityNotificationsState({
     this.notifications = const [],
     this.readIds = const {},
+    this.lastMarkAllReadCutoff,
     this.isLoading = false,
     this.hasError = false,
   });
 
-  int get unreadCount => notifications.where((n) => !readIds.contains(n.id)).length;
+  bool isNotificationRead(CommunityNotification n) {
+    if (readIds.contains(n.id)) return true;
+    if (lastMarkAllReadCutoff != null && n.date.isNotEmpty) {
+      final notifDate = DateTime.tryParse(n.date);
+      if (notifDate != null && !notifDate.isAfter(lastMarkAllReadCutoff!)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  int get unreadCount => notifications.where((n) => !isNotificationRead(n)).length;
 
   CommunityNotificationsState copyWith({
     List<CommunityNotification>? notifications,
     Set<String>? readIds,
+    DateTime? lastMarkAllReadCutoff,
     bool? isLoading,
     bool? hasError,
   }) {
     return CommunityNotificationsState(
       notifications: notifications ?? this.notifications,
       readIds: readIds ?? this.readIds,
+      lastMarkAllReadCutoff: lastMarkAllReadCutoff ?? this.lastMarkAllReadCutoff,
       isLoading: isLoading ?? this.isLoading,
       hasError: hasError ?? this.hasError,
     );
@@ -79,6 +94,7 @@ class CommunityNotificationsState {
 
 class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsState> {
   static const String _readIdsKey = 'read_community_notification_ids';
+  static const String _markAllCutoffKey = 'community_notifications_mark_all_read_cutoff';
   static const String _cacheKey = 'cached_community_notifications_json';
   static const String _remoteUrl = 'https://vishnunandan555.github.io/gateletics/notifications.json';
 
@@ -91,12 +107,12 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   Future<void> _init() async {
     final prefs = ref.read(sharedPreferencesProvider);
 
-    // 1. Load read IDs from SharedPreferences
-    // NOTE: null means key was NEVER set (fresh install).
-    //       [] (empty list) means user cleared or marked all as read.
-    final readList = prefs.getStringList(_readIdsKey); // null = fresh install
-    final isFirstInstall = readList == null;
+    // 1. Load read IDs & cutoff timestamp from SharedPreferences
+    final readList = prefs.getStringList(_readIdsKey);
+    final cutoffStr = prefs.getString(_markAllCutoffKey);
+    final isFirstInstall = readList == null && cutoffStr == null;
     final readSet = Set<String>.from(readList ?? []);
+    final DateTime? cutoffDate = cutoffStr != null ? DateTime.tryParse(cutoffStr) : null;
 
     // 2. Load cached notifications
     List<CommunityNotification> loadedList = [];
@@ -145,6 +161,7 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
     state = CommunityNotificationsState(
       notifications: loadedList,
       readIds: readSet,
+      lastMarkAllReadCutoff: cutoffDate,
       isLoading: true,
       hasError: false,
     );
@@ -154,10 +171,6 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   }
 
   /// Fetches the latest notifications from remote.
-  ///
-  /// [isFirstInstall]: When true (readIds key never existed in SharedPrefs),
-  /// notifications older than 30 days are pre-marked as read to avoid
-  /// flooding new users with a wall of old unread notifications.
   Future<void> _fetchRemote({required bool isFirstInstall}) async {
     try {
       final response = await http.get(Uri.parse(_remoteUrl)).timeout(const Duration(seconds: 4));
@@ -172,51 +185,53 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
         }
 
         final prefs = ref.read(sharedPreferencesProvider);
-        // 1. Completely replace local storage with the capped notification payload
         await prefs.setString(_cacheKey, jsonEncode(fetchedList.map((n) => n.toJson()).toList()));
 
-        // 2. Prune obsolete read IDs (garbage collection for deleted/retired notifications)
-        final currentReadList = prefs.getStringList(_readIdsKey);
-        final activeIds = fetchedList.map((n) => n.id).toSet();
-        Set<String> cleanedReadSet = currentReadList != null
-            ? currentReadList.where((id) => activeIds.contains(id)).toSet()
-            : <String>{};
+        // Merge existing read IDs and cutoff date
+        final currentReadList = prefs.getStringList(_readIdsKey) ?? [];
+        final currentCutoffStr = prefs.getString(_markAllCutoffKey);
+        final DateTime? cutoffDate = currentCutoffStr != null ? DateTime.tryParse(currentCutoffStr) : state.lastMarkAllReadCutoff;
 
-        // 3. Fresh install — pre-mark notifications older than 30 days as read
-        //    so users aren't greeted with a wall of unread historical announcements.
+        Set<String> cleanedReadSet = Set<String>.from(currentReadList);
+
+        for (final n in fetchedList) {
+          if (cutoffDate != null && n.date.isNotEmpty) {
+            final notifDate = DateTime.tryParse(n.date);
+            if (notifDate != null && !notifDate.isAfter(cutoffDate)) {
+              cleanedReadSet.add(n.id);
+            }
+          }
+        }
+
         if (isFirstInstall) {
           final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
           for (final n in fetchedList) {
             final notifDate = DateTime.tryParse(n.date);
             if (notifDate != null && notifDate.isBefore(thirtyDaysAgo)) {
-              cleanedReadSet = {...cleanedReadSet, n.id};
+              cleanedReadSet.add(n.id);
             }
           }
         }
 
-        // 4. Persist the final read set to SharedPreferences
         await prefs.setStringList(_readIdsKey, cleanedReadSet.toList());
 
-        // 5. Update state
         state = state.copyWith(
           notifications: fetchedList,
           readIds: cleanedReadSet,
+          lastMarkAllReadCutoff: cutoffDate,
           isLoading: false,
           hasError: false,
         );
       } else {
-        // Non-200 response — remote returned an error
         state = state.copyWith(isLoading: false, hasError: true);
       }
     } catch (_) {
-      // Network error / timeout — mark as error so UI can show retry option
       state = state.copyWith(isLoading: false, hasError: true);
     }
   }
 
-  /// Manually refresh notifications (e.g. from pull-to-refresh or retry button).
   Future<void> refresh() async {
-    if (state.isLoading) return; // Already in flight
+    if (state.isLoading) return;
     state = state.copyWith(isLoading: true, hasError: false);
     await _fetchRemote(isFirstInstall: false);
   }
@@ -224,10 +239,16 @@ class CommunityNotificationsNotifier extends Notifier<CommunityNotificationsStat
   Future<void> markAllAsRead() async {
     final allIds = state.notifications.map((n) => n.id).toSet();
     final updatedReadSet = {...state.readIds, ...allIds};
-    state = state.copyWith(readIds: updatedReadSet);
+    final now = DateTime.now();
+
+    state = state.copyWith(
+      readIds: updatedReadSet,
+      lastMarkAllReadCutoff: now,
+    );
 
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setStringList(_readIdsKey, updatedReadSet.toList());
+    await prefs.setString(_markAllCutoffKey, now.toIso8601String());
   }
 
   Future<void> markAsRead(String id) async {

@@ -49,14 +49,25 @@ class AboutScreen extends ConsumerWidget {
                 children: [
                   // App Icon
                   Container(
-                    width: 72,
-                    height: 72,
+                    width: 76,
+                    height: 76,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: context.appColors.borderColor),
+                      color: context.appColors.surfaceColor,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: context.appColors.primaryAccent.withValues(alpha: 0.3),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.appColors.primaryAccent.withValues(alpha: 0.08),
+                          blurRadius: 16,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(19),
+                      borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
                         'assets/icon.png',
                         fit: BoxFit.cover,
@@ -65,7 +76,7 @@ class AboutScreen extends ConsumerWidget {
                           child: Icon(
                             Icons.school_rounded,
                             color: context.appColors.primaryAccent,
-                            size: 36,
+                            size: 38,
                           ),
                         ),
                       ),
@@ -245,7 +256,7 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
           const SizedBox(width: 8),
           Text(
             'Checking for updates...',
-            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11.5),
+            style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11.5),
           ),
         ],
       );
@@ -254,7 +265,7 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
         children: [
           Text(
             'GATEletics v${updateState.releaseInfo!.latestVersion} is available!',
-            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12),
           ),
           const SizedBox(height: 6),
           InkWell(
@@ -274,12 +285,12 @@ class _DesktopAboutUpdateTile extends ConsumerWidget {
     } else if (updateState.status == DesktopUpdateStatus.upToDate) {
       statusContent = Text(
         '✓ You are using the latest version',
-        style: GoogleFonts.outfit(color: Colors.greenAccent.withValues(alpha: 0.8), fontWeight: FontWeight.w600, fontSize: 11.5),
+        style: GoogleFonts.outfit(color: context.appColors.isLight ? Colors.green.shade800 : Colors.greenAccent, fontWeight: FontWeight.w600, fontSize: 11.5),
       );
     } else if (updateState.status == DesktopUpdateStatus.error) {
       statusContent = Text(
         updateState.errorMessage ?? 'Could not check for updates',
-        style: GoogleFonts.outfit(color: Colors.redAccent.withValues(alpha: 0.8), fontSize: 11),
+        style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 11),
       );
     } else {
       statusContent = OutlinedButton.icon(
@@ -327,6 +338,18 @@ class _BadgeState extends State<_Badge> {
 
   @override
   Widget build(BuildContext context) {
+    final accentColor = context.appColors.primaryAccent;
+    final isInteractive = widget.onTap != null;
+    final bgColor = isInteractive
+        ? accentColor.withValues(alpha: 0.1)
+        : context.appColors.surfaceColor;
+    final borderColor = isInteractive
+        ? accentColor.withValues(alpha: 0.3)
+        : context.appColors.borderColor;
+    final textColor = isInteractive
+        ? accentColor
+        : context.appColors.textMuted;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
@@ -339,15 +362,15 @@ class _BadgeState extends State<_Badge> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: context.appColors.surfaceColor,
+            color: bgColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: context.appColors.borderColor, width: 1),
+            border: Border.all(color: borderColor, width: 1),
           ),
           child: Text(
             widget.label,
             style: GoogleFonts.outfit(
-              color: context.appColors.textMuted,
-              fontWeight: FontWeight.w600,
+              color: textColor,
+              fontWeight: FontWeight.bold,
               fontSize: 11,
               letterSpacing: 0.4,
             ),
@@ -380,6 +403,8 @@ class _LinkButtonState extends State<_LinkButton> {
 
   @override
   Widget build(BuildContext context) {
+    final accentColor = context.appColors.primaryAccent;
+
     return AnimatedScale(
       scale: _isPressed ? 0.94 : 1.0,
       duration: const Duration(milliseconds: 120),
@@ -389,8 +414,8 @@ class _LinkButtonState extends State<_LinkButton> {
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          splashColor: Colors.white.withValues(alpha: 0.08),
-          highlightColor: Colors.white.withValues(alpha: 0.04),
+          splashColor: accentColor.withValues(alpha: 0.08),
+          highlightColor: accentColor.withValues(alpha: 0.04),
           onTapDown: (_) => setState(() => _isPressed = true),
           onTapUp: (_) => setState(() => _isPressed = false),
           onTapCancel: () => setState(() => _isPressed = false),
@@ -401,25 +426,34 @@ class _LinkButtonState extends State<_LinkButton> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: context.appColors.borderColor, width: 1),
+              border: Border.all(
+                color: _isPressed ? accentColor : context.appColors.borderColor,
+                width: 1,
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (widget.assetIcon != null)
-                  Image.asset(widget.assetIcon!, width: 20, height: 20, color: context.appColors.textSecondary)
-                else
-                  Icon(widget.icon, size: 20, color: context.appColors.textSecondary),
-                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: widget.assetIcon != null
+                      ? Image.asset(widget.assetIcon!, width: 18, height: 18, color: accentColor)
+                      : Icon(widget.icon, size: 18, color: accentColor),
+                ),
+                const SizedBox(height: 8),
                 Text(
                   widget.label,
                   style: GoogleFonts.outfit(
-                    color: context.appColors.textSecondary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    color: context.appColors.textPrimary,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -447,13 +481,13 @@ class _InfoRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 38,
+          height: 38,
           decoration: BoxDecoration(
-            color: context.appColors.surfaceColor,
+            color: context.appColors.primaryAccent.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 18, color: context.appColors.textSecondary),
+          child: Icon(icon, size: 18, color: context.appColors.primaryAccent),
         ),
         const SizedBox(width: 14),
         Column(
@@ -515,6 +549,7 @@ class _TextLinkState extends ConsumerState<_TextLink> {
             style: GoogleFonts.outfit(
               color: accentColor,
               fontSize: 12,
+              fontWeight: FontWeight.w600,
               decoration: TextDecoration.underline,
               decorationColor: accentColor.withValues(alpha: 0.5),
             ),
@@ -560,8 +595,8 @@ class _AnimatedCardState extends State<_AnimatedCard> {
             borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
             border: Border.all(
               color: _isPressed
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : Colors.white.withValues(alpha: 0.05),
+                  ? context.appColors.primaryAccent.withValues(alpha: 0.3)
+                  : context.appColors.borderColor,
             ),
           ),
           child: widget.child,
