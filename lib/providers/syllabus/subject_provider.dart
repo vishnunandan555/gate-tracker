@@ -126,13 +126,13 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     await setFrozenColor(color);
   }
 
-  Future<void> setAutoMode() async {
+  Future<void> setAutoMode({bool? isDark}) async {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('accent_color_mode', 'auto');
     await prefs.remove('frozen_accent_color');
     _mode = 'auto';
     _frozenColor = null;
-    randomize();
+    randomize(isDark: isDark);
   }
 
   Future<void> setFrozenColor(Color color) async {
@@ -153,29 +153,36 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     state = systemColor;
   }
 
-  void randomize({bool isDark = true}) {
+  void randomize({bool? isDark}) {
     if (_mode == 'frozen' || _mode == 'device') return;
-    final pool = isDark ? darkPool : lightPool;
+    final activeIsDark = ref.read(activeThemeModeProvider) == ThemeMode.dark;
+    final targetIsDark = isDark ?? activeIsDark;
+
+    final pool = targetIsDark ? darkPool : lightPool;
     final nextColor = pool[math.Random().nextInt(pool.length)];
-    if (isDark) {
+    if (targetIsDark) {
       _autoDarkColor = nextColor;
     } else {
       _autoLightColor = nextColor;
     }
-    state = nextColor;
+    state = getAccentForBrightness(isDark: activeIsDark);
   }
 
-  void next({bool isDark = true}) {
+  void next({bool? isDark}) {
     if (_mode == 'frozen' || _mode == 'device') return;
-    final pool = isDark ? darkPool : lightPool;
-    final currentIdx = pool.indexOf(state);
+    final activeIsDark = ref.read(activeThemeModeProvider) == ThemeMode.dark;
+    final targetIsDark = isDark ?? activeIsDark;
+
+    final pool = targetIsDark ? darkPool : lightPool;
+    final currentColor = getAccentForBrightness(isDark: targetIsDark);
+    final currentIdx = pool.indexOf(currentColor);
     final nextIdx = (currentIdx + 1) % pool.length;
     final nextColor = pool[nextIdx];
-    if (isDark) {
+    if (targetIsDark) {
       _autoDarkColor = nextColor;
     } else {
       _autoLightColor = nextColor;
     }
-    state = nextColor;
+    state = getAccentForBrightness(isDark: activeIsDark);
   }
 }

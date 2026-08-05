@@ -11,8 +11,8 @@ import 'package:gateletics/providers/providers.dart';
 void showAccentColorDialog(BuildContext context, WidgetRef ref) {
   final size = MediaQuery.of(context).size;
   final colorNotifier = ref.read(overallProgressColorProvider.notifier);
-  final currentColor = ref.read(overallProgressColorProvider);
   final isThemeDark = !context.appColors.isLight;
+  final currentColor = colorNotifier.getAccentForBrightness(isDark: isThemeDark);
 
   int r = (currentColor.r * 255).round().clamp(0, 255);
   int g = (currentColor.g * 255).round().clamp(0, 255);
@@ -71,7 +71,7 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                       // ── Auto & Device Accent Buttons ─────────────────
                       InkWell(
                         onTap: () {
-                          colorNotifier.setAutoMode();
+                          colorNotifier.setAutoMode(isDark: isThemeDark);
                           Navigator.pop(context);
                         },
                         borderRadius: BorderRadius.circular(16),

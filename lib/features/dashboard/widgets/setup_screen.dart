@@ -1420,7 +1420,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
 
         // Auto-change option
         GestureDetector(
-          onTap: () => colorNotifier.setAutoMode(),
+          onTap: () => colorNotifier.setAutoMode(isDark: !context.appColors.isLight),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

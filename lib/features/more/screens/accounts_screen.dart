@@ -604,6 +604,7 @@ class _ResetDataRow extends ConsumerWidget {
 
     try {
       if (everything) {
+        final isDark = !context.appColors.isLight;
         final db = ref.read(appDatabaseProvider);
         await db.wipeDatabaseData();
 
@@ -628,7 +629,7 @@ class _ResetDataRow extends ConsumerWidget {
         ref.invalidate(topicFontSizeProvider);
         ref.invalidate(taskFontSizeProvider);
         ref.invalidate(overallUiScaleProvider);
-        await ref.read(overallProgressColorProvider.notifier).setAutoMode();
+        await ref.read(overallProgressColorProvider.notifier).setAutoMode(isDark: isDark);
       } else {
         await ref.read(syllabusControllerProvider.notifier).resetTrackingData();
 
