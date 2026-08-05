@@ -110,6 +110,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
       );
     }
 
+    final isLight = context.appColors.isLight;
+    final warningColor = isLight ? Colors.amber.shade900 : Colors.amberAccent;
+    final successColor = isLight ? Colors.green.shade800 : Colors.greenAccent;
+
     final raw = _rawData!;
     final currentKb = _calculateCurrentKb(raw);
     final currentPct = (currentKb / 1024.0) * 100.0;
@@ -129,10 +133,10 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             ? 'NO DATA TO PRUNE'
             : 'NO CHANGE';
     final Color badgeColor = hasSavings
-        ? Colors.greenAccent
+        ? successColor
         : (_selectedPruneDays != null && _syncStatsEnabled)
-            ? Colors.amberAccent
-            : Colors.white54;
+            ? warningColor
+            : context.appColors.textMuted;
 
     return Scaffold(
       backgroundColor: context.appColors.scaffoldBackground,
@@ -163,11 +167,11 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isCurrentWarning
-                      ? Colors.amber.withValues(alpha: 0.1)
+                      ? warningColor.withValues(alpha: 0.1)
                       : context.appColors.surfaceColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isCurrentWarning ? Colors.amber.withValues(alpha: 0.5) : context.appColors.borderColor,
+                    color: isCurrentWarning ? warningColor.withValues(alpha: 0.5) : context.appColors.borderColor,
                   ),
                 ),
                 child: Column(
@@ -177,7 +181,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Icon(
                           isCurrentWarning ? Icons.warning_amber_rounded : Icons.cloud_done_rounded,
-                          color: isCurrentWarning ? Colors.amberAccent : widget.accentColor,
+                          color: isCurrentWarning ? warningColor : widget.accentColor,
                           size: 22,
                         ),
                         const SizedBox(width: 10),
@@ -185,7 +189,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           child: Text(
                             isCurrentWarning ? 'Optimization Required' : 'Cloud Storage Optimal',
                             style: GoogleFonts.outfit(
-                              color: isCurrentWarning ? Colors.amberAccent : context.appColors.textPrimary,
+                              color: isCurrentWarning ? warningColor : context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
@@ -195,14 +199,14 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
                             color: isCurrentWarning
-                                ? Colors.amberAccent.withValues(alpha: 0.2)
+                                ? warningColor.withValues(alpha: 0.2)
                                 : widget.accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             isCurrentWarning ? 'STATUS: HIGH' : 'STATUS: OK',
                             style: GoogleFonts.outfit(
-                              color: isCurrentWarning ? Colors.amberAccent : widget.accentColor,
+                              color: isCurrentWarning ? warningColor : widget.accentColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -222,7 +226,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       child: LinearProgressIndicator(
                         value: (currentKb / 1024.0).clamp(0.0, 1.0),
                         backgroundColor: context.appColors.surfaceColor,
-                        color: isCurrentWarning ? Colors.amberAccent : widget.accentColor,
+                        color: isCurrentWarning ? warningColor : widget.accentColor,
                         minHeight: 8,
                       ),
                     ),
@@ -237,7 +241,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         Text(
                           '${currentPct.toStringAsFixed(1)}% Used',
                           style: GoogleFonts.outfit(
-                            color: isCurrentWarning ? Colors.amberAccent : widget.accentColor,
+                            color: isCurrentWarning ? warningColor : widget.accentColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -373,19 +377,19 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.amberAccent.withValues(alpha: 0.12),
+                        color: warningColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.amberAccent.withValues(alpha: 0.3)),
+                        border: Border.all(color: warningColor.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.warning_amber_rounded, size: 14, color: Colors.amberAccent),
+                          Icon(Icons.warning_amber_rounded, size: 14, color: warningColor),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'Warning: all historical data before ${_formatCutoffDate(DateTime.now().subtract(Duration(days: _selectedPruneDays!)))} will be deleted',
                               style: GoogleFonts.outfit(
-                                color: Colors.amberAccent,
+                                color: warningColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -410,11 +414,11 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isProjectedWarning
-                      ? Colors.amber.withValues(alpha: 0.1)
+                      ? warningColor.withValues(alpha: 0.1)
                       : widget.accentColor.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isProjectedWarning ? Colors.amberAccent : widget.accentColor.withValues(alpha: 0.4),
+                    color: isProjectedWarning ? warningColor : widget.accentColor.withValues(alpha: 0.4),
                   ),
                 ),
                 child: Column(
@@ -424,7 +428,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       children: [
                         Icon(
                           isProjectedWarning ? Icons.warning_amber_rounded : Icons.auto_awesome_rounded,
-                          color: isProjectedWarning ? Colors.amberAccent : widget.accentColor,
+                          color: isProjectedWarning ? warningColor : widget.accentColor,
                           size: 22,
                         ),
                         const SizedBox(width: 10),
@@ -432,7 +436,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           child: Text(
                             'Optimized Payload Preview',
                             style: GoogleFonts.outfit(
-                              color: isProjectedWarning ? Colors.amberAccent : context.appColors.textPrimary,
+                              color: isProjectedWarning ? warningColor : context.appColors.textPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
@@ -467,7 +471,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                       child: LinearProgressIndicator(
                         value: (projectedKb / 1024.0).clamp(0.0, 1.0),
                         backgroundColor: context.appColors.surfaceColor,
-                        color: widget.accentColor,
+                        color: isProjectedWarning ? warningColor : widget.accentColor,
                         minHeight: 8,
                       ),
                     ),
@@ -482,7 +486,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                         Text(
                           '${projectedPct.toStringAsFixed(1)}% Used',
                           style: GoogleFonts.outfit(
-                            color: widget.accentColor,
+                            color: isProjectedWarning ? warningColor : widget.accentColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -527,8 +531,8 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _isSuccess ? Colors.green : widget.accentColor,
                   foregroundColor: context.appColors.onAccent,
-                  disabledBackgroundColor: _isSuccess ? Colors.green : Colors.grey.shade800,
-                  disabledForegroundColor: _isSuccess ? Colors.white : Colors.white38,
+                  disabledBackgroundColor: _isSuccess ? Colors.green : context.appColors.surfaceColor,
+                  disabledForegroundColor: _isSuccess ? context.appColors.onAccent : context.appColors.textMuted,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 4,
                 ),
@@ -701,6 +705,12 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         ? 0.0
         : _computeSectionKb({'syllabusProgressLogs': progressLogs}, compress: compress);
 
+    final isLight = context.appColors.isLight;
+    final taskColor = isLight ? Colors.green.shade800 : Colors.lightGreenAccent;
+    final noteColor = isLight ? Colors.amber.shade900 : Colors.amberAccent;
+    final historyColor = isLight ? Colors.deepOrange.shade800 : Colors.deepOrangeAccent;
+    final progressColor = isLight ? Colors.pink.shade800 : Colors.pinkAccent;
+
     return [
       _buildBreakdownItem(
         title: 'Syllabus Categories & Topics',
@@ -714,7 +724,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         subtitle: '${tasks.length} Checklist Tasks • ${customTasks.length} Custom Tasks',
         sizeText: '${tasksKb.toStringAsFixed(1)} KB',
         icon: Icons.check_box_rounded,
-        color: Colors.lightGreenAccent,
+        color: taskColor,
       ),
       if (resourceCount > 0)
         _buildBreakdownItem(
@@ -722,7 +732,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
           subtitle: '$resourceCount Topics with Notes/Links',
           sizeText: '${resourcesKb.toStringAsFixed(1)} KB',
           icon: Icons.note_alt_rounded,
-          color: Colors.amberAccent,
+          color: noteColor,
         ),
       _buildBreakdownItem(
         title: 'Focus Sessions & Timer Logs',
@@ -740,7 +750,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             : '${dailyHistory.length} Daily Summary Records',
         sizeText: '${dailyHistoryKb.toStringAsFixed(1)} KB',
         icon: Icons.calendar_month_rounded,
-        color: (isProjected && !_syncStatsEnabled) ? Colors.white38 : Colors.deepOrangeAccent,
+        color: (isProjected && !_syncStatsEnabled) ? context.appColors.textMuted : historyColor,
       ),
       _buildBreakdownItem(
         title: 'Syllabus Progress Logs',
@@ -749,7 +759,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             : '${progressLogs.length} Timeline Activity Logs',
         sizeText: '${progressLogsKb.toStringAsFixed(1)} KB',
         icon: Icons.show_chart_rounded,
-        color: (isProjected && !_syncStatsEnabled) ? Colors.white38 : Colors.pinkAccent,
+        color: (isProjected && !_syncStatsEnabled) ? context.appColors.textMuted : progressColor,
       ),
     ];
   }
@@ -777,6 +787,8 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
     required bool enabled,
   }) {
     final isSelected = _selectedPruneDays == days;
+    final isLight = context.appColors.isLight;
+    final warningColor = isLight ? Colors.amber.shade900 : Colors.amberAccent;
 
     return InkWell(
       onTap: enabled
@@ -795,13 +807,13 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: enabled
-              ? (isSelected ? Colors.amberAccent.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03))
-              : Colors.white.withValues(alpha: 0.01),
+              ? (isSelected ? warningColor.withValues(alpha: 0.15) : context.appColors.surfaceColor)
+              : context.appColors.surfaceColor.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: enabled
-                ? (isSelected ? Colors.amberAccent : Colors.white10)
-                : Colors.white.withValues(alpha: 0.05),
+                ? (isSelected ? warningColor : context.appColors.borderColor)
+                : context.appColors.borderColor.withValues(alpha: 0.5),
           ),
         ),
         child: Column(
@@ -812,14 +824,14 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 Icon(
                   isSelected ? Icons.check_circle_rounded : Icons.history_rounded,
                   size: 14,
-                  color: enabled ? (isSelected ? Colors.amberAccent : context.appColors.textSecondary) : context.appColors.textMuted,
+                  color: enabled ? (isSelected ? warningColor : context.appColors.textSecondary) : context.appColors.textMuted,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     title,
                     style: GoogleFonts.outfit(
-                      color: enabled ? (isSelected ? Colors.amberAccent : context.appColors.textPrimary) : context.appColors.textMuted,
+                      color: enabled ? (isSelected ? warningColor : context.appColors.textPrimary) : context.appColors.textMuted,
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -843,6 +855,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
 
   // ── CONFIRM & STEP-BY-STEP EXECUTION FLOW ──
   Future<void> _executeOptimizationFlow() async {
+    final isLight = context.appColors.isLight;
     final exportBackup = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -850,7 +863,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            const Icon(Icons.shield_outlined, color: Colors.tealAccent, size: 22),
+            Icon(Icons.shield_outlined, color: isLight ? Colors.teal.shade800 : Colors.tealAccent, size: 22),
             const SizedBox(width: 10),
             Text('Safety Backup Prompt', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
           ],
@@ -916,6 +929,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
               children: List.generate(steps.length, (idx) {
                 final isDone = idx < currentStepIndex;
                 final isCurrent = idx == currentStepIndex;
+                final doneColor = isLight ? Colors.green.shade800 : Colors.greenAccent;
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
@@ -928,7 +942,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                                 ? Icons.arrow_right_rounded
                                 : Icons.radio_button_unchecked_rounded,
                         color: isDone
-                            ? Colors.greenAccent
+                            ? doneColor
                             : isCurrent
                                 ? widget.accentColor
                                 : context.appColors.textMuted,
@@ -940,7 +954,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                           steps[idx],
                           style: GoogleFonts.outfit(
                             color: isDone
-                                ? Colors.greenAccent
+                                ? doneColor
                                 : isCurrent
                                     ? context.appColors.textPrimary
                                     : context.appColors.textMuted,

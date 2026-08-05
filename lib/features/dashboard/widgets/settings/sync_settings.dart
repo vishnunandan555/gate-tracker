@@ -60,7 +60,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                   child: Text(
                     'Get GATEletics on all devices',
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -72,7 +72,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
             Text(
               'Sync your prep status seamlessly! GATEletics is also available as a native app for Android, Windows, and Linux.',
               style: GoogleFonts.outfit(
-                color: Colors.white70,
+                color: context.appColors.textSecondary,
                 fontSize: 11,
                 height: 1.3,
               ),
@@ -137,7 +137,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: context.appColors.surfaceColor,
+        backgroundColor: context.appColors.dialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Row(
           children: [
@@ -146,7 +146,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
             Text(
               'Payload Breakdown',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: context.appColors.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -161,7 +161,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
             children: [
               Text(
                 'GATEletics comes pre-seeded with the full GATE syllabus structure. Here is how your ${toKb(totalBytes).toStringAsFixed(1)} KB payload is distributed:',
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 12, height: 1.4),
+                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 12, height: 1.4),
               ),
               const SizedBox(height: 16),
               _buildBreakdownItem(
@@ -208,7 +208,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                 label: 'Progress Logs & Settings',
                 sizeKb: toKb(logsBytes + 1500),
                 pct: toPct(logsBytes + 1500),
-                color: Colors.white54,
+                color: context.appColors.textMuted,
                 icon: Icons.history_toggle_off_rounded,
               ),
             ],
@@ -250,7 +250,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
           ),
           Text(
             '${sizeKb.toStringAsFixed(1)} KB (${pct.toStringAsFixed(1)}%)',
-            style: GoogleFonts.outfit(color: Colors.white60, fontSize: 11),
+            style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
           ),
         ],
       ),
@@ -515,7 +515,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                     final recommendationText = _getRecommendationText(sizeKb, syncStatsEnabled, syncCompressed);
 
                     final isHealthy = sizeKb < 500;
-                    final recColor = isHealthy ? Colors.white38 : statusConfig.color;
+                    final recColor = isHealthy ? context.appColors.textMuted : statusConfig.color;
 
                     return Material(
                       color: Colors.transparent,
@@ -632,7 +632,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                                             TextSpan(
                                               text: recommendationText,
                                               style: GoogleFonts.outfit(
-                                                color: Colors.white70,
+                                                color: context.appColors.textSecondary,
                                                 fontSize: 11,
                                               ),
                                             ),
@@ -859,12 +859,12 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
   final choice = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: context.appColors.surfaceColor,
+      backgroundColor: context.appColors.dialogBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(
         'Sign Out',
         style: GoogleFonts.outfit(
-          color: Colors.white,
+          color: context.appColors.textPrimary,
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
@@ -877,7 +877,7 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
           children: [
             Text(
               'How would you like to handle your local study progress on this device when signing out?',
-              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.5),
+              style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
             ),
             const SizedBox(height: 16),
             InkWell(
@@ -900,12 +900,12 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
                         children: [
                           Text(
                             'Keep Local Progress (Offline Mode)',
-                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Preserve study data on device and switch to Offline Mode',
-                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 10),
+                            style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 10),
                           ),
                         ],
                       ),
@@ -935,12 +935,12 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
                         children: [
                           Text(
                             'Reset & Wipe Local Data',
-                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Sign out and permanently erase all local study progress',
-                            style: GoogleFonts.outfit(color: Colors.white30, fontSize: 10),
+                            style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 10),
                           ),
                         ],
                       ),
@@ -955,7 +955,7 @@ Future<void> showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) 
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
+          child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textMuted)),
         ),
       ],
     ),
