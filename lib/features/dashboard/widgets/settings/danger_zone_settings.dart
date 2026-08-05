@@ -270,25 +270,27 @@ class DangerZoneSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
-          leading: Icon(Icons.upload_file, color: context.appColors.primaryAccent),
+          leading: Icon(Icons.upload_file_rounded, color: accentColor),
           title: Text('Export Data', style: titleStyle),
           subtitle: Text(
-            'Save progress to JSON',
+            'Save progress to JSON backup file',
             style: subtitleStyle,
           ),
           onTap: () => _exportData(context, ref),
         ),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
-          leading: const Icon(Icons.download, color: Colors.greenAccent),
+          leading: Icon(Icons.download_rounded, color: accentColor),
           title: Text('Import Data', style: titleStyle),
           subtitle: Text(
-            'Restore from JSON file',
+            'Restore from JSON backup file',
             style: subtitleStyle,
           ),
           onTap: () => _importData(context, ref),
         ),
+        Divider(color: context.appColors.dividerColor, height: 1),
         ListTile(
-          leading: const Icon(Icons.restart_alt_rounded, color: Colors.amberAccent),
+          leading: Icon(Icons.restart_alt_rounded, color: accentColor),
           title: Text('Redo Onboarding Setup', style: titleStyle),
           subtitle: Text(
             'Reconfigure profile, daily goals, and branch presets',
@@ -296,9 +298,10 @@ class DangerZoneSettingsSection extends ConsumerWidget {
           ),
           onTap: () => _performRedoOnboarding(context, ref),
         ),
-        if (!isDesktop)
+        if (!isDesktop) ...[
+          Divider(color: context.appColors.dividerColor, height: 1),
           ListTile(
-            leading: Icon(Icons.help_outline_rounded, color: context.appColors.primaryAccent),
+            leading: Icon(Icons.help_outline_rounded, color: accentColor),
             title: Text('Redo Demo Guide', style: titleStyle),
             subtitle: Text(
               'Re-run interactive walkthrough tutorial',
@@ -306,6 +309,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
             ),
             onTap: () => _performRedoDemo(context, ref),
           ),
+        ],
       ],
     );
   }

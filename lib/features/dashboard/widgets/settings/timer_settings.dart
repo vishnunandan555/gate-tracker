@@ -116,6 +116,7 @@ class TimerSettingsSection extends ConsumerWidget {
             ref.read(categoryAutoSortProvider.notifier).setAutoSort(val);
           },
         ),
+        Divider(color: context.appColors.dividerColor, height: 1),
 
         ListTile(
           leading: Icon(Icons.track_changes_rounded, color: accentColor),

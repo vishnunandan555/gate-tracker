@@ -26,27 +26,32 @@ class SettingsScreen extends ConsumerWidget {
 
     final titleStyle = GoogleFonts.outfit(
       color: context.appColors.textPrimary,
-      fontSize: isDesktop ? 13.0 : context.s(13),
-      fontWeight: isDesktop ? FontWeight.w500 : FontWeight.bold,
+      fontSize: isDesktop ? 13.0 : context.s(13.5),
+      fontWeight: FontWeight.w600,
     );
 
     final subtitleStyle = GoogleFonts.outfit(
       color: context.appColors.textSecondary,
       fontSize: isDesktop ? 11.5 : context.s(11),
+      height: 1.35,
     );
 
     Widget buildHeader(String title, {Color? color}) {
       return Padding(
         padding: isDesktop
             ? const EdgeInsets.fromLTRB(16, 12, 16, 6)
-            : EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(8)),
+            : EdgeInsets.only(
+                left: context.s(4),
+                top: context.s(16),
+                bottom: context.s(8),
+              ),
         child: Text(
           title,
           style: GoogleFonts.outfit(
             color: color ?? context.appColors.textSecondary,
-            fontWeight: isDesktop ? FontWeight.w600 : FontWeight.bold,
-            fontSize: isDesktop ? 11.5 : context.s(12),
-            letterSpacing: isDesktop ? 0.8 : context.s(0.8),
+            fontSize: isDesktop ? 11.5 : context.s(10),
+            fontWeight: FontWeight.bold,
+            letterSpacing: isDesktop ? 0.8 : 1.2,
           ),
         ),
       );
@@ -56,16 +61,30 @@ class SettingsScreen extends ConsumerWidget {
       return Container(
         margin: isDesktop
             ? const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
-            : EdgeInsets.symmetric(horizontal: context.s(16), vertical: context.s(6)),
+            : EdgeInsets.zero,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(isDesktop ? 14 : 16),
           border: Border.all(color: context.appColors.borderColor),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(isDesktop ? 14 : context.s(16)),
+          borderRadius: BorderRadius.circular(isDesktop ? 14 : 16),
           child: Material(
             color: context.appColors.cardBackground,
-            child: child,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                listTileTheme: ListTileThemeData(
+                  dense: false,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? 16 : context.s(16),
+                    vertical: isDesktop ? 2 : context.s(2),
+                  ),
+                  titleTextStyle: titleStyle,
+                  subtitleTextStyle: subtitleStyle,
+                ),
+              ),
+              child: child,
+            ),
           ),
         ),
       );
@@ -105,21 +124,28 @@ class SettingsScreen extends ConsumerWidget {
     final versionText = Center(
       child: Text(
         '${BrandConfig.appName} v${packageInfo.version}',
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.3),
-          fontSize: 10,
+        style: GoogleFonts.outfit(
+          color: context.appColors.textMuted,
+          fontSize: 11,
         ),
       ),
     );
 
     return Scaffold(
+        backgroundColor: context.appColors.scaffoldBackground,
         appBar: AppBar(
+          backgroundColor: context.appColors.scaffoldBackground,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.appColors.textPrimary, size: 18),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           title: Text(
-            'SETTINGS',
+            'Settings',
             style: GoogleFonts.outfit(
-              fontSize: isDesktop ? 16.0 : context.s(18),
-              fontWeight: isDesktop ? FontWeight.w600 : FontWeight.bold,
-              letterSpacing: 0.8,
+              color: context.appColors.textPrimary,
+              fontSize: isDesktop ? 16.0 : 17,
+              fontWeight: FontWeight.w600,
             ),
           ),
           centerTitle: true,
