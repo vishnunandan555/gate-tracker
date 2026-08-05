@@ -91,10 +91,10 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: value ? accent.withAlpha(40) : Colors.white.withAlpha(10),
+          color: value ? accent.withAlpha(40) : context.appColors.surfaceColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: value ? accent.withAlpha(120) : Colors.white10,
+            color: value ? accent.withAlpha(120) : context.appColors.borderColor,
             width: 1,
           ),
         ),
@@ -480,7 +480,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                             Text(
                               BrandConfig.appName.toUpperCase(),
                               style: GoogleFonts.orbitron(
-                                color: Colors.white,
+                                color: context.appColors.textPrimary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
@@ -490,7 +490,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                             Text(
                               dateStr,
                               style: GoogleFonts.outfit(
-                                color: Colors.white38,
+                                color: context.appColors.textMuted,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -534,7 +534,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                   Text(
                                     headerTitle,
                                     style: GoogleFonts.outfit(
-                                      color: Colors.white,
+                                      color: context.appColors.textPrimary,
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -542,7 +542,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                   Text(
                                     "GATE $branch",
                                     style: GoogleFonts.outfit(
-                                      color: Colors.white54,
+                                      color: context.appColors.textSecondary,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -560,6 +560,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                     painter: SquareProgressPainter(
                                       progress: (stats?.percentage ?? 0.0) / 100.0,
                                       color: widget.accentColor,
+                                      backgroundColor: context.appColors.surfaceColor,
                                       strokeWidth: 2.5,
                                     ),
                                   ),
@@ -567,7 +568,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                 Text(
                                   "${(stats?.percentage ?? 0.0).toStringAsFixed(0)}%",
                                   style: GoogleFonts.orbitron(
-                                    color: Colors.white,
+                                    color: context.appColors.textPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -587,9 +588,9 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                child: Container(
                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                  decoration: BoxDecoration(
-                                   color: Colors.white.withAlpha(5),
+                                   color: context.appColors.surfaceColor,
                                    borderRadius: BorderRadius.circular(12),
-                                   border: Border.all(color: Colors.white10),
+                                   border: Border.all(color: context.appColors.borderColor),
                                  ),
                                  child: Column(
                                    children: [
@@ -597,7 +598,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "STUDY TIME",
-                                         style: GoogleFonts.outfit(color: Colors.white30, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                                         style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                                        ),
                                      ),
                                      const SizedBox(height: 6),
@@ -613,7 +614,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "Goal: $goalStr",
-                                         style: GoogleFonts.outfit(color: Colors.white54, fontSize: 9),
+                                         style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 9),
                                        ),
                                      ),
                                    ],
@@ -627,9 +628,9 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                child: Container(
                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                  decoration: BoxDecoration(
-                                   color: Colors.white.withAlpha(5),
+                                   color: context.appColors.surfaceColor,
                                    borderRadius: BorderRadius.circular(12),
-                                   border: Border.all(color: Colors.white10),
+                                   border: Border.all(color: context.appColors.borderColor),
                                  ),
                                  child: Column(
                                    children: [
@@ -637,7 +638,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "STREAK",
-                                         style: GoogleFonts.outfit(color: Colors.white30, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                                         style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                                        ),
                                      ),
                                      const SizedBox(height: 6),
@@ -662,7 +663,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "Daily Active",
-                                         style: GoogleFonts.outfit(color: Colors.white54, fontSize: 9),
+                                         style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 9),
                                        ),
                                      ),
                                    ],
@@ -676,9 +677,9 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                child: Container(
                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                  decoration: BoxDecoration(
-                                   color: Colors.white.withAlpha(5),
+                                   color: context.appColors.surfaceColor,
                                    borderRadius: BorderRadius.circular(12),
-                                   border: Border.all(color: Colors.white10),
+                                   border: Border.all(color: context.appColors.borderColor),
                                  ),
                                  child: Column(
                                    children: [
@@ -686,7 +687,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "PROGRESS",
-                                         style: GoogleFonts.outfit(color: Colors.white30, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                                         style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                                        ),
                                      ),
                                      const SizedBox(height: 6),
@@ -694,7 +695,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          "+${activeProgressDelta.toStringAsFixed(activeProgressDelta == activeProgressDelta.toInt() ? 0 : 1)}%",
-                                         style: GoogleFonts.orbitron(color: Colors.tealAccent, fontSize: 13, fontWeight: FontWeight.bold),
+                                         style: GoogleFonts.orbitron(color: context.appColors.primaryAccent, fontSize: 13, fontWeight: FontWeight.bold),
                                        ),
                                      ),
                                      const SizedBox(height: 4),
@@ -702,7 +703,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                        fit: BoxFit.scaleDown,
                                        child: Text(
                                          _isYesterday ? "Yesterday's Gain" : "Today's Gain",
-                                         style: GoogleFonts.outfit(color: Colors.white54, fontSize: 9),
+                                         style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 9),
                                        ),
                                      ),
                                    ],
@@ -722,7 +723,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                               children: [
                                 Text(
                                   "Daily Goal Progress",
-                                  style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11, height: 1.3),
+                                  style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11, height: 1.3),
                                 ),
                                 Text(
                                   "${(goalRatio * 100).round()}%",
@@ -735,7 +736,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                               height: 6,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.white12,
+                                color: context.appColors.dividerColor,
                                 borderRadius: BorderRadius.circular(3),
                               ),
                               child: FractionallySizedBox(
@@ -763,7 +764,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                           Text(
                             _isYesterday ? "YESTERDAY'S ACCOMPLISHMENTS" : "TODAY'S ACCOMPLISHMENTS",
                             style: GoogleFonts.outfit(
-                              color: Colors.white30,
+                              color: context.appColors.textMuted,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
@@ -783,11 +784,11 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.hourglass_empty_rounded, color: Colors.white24, size: 32),
+                                            Icon(Icons.hourglass_empty_rounded, color: context.appColors.textMuted, size: 32),
                                             const SizedBox(height: 8),
                                             Text(
                                               "No checklist tasks completed yet.",
-                                              style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12),
+                                              style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
@@ -822,7 +823,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                                 child: Text(
                                                   displayName,
                                                   style: GoogleFonts.outfit(
-                                                    color: Colors.white70,
+                                                    color: context.appColors.textSecondary,
                                                     fontSize: 12,
                                                   ),
                                                   maxLines: 2,
@@ -836,7 +837,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                     );
                                   },
                                   loading: () => const Center(child: CircularProgressIndicator()),
-                                  error: (e, _) => Text("Error loading accomplishments", style: TextStyle(color: Colors.white24, fontSize: 12)),
+                                  error: (e, _) => Text("Error loading accomplishments", style: TextStyle(color: context.appColors.textMuted, fontSize: 12)),
                                 );
                               },
                             ),
@@ -851,7 +852,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                           child: Text(
                             "STUDIED WITH GATELETICS",
                             style: GoogleFonts.orbitron(
-                              color: Colors.white24,
+                              color: context.appColors.textMuted,
                               fontSize: 9,
                               letterSpacing: 2.0,
                             ),
@@ -874,14 +875,14 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
                   "Close",
-                  style: GoogleFonts.outfit(color: Colors.white54, fontSize: 13),
+                  style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
                 ),
               ),
               const SizedBox(width: 8),
               OutlinedButton.icon(
                 onPressed: (_isSaving || _isSharing) ? null : _captureAndSave,
                 icon: _isSaving
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 1.5))
+                    ? SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: context.appColors.primaryAccent, strokeWidth: 1.5))
                     : const Icon(Icons.download_rounded, size: 14),
                 label: Text(
                   _isSaving ? "Saving..." : "Save",
@@ -898,7 +899,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
               FilledButton.icon(
                 onPressed: (_isSaving || _isSharing) ? null : _captureAndShare,
                 icon: _isSharing
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 1.5))
+                    ? SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: context.appColors.onAccent, strokeWidth: 1.5))
                     : const Icon(Icons.share_rounded, size: 14),
                 label: Text(
                   _isSharing ? "Sharing..." : "Share",
@@ -906,7 +907,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: widget.accentColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: context.appColors.onAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -922,18 +923,20 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
 class SquareProgressPainter extends CustomPainter {
   final double progress; // 0.0 to 1.0
   final Color color;
+  final Color backgroundColor;
   final double strokeWidth;
 
   SquareProgressPainter({
     required this.progress,
     required this.color,
+    this.backgroundColor = Colors.transparent,
     this.strokeWidth = 3.0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withAlpha(15)
+      ..color = backgroundColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;

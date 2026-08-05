@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../../core/theme/theme_context_ext.dart';
 
 class ActiveFocusWaveWidget extends ConsumerStatefulWidget {
   final Color accentColor;
@@ -71,7 +72,7 @@ class _ActiveFocusWaveWidgetState extends ConsumerState<ActiveFocusWaveWidget> w
                   child: Text(
                     "Focusing...",
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: context.appColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,

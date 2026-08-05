@@ -814,7 +814,7 @@ class _ResourceCardTile extends ConsumerWidget {
                 label: const Text('ADD'),
                 style: FilledButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: Colors.black,
+                  foregroundColor: context.appColors.onAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   textStyle: GoogleFonts.orbitron(fontSize: 10.5, fontWeight: FontWeight.bold),

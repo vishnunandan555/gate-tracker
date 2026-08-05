@@ -97,7 +97,7 @@ class ProgressBar extends StatelessWidget {
                     child: Container(
                       width: 1.5,
                       height: height * 0.6,
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: context.appColors.dividerColor,
                     ),
                   );
                 }),

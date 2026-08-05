@@ -387,7 +387,7 @@ class _SidebarNavItem extends ConsumerWidget {
 
     IconData displayIcon = icon;
     String displayLabel = label;
-    Color displayColor = isSelected ? color : Colors.white30;
+    Color displayColor = isSelected ? color : context.appColors.textMuted;
 
     Widget? timerBadge;
 
@@ -401,7 +401,7 @@ class _SidebarNavItem extends ConsumerWidget {
         if (sessionState.status == FocusStatus.focusing) {
           displayColor = color;
         } else {
-          displayColor = Colors.white;
+          displayColor = context.appColors.textPrimary;
         }
 
         final isCountUp = sessionState.details.isCountUp;
@@ -457,7 +457,7 @@ class _SidebarNavItem extends ConsumerWidget {
               children: [
                 Icon(
                   displayIcon,
-                  color: isSelected ? (index == 2 ? displayColor : color) : (index == 2 ? displayColor.withAlpha(150) : Colors.white30),
+                  color: isSelected ? (index == 2 ? displayColor : color) : (index == 2 ? displayColor.withAlpha(150) : context.appColors.textMuted),
                   size: 22,
                 ),
                 if (!isCompact) ...[
@@ -466,7 +466,7 @@ class _SidebarNavItem extends ConsumerWidget {
                     child: Text(
                       displayLabel,
                       style: GoogleFonts.outfit(
-                        color: isSelected ? (index == 2 ? displayColor : color) : (index == 2 ? displayColor.withAlpha(150) : Colors.white30),
+                        color: isSelected ? (index == 2 ? displayColor : color) : (index == 2 ? displayColor.withAlpha(150) : context.appColors.textMuted),
                         fontSize: 14,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       ),

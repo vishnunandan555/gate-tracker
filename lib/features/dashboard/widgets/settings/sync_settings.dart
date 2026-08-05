@@ -266,13 +266,13 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const Icon(Icons.info_outline_rounded, color: Colors.cyanAccent),
+            Icon(Icons.info_outline_rounded, color: context.appColors.primaryAccent),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 "Cloud Sync is supported on Web & Android. To transfer data to/from this desktop app, please use the Local Backup & Restore tools below.",
                 style: GoogleFonts.outfit(
-                  color: Colors.white70,
+                  color: context.appColors.textSecondary,
                   fontSize: 12,
                   height: 1.4,
                 ),

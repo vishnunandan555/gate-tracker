@@ -879,7 +879,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             child: Text('Skip Backup', style: GoogleFonts.outfit(color: context.appColors.textSecondary)),
           ),
           FilledButton.icon(
-            style: FilledButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+            style: FilledButton.styleFrom(backgroundColor: context.appColors.primaryAccent, foregroundColor: context.appColors.onAccent),
             onPressed: () => Navigator.of(ctx).pop(true),
             icon: const Icon(Icons.download_rounded, size: 16),
             label: Text('Export Backup & Continue', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),

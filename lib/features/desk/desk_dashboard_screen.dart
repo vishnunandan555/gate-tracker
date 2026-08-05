@@ -252,7 +252,7 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
                           },
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF27272A),
+                        fillColor: context.appColors.surfaceColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,

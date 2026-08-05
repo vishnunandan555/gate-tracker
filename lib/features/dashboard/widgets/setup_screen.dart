@@ -32,7 +32,6 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   late TextEditingController _nameController;
   late TextEditingController _setupHexController;
   late FocusNode _setupHexFocusNode;
-  bool? _isViewingDarkPool;
 
   @override
   void initState() {
@@ -1269,30 +1268,26 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     );
   }
 
-  // --- Step 7: Accent Color & UI Customization ---
+  // --- Step 7: Theme & Accent Customization ---
   Widget _buildStepAccentColor(Color accentColor) {
     final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
+    final themeState = ref.watch(themeEngineProvider);
+    final themeNotifier = ref.read(themeEngineProvider.notifier);
+
     final isAuto = colorNotifier.mode == 'auto';
     final isDevice = colorNotifier.mode == 'device';
 
-    _isViewingDarkPool ??= !context.appColors.isLight;
-    final activePool = _isViewingDarkPool! ? colorNotifier.darkPool : colorNotifier.lightPool;
-
-    int r = (accentColor.r * 255).round().clamp(0, 255);
-    int g = (accentColor.g * 255).round().clamp(0, 255);
-    int b = (accentColor.b * 255).round().clamp(0, 255);
+    final isLightMode = context.appColors.isLight;
+    final activePool = isLightMode ? colorNotifier.lightPool : colorNotifier.darkPool;
 
     final currentHex = AppAccentPools.toHexString(accentColor);
-    if (_setupHexController.text != currentHex && !_setupHexFocusNode.hasFocus) {
-      _setupHexController.text = currentHex;
-    }
 
     return Column(
       key: const ValueKey(7),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          "CHOOSE ACCENT THEME",
+          "CHOOSE THEME & ACCENT",
           style: GoogleFonts.jersey15(
             fontSize: context.s(24),
             fontWeight: FontWeight.bold,
@@ -1303,7 +1298,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          "Personalize your app's accent color. Select auto-changing dynamic themes, pick a preset, or enter custom Hex code.",
+          "Select your preferred app theme mode and personalize your dynamic accent color.",
           style: GoogleFonts.outfit(
             fontSize: context.s(13),
             color: context.appColors.textSecondary,
@@ -1418,106 +1413,112 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         ),
         const SizedBox(height: 20),
 
-        // Auto-change option
-        GestureDetector(
-          onTap: () => colorNotifier.setAutoMode(isDark: !context.appColors.isLight),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isAuto ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isAuto ? accentColor : context.appColors.borderColor,
-                width: isAuto ? 1.5 : 1.0,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.brightness_auto_rounded, color: isAuto ? accentColor : context.appColors.textSecondary, size: 24),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Auto-Change Color",
-                            style: GoogleFonts.outfit(
-                              color: context.appColors.textPrimary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: accentColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              "RECOMMENDED",
-                              style: GoogleFonts.orbitron(color: accentColor, fontSize: 8, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        "Automatically shifts accent colors every session for a fresh visual look.",
-                        style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ),
-                if (isAuto) Icon(Icons.check_circle_rounded, color: accentColor, size: 20),
-              ],
-            ),
+        // ── 1. SELECT APP THEME MODE (Dark / Light / System) ─────────
+        Text(
+          "APP THEME MODE",
+          style: GoogleFonts.orbitron(
+            fontSize: context.s(10),
+            fontWeight: FontWeight.bold,
+            color: context.appColors.textSecondary,
+            letterSpacing: 1.2,
           ),
-        ),
-        const SizedBox(height: 20),
-
-        // ── Accent Presets Section with Light / Dark Pool Switcher ──────
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "PRESET ACCENT POOL",
-              style: GoogleFonts.orbitron(
-                fontSize: context.s(10),
-                fontWeight: FontWeight.bold,
-                color: context.appColors.textSecondary,
-                letterSpacing: 1.2,
-              ),
-            ),
-            SegmentedButton<bool>(
-              segments: [
-                ButtonSegment(value: true, label: Text('Dark', style: GoogleFonts.outfit(fontSize: 10, color: context.appColors.textPrimary))),
-                ButtonSegment(value: false, label: Text('Light', style: GoogleFonts.outfit(fontSize: 10, color: context.appColors.textPrimary))),
-              ],
-              selected: {_isViewingDarkPool!},
-              onSelectionChanged: (val) {
-                setState(() {
-                  _isViewingDarkPool = val.first;
-                });
-              },
-              style: ButtonStyle(
-                visualDensity: VisualDensity.compact,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                backgroundColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return context.appColors.surfaceColor;
-                  }
-                  return Colors.transparent;
-                }),
-              ),
-            ),
-          ],
         ),
         const SizedBox(height: 4),
         Text(
-          "Pick a curated accent color from the theme pool.",
+          "Choose standard Light, Dark, or System mode.",
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildThemeModeCard('light', 'Light Mode', Icons.light_mode_rounded, themeState.themeMode == 'light', accentColor, () {
+              themeNotifier.setStandardMode('light');
+            }),
+            const SizedBox(width: 10),
+            _buildThemeModeCard('dark', 'Dark Mode', Icons.dark_mode_rounded, themeState.themeMode == 'dark', accentColor, () {
+              themeNotifier.setStandardMode('dark');
+            }),
+            const SizedBox(width: 10),
+            _buildThemeModeCard('system', 'System', Icons.brightness_auto_rounded, themeState.themeMode == 'system', accentColor, () {
+              themeNotifier.setStandardMode('system');
+            }),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // ── 2. ACCENT SELECTION MODES (3 Stacked Symmetric Cards) ────
+        Text(
+          "ACCENT SELECTION MODE",
+          style: GoogleFonts.orbitron(
+            fontSize: context.s(10),
+            fontWeight: FontWeight.bold,
+            color: context.appColors.textSecondary,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Select how your app's accent color is applied.",
+          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
+        ),
+        const SizedBox(height: 12),
+
+        // 1st Option - Auto-Rotate Accent Color
+        _buildAccentModeOptionCard(
+          title: "Auto-Rotate Accent Color",
+          subtitle: "Automatically shifts accent colors every session.",
+          icon: Icons.auto_awesome_rounded,
+          isSelected: isAuto,
+          accentColor: accentColor,
+          badge: "RECOMMENDED",
+          onTap: () => colorNotifier.setAutoMode(isDark: !isLightMode),
+        ),
+        const SizedBox(height: 10),
+
+        // 2nd Option - Use Material You Device Accent
+        Builder(
+          builder: (context) {
+            final systemAccent = ref.watch(systemAccentColorProvider);
+            return _buildAccentModeOptionCard(
+              title: "Material You Device Accent",
+              subtitle: "Uses your dynamic Android system color palette.",
+              icon: Icons.phonelink_setup_rounded,
+              isSelected: isDevice,
+              accentColor: accentColor,
+              badge: systemAccent != null ? "DYNAMIC" : "OFFLINE",
+              onTap: systemAccent != null
+                  ? () => colorNotifier.setDeviceMode(systemAccent)
+                  : () {},
+            );
+          },
+        ),
+        const SizedBox(height: 10),
+
+        // 3rd Option - Choose Custom Accent Color
+        _buildAccentModeOptionCard(
+          title: "Choose Custom Accent Color",
+          subtitle: "Pick preset swatches or open Hex / RGB color picker.",
+          icon: Icons.palette_rounded,
+          isSelected: !isAuto && !isDevice,
+          accentColor: accentColor,
+          customPreviewColor: accentColor,
+          onTap: () => showAccentColorDialog(context, ref),
+        ),
+        const SizedBox(height: 24),
+
+        // ── 3. PRESET ACCENT POOL (Strictly matching active Theme Mode) ─────
+        Text(
+          isLightMode ? "LIGHT ACCENT POOL" : "DARK ACCENT POOL",
+          style: GoogleFonts.orbitron(
+            fontSize: context.s(10),
+            fontWeight: FontWeight.bold,
+            color: context.appColors.textSecondary,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          isLightMode ? "Curated high-contrast light theme accents." : "Curated vibrant dark theme neon accents.",
           style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
         ),
         const SizedBox(height: 12),
@@ -1529,8 +1530,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             return GestureDetector(
               onTap: () => colorNotifier.setFrozenColor(presetColor),
               child: Container(
-                width: 36,
-                height: 36,
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
                   color: presetColor,
                   shape: BoxShape.circle,
@@ -1548,118 +1549,11 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   ],
                 ),
                 child: isSelected
-                    ? Icon(Icons.check_rounded, color: context.appColors.onAccent, size: 18)
+                    ? Icon(Icons.check_rounded, color: context.appColors.onAccent, size: 20)
                     : null,
               ),
             );
           }).toList(),
-        ),
-        const SizedBox(height: 20),
-
-        // ── Custom Hex & RGB Color Picker ──────────────────────────────
-        Text(
-          "CUSTOM ACCENT PICKER",
-          style: GoogleFonts.orbitron(
-            fontSize: context.s(10),
-            fontWeight: FontWeight.bold,
-            color: context.appColors.textSecondary,
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "Fine-tune exact Hex (#) code or Red, Green, Blue sliders.",
-          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
-        ),
-        const SizedBox(height: 12),
-
-        // Hex Code TextField Row with Live Color Preview Circle
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: accentColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: context.appColors.borderColor, width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: accentColor.withValues(alpha: 0.4),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: TextField(
-                controller: _setupHexController,
-                focusNode: _setupHexFocusNode,
-                style: GoogleFonts.orbitron(
-                  color: context.appColors.textPrimary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: context.appColors.cardBackground,
-                  labelText: 'Hex Code',
-                  labelStyle: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 12),
-                  prefixText: '# ',
-                  prefixStyle: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 13),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: context.appColors.borderColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: accentColor, width: 1.5),
-                  ),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
-                onChanged: (val) {
-                  final parsed = AppAccentPools.parseHexColor(val);
-                  if (parsed != null) {
-                    colorNotifier.setFrozenColor(parsed);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-
-        // Custom RGB Sliders
-        _buildRgbSlider("R", r, Colors.redAccent, (val) {
-          final newColor = Color.fromARGB(255, val.round(), g, b);
-          colorNotifier.setFrozenColor(newColor);
-        }),
-        _buildRgbSlider("G", g, Colors.greenAccent, (val) {
-          final newColor = Color.fromARGB(255, r, val.round(), b);
-          colorNotifier.setFrozenColor(newColor);
-        }),
-        _buildRgbSlider("B", b, Colors.blueAccent, (val) {
-          final newColor = Color.fromARGB(255, r, g, val.round());
-          colorNotifier.setFrozenColor(newColor);
-        }),
-        const SizedBox(height: 12),
-
-        // Button to open Full Color Picker Dialog popup
-        OutlinedButton.icon(
-          onPressed: () => showAccentColorDialog(context, ref),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: context.appColors.borderColor),
-            foregroundColor: context.appColors.textPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          icon: Icon(Icons.color_lens_rounded, size: 18, color: accentColor),
-          label: Text(
-            "OPEN COLOR PICKER DIALOG",
-            style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.8),
-          ),
         ),
 
         const SizedBox(height: 32),
@@ -1672,42 +1566,128 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     );
   }
 
-  Widget _buildRgbSlider(String label, int value, Color activeColor, ValueChanged<double> onChanged) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 16,
-          child: Text(
-            label,
-            style: GoogleFonts.orbitron(color: activeColor, fontWeight: FontWeight.bold, fontSize: 12),
+  Widget _buildAccentModeOptionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    required Color accentColor,
+    required VoidCallback onTap,
+    String? badge,
+    Color? customPreviewColor,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected ? accentColor.withValues(alpha: 0.08) : context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? accentColor : context.appColors.borderColor,
+            width: isSelected ? 1.6 : 1.0,
           ),
         ),
-        Expanded(
-          child: SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: activeColor,
-              inactiveTrackColor: context.appColors.borderColor,
-              thumbColor: context.appColors.textPrimary,
-              trackHeight: 3,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+        child: Row(
+          children: [
+            if (customPreviewColor != null)
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: customPreviewColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.appColors.borderColor, width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: customPreviewColor.withValues(alpha: 0.35),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+              )
+            else
+              Icon(icon, color: isSelected ? accentColor : context.appColors.textSecondary, size: 24),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          color: context.appColors.textPrimary,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (badge != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            badge,
+                            style: GoogleFonts.orbitron(color: accentColor, fontSize: 8, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
+                  ),
+                ],
+              ),
             ),
-            child: Slider(
-              value: value.toDouble(),
-              min: 0,
-              max: 255,
-              onChanged: onChanged,
+            if (isSelected)
+              Icon(Icons.check_circle_rounded, color: accentColor, size: 20)
+            else
+              Icon(Icons.chevron_right_rounded, color: context.appColors.textMuted, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeModeCard(String modeKey, String label, IconData icon, bool isSelected, Color accentColor, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? accentColor.withValues(alpha: 0.12) : context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isSelected ? accentColor : context.appColors.borderColor,
+              width: isSelected ? 1.8 : 1.0,
             ),
           ),
-        ),
-        SizedBox(
-          width: 32,
-          child: Text(
-            "$value",
-            textAlign: TextAlign.end,
-            style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 11),
+          child: Column(
+            children: [
+              Icon(icon, color: isSelected ? accentColor : context.appColors.textSecondary, size: 22),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
+                  fontSize: 11.5,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 

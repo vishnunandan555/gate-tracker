@@ -85,57 +85,79 @@ class GateTrackerApp extends ConsumerWidget {
     // Start listening and saving daily stats snapshots
     ref.watch(dailyHistoryManagerProvider);
 
+    final lightTheme = ref.watch(lightAppThemeProvider);
+    final darkTheme = ref.watch(darkAppThemeProvider);
+    final themeMode = ref.watch(activeThemeModeProvider);
+
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        final systemColor = darkDynamic?.primary ?? lightDynamic?.primary;
+        if (systemColor != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(systemAccentColorProvider.notifier).setSystemAccent(systemColor);
+          });
+        }
+
+        return MaterialApp(
+          title: BrandConfig.appName,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeMode,
+          themeAnimationDuration: const Duration(milliseconds: 250),
+          themeAnimationCurve: Curves.easeInOut,
+          debugShowCheckedModeBanner: false,
+          home: const AppContentResolver(),
+        );
+      },
+    );
+  }
+}
+
+class AppContentResolver extends ConsumerWidget {
+  const AppContentResolver({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final accentColor = ref.watch(overallProgressColorProvider);
     final agreementAsync = ref.watch(agreementProvider);
     final authAsync = ref.watch(authProvider);
     final setupAsync = ref.watch(setupCompletedProvider);
     final activeThemeData = ref.watch(activeAppThemeProvider);
-    final lightTheme = ref.watch(lightAppThemeProvider);
-    final darkTheme = ref.watch(darkAppThemeProvider);
-    final themeMode = ref.watch(activeThemeModeProvider);
 
     if (agreementAsync.isLoading || authAsync.isLoading || setupAsync.isLoading) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: themeMode,
-        home: Scaffold(
-          backgroundColor: activeThemeData.scaffoldBackgroundColor,
-          body: Center(
-            child: CircularProgressIndicator(color: accentColor),
-          ),
+      return Scaffold(
+        key: const ValueKey('loading_screen'),
+        backgroundColor: activeThemeData.scaffoldBackgroundColor,
+        body: Center(
+          child: CircularProgressIndicator(color: accentColor),
         ),
       );
     }
 
     if (agreementAsync.hasError || authAsync.hasError || setupAsync.hasError) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: activeThemeData,
-        home: Scaffold(
-          backgroundColor: activeThemeData.scaffoldBackgroundColor,
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Something went wrong on startup',
-                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Please restart the app. If the issue persists, try reinstalling.',
-                    style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+      return Scaffold(
+        key: const ValueKey('error_screen'),
+        backgroundColor: activeThemeData.scaffoldBackgroundColor,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                const SizedBox(height: 16),
+                Text(
+                  'Something went wrong on startup',
+                  style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Please restart the app. If the issue persists, try reinstalling.',
+                  style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ),
@@ -146,63 +168,25 @@ class GateTrackerApp extends ConsumerWidget {
     final authState = authAsync.value;
     final hasSetup = setupAsync.value ?? false;
 
-    return DynamicColorBuilder(
-      builder: (lightDynamic, darkDynamic) {
-        final systemColor = darkDynamic?.primary ?? lightDynamic?.primary;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(systemAccentColorProvider.notifier).setSystemAccent(systemColor);
-        });
+    Widget targetWidget;
+    if (!hasAgreed) {
+      targetWidget = const AgreementScreen(key: ValueKey('agreement_screen'));
+    } else if (authState != null && !authState.isOfflineMode && authState.user == null) {
+      targetWidget = const AuthScreen(key: ValueKey('auth_screen'));
+    } else if (!hasSetup) {
+      targetWidget = const SetupScreen(key: ValueKey('setup_screen'));
+    } else {
+      targetWidget = KeyedSubtree(
+        key: const ValueKey('app_router'),
+        child: Router.withConfig(config: appRouter),
+      );
+    }
 
-        if (!hasAgreed) {
-          return MaterialApp(
-            title: BrandConfig.appName,
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            themeMode: themeMode,
-            themeAnimationDuration: const Duration(milliseconds: 250),
-            themeAnimationCurve: Curves.easeInOut,
-            home: const AgreementScreen(),
-            debugShowCheckedModeBanner: false,
-          );
-        }
-
-        if (authState != null && !authState.isOfflineMode && authState.user == null) {
-          return MaterialApp(
-            title: BrandConfig.appName,
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            themeMode: themeMode,
-            themeAnimationDuration: const Duration(milliseconds: 250),
-            themeAnimationCurve: Curves.easeInOut,
-            home: const AuthScreen(),
-            debugShowCheckedModeBanner: false,
-          );
-        }
-
-        if (!hasSetup) {
-          return MaterialApp(
-            title: BrandConfig.appName,
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            themeMode: themeMode,
-            themeAnimationDuration: const Duration(milliseconds: 250),
-            themeAnimationCurve: Curves.easeInOut,
-            home: const SetupScreen(),
-            debugShowCheckedModeBanner: false,
-          );
-        }
-
-        return MaterialApp.router(
-          title: BrandConfig.appName,
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: themeMode,
-          themeAnimationDuration: const Duration(milliseconds: 250),
-          themeAnimationCurve: Curves.easeInOut,
-          routerConfig: appRouter,
-          debugShowCheckedModeBanner: false,
-        );
-      },
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      child: targetWidget,
     );
   }
 }

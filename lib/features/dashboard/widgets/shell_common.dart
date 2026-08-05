@@ -246,7 +246,7 @@ Future<void> checkAppVersionUpdate(BuildContext context, WidgetRef ref) async {
                   child: Text(
                     "CHANGELOG",
                     style: GoogleFonts.outfit(
-                      color: Colors.cyanAccent,
+                      color: context.appColors.primaryAccent,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -516,7 +516,7 @@ void showConflictDetailsDialog(
                       flex: 3,
                       child: Text(
                         "CLOUD BACKUP",
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.cyanAccent, fontSize: 10.5),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.primaryAccent, fontSize: 10.5),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -603,7 +603,7 @@ Widget _buildStatComparisonRow(BuildContext context, String label, String localV
           child: Text(
             cloudVal,
             style: GoogleFonts.outfit(
-              color: isDifferent ? Colors.cyanAccent : context.appColors.textPrimary,
+              color: isDifferent ? context.appColors.primaryAccent : context.appColors.textPrimary,
               fontSize: 11.5,
               fontWeight: FontWeight.bold,
             ),

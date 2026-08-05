@@ -32,7 +32,9 @@ class SystemAccentColorNotifier extends Notifier<Color?> {
 
   void setSystemAccent(Color? color) {
     if (color != null) {
-      state = color;
+      if (state != color) {
+        state = color;
+      }
     } else {
       _fetchNativeSystemColor();
     }

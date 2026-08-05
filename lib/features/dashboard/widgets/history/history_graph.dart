@@ -839,7 +839,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
                                   child: Text(
                                     'No data found',
                                     style: GoogleFonts.outfit(
-                                      color: Colors.white30,
+                                      color: context.appColors.textMuted,
                                       fontSize: context.s(13),
                                       fontWeight: FontWeight.w600,
                                     ),

@@ -162,7 +162,7 @@ class AdvancedSettingsSection extends ConsumerWidget {
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: accentColor,
                 thumbColor: accentColor,
-                inactiveTrackColor: Colors.white12,
+                inactiveTrackColor: context.appColors.dividerColor,
                 overlayColor: accentColor.withValues(alpha: 0.15),
                 trackHeight: 2,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),

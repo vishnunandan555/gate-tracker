@@ -58,7 +58,7 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Accent Color',
+                        'Accent Color Picker',
                         style: GoogleFonts.outfit(
                           color: context.appColors.textPrimary,
                           fontSize: 20,
@@ -67,116 +67,8 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
-                      
-                      // ── Auto & Device Accent Buttons ─────────────────
-                      InkWell(
-                        onTap: () {
-                          colorNotifier.setAutoMode(isDark: isThemeDark);
-                          Navigator.pop(context);
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: isAuto
-                                ? currentColor.withValues(alpha: 0.15)
-                                : context.appColors.surfaceColor,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isAuto ? currentColor : context.appColors.borderColor,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.brightness_auto_rounded,
-                                color: isAuto ? currentColor : context.appColors.textMuted,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  'Auto-rotate accent on launch',
-                                  style: GoogleFonts.outfit(
-                                    color: isAuto ? context.appColors.textPrimary : context.appColors.textMuted,
-                                    fontSize: 14,
-                                    fontWeight: isAuto ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                              if (isAuto)
-                                Icon(
-                                  Icons.check_circle_rounded,
-                                  color: currentColor,
-                                  size: 20,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Builder(
-                        builder: (context) {
-                          final systemAccent = ref.watch(systemAccentColorProvider);
-                          if (systemAccent == null) return const SizedBox.shrink();
 
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(height: 8),
-                              InkWell(
-                                onTap: () {
-                                  colorNotifier.setDeviceMode(systemAccent);
-                                  Navigator.pop(context);
-                                },
-                                borderRadius: BorderRadius.circular(16),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: isDevice
-                                        ? currentColor.withValues(alpha: 0.15)
-                                        : context.appColors.surfaceColor,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: isDevice ? currentColor : context.appColors.borderColor,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.phonelink_setup_rounded,
-                                        color: isDevice ? currentColor : context.appColors.textMuted,
-                                        size: 24,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Text(
-                                          'Use Material You Device Accent',
-                                          style: GoogleFonts.outfit(
-                                            color: isDevice ? context.appColors.textPrimary : context.appColors.textMuted,
-                                            fontSize: 14,
-                                            fontWeight: isDevice ? FontWeight.bold : FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                      if (isDevice)
-                                        Icon(
-                                          Icons.check_circle_rounded,
-                                          color: currentColor,
-                                          size: 20,
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // ── Mode Accent Pool Switcher ───────────────────
+                      // ── Mode Accent Pool Switcher (Dark / Light) ──────
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -228,7 +120,6 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                             return InkWell(
                               onTap: () {
                                 colorNotifier.setFrozenColor(color);
-                                Navigator.pop(context);
                               },
                               customBorder: const CircleBorder(),
                               child: Container(
@@ -396,19 +287,30 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      FilledButton(
+                      FilledButton.icon(
                         onPressed: () {
                           final chosenColor = Color.fromARGB(255, r, g, b);
                           colorNotifier.addCustomAccent(chosenColor, isDark: isViewingDarkPool);
-                          Navigator.pop(context);
                         },
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: Text(
+                          isViewingDarkPool ? 'Add Custom Accent to Dark Pool' : 'Add Custom Accent to Light Pool',
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5),
+                        ),
                         style: FilledButton.styleFrom(
                           backgroundColor: previewColor,
                           foregroundColor: context.appColors.onAccent,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text('Save & Apply Custom Accent', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Close',
+                          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
@@ -1001,7 +903,7 @@ class ThemeModeSelectorWidget extends ConsumerWidget {
                 color: effectiveBadgeBg,
                 borderRadius: BorderRadius.circular(6),
                 border: modeValue == 'dark' && !isSelected
-                    ? Border.all(color: Colors.white30, width: 0.8)
+                    ? Border.all(color: context.appColors.borderColor, width: 0.8)
                     : null,
               ),
               child: Text(

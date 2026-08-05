@@ -229,12 +229,12 @@ class ContributeScreen extends ConsumerWidget {
               icon: Icon(
                 data.isPlaceholder ? Icons.schedule_rounded : Icons.open_in_new_rounded,
                 size: 14,
-                color: Colors.black,
+                color: context.appColors.onAccent,
               ),
               label: Text(
                 data.actionLabel,
                 style: GoogleFonts.outfit(
-                  color: Colors.black,
+                  color: context.appColors.onAccent,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
