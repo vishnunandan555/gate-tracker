@@ -1278,7 +1278,6 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     final isDevice = colorNotifier.mode == 'device';
 
     final isLightMode = context.appColors.isLight;
-    final activePool = isLightMode ? colorNotifier.lightPool : colorNotifier.darkPool;
 
     final currentHex = AppAccentPools.toHexString(accentColor);
 
@@ -1478,16 +1477,18 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         // 2nd Option - Use Material You Device Accent
         Builder(
           builder: (context) {
-            final systemAccent = ref.watch(systemAccentColorProvider);
+            final systemAccents = ref.watch(systemAccentColorProvider);
+            final resolvedSystemColor = systemAccents?.getAccent(isDark: !isLightMode);
+
             return _buildAccentModeOptionCard(
               title: "Material You Device Accent",
               subtitle: "Uses your dynamic Android system color palette.",
               icon: Icons.phonelink_setup_rounded,
               isSelected: isDevice,
               accentColor: accentColor,
-              badge: systemAccent != null ? "DYNAMIC" : "OFFLINE",
-              onTap: systemAccent != null
-                  ? () => colorNotifier.setDeviceMode(systemAccent)
+              badge: systemAccents != null ? "DYNAMIC" : "OFFLINE",
+              onTap: systemAccents != null
+                  ? () => colorNotifier.setDeviceMode(resolvedSystemColor)
                   : () {},
             );
           },
@@ -1504,58 +1505,6 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           customPreviewColor: accentColor,
           onTap: () => showAccentColorDialog(context, ref),
         ),
-        const SizedBox(height: 24),
-
-        // ── 3. PRESET ACCENT POOL (Strictly matching active Theme Mode) ─────
-        Text(
-          isLightMode ? "LIGHT ACCENT POOL" : "DARK ACCENT POOL",
-          style: GoogleFonts.orbitron(
-            fontSize: context.s(10),
-            fontWeight: FontWeight.bold,
-            color: context.appColors.textSecondary,
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          isLightMode ? "Curated high-contrast light theme accents." : "Curated vibrant dark theme neon accents.",
-          style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 11),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: activePool.map((presetColor) {
-            final isSelected = !isAuto && !isDevice && colorNotifier.frozenColor?.toARGB32() == presetColor.toARGB32();
-            return GestureDetector(
-              onTap: () => colorNotifier.setFrozenColor(presetColor),
-              child: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: presetColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: isSelected ? context.appColors.textPrimary : context.appColors.borderColor,
-                    width: isSelected ? 2.5 : 1.2,
-                  ),
-                  boxShadow: [
-                    if (isSelected)
-                      BoxShadow(
-                        color: presetColor.withValues(alpha: 0.5),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      ),
-                  ],
-                ),
-                child: isSelected
-                    ? Icon(Icons.check_rounded, color: context.appColors.onAccent, size: 20)
-                    : null,
-              ),
-            );
-          }).toList(),
-        ),
-
         const SizedBox(height: 32),
         _buildNavigationRow(
           accentColor: accentColor,

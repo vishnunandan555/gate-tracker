@@ -91,10 +91,12 @@ class GateTrackerApp extends ConsumerWidget {
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        final systemColor = darkDynamic?.primary ?? lightDynamic?.primary;
-        if (systemColor != null) {
+        if (lightDynamic != null || darkDynamic != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(systemAccentColorProvider.notifier).setSystemAccent(systemColor);
+            ref.read(systemAccentColorProvider.notifier).setSystemAccents(
+                  lightAccent: lightDynamic?.primary,
+                  darkAccent: darkDynamic?.primary,
+                );
           });
         }
 

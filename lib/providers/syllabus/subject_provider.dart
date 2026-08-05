@@ -11,14 +11,22 @@ final overallProgressColorProvider = NotifierProvider<OverallProgressColorNotifi
   return OverallProgressColorNotifier();
 });
 
-// Track detected system dynamic accent color (null if unsupported/not detected)
-final systemAccentColorProvider = NotifierProvider<SystemAccentColorNotifier, Color?>(() {
+class SystemAccents {
+  final Color lightAccent;
+  final Color darkAccent;
+  const SystemAccents({required this.lightAccent, required this.darkAccent});
+
+  Color getAccent({required bool isDark}) => isDark ? darkAccent : lightAccent;
+}
+
+// Track detected system dynamic accent colors (null if unsupported/not detected)
+final systemAccentColorProvider = NotifierProvider<SystemAccentColorNotifier, SystemAccents?>(() {
   return SystemAccentColorNotifier();
 });
 
-class SystemAccentColorNotifier extends Notifier<Color?> {
+class SystemAccentColorNotifier extends Notifier<SystemAccents?> {
   @override
-  Color? build() {
+  SystemAccents? build() {
     _fetchNativeSystemColor();
     return null;
   }
@@ -26,14 +34,16 @@ class SystemAccentColorNotifier extends Notifier<Color?> {
   Future<void> _fetchNativeSystemColor() async {
     final nativeColor = await SystemColorService.getSystemAccentColor();
     if (nativeColor != null) {
-      state = nativeColor;
+      state = SystemAccents(lightAccent: nativeColor, darkAccent: nativeColor);
     }
   }
 
-  void setSystemAccent(Color? color) {
-    if (color != null) {
-      if (state != color) {
-        state = color;
+  void setSystemAccents({Color? lightAccent, Color? darkAccent}) {
+    if (lightAccent != null || darkAccent != null) {
+      final l = lightAccent ?? darkAccent!;
+      final d = darkAccent ?? lightAccent!;
+      if (state?.lightAccent != l || state?.darkAccent != d) {
+        state = SystemAccents(lightAccent: l, darkAccent: d);
       }
     } else {
       _fetchNativeSystemColor();
@@ -71,17 +81,32 @@ class OverallProgressColorNotifier extends Notifier<Color> {
 
     _loadCustomAccents();
 
-    if ((_mode == 'frozen' || _mode == 'device') && _frozenColor != null) {
+    final activeThemeMode = ref.watch(activeThemeModeProvider);
+    final isDark = activeThemeMode == ThemeMode.dark;
+
+    if (_mode == 'device') {
+      final systemAccents = ref.watch(systemAccentColorProvider);
+      if (systemAccents != null) {
+        return systemAccents.getAccent(isDark: isDark);
+      }
+    }
+
+    if (_mode == 'frozen' && _frozenColor != null) {
       return _frozenColor!;
     }
 
-    final activeThemeMode = ref.watch(activeThemeModeProvider);
-    final isDark = activeThemeMode == ThemeMode.dark;
     return getAccentForBrightness(isDark: isDark);
   }
 
   Color getAccentForBrightness({required bool isDark}) {
-    if ((_mode == 'frozen' || _mode == 'device') && _frozenColor != null) {
+    if (_mode == 'device') {
+      final systemAccents = ref.read(systemAccentColorProvider);
+      if (systemAccents != null) {
+        return systemAccents.getAccent(isDark: isDark);
+      }
+    }
+
+    if (_mode == 'frozen' && _frozenColor != null) {
       return _frozenColor!;
     }
 
@@ -128,13 +153,32 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     await setFrozenColor(color);
   }
 
-  Future<void> setAutoMode({bool? isDark}) async {
+  Future<void> removeCustomAccent(Color color, {required bool isDark}) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+
+    if (isDark) {
+      _userDarkAccents.removeWhere((c) => c.toARGB32() == color.toARGB32());
+      final raw = _userDarkAccents.map((c) => AppAccentPools.toHexString(c)).toList();
+      await prefs.setStringList('custom_dark_accents_list', raw);
+    } else {
+      _userLightAccents.removeWhere((c) => c.toARGB32() == color.toARGB32());
+      final raw = _userLightAccents.map((c) => AppAccentPools.toHexString(c)).toList();
+      await prefs.setStringList('custom_light_accents_list', raw);
+    }
+
+    if (_frozenColor?.toARGB32() == color.toARGB32()) {
+      final fallbackPool = isDark ? darkPool : lightPool;
+      await setFrozenColor(fallbackPool.first);
+    } else {
+      state = getAccentForBrightness(isDark: isDark);
+    }
+  }
+
+  Future<void> setAutoMode({required bool isDark}) async {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('accent_color_mode', 'auto');
-    await prefs.remove('frozen_accent_color');
     _mode = 'auto';
-    _frozenColor = null;
-    randomize(isDark: isDark);
+    state = getAccentForBrightness(isDark: isDark);
   }
 
   Future<void> setFrozenColor(Color color) async {
@@ -146,13 +190,19 @@ class OverallProgressColorNotifier extends Notifier<Color> {
     state = color;
   }
 
-  Future<void> setDeviceMode(Color systemColor) async {
+  Future<void> setDeviceMode([Color? fallbackColor]) async {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('accent_color_mode', 'device');
-    await prefs.setString('frozen_accent_color', systemColor.toARGB32().toRadixString(16));
     _mode = 'device';
-    _frozenColor = systemColor;
-    state = systemColor;
+
+    final systemAccents = ref.read(systemAccentColorProvider);
+    final activeThemeMode = ref.read(activeThemeModeProvider);
+    final isDark = activeThemeMode == ThemeMode.dark;
+
+    final resolvedColor = systemAccents?.getAccent(isDark: isDark) ?? fallbackColor ?? Colors.cyanAccent;
+    _frozenColor = resolvedColor;
+    await prefs.setString('frozen_accent_color', resolvedColor.toARGB32().toRadixString(16));
+    state = resolvedColor;
   }
 
   void randomize({bool? isDark}) {

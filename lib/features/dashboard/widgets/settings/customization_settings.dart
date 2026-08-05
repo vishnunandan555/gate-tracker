@@ -19,7 +19,6 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
   int b = (currentColor.b * 255).round().clamp(0, 255);
 
   final hexController = TextEditingController(text: AppAccentPools.toHexString(currentColor));
-  bool isViewingDarkPool = isThemeDark;
 
   showDialog(
     context: context,
@@ -41,12 +40,22 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
               border: Border.all(color: context.appColors.borderColor, width: 1.5),
             ),
             padding: const EdgeInsets.all(24.0),
-            child: StatefulBuilder(
-              builder: (context, setDialogState) {
+            child: Consumer(
+              builder: (context, ref, child) {
+                ref.watch(overallProgressColorProvider);
+                final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
+                final themeState = ref.watch(themeEngineProvider);
+                final themeNotifier = ref.read(themeEngineProvider.notifier);
+
+                final isThemeDark = themeState.themeMode == 'light'
+                    ? false
+                    : (themeState.themeMode == 'dark' ? true : !context.appColors.isLight);
+
+                final activeColor = colorNotifier.getAccentForBrightness(isDark: isThemeDark);
+
                 final isAuto = colorNotifier.mode == 'auto';
                 final isDevice = colorNotifier.mode == 'device';
                 final previewColor = Color.fromARGB(255, r, g, b);
-                final activePool = isViewingDarkPool ? colorNotifier.darkPool : colorNotifier.lightPool;
 
                 void syncFromRgb() {
                   hexController.text = AppAccentPools.toHexString(previewColor);
@@ -68,52 +77,97 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                       ),
                       const SizedBox(height: 16),
 
-                      // ── Mode Accent Pool Switcher (Dark / Light) ──────
+                      // ── 1. GLOBAL APP THEME MODE SELECTION CARDS ────────
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            isViewingDarkPool ? 'DARK ACCENTS:' : 'LIGHT ACCENTS:',
-                            style: GoogleFonts.outfit(
-                              color: context.appColors.textMuted,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8,
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                themeNotifier.setStandardMode('light');
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: !isThemeDark ? activeColor.withValues(alpha: 0.15) : context.appColors.surfaceColor,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: !isThemeDark ? activeColor : context.appColors.borderColor,
+                                    width: !isThemeDark ? 1.8 : 1.0,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.light_mode_rounded, color: !isThemeDark ? activeColor : context.appColors.textSecondary, size: 18),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Light Mode',
+                                      style: GoogleFonts.outfit(
+                                        color: !isThemeDark ? context.appColors.textPrimary : context.appColors.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: !isThemeDark ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          SegmentedButton<bool>(
-                            segments: [
-                              ButtonSegment(value: true, label: Text('Dark', style: GoogleFonts.outfit(fontSize: 11, color: context.appColors.textPrimary))),
-                              ButtonSegment(value: false, label: Text('Light', style: GoogleFonts.outfit(fontSize: 11, color: context.appColors.textPrimary))),
-                            ],
-                            selected: {isViewingDarkPool},
-                            onSelectionChanged: (val) {
-                              setDialogState(() {
-                                isViewingDarkPool = val.first;
-                              });
-                            },
-                            style: ButtonStyle(
-                              visualDensity: VisualDensity.compact,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              backgroundColor: WidgetStateProperty.resolveWith((states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return context.appColors.surfaceColor;
-                                }
-                                return Colors.transparent;
-                              }),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                themeNotifier.setStandardMode('dark');
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: isThemeDark ? activeColor.withValues(alpha: 0.15) : context.appColors.surfaceColor,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: isThemeDark ? activeColor : context.appColors.borderColor,
+                                    width: isThemeDark ? 1.8 : 1.0,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.dark_mode_rounded, color: isThemeDark ? activeColor : context.appColors.textSecondary, size: 18),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Dark Mode',
+                                      style: GoogleFonts.outfit(
+                                        color: isThemeDark ? context.appColors.textPrimary : context.appColors.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: isThemeDark ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
 
-                      // ── Accent Color Grid ────────────────────────────
+                      // ── 2. APPROPRIATE ACCENT SWATCHES GRID ─────────────
+                      Text(
+                        isThemeDark ? 'PRESET DARK ACCENTS:' : 'PRESET LIGHT ACCENTS:',
+                        style: GoogleFonts.outfit(
+                          color: context.appColors.textMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       Center(
                         child: Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
+                          spacing: 10,
+                          runSpacing: 10,
                           alignment: WrapAlignment.center,
-                          children: activePool.map((color) {
+                          children: (isThemeDark ? AppAccentPools.defaultDarkAccents : AppAccentPools.defaultLightAccents).map((color) {
                             final isSelected = !isAuto && !isDevice &&
                                 colorNotifier.frozenColor?.toARGB32() == color.toARGB32();
 
@@ -154,9 +208,110 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                           }).toList(),
                         ),
                       ),
+
+                      Builder(
+                        builder: (context) {
+                          final userAccents = isThemeDark ? colorNotifier.userDarkAccents : colorNotifier.userLightAccents;
+                          if (userAccents.isEmpty) return const SizedBox.shrink();
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 18),
+                              Text(
+                                'MY CUSTOM ACCENTS (HOLD TO DELETE):',
+                                style: GoogleFonts.outfit(
+                                  color: context.appColors.textMuted,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Center(
+                                child: Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  alignment: WrapAlignment.center,
+                                  children: userAccents.map((color) {
+                                    final isSelected = !isAuto && !isDevice &&
+                                        colorNotifier.frozenColor?.toARGB32() == color.toARGB32();
+
+                                    void confirmDelete() {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          backgroundColor: context.appColors.dialogBackground,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          title: Text(
+                                            'Delete Custom Accent?',
+                                            style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                                          ),
+                                          content: Text(
+                                            'Remove this custom color from your ${isThemeDark ? "dark" : "light"} accent pool?',
+                                            style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(ctx),
+                                              child: Text('Cancel', style: GoogleFonts.outfit(color: context.appColors.textMuted)),
+                                            ),
+                                            FilledButton(
+                                              onPressed: () {
+                                                Navigator.pop(ctx);
+                                                colorNotifier.removeCustomAccent(color, isDark: isThemeDark);
+                                              },
+                                              style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+                                              child: Text('Delete', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+
+                                    return InkWell(
+                                      onTap: () => colorNotifier.setFrozenColor(color),
+                                      onLongPress: confirmDelete,
+                                      customBorder: const CircleBorder(),
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: isSelected ? context.appColors.textPrimary : context.appColors.borderColor,
+                                            width: isSelected ? 2.5 : 1.2,
+                                          ),
+                                          boxShadow: [
+                                            if (isSelected)
+                                              BoxShadow(
+                                                color: color.withValues(alpha: 0.6),
+                                                blurRadius: 10,
+                                                spreadRadius: 1,
+                                              ),
+                                          ],
+                                        ),
+                                        child: isSelected
+                                            ? Icon(
+                                                Icons.check_rounded,
+                                                color: context.appColors.onAccent,
+                                                size: 18,
+                                                fontWeight: FontWeight.bold,
+                                              )
+                                            : null,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                       const SizedBox(height: 24),
 
-                      // ── Custom Hex & RGB Picker ─────────────────────
+                      // ── 3. CUSTOM ACCENT PICKER WITH NUMERIC RGB ────────
                       Text(
                         'CUSTOM ACCENT PICKER:',
                         style: GoogleFonts.outfit(
@@ -214,11 +369,10 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                               onChanged: (val) {
                                 final parsed = AppAccentPools.parseHexColor(val);
                                 if (parsed != null) {
-                                  setDialogState(() {
-                                    r = (parsed.r * 255).round();
-                                    g = (parsed.g * 255).round();
-                                    b = (parsed.b * 255).round();
-                                  });
+                                  (context as Element).markNeedsBuild();
+                                  r = (parsed.r * 255).round();
+                                  g = (parsed.g * 255).round();
+                                  b = (parsed.b * 255).round();
                                 }
                               },
                             ),
@@ -226,6 +380,8 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                         ],
                       ),
                       const SizedBox(height: 12),
+
+                      // R Slider with Numeric Display
                       Row(
                         children: [
                           const SizedBox(width: 20, child: Text('R', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 13))),
@@ -237,15 +393,24 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                               activeColor: Colors.redAccent,
                               inactiveColor: context.appColors.borderColor,
                               onChanged: (val) {
-                                setDialogState(() {
-                                  r = val.round();
-                                  syncFromRgb();
-                                });
+                                (context as Element).markNeedsBuild();
+                                r = val.round();
+                                syncFromRgb();
                               },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            child: Text(
+                              '$r',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 11),
                             ),
                           ),
                         ],
                       ),
+
+                      // G Slider with Numeric Display
                       Row(
                         children: [
                           const SizedBox(width: 20, child: Text('G', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 13))),
@@ -257,15 +422,24 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                               activeColor: Colors.greenAccent,
                               inactiveColor: context.appColors.borderColor,
                               onChanged: (val) {
-                                setDialogState(() {
-                                  g = val.round();
-                                  syncFromRgb();
-                                });
+                                (context as Element).markNeedsBuild();
+                                g = val.round();
+                                syncFromRgb();
                               },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            child: Text(
+                              '$g',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 11),
                             ),
                           ),
                         ],
                       ),
+
+                      // B Slider with Numeric Display
                       Row(
                         children: [
                           const SizedBox(width: 20, child: Text('B', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 13))),
@@ -277,24 +451,33 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                               activeColor: Colors.blueAccent,
                               inactiveColor: context.appColors.borderColor,
                               onChanged: (val) {
-                                setDialogState(() {
-                                  b = val.round();
-                                  syncFromRgb();
-                                });
+                                (context as Element).markNeedsBuild();
+                                b = val.round();
+                                syncFromRgb();
                               },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            child: Text(
+                              '$b',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.orbitron(color: context.appColors.textSecondary, fontSize: 11),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
+
+                      // ── 4. ADD CUSTOM ACCENT ACTION ─────────────────────
                       FilledButton.icon(
                         onPressed: () {
                           final chosenColor = Color.fromARGB(255, r, g, b);
-                          colorNotifier.addCustomAccent(chosenColor, isDark: isViewingDarkPool);
+                          colorNotifier.addCustomAccent(chosenColor, isDark: isThemeDark);
                         },
                         icon: const Icon(Icons.add_rounded, size: 18),
                         label: Text(
-                          isViewingDarkPool ? 'Add Custom Accent to Dark Pool' : 'Add Custom Accent to Light Pool',
+                          isThemeDark ? 'Add Custom Accent to Dark Pool' : 'Add Custom Accent to Light Pool',
                           style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5),
                         ),
                         style: FilledButton.styleFrom(
