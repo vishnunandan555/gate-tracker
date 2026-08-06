@@ -149,7 +149,11 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+              Icon(
+                Icons.error_outline_rounded,
+                color: context.appColors.isLight ? Colors.red.shade700 : Colors.redAccent,
+                size: 48,
+              ),
               const SizedBox(height: 12),
               Text(
                 'Failed to load study resources',
@@ -507,15 +511,16 @@ class _ResourceCardTile extends ConsumerWidget {
   });
 
   Color _getPlatformColor(BuildContext context, String platform) {
+    final isLight = context.appColors.isLight;
     switch (platform.toLowerCase()) {
       case 'youtube':
-        return const Color(0xFFFF0000);
+        return isLight ? const Color(0xFFD32F2F) : const Color(0xFFFF4D4D);
       case 'website':
         return context.appColors.primaryAccent;
       case 'drive':
         return context.appColors.primaryAccent;
       case 'pdf':
-        return Colors.amberAccent;
+        return isLight ? Colors.amber.shade800 : Colors.amberAccent;
       default:
         return accentColor;
     }
@@ -552,7 +557,7 @@ class _ResourceCardTile extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Could not open link: ${resource.url}'),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: context.appColors.isLight ? Colors.red.shade700 : Colors.redAccent,
             ),
           );
         }

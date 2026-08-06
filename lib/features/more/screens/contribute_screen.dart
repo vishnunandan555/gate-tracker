@@ -14,12 +14,13 @@ class ContributeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accentColor = context.appColors.primaryAccent;
 
+    final isLight = context.appColors.isLight;
     final cards = [
       _ContributeCardData(
         icon: Icons.code_rounded,
         title: 'GitHub Repository',
         description: 'Explore the open source codebase, star the repo, or build custom features.',
-        color: const Color(0xFF00F0FF),
+        color: accentColor,
         actionLabel: 'Open GitHub',
         onTap: () => _launch(BrandConfig.githubRepoUrl),
       ),
@@ -27,7 +28,7 @@ class ContributeScreen extends ConsumerWidget {
         icon: Icons.bug_report_rounded,
         title: 'Report an Issue or Bug',
         description: 'Found a problem or unexpected behavior? Submit an issue report directly.',
-        color: const Color(0xFFFF5E00),
+        color: isLight ? Colors.orange.shade800 : const Color(0xFFFF5E00),
         actionLabel: 'Report Bug',
         onTap: () => _launch(BrandConfig.githubIssuesUrl),
       ),
@@ -35,7 +36,7 @@ class ContributeScreen extends ConsumerWidget {
         icon: Icons.school_rounded,
         title: 'Request Your Exam / Branch',
         description: 'Need GATE EE, ECE, ME, Civil, or another branch added to ${BrandConfig.appName}?',
-        color: const Color(0xFFE040FB),
+        color: isLight ? Colors.purple.shade700 : const Color(0xFFE040FB),
         actionLabel: 'Request Exam',
         isPlaceholder: true,
         onTap: () => _showPlaceholderDialog(
@@ -49,7 +50,7 @@ class ContributeScreen extends ConsumerWidget {
         icon: Icons.library_add_rounded,
         title: 'Add Your Own Resource',
         description: 'Share notes, formulas, test series recommendations, or study resources with peers.',
-        color: const Color(0xFF00FFCC),
+        color: isLight ? Colors.teal.shade700 : const Color(0xFF00FFCC),
         actionLabel: 'Submit Resource',
         isPlaceholder: true,
         onTap: () => _showPlaceholderDialog(

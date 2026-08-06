@@ -280,11 +280,14 @@ class _FocusActiveViewState extends ConsumerState<FocusActiveView> {
                           child: FilledButton.icon(
                             onPressed: () => _handleStopSessionConfirm(context, sessionState),
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF221111),
-                              foregroundColor: Colors.redAccent,
+                              backgroundColor: context.appColors.isLight ? Colors.red.withValues(alpha: 0.1) : const Color(0xFF221111),
+                              foregroundColor: context.appColors.isLight ? Colors.red.shade700 : Colors.redAccent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(context.s(12)),
-                                side: const BorderSide(color: Colors.redAccent, width: 1.5),
+                                side: BorderSide(
+                                  color: context.appColors.isLight ? Colors.red.shade400 : Colors.redAccent,
+                                  width: 1.5,
+                                ),
                               ),
                             ),
                             icon: const Icon(Icons.stop_rounded),
