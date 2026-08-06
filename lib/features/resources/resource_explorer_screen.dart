@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/theme_context_ext.dart';
+import '../../core/widgets/app_loading_indicator.dart';
 import '../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
@@ -143,7 +144,7 @@ class _ResourceExplorerScreenState extends ConsumerState<ResourceExplorerScreen>
       ),
       body: resourcesAsync.when(
         loading: () => Center(
-          child: CircularProgressIndicator(color: accentColor),
+          child: AppLoadingIndicator(color: accentColor),
         ),
         error: (err, stack) => Center(
           child: Column(

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/models/topic_resource_data.dart';
 import '../../../../database/app_database.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 
 bool _isResourceMatchingCategory(StudyResource res, String categoryName) {
@@ -87,7 +88,7 @@ void _showResourcePickerModal(
                 const SizedBox(height: 14),
                 Flexible(
                   child: resourcesAsync.when(
-                    loading: () => Center(child: CircularProgressIndicator(color: accentColor)),
+                    loading: () => Center(child: AppLoadingIndicator(color: accentColor)),
                     error: (e, s) => const Text('Failed to load resources', style: TextStyle(color: Colors.redAccent)),
                     data: (resourceList) {
                       final filtered = categoryName.isNotEmpty

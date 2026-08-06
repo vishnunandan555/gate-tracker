@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/demo_keys.dart';
 import '../../../../utils/string_utils.dart';
@@ -214,7 +215,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     ),
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(child: AppLoadingIndicator(color: accentColor)),
                 error: (e, _) => Text("Goal error: $e"),
               );
             }(),
@@ -309,7 +310,7 @@ class _FocusIdleViewState extends ConsumerState<FocusIdleView> {
                     },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(child: AppLoadingIndicator(color: accentColor)),
                 error: (e, _) => Text("History error: $e"),
               ),
               // Yesterday's History (Only shown if yesterday has completed sessions)

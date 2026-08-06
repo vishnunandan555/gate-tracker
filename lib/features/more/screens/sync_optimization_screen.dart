@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/theme_context_ext.dart';
+import '../../../core/widgets/app_loading_indicator.dart';
 import '../../../database/backup_service.dart';
 import 'package:gateletics/providers/providers.dart';
 
@@ -107,7 +108,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
             style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
           ),
         ),
-        body: Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent)),
+        body: Center(child: AppLoadingIndicator(color: context.appColors.primaryAccent)),
       );
     }
 
@@ -918,7 +919,7 @@ class _SyncOptimizationScreenState extends ConsumerState<SyncOptimizationScreen>
                 SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: widget.accentColor),
+                  child: AppLoadingIndicator(strokeWidth: 2, color: widget.accentColor),
                 ),
                 const SizedBox(width: 12),
                 Text('Applying Optimization...', style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),

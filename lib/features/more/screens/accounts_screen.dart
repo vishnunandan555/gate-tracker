@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/theme_context_ext.dart';
+import '../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
@@ -285,7 +286,7 @@ class _HeroProfileCard extends ConsumerWidget {
                     ? SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: context.appColors.onAccent),
+                        child: AppLoadingIndicator(strokeWidth: 2, color: context.appColors.onAccent),
                       )
                     : Icon(Icons.login_rounded, color: context.appColors.onAccent, size: 18),
                 label: Text(
@@ -874,7 +875,7 @@ class _DeleteAccountRowState extends ConsumerState<_DeleteAccountRow> {
             context: context,
             barrierDismissible: false,
             builder: (context) =>
-                Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent)),
+                Center(child: AppLoadingIndicator(color: context.appColors.primaryAccent)),
           );
         }
 

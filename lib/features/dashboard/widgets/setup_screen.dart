@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/theme_context_ext.dart';
+import '../../../core/widgets/app_loading_indicator.dart';
 import '../../../database/app_database.dart';
 import '../../../database/syllabus_preset.dart';
 import 'package:gateletics/providers/providers.dart';
@@ -331,7 +332,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       backgroundColor: context.appColors.scaffoldBackground,
       body: SafeArea(
         child: _isLoading
-            ? Center(child: CircularProgressIndicator(color: progressColor))
+            ? Center(child: AppLoadingIndicator(color: progressColor))
             : Center(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),

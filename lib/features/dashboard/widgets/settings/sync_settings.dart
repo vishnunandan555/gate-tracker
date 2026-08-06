@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../more/screens/sync_optimization_screen.dart';
 import 'sync/sync_payload_breakdown_dialog.dart';
@@ -135,7 +136,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                     SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(
+                      child: AppLoadingIndicator(
                         strokeWidth: 2,
                         color: widget.accentColor,
                       ),
@@ -438,7 +439,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator(color: widget.accentColor)),
+      loading: () => Center(child: AppLoadingIndicator(color: widget.accentColor)),
       error: (err, _) => Text('Auth Error: $err', style: const TextStyle(color: Colors.redAccent)),
     );
   }

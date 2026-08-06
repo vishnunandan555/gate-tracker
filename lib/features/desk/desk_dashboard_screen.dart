@@ -11,6 +11,7 @@ import 'package:gateletics/providers/providers.dart';
 import '../dashboard/widgets/syllabus_category_header.dart';
 import '../dashboard/widgets/syllabus_topic_card.dart';
 import '../../core/theme/theme_context_ext.dart';
+import '../../core/widgets/app_loading_indicator.dart';
 
 class DeskDashboardScreen extends ConsumerStatefulWidget {
   const DeskDashboardScreen({super.key});
@@ -129,7 +130,7 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
       return Center(child: Text('Error: ${syllabusAsync.error}'));
     }
     if (!syllabusAsync.hasValue) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: AppLoadingIndicator(color: context.appColors.primaryAccent));
     }
 
     final syllabusData = syllabusAsync.value!;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 
@@ -51,7 +52,7 @@ class HomeNotificationsView extends ConsumerWidget {
                   SizedBox(
                     width: context.s(18),
                     height: context.s(18),
-                    child: CircularProgressIndicator(
+                    child: AppLoadingIndicator(
                       strokeWidth: 2,
                       color: accentColor.withAlpha(180),
                     ),

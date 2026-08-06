@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/theme_context_ext.dart';
+import '../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../utils/ui_scaling.dart';
 import '../../database/app_database.dart';
@@ -276,7 +277,7 @@ class _ProgressHistoryScreenState extends ConsumerState<ProgressHistoryScreen>
                   final logsAsync = ref.watch(progressLogsProvider);
                   if (logsAsync.hasError || categoriesAsync.hasError) return const SizedBox();
                   if (!logsAsync.hasValue || !categoriesAsync.hasValue) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: AppLoadingIndicator(color: accentColor));
                   }
                   final filteredList = getFilteredCategoriesStudy(
                     logsAsync.value!,

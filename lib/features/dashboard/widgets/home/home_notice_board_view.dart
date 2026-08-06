@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
 import '../../../../utils/demo_keys.dart';
@@ -110,10 +111,10 @@ class HomeNoticeBoardView extends ConsumerWidget {
         SizedBox(height: context.s(20)),
 
         tasksStream.when(
-          loading: () => const Center(
+          loading: () => Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: CircularProgressIndicator(),
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: AppLoadingIndicator(color: accentColor),
             ),
           ),
           error: (err, stack) => Center(

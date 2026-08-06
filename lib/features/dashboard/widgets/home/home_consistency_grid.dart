@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
@@ -168,11 +169,11 @@ class HomeConsistencyGrid extends ConsumerWidget {
           }).toList(),
         );
       },
-      loading: () => const Center(
+      loading: () => Center(
         child: SizedBox(
           height: 40,
           width: 40,
-          child: CircularProgressIndicator(strokeWidth: 2),
+          child: AppLoadingIndicator(color: accentColor, strokeWidth: 2),
         ),
       ),
       error: (e, _) => Center(

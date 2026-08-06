@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'core/widgets/app_loading_indicator.dart';
 import 'core/config/brand_config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_context_ext.dart';
@@ -131,7 +132,7 @@ class AppContentResolver extends ConsumerWidget {
         key: const ValueKey('loading_screen'),
         backgroundColor: activeThemeData.scaffoldBackgroundColor,
         body: Center(
-          child: CircularProgressIndicator(color: accentColor),
+          child: AppLoadingIndicator(color: accentColor),
         ),
       );
     }

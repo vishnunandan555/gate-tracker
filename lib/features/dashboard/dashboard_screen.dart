@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../database/app_database.dart';
 import '../../core/theme/theme_context_ext.dart';
+import '../../core/widgets/app_loading_indicator.dart';
 import '../../widgets/pill_progress_widget.dart';
 import 'package:gateletics/providers/providers.dart';
 import 'widgets/syllabus_category_header.dart';
@@ -190,7 +191,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             return Center(child: Text('Error: ${syllabusAsync.error}'));
           }
           if (!syllabusAsync.hasValue) {
-            return Center(child: CircularProgressIndicator(color: context.appColors.primaryAccent));
+            return Center(child: AppLoadingIndicator(color: context.appColors.primaryAccent));
           }
           final syllabusData = syllabusAsync.value!;
           final isSyllabusEmpty = syllabusData.isEmpty;

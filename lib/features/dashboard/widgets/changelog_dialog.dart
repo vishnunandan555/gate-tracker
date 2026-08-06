@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/brand_config.dart';
 import '../../../core/theme/theme_context_ext.dart';
+import '../../../core/widgets/app_loading_indicator.dart';
 import '../../../providers/sync/changelog_provider.dart';
 
 void showChangelogDialog(BuildContext context, {String? version, Color? accentColor}) {
@@ -115,7 +116,7 @@ class ChangelogDialog extends ConsumerWidget {
                       SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator(
+                        child: AppLoadingIndicator(
                           strokeWidth: 2.5,
                           color: themeAccent,
                         ),
