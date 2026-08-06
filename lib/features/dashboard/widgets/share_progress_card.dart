@@ -280,6 +280,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
                                 radius: 20,
                                 backgroundColor: widget.accentColor.withAlpha(40),
                                 backgroundImage: (_showProfilePhoto && profileImage != null) ? profileImage : null,
+                                onBackgroundImageError: (_showProfilePhoto && profileImage != null) ? (e, s) {} : null,
                                 child: (_showProfilePhoto && profileImage != null)
                                     ? null
                                     : (_showName && displayName != null && displayName.isNotEmpty)

@@ -50,13 +50,16 @@ class SetupStepProfile extends ConsumerWidget {
                   spreadRadius: 2,
                 )
               ],
-              image: profileImage != null
-                  ? DecorationImage(image: profileImage, fit: BoxFit.cover)
+            ),
+            child: CircleAvatar(
+              radius: 43,
+              backgroundImage: profileImage,
+              onBackgroundImageError: profileImage != null ? (e, s) {} : null,
+              backgroundColor: context.appColors.surfaceColor,
+              child: profileImage == null
+                  ? Icon(Icons.person_rounded, size: 48, color: context.appColors.textSecondary)
                   : null,
             ),
-            child: profileImage == null
-                ? Icon(Icons.person_rounded, size: 48, color: context.appColors.textSecondary)
-                : null,
           ),
         ),
         const SizedBox(height: 32),

@@ -102,6 +102,7 @@ class ProfileSettingsSection extends ConsumerWidget {
             child: CircleAvatar(
               radius: 16,
               backgroundImage: displayImage,
+              onBackgroundImageError: displayImage != null ? (e, s) {} : null,
               backgroundColor: context.appColors.surfaceColor,
               child: displayImage == null ? Icon(Icons.person, size: 18, color: context.appColors.textSecondary) : null,
             ),

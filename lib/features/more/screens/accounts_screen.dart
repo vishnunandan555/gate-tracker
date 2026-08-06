@@ -134,6 +134,7 @@ class _HeroProfileCard extends ConsumerWidget {
                   child: CircleAvatar(
                     radius: context.s(38),
                     backgroundImage: displayImage,
+                    onBackgroundImageError: displayImage != null ? (e, s) {} : null,
                     backgroundColor: context.appColors.surfaceColor,
                     child: displayImage == null
                         ? Text(

@@ -167,10 +167,12 @@ final displayProfileImageProvider = Provider<ImageProvider?>((ref) {
         } catch (_) {}
         return null;
       } else {
-        final file = io.File(profile.customProfilePhotoPath!);
-        if (file.existsSync() && file.lengthSync() > 0) {
-          return FileImage(file);
-        }
+        try {
+          final file = io.File(profile.customProfilePhotoPath!);
+          if (file.existsSync() && file.lengthSync() > 0) {
+            return FileImage(file);
+          }
+        } catch (_) {}
       }
     }
     return null;
