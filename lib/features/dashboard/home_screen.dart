@@ -39,7 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final hasSeen = ref.read(hasSeenDemoGuideProvider);
-      final isDesktop = MediaQuery.sizeOf(context).width > 900;
+      final isDesktop = MediaQuery.sizeOf(context).width >= 768;
       if (!hasSeen && ref.read(demoGuideProvider) == DemoStep.none && !isDesktop) {
         Future.delayed(const Duration(milliseconds: 600), () {
           if (mounted) showOnboardingPopup(context, ref);

@@ -22,7 +22,7 @@ class SettingsScreen extends ConsumerWidget {
     final packageInfo = ref.watch(packageInfoProvider);
     final accentColor = context.appColors.primaryAccent;
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth > 900;
+    final isDesktop = screenWidth >= 768;
 
     final titleStyle = GoogleFonts.outfit(
       color: context.appColors.textPrimary,

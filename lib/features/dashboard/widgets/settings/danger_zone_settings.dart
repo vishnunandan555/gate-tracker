@@ -263,7 +263,7 @@ class DangerZoneSettingsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth > 900;
+    final isDesktop = screenWidth >= 768;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

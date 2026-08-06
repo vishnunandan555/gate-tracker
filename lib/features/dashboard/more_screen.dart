@@ -88,7 +88,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     final accentColor = context.appColors.primaryAccent;
     final packageInfo = ref.watch(packageInfoProvider);
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth > 900;
+    final isDesktop = screenWidth >= 768;
 
     final items = _buildMenuItems(accentColor, isDesktop, context, ref);
     _ensureItemControllers(items.length);
