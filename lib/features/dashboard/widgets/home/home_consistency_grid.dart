@@ -1,99 +1,205 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
+import 'package:gateletics/providers/providers.dart';
+import '../../../../utils/ui_scaling.dart';
 
-class HomeConsistencyGridWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> dailyHistory;
-  final int currentStreak;
+class HomeConsistencyGrid extends ConsumerWidget {
+  final Color accentColor;
+  final int dailyGoalMinutes;
 
-  const HomeConsistencyGridWidget({
+  const HomeConsistencyGrid({
     super.key,
-    required this.dailyHistory,
-    required this.currentStreak,
+    required this.accentColor,
+    required this.dailyGoalMinutes,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final appColors = context.appColors;
-    final accentColor = appColors.primaryAccent;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recentSessionsAsync = ref.watch(recentDaysFocusProvider);
+    final rollover = ref.watch(studyDayRolloverProvider);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: appColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: appColors.borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '7-DAY CONSISTENCY',
-                style: GoogleFonts.outfit(
-                  color: appColors.textMuted,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              Row(
-                children: [
-                  Icon(Icons.local_fire_department_rounded, color: accentColor, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$currentStreak Day Streak',
-                    style: GoogleFonts.outfit(
+    return recentSessionsAsync.when(
+      data: (sessionsMap) {
+        final now = DateTime.now();
+        final List<DateTime> days = List.generate(7, (index) {
+          return studyDayFor(now, rollover).add(Duration(days: index - 3));
+        });
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: days.asMap().entries.map((entry) {
+            final index = entry.key;
+            final day = entry.value;
+
+            final secondsFocused = sessionsMap[day] ?? 0;
+            final minutesFocused = secondsFocused / 60;
+            final progress = dailyGoalMinutes > 0 ? (minutesFocused / dailyGoalMinutes).clamp(0.0, 1.0) : 0.0;
+
+            final dayName = _getDayName(day.weekday);
+            final dayNumber = '${day.day}';
+
+            final isMiddleToday = index == 3;
+            final isPastDay = index < 3;
+
+            if (isMiddleToday) {
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.s(4.0)),
+                  child: Container(
+                    height: context.s(52),
+                    decoration: BoxDecoration(
                       color: accentColor,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(context.s(8)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          dayName,
+                          style: GoogleFonts.outfit(
+                            color: context.appColors.onAccent,
+                            fontSize: context.s(10),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: context.s(2)),
+                        Text(
+                          dayNumber,
+                          style: GoogleFonts.outfit(
+                            color: context.appColors.onAccent,
+                            fontSize: context.s(12),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(7, (index) {
-              final isAchieved = index < dailyHistory.length && (dailyHistory[index]['achieved'] ?? false);
-              final dayLabel = index < dailyHistory.length ? (dailyHistory[index]['dayLabel'] ?? '') : '';
+                ),
+              );
+            }
 
-              return Column(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: isAchieved ? accentColor : appColors.surfaceColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isAchieved ? accentColor : appColors.borderColor,
+            if (isPastDay) {
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.s(4.0)),
+                  child: CustomPaint(
+                    painter: DailyGoalOutlinePainter(
+                      progress: progress,
+                      color: accentColor,
+                      borderRadius: context.s(8.0),
+                      strokeWidth: context.s(1.8),
+                    ),
+                    child: Container(
+                      height: context.s(52),
+                      decoration: BoxDecoration(
+                        color: context.appColors.cardBackground,
+                        borderRadius: BorderRadius.circular(context.s(8)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            dayName,
+                            style: GoogleFonts.outfit(
+                              color: progress > 0 ? accentColor : context.appColors.textMuted,
+                              fontSize: context.s(10),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: context.s(2)),
+                          Text(
+                            dayNumber,
+                            style: GoogleFonts.outfit(
+                              color: context.appColors.textPrimary,
+                              fontSize: context.s(12),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: isAchieved
-                        ? Icon(Icons.check_rounded, color: appColors.onAccent, size: 16)
-                        : null,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    dayLabel,
-                    style: GoogleFonts.outfit(
-                      color: appColors.textSecondary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                ),
+              );
+            }
+
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.s(4.0)),
+                child: Container(
+                  height: context.s(52),
+                  decoration: BoxDecoration(
+                    color: context.appColors.cardBackground,
+                    borderRadius: BorderRadius.circular(context.s(8)),
+                    border: Border.all(
+                      color: context.appColors.dividerColor,
+                      width: context.s(1.2),
                     ),
                   ),
-                ],
-              );
-            }),
-          ),
-        ],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        dayName,
+                        style: GoogleFonts.outfit(
+                          color: context.appColors.textMuted,
+                          fontSize: context.s(10),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: context.s(2)),
+                      Text(
+                        dayNumber,
+                        style: GoogleFonts.outfit(
+                          color: context.appColors.textSecondary,
+                          fontSize: context.s(12),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+      loading: () => const Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+      error: (e, _) => Center(
+        child: Text(
+          "Consistency error: $e",
+          style: const TextStyle(color: Colors.redAccent, fontSize: 10),
+        ),
       ),
     );
+  }
+
+  String _getDayName(int weekday) {
+    switch (weekday) {
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        return '';
+    }
   }
 }
