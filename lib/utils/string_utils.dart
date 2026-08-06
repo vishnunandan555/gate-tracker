@@ -20,3 +20,30 @@ String formatTimeOfDay(DateTime dateTime) {
   final displayMinute = minute.toString().padLeft(2, '0');
   return "$displayHour:$displayMinute $ampm";
 }
+
+String getMonthName(int month, {bool short = false}) {
+  if (month < 1 || month > 12) return "";
+  const fullMonths = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const shortMonths = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  return short ? shortMonths[month - 1] : fullMonths[month - 1];
+}
+
+String formatSyncTime(DateTime time) {
+  final now = DateTime.now();
+  final isToday = time.year == now.year && time.month == now.month && time.day == now.day;
+  final hour = time.hour.toString().padLeft(2, '0');
+  final minute = time.minute.toString().padLeft(2, '0');
+  if (isToday) {
+    return "$hour:$minute";
+  } else {
+    final day = time.day.toString().padLeft(2, '0');
+    final month = time.month.toString().padLeft(2, '0');
+    return "$day/$month $hour:$minute";
+  }
+}

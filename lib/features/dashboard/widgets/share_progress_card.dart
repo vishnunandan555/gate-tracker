@@ -14,6 +14,7 @@ import '../../../../core/config/brand_config.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../../utils/string_utils.dart';
 import '../../../../utils/ui_scaling.dart';
 import 'share/share_card_actions.dart';
 import 'share/share_card_options_panel.dart';
@@ -183,7 +184,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final targetDate = _isYesterday ? now.subtract(const Duration(days: 1)) : now;
-    final dateStr = "${targetDate.day} ${_getMonthName(targetDate.month)} ${targetDate.year}";
+    final dateStr = "${targetDate.day} ${getMonthName(targetDate.month, short: true)} ${targetDate.year}";
 
     final profileImage = ref.watch(displayProfileImageProvider);
     final displayName = ref.watch(displayNameProvider);
@@ -438,10 +439,5 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
         ],
       ),
     );
-  }
-
-  String _getMonthName(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[month - 1];
   }
 }

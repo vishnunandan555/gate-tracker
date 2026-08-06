@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../utils/string_utils.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import 'setup_step_widgets.dart';
 
@@ -20,19 +21,11 @@ class SetupStepExamDate extends StatelessWidget {
     required this.onNext,
   });
 
-  String _getMonthName(int month) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month - 1];
-  }
-
   @override
   Widget build(BuildContext context) {
     final remainingDays = targetDate.difference(DateTime.now()).inDays;
     final displayDays = remainingDays > 0 ? remainingDays : 0;
-    final formattedDate = "${_getMonthName(targetDate.month)} ${targetDate.day}, ${targetDate.year}";
+    final formattedDate = "${getMonthName(targetDate.month)} ${targetDate.day}, ${targetDate.year}";
 
     return Column(
       key: const ValueKey(3),

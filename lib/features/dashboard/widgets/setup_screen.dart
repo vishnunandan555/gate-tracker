@@ -75,7 +75,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       final needsAction = await ref.read(syncProvider.notifier).initializeSync();
       if (needsAction) {
         if (mounted) {
-          _showSyncConflictDialog();
+          showSyncConflictDialog(context, ref, ref.read(overallProgressColorProvider));
         }
       } else {
         final hasSetup = ref.read(setupCompletedProvider).value ?? false;
@@ -95,117 +95,6 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _showSyncConflictDialog() {
-    final accentColor = ref.read(overallProgressColorProvider);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: context.appColors.dialogBackground,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          "Sync Conflict Detected",
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: context.appColors.textPrimary, fontSize: 18),
-        ),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Both your local device and cloud backup contain study tracking progress. How would you like to resolve this conflict?",
-                style: GoogleFonts.outfit(color: context.appColors.textSecondary, fontSize: 13, height: 1.5),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final localData = await ref.read(syncProvider.notifier).exportLocalData();
-                  final cloudData = ref.read(syncProvider).pendingCloudData;
-                  if (cloudData != null && ctx.mounted) {
-                    showConflictDetailsDialog(ctx, localData, cloudData, accentColor);
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: accentColor.withValues(alpha: 0.4)),
-                  foregroundColor: accentColor,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-                icon: const Icon(Icons.compare_arrows_rounded, size: 16),
-                label: Text(
-                  "Compare Data (View Conflicts)",
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildDialogOption(
-                ctx,
-                title: "Merge Progress (Recommended)",
-                subtitle: "Combine local and cloud progress (no data lost)",
-                icon: Icons.merge_type_rounded,
-                color: context.appColors.primaryAccent,
-                onTap: () async {
-                  Navigator.pop(ctx);
-                  setState(() => _isLoading = true);
-                  try {
-                    await ref.read(syncProvider.notifier).mergeCloudAndLocal();
-                    await ref.read(setupCompletedProvider.notifier).completeSetup();
-                  } catch (_) {}
-                  if (mounted) setState(() => _isLoading = false);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialogOption(
-    BuildContext ctx, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: context.appColors.borderColor),
-          borderRadius: BorderRadius.circular(16),
-          color: context.appColors.surfaceColor,
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.outfit(color: context.appColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.outfit(color: context.appColors.textMuted, fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _handleFinishSetup() async {

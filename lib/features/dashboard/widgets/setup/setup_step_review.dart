@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../utils/string_utils.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
@@ -31,19 +32,11 @@ class SetupStepReview extends ConsumerWidget {
     required this.onBack,
   });
 
-  String _getMonthName(int month) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month - 1];
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final remainingDays = targetDate.difference(DateTime.now()).inDays;
     final displayDays = remainingDays > 0 ? remainingDays : 0;
-    final formattedDate = "${_getMonthName(targetDate.month)} ${targetDate.day}, ${targetDate.year}";
+    final formattedDate = "${getMonthName(targetDate.month)} ${targetDate.day}, ${targetDate.year}";
     final colorNotifier = ref.watch(overallProgressColorProvider.notifier);
 
     return Column(

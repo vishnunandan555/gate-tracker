@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../utils/string_utils.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import 'package:gateletics/providers/providers.dart';
@@ -23,20 +24,6 @@ class SyncSettingsSection extends ConsumerStatefulWidget {
 }
 
 class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
-  String _formatSyncTime(DateTime time) {
-    final now = DateTime.now();
-    final isToday = time.year == now.year && time.month == now.month && time.day == now.day;
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    if (isToday) {
-      return "$hour:$minute";
-    } else {
-      final day = time.day.toString().padLeft(2, '0');
-      final month = time.month.toString().padLeft(2, '0');
-      return "$day/$month $hour:$minute";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!isFirebaseSupported()) {
@@ -129,7 +116,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                   SyncStatusBadge(
                     syncState: syncState,
                     accentColor: widget.accentColor,
-                    formatSyncTime: _formatSyncTime,
+                    formatSyncTime: formatSyncTime,
                   ),
                   const Spacer(),
                   if (syncState.status == SyncStatus.syncing)
