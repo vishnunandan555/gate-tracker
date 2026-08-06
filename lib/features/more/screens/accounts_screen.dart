@@ -10,6 +10,7 @@ import '../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../utils/ui_scaling.dart';
 import '../../dashboard/widgets/settings/sync_settings.dart';
+import '../../dashboard/widgets/settings/sync/sync_account_card.dart';
 
 class AccountsScreen extends ConsumerWidget {
   const AccountsScreen({super.key});
