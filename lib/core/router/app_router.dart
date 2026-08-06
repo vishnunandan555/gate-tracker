@@ -36,17 +36,27 @@ final appRouter = GoRouter(
         return '/desk';
       }
     }
-    if (kIsWeb && state.uri.path == '/') {
-      if (persistedUserWantsDesktopUI == true) {
-        return '/desk';
-      }
+    if (kIsWeb) {
+      double? logicalWidth;
       try {
         final view = PlatformDispatcher.instance.views.first;
-        final logicalWidth = view.physicalSize.width / view.devicePixelRatio;
-        if (logicalWidth > 600) {
+        logicalWidth = view.physicalSize.width / view.devicePixelRatio;
+      } catch (_) {}
+
+      final isDesktopWidth = (logicalWidth ?? 0) >= 768;
+      final prefersDesktop = persistedUserWantsDesktopUI == true;
+
+      if (state.uri.path.startsWith('/desk')) {
+        if (!isDesktopWidth && !prefersDesktop) {
+          return '/';
+        }
+      }
+
+      if (state.uri.path == '/') {
+        if (prefersDesktop || isDesktopWidth) {
           return '/desk';
         }
-      } catch (_) {}
+      }
     }
     return null;
   },
