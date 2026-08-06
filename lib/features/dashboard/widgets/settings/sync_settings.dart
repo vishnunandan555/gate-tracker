@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../../more/screens/sync_optimization_screen.dart';
 import 'sync/sync_payload_breakdown_dialog.dart';
 
 class SyncSettingsSection extends ConsumerStatefulWidget {

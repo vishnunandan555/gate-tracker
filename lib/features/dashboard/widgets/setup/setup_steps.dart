@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
-import '../../../../core/theme/models/accent_pool_model.dart';
 import 'package:gateletics/providers/providers.dart';
-import '../../../../utils/ui_scaling.dart';
-import '../../../../database/syllabus_preset.dart';
-import '../settings/customization_settings.dart';
 
 Widget buildSetupNavigationRow({
   required BuildContext context,
