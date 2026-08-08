@@ -64,7 +64,9 @@ class SyllabusTopicCard extends ConsumerWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(40),
+            color: context.appColors.isLight
+                ? Colors.black.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.25),
             blurRadius: context.s(10),
             offset: Offset(0, context.s(4)),
           ),

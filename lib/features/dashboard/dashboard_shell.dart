@@ -41,9 +41,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     super.initState();
     _pageController = PageController(initialPage: 2);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkAndInitSync(ref);
-      _checkDesktopWarning();
-      checkAppVersionUpdate(context, ref);
+      initializeShellServices(context, ref);
     });
   }
 
@@ -406,10 +404,6 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         ),
       ),
     );
-  }
-
-  Future<void> _checkDesktopWarning() async {
-    // Prompting dialog removed. Auto-routing based on preference / screen size is active.
   }
 
   void _runSpotlight(String identifier, List<TargetFocus> targets, VoidCallback onFinish) {

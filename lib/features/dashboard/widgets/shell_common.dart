@@ -179,6 +179,12 @@ class _SyncDialogOption extends StatelessWidget {
   }
 }
 
+void initializeShellServices(BuildContext context, WidgetRef ref) {
+  checkAndInitSync(ref);
+  checkAppVersionUpdate(context, ref);
+  ref.read(desktopUpdateProvider.notifier).checkOnLaunchSilently();
+}
+
 void checkAndInitSync(WidgetRef ref) {
   final authState = ref.read(authProvider).value;
   if (authState != null && authState.user != null) {

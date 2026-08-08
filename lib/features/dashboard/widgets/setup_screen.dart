@@ -81,9 +81,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         final hasSetup = ref.read(setupCompletedProvider).value ?? false;
         if (hasSetup && !forceOnboarding && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✓ Cloud data loaded successfully!'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: Text('✓ Cloud data loaded successfully!', style: TextStyle(color: context.appColors.onAccent)),
+              backgroundColor: context.appColors.primaryAccent,
             ),
           );
         }
