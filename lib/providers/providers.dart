@@ -17,7 +17,6 @@ export 'syllabus/category_autosort_provider.dart';
 export 'syllabus/completion_provider.dart';
 export 'syllabus/selected_branch_provider.dart';
 export 'syllabus/setup_provider.dart';
-export 'syllabus/subject_provider.dart';
 export 'syllabus/syllabus_provider.dart';
 
 // Focus Domain

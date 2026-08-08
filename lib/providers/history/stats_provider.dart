@@ -93,5 +93,19 @@ final weeklyAverageFocusHoursProvider = Provider<double>((ref) {
   );
 });
 
+final recentDaysFocusProvider = StreamProvider<Map<DateTime, int>>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final rollover = ref.watch(studyDayRolloverProvider);
+  return db.watchRecentFocusSessions(7, rollover: rollover).map((sessions) {
+    final map = <DateTime, int>{};
+    for (final s in sessions) {
+      final studyDay = studyDayFor(s.startTime, rollover);
+      final current = map[studyDay] ?? 0;
+      map[studyDay] = current + s.durationSeconds;
+    }
+    return map;
+  });
+});
+
 
 

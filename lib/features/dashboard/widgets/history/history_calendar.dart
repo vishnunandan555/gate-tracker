@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import '../../../../database/app_database.dart';
 import '../../../../utils/ui_scaling.dart';
+import '../../../../utils/string_utils.dart';
 
 class CalendarCellRingPainter extends CustomPainter {
   final double progress;
@@ -184,7 +185,7 @@ class HistoryCalendar extends StatelessWidget {
                   }
 
                   final cellDate = DateTime(selectedMonth.year, selectedMonth.month, dayNum);
-                  final dateStr = "${cellDate.year}-${cellDate.month.toString().padLeft(2, '0')}-${cellDate.day.toString().padLeft(2, '0')}";
+                  final dateStr = cellDate.toDateKey();
                   final record = historyMap[dateStr];
 
                   final focusSeconds = record?.totalFocusSeconds ?? 0;

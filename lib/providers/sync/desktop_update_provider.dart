@@ -7,6 +7,19 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package_info_provider.dart';
 import '../../core/config/brand_config.dart';
 
+class HasCheckedVersionNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void setChecked(bool val) {
+    state = val;
+  }
+}
+
+final hasCheckedVersionProvider = NotifierProvider<HasCheckedVersionNotifier, bool>(() {
+  return HasCheckedVersionNotifier();
+});
+
 class DesktopReleaseInfo {
   final String latestVersion;
   final String releaseNotes;

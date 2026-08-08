@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../database/app_database.dart';
+import '../../utils/string_utils.dart';
 import '../providers.dart';
 
 // Stream of historical snapshots
@@ -25,7 +26,7 @@ final dailyHistoryManagerProvider = Provider<void>((ref) {
       completionAsync.whenData((completionPct) {
         final now = DateTime.now();
         final date = studyDayFor(now, rollover);
-        final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+        final dateStr = date.toDateKey();
 
         final tasksCompleted = completionStatsAsync.when(
           data: (stats) => stats.completed,
@@ -125,7 +126,7 @@ final currentStreakProvider = Provider<int>((ref) {
       DateTime checkDate = today;
 
       while (true) {
-        final checkDateStr = "${checkDate.year}-${checkDate.month.toString().padLeft(2, '0')}-${checkDate.day.toString().padLeft(2, '0')}";
+        final checkDateStr = checkDate.toDateKey();
         
         if (completedDates.contains(checkDateStr)) {
           streak++;
@@ -173,8 +174,7 @@ final projectedCompletionProvider = Provider<Map<String, dynamic>?>((ref) {
 
           final dailyCounts = <String, int>{};
           for (final log in logs) {
-            final ts = log.timestamp;
-            final key = "${ts.year}-${ts.month.toString().padLeft(2, '0')}-${ts.day.toString().padLeft(2, '0')}";
+            final key = log.timestamp.toDateKey();
             dailyCounts[key] = (dailyCounts[key] ?? 0) + log.delta;
           }
 
@@ -183,7 +183,7 @@ final projectedCompletionProvider = Provider<Map<String, dynamic>?>((ref) {
           final activeDeltas = <double>[];
           for (int i = 0; i < 14 && activeDeltas.length < 7; i++) {
             final day = todayMidnight.subtract(Duration(days: i));
-            final key = "${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}";
+            final key = day.toDateKey();
             final progressOnDay = dailyCounts[key] ?? 0;
 
             if (progressOnDay > 0) {
@@ -283,7 +283,7 @@ final checkInStreakProvider = Provider<int>((ref) {
       DateTime checkDate = today;
 
       while (true) {
-        final checkDateStr = "${checkDate.year}-${checkDate.month.toString().padLeft(2, '0')}-${checkDate.day.toString().padLeft(2, '0')}";
+        final checkDateStr = checkDate.toDateKey();
         
         if (completedDates.contains(checkDateStr)) {
           streak++;

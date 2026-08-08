@@ -7,6 +7,7 @@ import '../../../../database/app_database.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../../../../utils/ui_scaling.dart';
+import '../../../../utils/string_utils.dart';
 
 class WaveAreaChartPainter extends CustomPainter {
   final List<double> data;
@@ -462,13 +463,13 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
 
       for (int i = 0; i < 7; i++) {
         final dCurr = startOfWeek.add(Duration(days: i));
-        final dateStrCurr = "${dCurr.year}-${dCurr.month.toString().padLeft(2, '0')}-${dCurr.day.toString().padLeft(2, '0')}";
+        final dateStrCurr = dCurr.toDateKey();
         final recordCurr = widget.history.firstWhere((h) => h.dateStr == dateStrCurr, orElse: () => DailyHistoryData(dateStr: dateStrCurr, totalFocusSeconds: 0, targetGoalSeconds: widget.dailyGoalMinutes * 60, isGoalCompleted: false, syllabusProgressPct: 0, tasksCompletedTotal: 0));
         currentHoursSum += recordCurr.totalFocusSeconds;
         currentProgressSum += getSyllabusProgressDeltaFromLogs(dCurr, logs, totalItems);
 
         final dPrev = prevStartOfWeek.add(Duration(days: i));
-        final dateStrPrev = "${dPrev.year}-${dPrev.month.toString().padLeft(2, '0')}-${dPrev.day.toString().padLeft(2, '0')}";
+        final dateStrPrev = dPrev.toDateKey();
         final recordPrev = widget.history.firstWhere((h) => h.dateStr == dateStrPrev, orElse: () => DailyHistoryData(dateStr: dateStrPrev, totalFocusSeconds: 0, targetGoalSeconds: widget.dailyGoalMinutes * 60, isGoalCompleted: false, syllabusProgressPct: 0, tasksCompletedTotal: 0));
         previousHoursSum += recordPrev.totalFocusSeconds;
         previousProgressSum += getSyllabusProgressDeltaFromLogs(dPrev, logs, totalItems);
@@ -487,7 +488,7 @@ class _HistoryGraphState extends ConsumerState<HistoryGraph> with TickerProvider
       labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
       for (int i = 0; i < 7; i++) {
         final d = startOfWeek.add(Duration(days: i));
-        final dateStr = "${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
+        final dateStr = d.toDateKey();
         final record = widget.history.firstWhere((h) => h.dateStr == dateStr, orElse: () => DailyHistoryData(dateStr: dateStr, totalFocusSeconds: 0, targetGoalSeconds: widget.dailyGoalMinutes * 60, isGoalCompleted: false, syllabusProgressPct: 0, tasksCompletedTotal: 0));
         final hrs = record.totalFocusSeconds / 3600.0;
         dataPointsHours.add(hrs);

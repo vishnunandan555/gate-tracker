@@ -1,18 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class HasCheckedVersionNotifier extends Notifier<bool> {
-  @override
-  bool build() => false;
-
-  void setChecked(bool val) {
-    state = val;
-  }
-}
-
-final hasCheckedVersionProvider = NotifierProvider<HasCheckedVersionNotifier, bool>(() {
-  return HasCheckedVersionNotifier();
-});
-
 enum SyncStatus {
   idle,
   syncing,

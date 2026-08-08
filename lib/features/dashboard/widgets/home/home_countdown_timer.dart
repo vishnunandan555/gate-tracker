@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/theme_context_ext.dart';
-import '../../../../database/app_database.dart';
 import 'package:gateletics/providers/providers.dart';
 
 class DailyGoalOutlinePainter extends CustomPainter {
@@ -44,20 +43,6 @@ class DailyGoalOutlinePainter extends CustomPainter {
     return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }
-
-final recentDaysFocusProvider = StreamProvider<Map<DateTime, int>>((ref) {
-  final db = ref.watch(appDatabaseProvider);
-  final rollover = ref.watch(studyDayRolloverProvider);
-  return db.watchRecentFocusSessions(7, rollover: rollover).map((sessions) {
-    final map = <DateTime, int>{};
-    for (final s in sessions) {
-      final studyDay = studyDayFor(s.startTime, rollover);
-      final current = map[studyDay] ?? 0;
-      map[studyDay] = current + s.durationSeconds;
-    }
-    return map;
-  });
-});
 
 class TickingCountdownTimer extends ConsumerStatefulWidget {
   const TickingCountdownTimer({super.key});

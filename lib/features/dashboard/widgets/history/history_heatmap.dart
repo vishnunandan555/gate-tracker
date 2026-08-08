@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../database/app_database.dart';
 import '../../../../utils/ui_scaling.dart';
+import '../../../../utils/string_utils.dart';
 import '../../../../core/theme/theme_context_ext.dart';
 
 class HistoryHeatmap extends StatelessWidget {
@@ -217,7 +218,8 @@ class HistoryHeatmap extends StatelessWidget {
                                           mDateTime.month == DateTime.now().month &&
                                           dayNum > DateTime.now().day;
 
-                                      final dateStr = "${mDateTime.year}-${mDateTime.month.toString().padLeft(2, '0')}-${dayNum.toString().padLeft(2, '0')}";
+                                      final cellDate = DateTime(mDateTime.year, mDateTime.month, dayNum);
+                                      final dateStr = cellDate.toDateKey();
                                       final record = historyMap[dateStr];
                                       final focusSeconds = (record?.totalFocusSeconds ?? 0).toDouble();
                                       final ratio = focusSeconds / maxVal;

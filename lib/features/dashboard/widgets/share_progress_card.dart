@@ -58,7 +58,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
 
       final pngBytes = byteData.buffer.asUint8List();
       final now = DateTime.now();
-      final dateStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final dateStr = now.toDateKey();
       final defaultFileName = "gateletics_progress_$dateStr.png";
 
       if (kIsWeb) {
@@ -112,7 +112,7 @@ class _ShareProgressCardState extends ConsumerState<ShareProgressCard> {
 
       final pngBytes = byteData.buffer.asUint8List();
       final now = DateTime.now();
-      final dateStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final dateStr = now.toDateKey();
       final defaultFileName = "gateletics_progress_$dateStr.png";
 
       if (kIsWeb) {

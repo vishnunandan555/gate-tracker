@@ -15,6 +15,7 @@ import '../../core/config/brand_config.dart';
 import '../dashboard/widgets/focus/focus_recovery_dialog.dart';
 import '../../core/theme/theme_context_ext.dart';
 import 'package:gateletics/providers/providers.dart';
+import '../../utils/string_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DeskDashboardShell extends ConsumerStatefulWidget {
@@ -411,7 +412,7 @@ class _SidebarNavItem extends ConsumerWidget {
                 ? max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds)
                 : max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds));
 
-        final timeStr = formatDuration(displaySeconds, isCountUp);
+        final timeStr = formatDurationSeconds(displaySeconds, isCountUp: isCountUp);
         timerBadge = Container(
           margin: const EdgeInsets.only(left: 8),
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
@@ -481,22 +482,6 @@ class _SidebarNavItem extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String formatDuration(int seconds, bool isCountUp) {
-    if (isCountUp) {
-      final h = (seconds / 3600).floor();
-      final m = ((seconds % 3600) / 60).floor();
-      final s = seconds % 60;
-      if (h > 0) {
-        return "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}";
-      }
-      return "${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-    } else {
-      final m = (seconds / 60).floor();
-      final s = seconds % 60;
-      return "${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-    }
   }
 }
 

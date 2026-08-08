@@ -106,6 +106,22 @@ class SyllabusCategoryWithTopics {
     required this.category,
     required this.topics,
   });
+
+  ({int completed, int total, double progress}) get completionStats {
+    int catCompleted = 0, catTotal = 0;
+    for (final topicWithTasks in topics) {
+      final topic = topicWithTasks.topic;
+      if (topic.isCounter) {
+        catCompleted += topic.currentCount;
+        catTotal += topic.maxCount;
+      } else {
+        catCompleted += topicWithTasks.tasks.where((t) => t.isCompleted).length;
+        catTotal += topicWithTasks.tasks.length;
+      }
+    }
+    final catProgress = catTotal == 0 ? 0.0 : (catCompleted / catTotal) * 100;
+    return (completed: catCompleted, total: catTotal, progress: catProgress);
+  }
 }
 
 @DriftDatabase(tables: [SyllabusCategories, SyllabusTopics, SyllabusTasks, FocusSessions, DailyHistory, CustomTasks, SyllabusProgressLogs])

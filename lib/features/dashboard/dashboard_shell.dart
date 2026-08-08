@@ -21,6 +21,7 @@ import 'widgets/app_bar_title.dart';
 import 'widgets/countdown_widget.dart';
 import 'widgets/focus/focus_recovery_dialog.dart';
 import '../../utils/demo_keys.dart';
+import '../../utils/string_utils.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 
@@ -351,7 +352,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
             ? max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds)
             : max(0, sessionState.currentTargetSeconds - sessionState.elapsedSeconds));
 
-    final timeStr = formatNavDuration(displaySeconds, isCountUp);
+    final timeStr = formatDurationSeconds(displaySeconds, isCountUp: isCountUp);
 
     return Expanded(
       key: key,
@@ -405,22 +406,6 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
         ),
       ),
     );
-  }
-
-  String formatNavDuration(int seconds, bool isCountUp) {
-    if (isCountUp) {
-      final h = (seconds / 3600).floor();
-      final m = ((seconds % 3600) / 60).floor();
-      final s = seconds % 60;
-      if (h > 0) {
-        return "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}";
-      }
-      return "${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-    } else {
-      final m = (seconds / 60).floor();
-      final s = seconds % 60;
-      return "${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-    }
   }
 
   Future<void> _checkDesktopWarning() async {

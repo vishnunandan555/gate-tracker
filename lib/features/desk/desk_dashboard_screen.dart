@@ -10,6 +10,7 @@ import '../../widgets/pill_progress_widget.dart';
 import 'package:gateletics/providers/providers.dart';
 import '../dashboard/widgets/syllabus_category_header.dart';
 import '../dashboard/widgets/syllabus_topic_card.dart';
+import '../../utils/string_utils.dart';
 import '../../core/theme/theme_context_ext.dart';
 import '../../core/widgets/app_loading_indicator.dart';
 
@@ -59,56 +60,6 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
     }
   }
 
-  double _calculateScore(SyllabusTopicWithTasks topicWithTasks, String query, String categoryName) {
-    final topic = topicWithTasks.topic;
-    final name = topic.name.toLowerCase();
-    final catName = categoryName.toLowerCase();
-    
-    // Extract note
-    final rawUrl = topic.resourceUrl ?? '';
-    String note = '';
-    if (rawUrl.trim().isNotEmpty) {
-      final parts = rawUrl.trim().split('|');
-      if (parts.length > 2) {
-        note = parts[2].trim().toLowerCase();
-      }
-    }
-
-    double score = 0;
-    
-    // Category Name Match (highest weight)
-    if (catName == query) {
-      score += 150;
-    } else if (catName.contains(query)) {
-      score += 80 + (1.0 / (catName.indexOf(query) + 1));
-    }
-    
-    // Topic Name Match
-    if (name == query) {
-      score += 100;
-    } else if (name.contains(query)) {
-      score += 50 + (1.0 / (name.indexOf(query) + 1));
-    }
-    
-    if (note.isNotEmpty) {
-      if (note == query) {
-        score += 40;
-      } else if (note.contains(query)) {
-        score += 20;
-      }
-    }
-    
-    for (final task in topicWithTasks.tasks) {
-      final taskName = task.name.toLowerCase();
-      if (taskName == query) {
-        score += 30;
-      } else if (taskName.contains(query)) {
-        score += 15;
-      }
-    }
-    return score;
-  }
-
   Widget _buildConstrainedBody(Widget child) {
     return Center(
       child: ConstrainedBox(
@@ -140,50 +91,12 @@ class _DeskDashboardScreenState extends ConsumerState<DeskDashboardScreen> {
     final totalCompleted = stats.completed;
     final totalTasks = stats.total;
 
-    // Search processing logic
+    // Unified search processing logic
+    final searchResult = filterSyllabusWithScores(syllabusData, searchQuery);
+    final filteredSyllabus = searchResult.filteredSyllabus;
+    final bestMatchTopic = searchResult.bestMatchTopic;
+    final bestMatchCategory = searchResult.bestMatchCategory;
     final query = searchQuery.trim().toLowerCase();
-    List<SyllabusCategoryWithTopics> filteredSyllabus = [];
-    SyllabusTopicWithTasks? bestMatchTopic;
-    SyllabusCategory? bestMatchCategory;
-    double maxScore = 0;
-
-    if (query.isNotEmpty) {
-      for (final catWithTopics in syllabusData) {
-        List<SyllabusTopicWithTasks> matchedTopics = [];
-        for (final topicWithTasks in catWithTopics.topics) {
-          double score = _calculateScore(topicWithTasks, query, catWithTopics.category.name);
-          if (score > 0) {
-            matchedTopics.add(topicWithTasks);
-            if (score > maxScore) {
-              maxScore = score;
-              bestMatchTopic = topicWithTasks;
-              bestMatchCategory = catWithTopics.category;
-            }
-          }
-        }
-        
-        if (matchedTopics.isNotEmpty) {
-          filteredSyllabus.add(SyllabusCategoryWithTopics(
-            category: catWithTopics.category,
-            topics: matchedTopics,
-          ));
-        }
-      }
-      
-      if (bestMatchTopic != null && bestMatchCategory != null) {
-        filteredSyllabus = filteredSyllabus.map((catWithTopics) {
-          if (catWithTopics.category.id == bestMatchCategory!.id) {
-            return SyllabusCategoryWithTopics(
-              category: catWithTopics.category,
-              topics: catWithTopics.topics.where((t) => t.topic.id != bestMatchTopic!.topic.id).toList(),
-            );
-          }
-          return catWithTopics;
-        }).where((catWithTopics) => catWithTopics.topics.isNotEmpty).toList();
-      }
-    } else {
-      filteredSyllabus = syllabusData;
-    }
 
     return Scaffold(
       body: _buildConstrainedBody(CustomScrollView(
@@ -430,18 +343,9 @@ class _SyllabusCategoryBlock extends ConsumerWidget {
     final category = catWithTopics.category;
     final topics = catWithTopics.topics;
 
-    int catCompleted = 0, catTotal = 0;
-    for (final topicWithTasks in topics) {
-      final topic = topicWithTasks.topic;
-      if (topic.isCounter) {
-        catCompleted += topic.currentCount;
-        catTotal += topic.maxCount;
-      } else {
-        catCompleted += topicWithTasks.tasks.where((t) => t.isCompleted).length;
-        catTotal += topicWithTasks.tasks.length;
-      }
-    }
-    final catProgress = catTotal == 0 ? 0.0 : (catCompleted / catTotal) * 100;
+    final catStats = catWithTopics.completionStats;
+    final catProgress = catStats.progress;
+    final catTotal = catStats.total;
     final rawTopics = topics.map((e) => e.topic).toList();
 
     final manuallyExpanded = ref.watch(manuallyExpandedCompletedSyllabusCategoriesProvider);
@@ -451,19 +355,8 @@ class _SyllabusCategoryBlock extends ConsumerWidget {
     bool isPrevCollapsed = false;
     if (index > 0) {
       final prevCat = syllabusData[index - 1];
-      int prevCompleted = 0, prevTotal = 0;
-      for (final topicWithTasks in prevCat.topics) {
-        final topic = topicWithTasks.topic;
-        if (topic.isCounter) {
-          prevCompleted += topic.currentCount;
-          prevTotal += topic.maxCount;
-        } else {
-          prevCompleted += topicWithTasks.tasks.where((t) => t.isCompleted).length;
-          prevTotal += topicWithTasks.tasks.length;
-        }
-      }
-      final prevProgress = prevTotal == 0 ? 0.0 : (prevCompleted / prevTotal) * 100;
-      final prevCompletedCheck = prevProgress >= 100.0 && prevTotal > 0;
+      final prevStats = prevCat.completionStats;
+      final prevCompletedCheck = prevStats.progress >= 100.0 && prevStats.total > 0;
       isPrevCollapsed = prevCompletedCheck && !manuallyExpanded.contains(prevCat.category.id);
     }
 
