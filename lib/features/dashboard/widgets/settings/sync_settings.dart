@@ -26,37 +26,14 @@ class SyncSettingsSection extends ConsumerStatefulWidget {
 class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
   @override
   Widget build(BuildContext context) {
-    if (!isFirebaseSupported()) {
-      return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline_rounded, color: context.appColors.primaryAccent),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                "Cloud Sync is supported on Web & Android. To transfer data to/from this desktop app, please use the Local Backup & Restore tools below.",
-                style: GoogleFonts.outfit(
-                  color: context.appColors.textSecondary,
-                  fontSize: 12,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
     final authAsync = ref.watch(authProvider);
     final syncState = ref.watch(syncProvider);
 
     return authAsync.when(
       data: (authState) {
-        final user = authState.user;
         final isOffline = authState.isOfflineMode;
 
-        if (user == null || isOffline) {
+        if (!authState.isAuthenticated || isOffline) {
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -88,7 +65,7 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Sign in to enable automatic cloud backups.',
+                            'Sign in with Google to enable automatic cloud sync.',
                             style: GoogleFonts.outfit(
                               color: context.appColors.textMuted,
                               fontSize: 11,
@@ -99,6 +76,23 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 14),
+                FilledButton.icon(
+                  onPressed: () async {
+                    await ref.read(authProvider.notifier).resetAuthChoice();
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: widget.accentColor,
+                    foregroundColor: context.appColors.onAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.login_rounded, size: 16),
+                  label: Text(
+                    'SIGN IN WITH GOOGLE',
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
                 ),
                 SyncWebBanner(accentColor: widget.accentColor),
               ],
@@ -111,6 +105,53 @@ class _SyncSettingsSectionState extends ConsumerState<SyncSettingsSection> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: context.appColors.surfaceColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: context.appColors.borderColor),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 14,
+                      backgroundImage: ref.watch(displayProfileImageProvider),
+                      backgroundColor: widget.accentColor.withValues(alpha: 0.1),
+                      child: ref.watch(displayProfileImageProvider) == null
+                          ? Icon(Icons.person_rounded, size: 14, color: widget.accentColor)
+                          : null,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            authState.displayName ?? authState.email ?? 'Signed in',
+                            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12, color: context.appColors.textPrimary),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (authState.email != null)
+                            Text(
+                              authState.email!,
+                              style: GoogleFonts.outfit(fontSize: 10.5, color: context.appColors.textMuted),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Sign Out',
+                      icon: const Icon(Icons.logout_rounded, size: 16, color: Colors.redAccent),
+                      onPressed: () async {
+                        await ref.read(authProvider.notifier).signOut();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
               Row(
                 children: [
                   SyncStatusBadge(

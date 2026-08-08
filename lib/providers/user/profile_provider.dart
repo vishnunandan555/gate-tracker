@@ -146,8 +146,8 @@ final displayNameProvider = Provider<String?>((ref) {
   }
   final authAsync = ref.watch(authProvider);
   final authState = authAsync.value;
-  if (authState != null && authState.user != null) {
-    return authState.user!.displayName;
+  if (authState != null && authState.displayName != null) {
+    return authState.displayName;
   }
   return null;
 });
@@ -179,8 +179,8 @@ final displayProfileImageProvider = Provider<ImageProvider?>((ref) {
   } else if (profile.profilePhotoMode == 'google') {
     final authAsync = ref.watch(authProvider);
     final authState = authAsync.value;
-    if (authState != null && authState.user != null && authState.user!.photoURL != null) {
-      return NetworkImage(authState.user!.photoURL!);
+    if (authState != null && authState.photoUrl != null) {
+      return NetworkImage(authState.photoUrl!);
     }
     return null;
   }

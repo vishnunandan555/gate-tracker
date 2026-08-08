@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'desktop_firebase_rest_client.dart';
 
 // Generate a cryptographically secure random verifier for PKCE
 String _generateCodeVerifier() {
@@ -21,15 +21,21 @@ String _generateCodeChallenge(String verifier) {
   return base64Url.encode(digest.bytes).replaceAll('=', '').replaceAll('+', '-').replaceAll('/', '_');
 }
 
-Future<UserCredential> signInWithGoogleWindows() async {
-  // 1. Bind to loopback server on a dynamic free port
-  late final HttpServer server;
-  try {
-    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-  } catch (e) {
-    throw Exception('Unable to start local authentication server: $e. Please check your firewall permissions.');
+Future<DesktopUser> signInWithGoogleWindows() async {
+  // 1. Bind to loopback server (try standard preferred ports first, fallback to dynamic port 0)
+  HttpServer? server;
+  final preferredPorts = [8080, 8888, 5000, 0];
+  for (final targetPort in preferredPorts) {
+    try {
+      server = await HttpServer.bind(InternetAddress.loopbackIPv4, targetPort);
+      break;
+    } catch (_) {}
   }
-  final port = server.port;
+  if (server == null) {
+    throw Exception('Unable to start local authentication server. Please check your firewall permissions.');
+  }
+  final activeServer = server;
+  final port = activeServer.port;
 
   // 2. Generate PKCE verifier and challenge
   final codeVerifier = _generateCodeVerifier();
@@ -52,7 +58,7 @@ Future<UserCredential> signInWithGoogleWindows() async {
   if (await canLaunchUrl(authUrl)) {
     await launchUrl(authUrl, mode: LaunchMode.externalApplication);
   } else {
-    server.close(force: true);
+    activeServer.close(force: true);
     throw Exception('Could not launch Google Sign-In browser.');
   }
 
@@ -61,14 +67,14 @@ Future<UserCredential> signInWithGoogleWindows() async {
   final timeoutTimer = Timer(const Duration(minutes: 3), () {
     if (!codeCompleter.isCompleted) {
       codeCompleter.completeError(TimeoutException('Sign-in timed out after 3 minutes.'));
-      server.close(force: true);
+      activeServer.close(force: true);
     }
   });
 
   // 6. Listen for local server redirect request
   unawaited(() async {
     try {
-      await for (HttpRequest request in server) {
+      await for (HttpRequest request in activeServer) {
         final code = request.uri.queryParameters['code'];
         if (code != null) {
           request.response
@@ -114,7 +120,7 @@ Future<UserCredential> signInWithGoogleWindows() async {
             ''');
           await request.response.close();
           codeCompleter.complete(code);
-          server.close(force: true);
+          activeServer.close(force: true);
           break;
         } else {
           request.response
@@ -153,19 +159,13 @@ Future<UserCredential> signInWithGoogleWindows() async {
     }
 
     final tokenData = jsonDecode(response.body) as Map<String, dynamic>;
-    final accessToken = tokenData['access_token'] as String?;
     final idToken = tokenData['id_token'] as String?;
 
     if (idToken == null) {
       throw Exception('ID Token missing from token exchange.');
     }
 
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: accessToken,
-      idToken: idToken,
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    return await DesktopFirebaseRestClient.signInWithGoogleIdToken(idToken);
   } catch (e) {
     timeoutTimer.cancel();
     rethrow;

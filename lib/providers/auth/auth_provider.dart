@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -6,34 +7,44 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers.dart';
+import 'desktop_firebase_rest_client.dart';
 
 // Check if Firebase is supported on the current platform
 bool isFirebaseSupported() {
   if (kIsWeb) return true;
   return defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.macOS ||
-      defaultTargetPlatform == TargetPlatform.windows;
+      defaultTargetPlatform == TargetPlatform.macOS;
 }
 
 class AuthState {
   final User? user;
+  final DesktopUser? desktopUser;
   final bool isOfflineMode;
   final bool isLoading;
 
   AuthState({
     this.user,
+    this.desktopUser,
     required this.isOfflineMode,
     required this.isLoading,
   });
 
+  String? get uid => user?.uid ?? desktopUser?.uid;
+  String? get email => user?.email ?? desktopUser?.email;
+  String? get displayName => user?.displayName ?? desktopUser?.displayName;
+  String? get photoUrl => user?.photoURL ?? desktopUser?.photoUrl;
+  bool get isAuthenticated => user != null || desktopUser != null;
+
   AuthState copyWith({
     User? user,
+    DesktopUser? desktopUser,
     bool? isOfflineMode,
     bool? isLoading,
   }) {
     return AuthState(
       user: user ?? this.user,
+      desktopUser: desktopUser ?? this.desktopUser,
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
       isLoading: isLoading ?? this.isLoading,
     );
@@ -47,8 +58,34 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<AuthState> build() async {
     final hasChosenOffline = _prefs.getBool('has_chosen_offline') ?? false;
 
+    final isDesktop = !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux);
+
+    if (isDesktop) {
+      final savedJson = _prefs.getString('desktop_user_session');
+      if (savedJson != null) {
+        try {
+          var desktopUser = DesktopUser.fromJson(jsonDecode(savedJson));
+          if (desktopUser.isExpired) {
+            desktopUser = await DesktopFirebaseRestClient.refreshToken(desktopUser);
+            await _prefs.setString('desktop_user_session', jsonEncode(desktopUser.toJson()));
+          }
+          return AuthState(
+            user: null,
+            desktopUser: desktopUser,
+            isOfflineMode: false,
+            isLoading: false,
+          );
+        } catch (e) {
+          if (kDebugMode) debugPrint("Error loading saved desktop session: $e");
+        }
+      }
+      return AuthState(user: null, desktopUser: null, isOfflineMode: hasChosenOffline, isLoading: false);
+    }
+
     if (!isFirebaseSupported()) {
-      // Force offline mode for unsupported platforms (e.g. desktop)
+      // Force offline mode for unsupported platforms
       return AuthState(user: null, isOfflineMode: true, isLoading: false);
     }
 
@@ -76,6 +113,23 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
+      final isDesktop = !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.windows ||
+              defaultTargetPlatform == TargetPlatform.linux);
+
+      if (isDesktop) {
+        final desktopUser = await signInWithGoogleWindows();
+        await _prefs.setString('desktop_user_session', jsonEncode(desktopUser.toJson()));
+        await _prefs.setBool('has_chosen_offline', false);
+        state = AsyncValue.data(AuthState(
+          user: null,
+          desktopUser: desktopUser,
+          isOfflineMode: false,
+          isLoading: false,
+        ));
+        return;
+      }
+
       if (!isFirebaseSupported()) {
         throw UnsupportedError('Firebase is not supported on this platform.');
       }
@@ -90,9 +144,6 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         googleProvider.addScope('email');
         
         userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-      } else if (defaultTargetPlatform == TargetPlatform.windows) {
-        // Windows Desktop OAuth 2.0 Loopback flow
-        userCredential = await signInWithGoogleWindows();
       } else {
         // Mobile platform (Android/iOS) uses the GoogleSignIn package flow
         final GoogleSignInAccount googleUser;
@@ -137,7 +188,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       if (isCancellation) {
         final currentOffline = _prefs.getBool('has_chosen_offline') ?? false;
         state = AsyncValue.data(AuthState(
-          user: FirebaseAuth.instance.currentUser,
+          user: isFirebaseSupported() ? FirebaseAuth.instance.currentUser : null,
           isOfflineMode: currentOffline,
           isLoading: false,
         ));
@@ -179,6 +230,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> signOut({bool keepLocalData = false}) async {
     state = const AsyncValue.loading();
     try {
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        await _prefs.remove('desktop_user_session');
+      }
       if (isFirebaseSupported()) {
         if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
           await GoogleSignIn.instance.signOut();
@@ -198,6 +252,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       }
       state = AsyncValue.data(AuthState(
         user: null,
+        desktopUser: null,
         isOfflineMode: keepLocalData,
         isLoading: false,
       ));
@@ -210,6 +265,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> resetAuthChoice() async {
     state = const AsyncValue.loading();
     await _prefs.remove('has_chosen_offline');
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      await _prefs.remove('desktop_user_session');
+    }
     if (isFirebaseSupported()) {
       if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
         await GoogleSignIn.instance.signOut();
@@ -224,6 +282,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     }
     state = AsyncValue.data(AuthState(
       user: null,
+      desktopUser: null,
       isOfflineMode: false,
       isLoading: false,
     ));
@@ -236,7 +295,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       await user.reauthenticateWithPopup(googleProvider);
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       final cred = await signInWithGoogleWindows();
-      if (cred.user != null && user.uid == cred.user!.uid) {
+      if (cred.uid == user.uid) {
         // Successfully re-authenticated via Windows OAuth loopback
         return;
       }

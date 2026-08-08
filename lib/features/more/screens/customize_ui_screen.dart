@@ -50,7 +50,6 @@ class CustomizeUiScreen extends ConsumerWidget {
     Widget buildSettingsGroup(Widget child) {
       return Container(
         decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: context.appColors.borderColor),
         ),

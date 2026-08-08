@@ -174,7 +174,7 @@ class AppContentResolver extends ConsumerWidget {
     Widget targetWidget;
     if (!hasAgreed) {
       targetWidget = const AgreementScreen(key: ValueKey('agreement_screen'));
-    } else if (authState != null && !authState.isOfflineMode && authState.user == null) {
+    } else if (authState != null && !authState.isOfflineMode && !authState.isAuthenticated) {
       targetWidget = const AuthScreen(key: ValueKey('auth_screen'));
     } else if (!hasSetup) {
       targetWidget = const SetupScreen(key: ValueKey('setup_screen'));

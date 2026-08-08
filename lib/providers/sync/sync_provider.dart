@@ -12,6 +12,8 @@ import '../../database/backup_service.dart';
 import '../../database/syllabus_preset.dart';
 import '../providers.dart';
 
+import '../auth/desktop_firebase_rest_client.dart';
+
 export 'sync_data_mapper.dart';
 export 'sync_encoding.dart';
 export 'sync_models.dart';
@@ -29,6 +31,38 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   int _retryCount = 0;
 
   bool get hasPendingChanges => _hasPendingChanges;
+
+  DesktopUser? get _desktopUser => ref.read(authProvider).value?.desktopUser;
+  String? get _currentUserId {
+    if (isFirebaseSupported()) {
+      return FirebaseAuth.instance.currentUser?.uid;
+    }
+    return _desktopUser?.uid;
+  }
+
+  Future<Map<String, dynamic>?> _fetchFirestoreDoc(String uid) async {
+    if (isFirebaseSupported()) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get(const GetOptions(source: Source.server));
+      return doc.data();
+    } else if (_desktopUser != null) {
+      return await DesktopFirebaseRestClient.fetchUserDocument(_desktopUser!.uid, _desktopUser!.idToken);
+    }
+    return null;
+  }
+
+  Future<void> _writeFirestoreDoc(String uid, Map<String, dynamic> payload) async {
+    if (isFirebaseSupported()) {
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        ...payload,
+        'lastSyncedAt': FieldValue.serverTimestamp(),
+      });
+    } else if (_desktopUser != null) {
+      await DesktopFirebaseRestClient.saveUserDocument(_desktopUser!.uid, _desktopUser!.idToken, {
+        ...payload,
+        'lastSyncedAt': DateTime.now().toUtc().toIso8601String(),
+      });
+    }
+  }
 
   @override
   SyncState build() {
@@ -121,31 +155,29 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> _updateSyncState({
-    required SyncStatus status,
+    SyncStatus? status,
     DateTime? lastSyncedAt,
     String? errorMessage,
     Map<String, dynamic>? pendingCloudData,
   }) async {
-    final saveStatus = (status == SyncStatus.success || status == SyncStatus.error || status == SyncStatus.idle)
-        ? status.name
-        : SyncStatus.idle.name;
-
-    state = SyncState(
-      status: status,
+    state = state.copyWith(
+      status: status ?? state.status,
       lastSyncedAt: lastSyncedAt ?? state.lastSyncedAt,
-      errorMessage: errorMessage,
-      pendingCloudData: pendingCloudData,
+      errorMessage: errorMessage ?? state.errorMessage,
+      pendingCloudData: pendingCloudData ?? state.pendingCloudData,
     );
 
     try {
       final prefs = ref.read(sharedPreferencesProvider);
-      await prefs.setString('last_sync_status', saveStatus);
+      if (status != null) {
+        await prefs.setString('last_sync_status', status.name);
+      }
       if (lastSyncedAt != null) {
         await prefs.setString('last_synced_at', lastSyncedAt.toIso8601String());
       }
       if (errorMessage != null) {
         await prefs.setString('last_sync_error', errorMessage);
-      } else {
+      } else if (status == SyncStatus.success) {
         await prefs.remove('last_sync_error');
       }
     } catch (e) {
@@ -154,20 +186,29 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> clearSyncState() async {
+    _hasPendingChanges = false;
+    _firstPendingTime = null;
+    _lastFirestoreWriteTime = null;
+    _syncTimer?.cancel();
+    _syncTimer = null;
+    _throttleTimer?.cancel();
+    _throttleTimer = null;
+    _clearRetry();
+
+    state = SyncState(status: SyncStatus.idle);
+
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       await prefs.remove('last_sync_status');
       await prefs.remove('last_synced_at');
       await prefs.remove('last_sync_error');
     } catch (e) {
-      if (kDebugMode) debugPrint("Error clearing sync state: $e");
+      if (kDebugMode) debugPrint("Error clearing sync state prefs: $e");
     }
-    state = SyncState(status: SyncStatus.idle);
   }
 
   AppDatabase get _db => ref.read(appDatabaseProvider);
 
-  // Helper: Export local database to backup JSON format
   Future<Map<String, dynamic>> exportLocalData() async {
     await _db.purgeOldDeletedItems();
     final exported = await BackupService.exportDatabase(_db);
@@ -176,7 +217,6 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     return exported;
   }
 
-  // Helper: Restore database from backup JSON format
   Future<void> _restoreLocalData(Map<String, dynamic> payload) async {
     await BackupService.restoreDatabase(_db, payload);
     final hasCompleted = payload['hasCompletedSetup'] as bool? ?? false;
@@ -193,14 +233,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
 
   Future<bool> _hasLocalUserModifications() async {
     try {
-      final tasks = await _db.select(_db.syllabusTasks).get();
-      if (tasks.any((t) => t.isCompleted)) return true;
-
       final sessions = await _db.select(_db.focusSessions).get();
       if (sessions.isNotEmpty) return true;
 
       final history = await _db.select(_db.dailyHistory).get();
       if (history.isNotEmpty) return true;
+
+      final tasks = await _db.select(_db.syllabusTasks).get();
+      if (tasks.any((t) => t.isCompleted)) return true;
 
       final sylCategories = await _db.select(_db.syllabusCategories).get();
       final prefs = ref.read(sharedPreferencesProvider);
@@ -225,18 +265,16 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<bool> initializeSync() async {
-    if (!isFirebaseSupported()) return false;
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return false;
+    final uid = _currentUserId;
+    if (uid == null) return false;
 
     await _db.purgeOldDeletedItems();
     await _updateSyncState(status: SyncStatus.syncing);
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
-      
+      final docData = await _fetchFirestoreDoc(uid);
       final hasLocalData = await _hasLocalUserModifications();
 
-      if (!doc.exists || doc.data()?['data'] == null) {
+      if (docData == null || docData['data'] == null) {
         if (hasLocalData) {
           await uploadLocalToCloud();
         } else {
@@ -245,12 +283,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         return false;
       }
 
-      final cloudData = doc.data()!['data'] as Map<String, dynamic>;
+      final cloudData = decodeSyncPayload(docData);
 
       DateTime? cloudLastSynced;
-      final ts = doc.data()?['lastSyncedAt'];
+      final ts = docData['lastSyncedAt'];
       if (ts is Timestamp) {
         cloudLastSynced = ts.toDate();
+      } else if (ts is String) {
+        cloudLastSynced = DateTime.tryParse(ts);
       }
 
       if (hasLocalData) {
@@ -292,8 +332,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> uploadLocalToCloud() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final uid = _currentUserId;
+    if (uid == null) return;
 
     _hasPendingChanges = false;
     _syncTimer?.cancel();
@@ -314,10 +354,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         historyPrunedBefore: historyPrunedBefore,
       );
 
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        ...payload,
-        'lastSyncedAt': FieldValue.serverTimestamp(),
-      });
+      await _writeFirestoreDoc(uid, payload);
       _hasPendingChanges = false;
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now());
     } catch (e) {
@@ -327,14 +364,13 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> downloadCloudToLocal() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final uid = _currentUserId;
+    if (uid == null) return;
 
     await _updateSyncState(status: SyncStatus.syncing);
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
-      final docData = doc.data();
-      if (doc.exists && docData != null && docData['data'] != null) {
+      final docData = await _fetchFirestoreDoc(uid);
+      if (docData != null && docData['data'] != null) {
         if (docData.containsKey('syncStatsEnabled') && docData['syncStatsEnabled'] is bool) {
           await ref.read(syncStatsEnabledProvider.notifier).setSyncStatsEnabled(docData['syncStatsEnabled'] as bool);
         }
@@ -359,6 +395,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
         final ts = docData['lastSyncedAt'];
         if (ts is Timestamp) {
           cloudLastSynced = ts.toDate();
+        } else if (ts is String) {
+          cloudLastSynced = DateTime.tryParse(ts);
         }
         await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced);
       } else {
@@ -370,8 +408,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
   }
 
   Future<void> mergeCloudAndLocal() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final uid = _currentUserId;
+    if (uid == null) return;
 
     final cloudData = state.pendingCloudData;
     await _updateSyncState(status: SyncStatus.syncing);
@@ -379,9 +417,8 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     try {
       Map<String, dynamic>? dataToMerge = cloudData;
       if (dataToMerge == null) {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
-        final docData = doc.data();
-        if (doc.exists && docData != null && docData['data'] != null) {
+        final docData = await _fetchFirestoreDoc(uid);
+        if (docData != null && docData['data'] != null) {
           if (docData.containsKey('syncStatsEnabled') && docData['syncStatsEnabled'] is bool) {
             await ref.read(syncStatsEnabledProvider.notifier).setSyncStatsEnabled(docData['syncStatsEnabled'] as bool);
           }
@@ -424,10 +461,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
           historyPrunedBefore: historyPrunedBefore,
         );
 
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          ...payload,
-          'lastSyncedAt': FieldValue.serverTimestamp(),
-        });
+        await _writeFirestoreDoc(uid, payload);
       }
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now());
     } catch (e) {
@@ -483,18 +517,14 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
     }
 
     _lastFirestoreWriteTime = now;
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
-      ...payload,
-      'lastSyncedAt': FieldValue.serverTimestamp(),
-    });
+    await _writeFirestoreDoc(uid, payload);
     _throttleTimer?.cancel();
     _throttleTimer = null;
   }
 
   Future<void> autoSync() async {
-    if (!isFirebaseSupported()) return;
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final uid = _currentUserId;
+    if (uid == null) return;
     if (state.status == SyncStatus.requiresAction) return;
 
     await _updateSyncState(status: SyncStatus.syncing);
@@ -508,44 +538,26 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       final localData = await exportLocalData();
       localData['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
 
-      try {
-        final cachedDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get(const GetOptions(source: Source.cache));
+      final docData = await _fetchFirestoreDoc(uid);
 
-        if (cachedDoc.exists && cachedDoc.data()?['data'] != null) {
-          final cachedCloudData = cachedDoc.data()!['data'] as Map<String, dynamic>;
-          final isEqual = await compute(areDataEqualIsolate, [localData, cachedCloudData]);
-          if (isEqual) {
-            DateTime? cloudLastSynced;
-            final ts = cachedDoc.data()?['lastSyncedAt'];
-            if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
-            await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
-            _clearRetry();
-            return;
-          }
-        }
-      } catch (_) {
-        // Cache miss or offline cache unavailable
-      }
-
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get(const GetOptions(source: Source.server));
-
-      if (!doc.exists || doc.data()?['data'] == null) {
-        await _throttledFirestoreWrite(user.uid, localData);
+      if (docData == null || docData['data'] == null) {
+        await _throttledFirestoreWrite(uid, localData);
         await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now().toUtc());
         _clearRetry();
         return;
       }
 
-      final cloudData = doc.data()!['data'] as Map<String, dynamic>;
+      final cloudData = docData['data'] as Map<String, dynamic>;
 
       final isCloudEqual = await compute(areDataEqualIsolate, [localData, cloudData]);
       if (isCloudEqual) {
         DateTime? cloudLastSynced;
-        final ts = doc.data()?['lastSyncedAt'];
-        if (ts is Timestamp) cloudLastSynced = ts.toDate().toUtc();
+        final ts = docData['lastSyncedAt'];
+        if (ts is Timestamp) {
+          cloudLastSynced = ts.toDate().toUtc();
+        } else if (ts is String) {
+          cloudLastSynced = DateTime.tryParse(ts)?.toUtc();
+        }
         await _updateSyncState(status: SyncStatus.success, lastSyncedAt: cloudLastSynced ?? DateTime.now().toUtc());
         _clearRetry();
         return;
@@ -563,7 +575,7 @@ class SyncNotifier extends Notifier<SyncState> with WidgetsBindingObserver {
       }
 
       merged['hideDownloadBanner'] = ref.read(hideDownloadBannerProvider);
-      await _throttledFirestoreWrite(user.uid, merged);
+      await _throttledFirestoreWrite(uid, merged);
       await _updateSyncState(status: SyncStatus.success, lastSyncedAt: DateTime.now().toUtc());
       _clearRetry();
     } catch (e, stack) {

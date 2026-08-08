@@ -138,7 +138,11 @@ class SettingsScreen extends ConsumerWidget {
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.appColors.textPrimary, size: 18),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            },
           ),
           title: Text(
             'Settings',
