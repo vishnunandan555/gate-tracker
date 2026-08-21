@@ -103,6 +103,9 @@ PLAN.md
 compile_commands.json
 FEATURES_OLD.md
 KEYSTORE_GUIDE.md
+KEYSTORE_INFO.txt
+*.secret
+*.secrets
 mockup/
 RELEASE_CHECKLIST.md
 PROBLEMS.md

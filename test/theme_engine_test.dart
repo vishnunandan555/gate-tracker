@@ -147,5 +147,42 @@ void main() {
       expect(colorNotifier.frozenColor, customColor);
       expect(colorNotifier.mode, 'frozen');
     });
+
+    test('Semantic color tokens resolve and lerp correctly', () {
+      final darkColors = AppThemeColors.fromModel(HandcraftedPresets.zincDark);
+      final lightColors = AppThemeColors.fromModel(HandcraftedPresets.paperLight);
+
+      expect(darkColors.success, const Color(0xFF10B981));
+      expect(lightColors.success, const Color(0xFF059669));
+      expect(darkColors.warning, const Color(0xFFF59E0B));
+      expect(lightColors.warning, const Color(0xFFD97706));
+      expect(darkColors.error, const Color(0xFFEF4444));
+      expect(lightColors.error, const Color(0xFFDC2626));
+      expect(darkColors.info, const Color(0xFF38BDF8));
+      expect(lightColors.info, const Color(0xFF0284C7));
+
+      final interpolated = darkColors.lerp(lightColors, 0.5);
+      expect(interpolated.success, isNotNull);
+      expect(interpolated.warning, isNotNull);
+      expect(interpolated.error, isNotNull);
+      expect(interpolated.info, isNotNull);
+    });
+
+    test('AppTheme buildTheme constructs standardized typography and dynamic ColorScheme seed', () {
+      final darkTheme = AppTheme.buildTheme(
+        HandcraftedPresets.zincDark,
+        primaryAccentOverride: const Color(0xFF00F0FF),
+      );
+
+      // Verify ColorScheme seed generation
+      expect(darkTheme.colorScheme.primary, const Color(0xFF00F0FF));
+      expect(darkTheme.colorScheme.brightness, Brightness.dark);
+      expect(darkTheme.colorScheme.error, const Color(0xFFEF4444));
+
+      // Verify Typography standardization
+      expect(darkTheme.textTheme.headlineLarge?.fontWeight, FontWeight.w700);
+      expect(darkTheme.textTheme.titleLarge?.fontWeight, FontWeight.w600);
+      expect(darkTheme.textTheme.bodyLarge?.color, const Color(0xFFF1F5F9));
+    });
   });
 }

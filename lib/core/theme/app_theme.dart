@@ -32,27 +32,87 @@ class AppTheme {
       ),
     );
 
-    final colorScheme = isDark
-        ? ColorScheme.dark(
-            primary: themeColors.primaryAccent,
-            secondary: themeColors.secondaryAccent,
-            surface: themeColors.surfaceColor,
-            onPrimary: themeColors.onAccent,
-            onSecondary: themeColors.onAccent,
-            onSurface: themeColors.textPrimary,
-          )
-        : ColorScheme.light(
-            primary: themeColors.primaryAccent,
-            secondary: themeColors.secondaryAccent,
-            surface: themeColors.surfaceColor,
-            onPrimary: themeColors.onAccent,
-            onSecondary: themeColors.onAccent,
-            onSurface: themeColors.textPrimary,
-          );
+    final dynamicColorScheme = ColorScheme.fromSeed(
+      seedColor: themeColors.primaryAccent,
+      brightness: brightness,
+    );
+
+    final colorScheme = dynamicColorScheme.copyWith(
+      primary: themeColors.primaryAccent,
+      secondary: themeColors.secondaryAccent,
+      surface: themeColors.surfaceColor,
+      onPrimary: themeColors.onAccent,
+      onSecondary: themeColors.onAccent,
+      onSurface: themeColors.textPrimary,
+      error: themeColors.error,
+      onError: Colors.white,
+    );
 
     final baseTextTheme = isDark
         ? ThemeData.dark().textTheme
         : ThemeData.light().textTheme;
+
+    final outfitTextTheme = GoogleFonts.outfitTextTheme(baseTextTheme);
+
+    final standardizedTextTheme = outfitTextTheme.copyWith(
+      displayLarge: outfitTextTheme.displayLarge?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+      ),
+      displayMedium: outfitTextTheme.displayMedium?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineLarge: outfitTextTheme.headlineLarge?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      headlineMedium: outfitTextTheme.headlineMedium?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: outfitTextTheme.titleLarge?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
+      ),
+      titleMedium: outfitTextTheme.titleMedium?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w500,
+      ),
+      titleSmall: outfitTextTheme.titleSmall?.copyWith(
+        color: themeColors.textSecondary,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyLarge: outfitTextTheme.bodyLarge?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w400,
+        height: 1.4,
+      ),
+      bodyMedium: outfitTextTheme.bodyMedium?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w400,
+        height: 1.35,
+      ),
+      bodySmall: outfitTextTheme.bodySmall?.copyWith(
+        color: themeColors.textSecondary,
+        fontWeight: FontWeight.w400,
+      ),
+      labelLarge: outfitTextTheme.labelLarge?.copyWith(
+        color: themeColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+      labelMedium: outfitTextTheme.labelMedium?.copyWith(
+        color: themeColors.textSecondary,
+        fontWeight: FontWeight.w500,
+      ),
+      labelSmall: outfitTextTheme.labelSmall?.copyWith(
+        color: themeColors.textMuted,
+        fontWeight: FontWeight.w500,
+      ),
+    );
 
     return ThemeData(
       brightness: brightness,
@@ -63,12 +123,7 @@ class AppTheme {
       highlightColor: Colors.transparent,
       dividerColor: themeColors.dividerColor,
       dividerTheme: DividerThemeData(color: themeColors.dividerColor),
-      textTheme: GoogleFonts.outfitTextTheme(baseTextTheme).copyWith(
-        bodyLarge: baseTextTheme.bodyLarge?.copyWith(color: themeColors.textPrimary),
-        bodyMedium: baseTextTheme.bodyMedium?.copyWith(color: themeColors.textPrimary),
-        titleLarge: baseTextTheme.titleLarge?.copyWith(color: themeColors.textPrimary),
-        titleMedium: baseTextTheme.titleMedium?.copyWith(color: themeColors.textPrimary),
-      ),
+      textTheme: standardizedTextTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: themeColors.scaffoldBackground,
         surfaceTintColor: Colors.transparent,

@@ -18,6 +18,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color onSurface;
   final Color dividerColor;
   final Color onAccent;
+  final Color success;
+  final Color warning;
+  final Color error;
+  final Color info;
   final double borderRadius;
   final bool enableGlassmorphism;
 
@@ -36,6 +40,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     required this.onSurface,
     required this.dividerColor,
     required this.onAccent,
+    required this.success,
+    required this.warning,
+    required this.error,
+    required this.info,
     required this.borderRadius,
     required this.enableGlassmorphism,
   });
@@ -70,6 +78,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       onSurface: model.onSurfaceColor ?? model.textPrimaryColor,
       dividerColor: model.dividerColorValue,
       onAccent: estimatedOnAccent,
+      success: model.successColor,
+      warning: model.warningColor,
+      error: model.errorColor,
+      info: model.infoColor,
       borderRadius: model.borderRadius,
       enableGlassmorphism: model.enableGlassmorphism,
     );
@@ -91,6 +103,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     Color? onSurface,
     Color? dividerColor,
     Color? onAccent,
+    Color? success,
+    Color? warning,
+    Color? error,
+    Color? info,
     double? borderRadius,
     bool? enableGlassmorphism,
   }) {
@@ -109,6 +125,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       onSurface: onSurface ?? this.onSurface,
       dividerColor: dividerColor ?? this.dividerColor,
       onAccent: onAccent ?? this.onAccent,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      error: error ?? this.error,
+      info: info ?? this.info,
       borderRadius: borderRadius ?? this.borderRadius,
       enableGlassmorphism: enableGlassmorphism ?? this.enableGlassmorphism,
     );
@@ -133,6 +153,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       onSurface: Color.lerp(onSurface, other.onSurface, t)!,
       dividerColor: Color.lerp(dividerColor, other.dividerColor, t)!,
       onAccent: Color.lerp(onAccent, other.onAccent, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      error: Color.lerp(error, other.error, t)!,
+      info: Color.lerp(info, other.info, t)!,
       borderRadius: (borderRadius + (other.borderRadius - borderRadius) * t),
       enableGlassmorphism: t < 0.5 ? enableGlassmorphism : other.enableGlassmorphism,
     );

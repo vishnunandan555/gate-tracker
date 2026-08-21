@@ -210,16 +210,36 @@ In any Flutter widget, access active design system colors through `context.appCo
 - `appColors.borderColor` — Border Outlines
 - `appColors.dividerColor` — Separation Dividers
 - `appColors.primaryAccent` — Active Accent Color
-- `appColors.onAccent` — Text / Icon Color on top of Accent
+- `appColors.secondaryAccent` — Semi-transparent / Secondary Accent
+- `appColors.onAccent` — Text / Icon Color on top of Accent (calculated luminance)
+- `appColors.success` — Semantic Success Status (Emerald)
+- `appColors.warning` — Semantic Warning Status (Amber)
+- `appColors.error` — Semantic Error Status (Red)
+- `appColors.info` — Semantic Info Status (Sky Blue)
 - `appColors.isLight` — Boolean indicating if active theme is Light Mode
 
 ---
 
-## 8. Full Codebase Theme Engine Migration Completed
+## 8. Typography Hierarchy & Material You Monet Seed Generation
+
+### Typography Standard:
+The typography stack is powered by `GoogleFonts.outfitTextTheme` with deterministic font weights, letter spacing, and line heights mapped directly to `textPrimary`, `textSecondary`, and `textMuted`:
+- **Display & Headline**: `FontWeight.w700` with subtle negative letter spacing for modern editorial clarity.
+- **Titles**: `FontWeight.w600` / `FontWeight.w500` for cards and modal headers.
+- **Body**: `FontWeight.w400` with standardized `1.35x` - `1.4x` line heights for optimal reading comfort.
+- **Labels**: `FontWeight.w500` / `FontWeight.w600` for buttons, badges, and input hints.
+
+### Material You Monet Dynamic Seed Generation:
+`AppTheme.buildTheme()` generates its underlying Flutter `ColorScheme` via `ColorScheme.fromSeed(seedColor: themeColors.primaryAccent, brightness: brightness)`. This produces a harmonized Material You tonal palette across the entire framework while preserving strict surface layer contrast definitions.
+
+---
+
+## 9. Full Codebase Theme Engine Migration Completed
 
 A comprehensive, 100% project-wide theme engine migration was executed across all UI screens, widgets, custom canvas painters, dialogs, and navigation shells.
 
 ### Key Refactoring Highlights:
-1. **0 Hardcoded Color Leaks:** All occurrences of hardcoded `Colors.white`, `Colors.white70`, dark container fills (`#141824`, `#16161A`), and fixed cyan accents (`Colors.cyanAccent`) were refactored to `context.appColors` tokens.
+1. **0 Hardcoded Color Leaks:** All occurrences of hardcoded `Colors.white`, `Colors.white70`, dark container fills (`#141824`, `#16161A`), and fixed cyan accents were refactored to `context.appColors` tokens.
 2. **Dynamic Light & Dark Surface Tiering:** Canvas, card surfaces, interactive text fields, and floating dialogs dynamically adapt their elevation and background fills between Light Mode and Dark Mode.
-3. **Luminance-Based Contrast Safeguards:** Custom canvas painters and accent pill chips dynamically check `accentColor.computeLuminance() > 0.5` or use `context.appColors.onAccent` to guarantee legible text on any user-selected accent color.
+3. **Semantic Status Colors:** Unified `appColors.success`, `appColors.warning`, `appColors.error`, and `appColors.info` tokens ensure status indicators maintain contrast across themes.
+4. **Luminance-Based Contrast Safeguards:** Custom canvas painters and accent pill chips dynamically calculate luminance or use `context.appColors.onAccent` to guarantee legible text on any user-selected accent color.
