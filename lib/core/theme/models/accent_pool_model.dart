@@ -8,9 +8,29 @@ class AppAccentPools {
     Color(0xFF00F0FF), // Bright Cyan (Default Dark Accent)
   ];
 
+  /// Curated Study Focus Accent Presets (Dark Mode)
+  static const List<Color> curatedDarkAccents = [
+    Color(0xFF00F0FF), // Cyber Cyan
+    Color(0xFF10B981), // Emerald Focus
+    Color(0xFF8B5CF6), // Electric Violet
+    Color(0xFFF43F5E), // Sunset Rose
+    Color(0xFFF59E0B), // Solar Amber
+    Color(0xFF38BDF8), // Arctic Sky
+  ];
+
   /// Default Light Mode Accent Pool (Dark Blue)
   static const List<Color> defaultLightAccents = [
     Color(0xFF0284C7), // Dark Blue (Default Light Accent)
+  ];
+
+  /// Curated Study Focus Accent Presets (Light Mode)
+  static const List<Color> curatedLightAccents = [
+    Color(0xFF0284C7), // Deep Ocean
+    Color(0xFF059669), // Forest Emerald
+    Color(0xFF6D28D9), // Royal Violet
+    Color(0xFFE11D48), // Crimson Rose
+    Color(0xFFD97706), // Deep Amber
+    Color(0xFF4338CA), // Cobalt Indigo
   ];
 
   /// Ensures an accent color has safe readable contrast against target scaffold brightness.

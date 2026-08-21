@@ -148,9 +148,21 @@ Accent colors are isolated from surface `ThemeSetModel` objects to ensure color 
      └───────────────────────┘                       └───────────────────────┘
 ```
 
-### Initial Accent Pool Defaults:
-- **Dark Mode Initial Accent**: Bright Cyan (`0xFF00F0FF`)
-- **Light Mode Initial Accent**: Dark Blue (`0xFF0284C7`)
+### Initial Accent Pool Defaults & Curated Focus Palettes:
+- **Dark Mode Curated Swatches**:
+  - `Cyber Cyan` (`0xFF00F0FF`)
+  - `Emerald Focus` (`0xFF10B981`)
+  - `Electric Violet` (`0xFF8B5CF6`)
+  - `Sunset Rose` (`0xFFF43F5E`)
+  - `Solar Amber` (`0xFFF59E0B`)
+  - `Arctic Sky` (`0xFF38BDF8`)
+- **Light Mode Curated Swatches**:
+  - `Deep Ocean` (`0xFF0284C7`)
+  - `Forest Emerald` (`0xFF059669`)
+  - `Royal Violet` (`0xFF6D28D9`)
+  - `Crimson Rose` (`0xFFE11D48`)
+  - `Deep Amber` (`0xFFD97706`)
+  - `Cobalt Indigo` (`0xFF4338CA`)
 
 ### Custom Hex `#` Accent Entry:
 Users can add custom accent colors with direct Hex code entry (e.g. `#00F0FF`) or RGB sliders in the Accent Color dialog. Custom accents are stored in `SharedPreferences` under `custom_dark_accents_list` or `custom_light_accents_list`.
@@ -160,6 +172,14 @@ When a custom accent color is selected, `AppAccentPools.ensureContrast()` calcul
 
 ### Contrast On-Accent Calculation:
 `AppThemeColors` computes luminance dynamically to select the optimal text/icon color overlay (`Colors.black` for high-luminance accents, `Colors.white` for dark accents).
+
+---
+
+## 5. Frosted Glassmorphism UI Component (`GlassContainer`)
+
+The `GlassContainer` widget provides a unified frosted-glass aesthetic powered by `BackdropFilter` and translucent surface layers:
+- **Automatic Theme Sync**: Follows `context.appColors.enableGlassmorphism`. When disabled (default for base themes), automatically renders lightweight solid card backgrounds without backdrop blur performance overhead.
+- **Translucent Tiering**: Applies adaptive alpha values (`0.65` light, `0.45` dark) with high-contrast highlight border outlines.
 
 ---
 

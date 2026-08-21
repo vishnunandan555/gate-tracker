@@ -184,5 +184,15 @@ void main() {
       expect(darkTheme.textTheme.titleLarge?.fontWeight, FontWeight.w600);
       expect(darkTheme.textTheme.bodyLarge?.color, const Color(0xFFF1F5F9));
     });
+
+    test('AppAccentPools curated study palettes are correctly defined', () {
+      expect(AppAccentPools.curatedDarkAccents.length, 6);
+      expect(AppAccentPools.curatedLightAccents.length, 6);
+
+      expect(AppAccentPools.curatedDarkAccents.contains(const Color(0xFF00F0FF)), isTrue);
+      expect(AppAccentPools.curatedDarkAccents.contains(const Color(0xFF10B981)), isTrue);
+      expect(AppAccentPools.curatedLightAccents.contains(const Color(0xFF0284C7)), isTrue);
+      expect(AppAccentPools.curatedLightAccents.contains(const Color(0xFF059669)), isTrue);
+    });
   });
 }

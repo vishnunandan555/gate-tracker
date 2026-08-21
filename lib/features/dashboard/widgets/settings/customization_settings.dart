@@ -151,9 +151,9 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                       ),
                       const SizedBox(height: 16),
 
-                      // ── 2. APPROPRIATE ACCENT SWATCHES GRID ─────────────
+                      // ── 2. CURATED FOCUS ACCENT SWATCHES ──────────────
                       Text(
-                        isThemeDark ? 'PRESET DARK ACCENTS:' : 'PRESET LIGHT ACCENTS:',
+                        isThemeDark ? 'CURATED FOCUS ACCENTS (DARK):' : 'CURATED FOCUS ACCENTS (LIGHT):',
                         style: GoogleFonts.outfit(
                           color: context.appColors.textMuted,
                           fontSize: 11,
@@ -167,7 +167,7 @@ void showAccentColorDialog(BuildContext context, WidgetRef ref) {
                           spacing: 10,
                           runSpacing: 10,
                           alignment: WrapAlignment.center,
-                          children: (isThemeDark ? AppAccentPools.defaultDarkAccents : AppAccentPools.defaultLightAccents).map((color) {
+                          children: (isThemeDark ? AppAccentPools.curatedDarkAccents : AppAccentPools.curatedLightAccents).map((color) {
                             final isSelected = !isAuto && !isDevice &&
                                 colorNotifier.frozenColor?.toARGB32() == color.toARGB32();
 
